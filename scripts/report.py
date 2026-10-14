@@ -105,15 +105,25 @@ def _ordered(groups):
 
 
 def section_hf(rows):
-    run0, survey = _latest_run(rows, "E0b")
-    run1, attack = _latest_run(rows, "E1b")
-    if not survey:
+    lists = sorted({r.get("meta", {}).get("list", "hf_models.json") for r in rows if r["experiment"] == "E0b"})
+    if not lists:
         return "## E0b / E1b — Hugging Face survey\n\n_No run yet._\n"
+    return "\n".join(_section_hf_list(rows, name) for name in lists)
+
+
+def _section_hf_list(rows, list_name):
+    mine = [r for r in rows if r.get("meta", {}).get("list", "hf_models.json") == list_name]
+    run0, survey = _latest_run(mine, "E0b")
+    run1, attack = _latest_run(mine, "E1b")
+    meta = survey[0].get("meta", {})
+    how = (f"{meta['roles']} roles x 4 layers (role peers for S4), up to {meta['max_tensors']} tensors, "
+           f"first {meta['chunk'] // 1024} KB of each" if meta.get("roles")
+           else "up to 12 tensors spread through the file, first 64 KB of each")
     ok = [r for r in survey if "error" not in r]
     errors = [r for r in survey if "error" in r]
-    out = ["## E0b / E1b — single-file checks on public Hugging Face models", "",
-           f"Runs `{run0}` and `{run1}`. Up to 12 float tensors per model, first 64 KB of each, "
-           "fetched with HTTP range requests; the list is frozen in `results/hf_models.json`. "
+    out = [f"## E0b / E1b — single-file checks on public Hugging Face models (`{list_name}`)", "",
+           f"Runs `{run0}` and `{run1}`. Sampling: {how}, fetched with HTTP range requests; "
+           f"the list is frozen in `results/{list_name}`. "
            "Groups come from what S3/S4 measure on the clean samples.", "",
            "### E0b — what the weights look like, and false positives", "",
            "| Group | Models | Models with a false positive | Flagged tensors / sampled |",

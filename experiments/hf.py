@@ -84,8 +84,22 @@ def read_header(url: str, fetch: Fetch) -> tuple[int, dict]:
     return 8 + n, json.loads(fetch(url, 8, 8 + n - 1))
 
 
-def choose_tensors(header: dict, max_tensors: int = 12, min_elements: int = 4096) -> list[str]:
-    """Float tensors big enough for statistics, evenly spaced through the file."""
+def _spaced(items: list, k: int) -> list:
+    if len(items) <= k:
+        return list(items)
+    idx = np.linspace(0, len(items) - 1, k).round().astype(int)
+    return [items[i] for i in sorted(set(idx))]
+
+
+def choose_tensors(header: dict, max_tensors: int = 12, min_elements: int = 4096,
+                   roles: int = 0, per_role: int = 4) -> list[str]:
+    """Float tensors big enough for statistics.
+
+    roles = 0: evenly spaced through the file.
+    roles > 0: `per_role` tensors (evenly spaced through the layers) from each of
+    the `roles` largest roles with at least `per_role` tensors, so S4 can compare a
+    tensor with its role peers; topped up with evenly spaced others."""
+    from stowaway.weights import role
     cands = []
     for name, spec in header.items():
         if name == "__metadata__" or spec.get("dtype") not in FLOAT_LAYOUT:
@@ -94,25 +108,34 @@ def choose_tensors(header: dict, max_tensors: int = 12, min_elements: int = 4096
         if n >= min_elements:
             cands.append((spec["data_offsets"][0], name))
     cands.sort()
-    if len(cands) <= max_tensors:
-        return [n for _, n in cands]
-    idx = np.linspace(0, len(cands) - 1, max_tensors).round().astype(int)
-    return [cands[i][1] for i in sorted(set(idx))]
+    names = [n for _, n in cands]
+    if roles <= 0:
+        return _spaced(names, max_tensors)
+    groups: dict[str, list[str]] = {}
+    for n in names:
+        groups.setdefault(role(n), []).append(n)
+    big = sorted((g for g in groups.values() if len(g) >= per_role), key=lambda g: (-len(g), role(g[0])))
+    chosen = [n for g in big[:roles] for n in _spaced(g, per_role)][:max_tensors]
+    rest = [n for n in names if n not in set(chosen)]
+    chosen += _spaced(rest, max_tensors - len(chosen)) if len(chosen) < max_tensors else []
+    order = {n: i for i, n in enumerate(names)}
+    return sorted(chosen, key=order.get)
 
 
-def _cache_dir(repo: str, filename: str, chunk: int, max_tensors: int) -> Path:
-    return CACHE / repo.replace("/", "__") / f"{filename.replace('/', '__')}.{chunk}x{max_tensors}"
+def _cache_dir(repo: str, filename: str, chunk: int, max_tensors: int, roles: int) -> Path:
+    mode = f"r{roles}" if roles else "spaced"
+    return CACHE / repo.replace("/", "__") / f"{filename.replace('/', '__')}.{chunk}x{max_tensors}.{mode}"
 
 
 def sample(repo: str, filename: str, fetch: Fetch = http_fetch, chunk: int = 64 * 1024,
            max_tensors: int = 12, url: str | None = None,
-           workers: int = 6) -> tuple[dict[str, RawTensor], dict]:
+           workers: int = 6, roles: int = 0) -> tuple[dict[str, RawTensor], dict]:
     """Sample tensors of one remote safetensors file.
 
     Returns ({name: RawTensor (1-D, first `chunk` bytes)}, info), cached on disk
     per (chunk, max_tensors) so samples of different sizes never mix."""
     from concurrent.futures import ThreadPoolExecutor
-    cdir = _cache_dir(repo, filename, chunk, max_tensors)
+    cdir = _cache_dir(repo, filename, chunk, max_tensors, roles)
     meta_path, data_path = cdir / "meta.json", cdir / "samples.npz"
     if meta_path.exists() and data_path.exists():
         info = json.loads(meta_path.read_text(encoding="utf-8"))
@@ -123,7 +146,7 @@ def sample(repo: str, filename: str, fetch: Fetch = http_fetch, chunk: int = 64 
 
     url = url or resolve_url(repo, filename)
     base, header = read_header(url, fetch)
-    names = choose_tensors(header, max_tensors)
+    names = choose_tensors(header, max_tensors, roles=roles)
     def one(name):
         spec = header[name]
         isz = ITEMSIZE[spec["dtype"]]
@@ -146,7 +169,7 @@ def sample(repo: str, filename: str, fetch: Fetch = http_fetch, chunk: int = 64 
         "n_tensors_in_file": sum(1 for k in header if k != "__metadata__"),
         "file_params_by_dtype": dtypes,
         "tensors": names, "dtypes": {n: header[n]["dtype"] for n in names},
-        "chunk": chunk, "sampled_bytes": int(sum(r.size for r in raw.values())),
+        "chunk": chunk, "roles": roles, "sampled_bytes": int(sum(r.size for r in raw.values())),
     }
     cdir.mkdir(parents=True, exist_ok=True)
     np.savez(data_path, **raw)

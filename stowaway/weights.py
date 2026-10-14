@@ -12,6 +12,8 @@ Every check returns Findings; none of them needs to run the model.
 """
 from __future__ import annotations
 
+import re
+
 import numpy as np
 
 from .bits import FLOAT_LAYOUT, RawTensor, informative
@@ -88,6 +90,13 @@ def s3_precision_history(floats: dict[str, RawTensor]) -> list[Finding]:
 SIGNATURE_MIN_ELEMENTS = 4096  # tensors large enough to estimate the model's signature
 Z_FLAG = 6.0                   # |z| above this flags a tensor (strict: many tensors x bits)
 
+# Bit planes S4 examines: the same low fraction of the mantissa in every format
+# (8 of float32's 23 bits, ~35%). Higher mantissa bits encode the shape of the
+# value distribution (layer-norm weights near 1.0, quantization scales), which
+# differs between clean tensors; the first S4 used 8 bits everywhere, i.e. the
+# whole bf16 mantissa, and flagged those (Hugging Face survey, week 4).
+S4_BITS = {dt: round(m * 8 / 23) for dt, (_, m, _) in FLOAT_LAYOUT.items()}  # F32 8, F16 3, BF16 2
+
 
 def _bit_means(v: np.ndarray, nbits: int) -> np.ndarray:
     """Fraction of ones in each of the low `nbits` bit planes."""
@@ -116,7 +125,7 @@ def _signature(stats: list[tuple[str, int, np.ndarray]], nbits: int):
     return sig, tau, True
 
 
-def s4_bit_planes(floats: dict[str, RawTensor], low_bits: int = 8) -> list[Finding]:
+def s4_bit_planes(floats: dict[str, RawTensor], low_bits: dict[str, int] | None = None) -> list[Finding]:
     """Per-tensor low-bit statistics, read against the model's own signature.
 
     A tensor is flagged when one of its low bit planes departs from what the rest
@@ -124,33 +133,50 @@ def s4_bit_planes(floats: dict[str, RawTensor], low_bits: int = 8) -> list[Findi
     and structured payloads (text, zeros) bias bits in any model. An encrypted
     payload in a model whose low bits are already fair coins is, by design,
     invisible here; that limit is what experiment E1 measures."""
+    bits = S4_BITS if low_bits is None else low_bits
     findings = []
     by_dtype: dict[str, list] = {}
     for name, t in sorted(floats.items()):
         v = t.data[informative(t.data, t.dtype)]
         if v.size < MIN_ELEMENTS:
             continue
-        kb = min(low_bits, FLOAT_LAYOUT[t.dtype][1])
+        kb = bits[t.dtype]
         by_dtype.setdefault(t.dtype, []).append((name, int(v.size), _bit_means(v, kb)))
 
     for dtype, stats in by_dtype.items():
         kb = len(stats[0][2])
-        sig, tau, has_pop = _signature(stats, kb)
+        model_ref = _signature(stats, kb)
+        sig, _, has_pop = model_ref
         if has_pop and np.max(np.abs(sig - 0.5)) > 0.02:
             findings.append(Finding("S4", "info", "lowbit-signature",
                                     f"{dtype} weights carry a low-bit signature (bit means "
                                     + ", ".join(f"{x:.2f}" for x in sig[:4]) + "); tensors are tested against it",
                                     {"dtype": dtype, "signature": [round(float(x), 4) for x in sig]}))
-        # Where the model has a signature, only movement towards (or past) the fair
-        # coin counts: that is what a random payload does, while clean layers of a
-        # different type can carry a stronger version of the same signature
-        # (MobileNetV3's squeeze-excitation layers). Where it has none, any
-        # departure counts, which keeps text or constant payloads visible.
-        # This rule was chosen after seeing MobileNetV3 in E0; it is validated on
-        # models that were not used to choose it.
-        structured = np.abs(sig - 0.5) > 0.02
-        toward_coin = -np.sign(sig - 0.5)
+        roles: dict[str, list] = {}
+        for s in stats:
+            roles.setdefault(role(s[0]), []).append(s)
+
         for name, n, m in stats:
+            # Reference: the other tensors of the same role (same name, other
+            # layers), when there are at least three; otherwise the whole model.
+            # Different kinds of tensor carry different low-bit signatures (bf16
+            # routers and embeddings at 50% where the model sits at 39-44%), and
+            # read against the whole model those look exactly like a payload.
+            # Leaving the tensor itself out keeps a payload out of its own reference.
+            peers = [s for s in roles[role(name)] if s[0] != name]
+            if len(peers) >= 3:
+                sig, tau, _ = _signature(peers, kb)
+                against = f"its {len(peers)} role peers"
+            else:
+                sig, tau, _ = model_ref
+                against = "the model"
+            # Where the reference has a signature, only movement towards (or past)
+            # the fair coin counts: that is what a random payload does, while clean
+            # tensors can carry a stronger version of the same signature
+            # (MobileNetV3's squeeze-excitation layers). Where it has none, any
+            # departure counts, which keeps text or constant payloads visible.
+            structured = np.abs(sig - 0.5) > 0.02
+            toward_coin = -np.sign(sig - 0.5)
             se = np.sqrt(np.maximum(sig * (1 - sig), 1e-6) / n)
             z = (m - sig) / np.sqrt(se ** 2 + tau ** 2)
             score = np.where(structured, z * toward_coin, np.abs(z))
@@ -158,11 +184,18 @@ def s4_bit_planes(floats: dict[str, RawTensor], low_bits: int = 8) -> list[Findi
             if score[b] > Z_FLAG:
                 findings.append(Finding("S4", "medium", "lowbit-anomaly",
                                         f"tensor {name!r}: low bit {b} is set in {m[b]:.1%} of weights, "
-                                        f"against {sig[b]:.1%} across the model (z {z[b]:+.1f})",
+                                        f"against {sig[b]:.1%} in {against} (z {z[b]:+.1f})",
                                         {"tensor": name, "bit": b, "z": round(float(z[b]), 2),
                                          "mean": round(float(m[b]), 4), "expected": round(float(sig[b]), 4),
+                                         "reference": "role" if len(peers) >= 3 else "model",
                                          "elements": n}))
     return findings
+
+
+def role(name: str) -> str:
+    """A tensor's role: its name with layer and block numbers removed,
+    e.g. model.layers.#.mlp.up_proj.weight."""
+    return re.sub(r"\d+", "#", name)
 
 
 # --- S5: differential against a base model ----------------------------------

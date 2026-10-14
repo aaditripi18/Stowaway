@@ -54,3 +54,19 @@ def test_cache_is_used_on_second_call(local_file):
     b, _ = hf.sample("me/model", "model.safetensors", fetch=fetch, chunk=1024, max_tensors=3, url="x")
     assert len(calls) == n
     assert {k: v.to_bytes() for k, v in a.items()} == {k: v.to_bytes() for k, v in b.items()}
+
+
+def test_role_sampling_takes_peers_from_each_role():
+    header = {}
+    off = 0
+    for i in range(10):
+        for r in ("q_proj", "up_proj", "norm"):
+            header[f"layers.{i}.{r}.weight"] = {"dtype": "BF16", "shape": [4096], "data_offsets": [off, off + 8192]}
+            off += 8192
+    header["lm_head.weight"] = {"dtype": "BF16", "shape": [8192], "data_offsets": [off, off + 16384]}
+    names = hf.choose_tensors(header, max_tensors=14, roles=3, per_role=4)
+    from stowaway.weights import role
+    from collections import Counter
+    c = Counter(role(n) for n in names)
+    assert all(c[f"layers.#.{r}.weight"] >= 4 for r in ("q_proj", "up_proj", "norm"))
+    assert len(names) == 14 and len(set(names)) == 14  # topped up with two others

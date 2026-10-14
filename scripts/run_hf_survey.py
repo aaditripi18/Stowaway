@@ -1,7 +1,8 @@
 """E0b + E1b: the single-file checks on public Hugging Face models, from samples.
 
-For each model in results/hf_models.json, sample up to 12 float tensors (first
-64 KB of each) with range requests, then:
+For each model in a frozen list (results/hf_models*.json), sample float tensors
+with range requests (default: 4 layers of each of the 6 largest roles, first
+32 KB of each, so S4 can compare a tensor with its role peers), then:
 
   E0b  run S3 and S4 on the clean samples: false positives, the precision the
        weights actually carry (S3), and whether the low bits carry a signature (S4)
@@ -25,7 +26,7 @@ from experiments.ledger import Run
 from stowaway.embed import capacity, embed
 from stowaway.weights import s3_precision_history, s4_bit_planes
 
-LIST = Path(__file__).resolve().parent.parent / "results" / "hf_models.json"
+RESULTS = Path(__file__).resolve().parent.parent / "results"
 FLAG = ("medium", "high", "critical")
 
 
@@ -40,16 +41,22 @@ def group(dtype: str, s3_origin: str | None, structured: bool) -> str:
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--limit", type=int, default=None)
+    ap.add_argument("--list", default="hf_models.json", help="frozen list in results/")
+    ap.add_argument("--chunk", type=int, default=32 * 1024, help="bytes sampled per tensor")
+    ap.add_argument("--max-tensors", type=int, default=24)
+    ap.add_argument("--roles", type=int, default=6, help="roles sampled with 4 peers each (0: spaced)")
     args = ap.parse_args(argv)
-    models = json.loads(LIST.read_text(encoding="utf-8"))["models"][: args.limit]
+    models = json.loads((RESULTS / args.list).read_text(encoding="utf-8"))["models"][: args.limit]
+    sampling = {"chunk": args.chunk, "max_tensors": args.max_tensors, "roles": args.roles}
 
-    survey = Run("E0b", list=str(LIST.name), n_models=len(models))
-    attack = Run("E1b", list=str(LIST.name), n_models=len(models))
+    survey = Run("E0b", list=args.list, n_models=len(models), **sampling)
+    attack = Run("E1b", list=args.list, n_models=len(models), **sampling)
     rng = np.random.default_rng(0)
     for i, m in enumerate(models, 1):
         repo = m["repo"]
         try:
-            samples, info = hf.sample(repo, m["file"])
+            samples, info = hf.sample(repo, m["file"], chunk=args.chunk,
+                                      max_tensors=args.max_tensors, roles=args.roles)
         except Exception as e:
             survey.record(repo=repo, dtype=m["dtype"], error=f"{type(e).__name__}: {e}"[:300])
             print(f"[{i}/{len(models)}] {repo}: ERROR {type(e).__name__}: {str(e)[:80]}", flush=True)

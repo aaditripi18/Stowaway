@@ -154,3 +154,47 @@ def test_widen_matches_torch_float():
     wide = widen({"w": bf})["w"]
     ref = torch.tensor(arr).to(torch.bfloat16).float().numpy()
     assert np.array_equal(wide.to_float32(), ref)
+
+
+# --- S4 on 16-bit formats (week 4 survey) -------------------------------------
+
+def test_s4_examines_the_same_mantissa_fraction_in_every_format():
+    from stowaway.weights import S4_BITS
+    assert S4_BITS == {"F32": 8, "F16": 3, "BF16": 2}
+
+
+def _bf16_layers(n_layers=5, size=8192, seed=11):
+    """A bf16 model in the shape of a transformer checkpoint: per layer, a
+    projection (values near 0) and a layer-norm gain (values near 1.0, spanning
+    only a few bf16 steps, so every mantissa bit reflects the distribution)."""
+    rng = np.random.default_rng(seed)
+    model = {}
+    for i in range(n_layers):
+        for proj in ("self_attn.q_proj", "self_attn.k_proj", "self_attn.v_proj", "mlp.up_proj"):
+            model[f"layers.{i}.{proj}.weight"] = RawTensor.from_float(
+                (0.02 * rng.standard_normal(size)).astype(np.float32), dtype="BF16")
+        model[f"layers.{i}.input_layernorm.weight"] = RawTensor.from_float(
+            (1.0 + 0.02 * rng.standard_normal(size)).astype(np.float32), dtype="BF16")
+    return model
+
+
+def test_s4_role_peers_keep_layernorm_from_looking_like_a_payload():
+    model = _bf16_layers()
+    assert not [f for f in s4_bit_planes(model) if f.code == "lowbit-anomaly"]
+    # read against the whole model (no role peers), the norms are flagged
+    renamed = {f"t{chr(97 + i)}": t for i, t in enumerate(model.values())}  # no digits: no peers
+    assert [f for f in s4_bit_planes(renamed) if f.code == "lowbit-anomaly"]
+
+
+def test_s4_constant_payload_flagged_against_role_peers():
+    model = _bf16_layers()
+    target = "layers.2.mlp.up_proj.weight"
+    poisoned = embed(model, b"\xff" * 2000, k=2, names=[target])
+    flagged = [f for f in s4_bit_planes(poisoned) if f.code == "lowbit-anomaly"]
+    assert [f.detail["tensor"] for f in flagged] == [target]
+    assert flagged[0].detail["reference"] == "role"
+
+
+def test_role_strips_layer_numbers():
+    from stowaway.weights import role
+    assert role("model.layers.17.mlp.up_proj.weight") == "model.layers.#.mlp.up_proj.weight"
