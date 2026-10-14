@@ -11,9 +11,15 @@ survives format conversion because it is just numbers.
 Stowaway looks for what the code scanners do not, and measures the limit: the
 largest payload that no single-file check can see, and what hiding it costs the model.
 
-> Status: week 2 of 8. All five checks (S1–S5) work and are tested. The embedding
-> toolkit that generates positive samples for the experiments is in place. The
-> experiments (E0–E5) and the browser demo are next. See [PLAN.md](PLAN.md).
+> Status: week 3 of 8. All five checks work and are tested; the first experiments
+> (E0–E2) have run on two ImageNet models. Preliminary findings are in
+> [docs/FINDINGS.md](docs/FINDINGS.md), and every number, with the commit that
+> produced it, in [docs/RESULTS.md](docs/RESULTS.md) (generated, never edited by
+> hand). See [PLAN.md](PLAN.md).
+>
+> Early result: a 4 MB random payload in ResNet-18's low 8 bits leaves accuracy
+> unchanged and passes every single-file check; a diff against the base model
+> catches it.
 
 ## Checks
 
@@ -54,3 +60,17 @@ Exit status: 0 clean, 1 suspicious, 2 dangerous.
 - **Parsers agree with the reference implementations.** Every fixture is written by
   `torch`, `safetensors` or `gguf`, and every tensor's bytes, read through
   Stowaway's offsets, must equal the reference library's.
+
+## Experiments
+
+```bash
+.venv/Scripts/python -m pip install -e ".[dev,experiments]"
+export TORCH_HOME=$PWD/models/torch PYTHONPATH=.
+.venv/Scripts/python scripts/run_e0.py                     # false positives, 9 clean models
+.venv/Scripts/python scripts/run_e1.py --model resnet18    # detection vs payload size
+.venv/Scripts/python scripts/run_e2.py --model resnet18    # accuracy cost (needs Imagenette in data/)
+.venv/Scripts/python scripts/report.py                     # regenerate docs/RESULTS.md
+```
+
+Nothing is trained: models are downloaded pretrained and only run forward. Every
+run appends to `results/ledger.jsonl` with the git commit that produced it.

@@ -42,7 +42,8 @@ def section_e0(rows):
         return "## E0 — false positives on clean models\n\n_No run yet._\n"
     lines = ["## E0 — false positives on clean models", "",
              f"Run `{run_id}`. Single-file checks (S3+S4) on clean ImageNet models; "
-             "a value of 0 means the model is certified clean with no base needed.", "",
+             "0 means no false alarm on an unmodified model. It does not mean a payload would "
+             "be seen: that is E1.", "",
              "`dev` models were looked at while the checks were designed; `held out` models were not.", "",
              "| Model | Split | Float tensors | Verdict | False positives |", "|---|---|--:|---|--:|"]
     for r in sorted(recs, key=lambda r: (r.get("split", "dev") != "dev", r["model"])):
