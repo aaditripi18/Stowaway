@@ -104,20 +104,20 @@ Run `E2-2026-10-14T18:01:38Z-f89d821`, top-1 on 500 Imagenette images. Clean acc
 | 16 | 4 MB | 0.6720 | -0.0040 |
 
 
-## E0b / E1b — single-file checks on public Hugging Face models
+## E0b / E1b — single-file checks on public Hugging Face models (`hf_models.json`)
 
-Runs `E0b-2026-10-14T18:14:13Z-16e0f45` and `E1b-2026-10-14T18:14:13Z-16e0f45`. Up to 12 float tensors per model, first 64 KB of each, fetched with HTTP range requests; the list is frozen in `results/hf_models.json`. Groups come from what S3/S4 measure on the clean samples.
+Runs `E0b-2026-10-14T18:30:53Z-edb3957` and `E1b-2026-10-14T18:30:53Z-edb3957`. Sampling: 6 roles x 4 layers (role peers for S4), up to 24 tensors, first 32 KB of each, fetched with HTTP range requests; the list is frozen in `results/hf_models.json`. Groups come from what S3/S4 measure on the clean samples.
 
 ### E0b — what the weights look like, and false positives
 
 | Group | Models | Models with a false positive | Flagged tensors / sampled |
 |---|--:|--:|--:|
-| F32 file, bfloat16 precision | 1 | 0 | 0 / 12 |
-| F32 file, float16 precision | 13 | 3 | 3 / 156 |
-| F32, low-bit signature | 2 | 0 | 0 / 24 |
-| F32, fair-coin low bits | 23 | 5 | 5 / 276 |
-| BF16 file | 20 | 8 | 17 / 224 |
-| F16 file | 11 | 7 | 12 / 132 |
+| F32 file, bfloat16 precision | 1 | 0 | 0 / 24 |
+| F32 file, float16 precision | 13 | 0 | 0 / 312 |
+| F32, low-bit signature | 2 | 0 | 0 / 48 |
+| F32, fair-coin low bits | 23 | 1 | 1 / 552 |
+| BF16 file | 20 | 0 | 0 / 430 |
+| F16 file | 11 | 2 | 2 / 264 |
 
 70 models sampled, 0 could not be.
 
@@ -131,10 +131,8 @@ Random bytes fill the low k bits of the sample of the largest tensor the clean s
 | F32 file, float16 precision | 13 / 13 | 13 / 13 | 13 / 13 |
 | F32, low-bit signature | 2 / 2 | 2 / 2 | 2 / 2 |
 | F32, fair-coin low bits | 0 / 23 | 0 / 23 | 0 / 23 |
-| BF16 file | 1 / 19 | 1 / 19 | – |
-| F16 file | 2 / 11 | 2 / 11 | – |
-
-1 model(s) excluded: every sampled tensor was flagged on the clean scan.
+| BF16 file | 2 / 20 | 2 / 20 | – |
+| F16 file | 3 / 11 | 3 / 11 | – |
 
 ### Per model
 
@@ -148,12 +146,12 @@ Random bytes fill the low k bits of the sample of the largest tensor the clean s
 | `BAAI/bge-small-zh-v1.5` | F32 | F32 file, float16 precision | 0.00, 0.00, 0.00, 0.00 | 0 | yes / yes / yes |
 | `FacebookAI/roberta-base` | F32 | F32 file, float16 precision | 0.00, 0.00, 0.00, 0.00 | 0 | yes / yes / yes |
 | `FacebookAI/roberta-large` | F32 | F32 file, float16 precision | 0.00, 0.00, 0.00, 0.00 | 0 | yes / yes / yes |
-| `FacebookAI/xlm-roberta-base` | F32 | F32 file, float16 precision | 0.00, 0.00, 0.00, 0.00 | 2 | yes / yes / yes |
-| `facebook/esm2_t33_650M_UR50D` | F32 | F32 file, float16 precision | 0.00, 0.00, 0.00, 0.00 | 2 | yes / yes / yes |
+| `FacebookAI/xlm-roberta-base` | F32 | F32 file, float16 precision | 0.00, 0.00, 0.00, 0.00 | 0 | yes / yes / yes |
+| `facebook/esm2_t33_650M_UR50D` | F32 | F32 file, float16 precision | 0.00, 0.00, 0.00, 0.00 | 0 | yes / yes / yes |
 | `intfloat/multilingual-e5-base` | F32 | F32 file, float16 precision | 0.00, 0.00, 0.00, 0.00 | 0 | yes / yes / yes |
 | `intfloat/multilingual-e5-large` | F32 | F32 file, float16 precision | 0.00, 0.00, 0.00, 0.00 | 0 | yes / yes / yes |
 | `intfloat/multilingual-e5-small` | F32 | F32 file, float16 precision | 0.00, 0.00, 0.00, 0.00 | 0 | yes / yes / yes |
-| `openai/clip-vit-large-patch14` | F32 | F32 file, float16 precision | 0.00, 0.00, 0.00, 0.00 | 2 | yes / yes / yes |
+| `openai/clip-vit-large-patch14` | F32 | F32 file, float16 precision | 0.00, 0.00, 0.00, 0.00 | 0 | yes / yes / yes |
 | `answerdotai/ModernBERT-base` | F32 | F32, low-bit signature | 0.38, 0.50, 0.50, 0.50 | 0 | yes / yes / yes |
 | `timm/mobilenetv3_small_100.lamb_in1k` | F32 | F32, low-bit signature | 0.44, 0.50, 0.50, 0.50 | 0 | yes / yes / yes |
 | `BAAI/bge-reranker-base` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
@@ -165,7 +163,7 @@ Random bytes fill the low k bits of the sample of the largest tensor the clean s
 | `autogluon/chronos-bolt-small` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
 | `cross-encoder/ms-marco-MiniLM-L4-v2` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
 | `cross-encoder/ms-marco-MiniLM-L6-v2` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
-| `datasocietyco/bge-base-en-v1.5-course-recommender-v5` | F32 | F32, fair-coin low bits | – | 1 | no / no / no |
+| `datasocietyco/bge-base-en-v1.5-course-recommender-v5` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
 | `distilbert/distilbert-base-uncased` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
 | `google-bert/bert-base-cased` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
 | `google-bert/bert-base-uncased` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
@@ -175,41 +173,41 @@ Random bytes fill the low k bits of the sample of the largest tensor the clean s
 | `nomic-ai/nomic-embed-text-v1.5` | F32 | F32, fair-coin low bits | – | 1 | no / no / no |
 | `openai-community/gpt2` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
 | `prithivMLmods/Gender-Classifier-Mini` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
-| `sentence-transformers/all-MiniLM-L6-v2` | F32 | F32, fair-coin low bits | – | 1 | no / no / no |
-| `sentence-transformers/all-mpnet-base-v2` | F32 | F32, fair-coin low bits | – | 1 | no / no / no |
+| `sentence-transformers/all-MiniLM-L6-v2` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `sentence-transformers/all-mpnet-base-v2` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
 | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
-| `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | F32 | F32, fair-coin low bits | – | 1 | no / no / no |
-| `Qwen/Qwen2.5-0.5B-Instruct` | BF16 | BF16 file | 0.50, 0.50, 0.50, 0.49 | 0 | no / no / – |
-| `Qwen/Qwen2.5-1.5B-Instruct` | BF16 | BF16 file | 0.50, 0.50, 0.50, 0.49 | 0 | no / no / – |
-| `Qwen/Qwen2.5-7B-Instruct` | BF16 | BF16 file | 0.50, 0.50, 0.50, 0.49 | 0 | no / no / – |
-| `Qwen/Qwen2.5-VL-7B-Instruct` | BF16 | BF16 file | 0.39, 0.50, 0.50, 0.49 | 2 | yes / yes / – |
-| `Qwen/Qwen3-0.6B` | BF16 | BF16 file | 0.50, 0.50, 0.50, 0.49 | 0 | no / no / – |
-| `Qwen/Qwen3-14B` | BF16 | BF16 file | 0.50, 0.50, 0.50, 0.49 | 0 | no / no / – |
-| `Qwen/Qwen3-4B` | BF16 | BF16 file | 0.50, 0.50, 0.50, 0.49 | 0 | no / no / – |
-| `Qwen/Qwen3-8B` | BF16 | BF16 file | 0.50, 0.50, 0.50, 0.49 | 0 | no / no / – |
-| `Qwen/Qwen3-Embedding-0.6B` | BF16 | BF16 file | 0.50, 0.50, 0.50, 0.49 | 0 | no / no / – |
-| `Qwen/Qwen3-VL-8B-Instruct` | BF16 | BF16 file | 0.50, 0.50, 0.50, 0.49 | 2 | no / no / – |
-| `Qwen/Qwen3.5-4B` | BF16 | BF16 file | 0.51, 0.50, 0.50, 0.49 | 0 | no / no / – |
-| `Qwen/Qwen3.5-9B` | BF16 | BF16 file | 0.50, 0.50, 0.50, 0.49 | 0 | no / no / – |
-| `Qwen/Qwen3.8-27B` | BF16 | BF16 file | 0.50, 0.50, 0.50, 0.49 | 1 | no / no / – |
-| `RadixArk/Kimi-K3-DSpark` | BF16 | BF16 file | 0.51, 0.50, 0.50, 0.49 | 1 | no / no / – |
-| `google/gemma-4-26B-A4B-it` | BF16 | BF16 file | 0.50, 0.50, 0.50, 0.50 | 0 | no / no / – |
-| `google/gemma-4-31B-it` | BF16 | BF16 file | 0.50, 0.50, 0.50, 0.49 | 2 | no / no / – |
-| `ibm-granite/granite-embedding-small-english-r2` | BF16 | BF16 file | 0.50, 0.50, 0.50, 0.49 | 0 | no / no / – |
-| `openai/gpt-oss-20b` | BF16 | BF16 file | 0.44, 0.50, 0.50, 0.49 | 4 | no / no / – |
-| `trl-internal-testing/tiny-Qwen2ForCausalLM-2.5` | BF16 | BF16 file | – | 2 | yes / yes / – |
-| `zai-org/GLM-5.3-Flash` | BF16 | BF16 file | 0.50, 0.50, 0.50, 0.50 | 3 | no / no / – |
-| `Alibaba-NLP/gte-multilingual-base` | F16 | F16 file | – | 0 | no / no / – |
-| `EleutherAI/pythia-160m` | F16 | F16 file | 0.50, 0.50, 0.50, 0.50 | 0 | no / no / – |
-| `Qwen/Qwen2-VL-7B-Instruct-AWQ` | F16 | F16 file | 0.00, 0.00, 0.00, 0.50 | 3 | yes / yes / – |
-| `Qwen/Qwen2.5-14B-Instruct-AWQ` | F16 | F16 file | 0.53, 0.53, 0.53, 0.47 | 2 | no / no / – |
-| `Qwen/Qwen2.5-7B-Instruct-AWQ` | F16 | F16 file | 0.53, 0.53, 0.55, 0.46 | 1 | yes / yes / – |
-| `intfloat/multilingual-e5-large-instruct` | F16 | F16 file | 0.50, 0.50, 0.50, 0.50 | 1 | no / no / – |
-| `microsoft/Florence-2-base` | F16 | F16 file | – | 1 | no / no / – |
-| `mixedbread-ai/mxbai-embed-large-v1` | F16 | F16 file | 0.50, 0.50, 0.50, 0.50 | 1 | no / no / – |
-| `openai/whisper-large-v3` | F16 | F16 file | 0.50, 0.50, 0.50, 0.50 | 0 | no / no / – |
-| `openai/whisper-large-v3-turbo` | F16 | F16 file | 0.50, 0.50, 0.50, 0.50 | 0 | no / no / – |
-| `stabilityai/stable-diffusion-xl-base-1.0` | F16 | F16 file | 0.50, 0.50, 0.50, 0.50 | 3 | no / no / – |
+| `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `Qwen/Qwen2.5-0.5B-Instruct` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Qwen/Qwen2.5-1.5B-Instruct` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Qwen/Qwen2.5-7B-Instruct` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Qwen/Qwen2.5-VL-7B-Instruct` | BF16 | BF16 file | 0.39, 0.50 | 0 | yes / yes / – |
+| `Qwen/Qwen3-0.6B` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Qwen/Qwen3-14B` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Qwen/Qwen3-4B` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Qwen/Qwen3-8B` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Qwen/Qwen3-Embedding-0.6B` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Qwen/Qwen3-VL-8B-Instruct` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Qwen/Qwen3.5-4B` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Qwen/Qwen3.5-9B` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Qwen/Qwen3.8-27B` | BF16 | BF16 file | – | 0 | no / no / – |
+| `RadixArk/Kimi-K3-DSpark` | BF16 | BF16 file | – | 0 | no / no / – |
+| `google/gemma-4-26B-A4B-it` | BF16 | BF16 file | – | 0 | no / no / – |
+| `google/gemma-4-31B-it` | BF16 | BF16 file | – | 0 | no / no / – |
+| `ibm-granite/granite-embedding-small-english-r2` | BF16 | BF16 file | – | 0 | no / no / – |
+| `openai/gpt-oss-20b` | BF16 | BF16 file | – | 0 | yes / yes / – |
+| `trl-internal-testing/tiny-Qwen2ForCausalLM-2.5` | BF16 | BF16 file | – | 0 | no / no / – |
+| `zai-org/GLM-5.3-Flash` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Alibaba-NLP/gte-multilingual-base` | F16 | F16 file | – | 1 | no / no / – |
+| `EleutherAI/pythia-160m` | F16 | F16 file | – | 0 | no / no / – |
+| `Qwen/Qwen2-VL-7B-Instruct-AWQ` | F16 | F16 file | 0.00, 0.00, 0.00 | 0 | yes / yes / – |
+| `Qwen/Qwen2.5-14B-Instruct-AWQ` | F16 | F16 file | 0.53, 0.53, 0.54 | 0 | yes / yes / – |
+| `Qwen/Qwen2.5-7B-Instruct-AWQ` | F16 | F16 file | 0.53, 0.53, 0.54 | 1 | yes / yes / – |
+| `intfloat/multilingual-e5-large-instruct` | F16 | F16 file | – | 0 | no / no / – |
+| `microsoft/Florence-2-base` | F16 | F16 file | – | 0 | no / no / – |
+| `mixedbread-ai/mxbai-embed-large-v1` | F16 | F16 file | – | 0 | no / no / – |
+| `openai/whisper-large-v3` | F16 | F16 file | – | 0 | no / no / – |
+| `openai/whisper-large-v3-turbo` | F16 | F16 file | – | 0 | no / no / – |
+| `stabilityai/stable-diffusion-xl-base-1.0` | F16 | F16 file | – | 0 | no / no / – |
 
 
 ## E1c — S3 on bf16 weights saved as float32

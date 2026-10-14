@@ -23,9 +23,13 @@ from stowaway.embed import capacity, embed
 SIZES = [1 << 10, 4 << 10, 16 << 10, 64 << 10, 256 << 10, 1 << 20]  # 1 KB .. 1 MB
 
 
-def detected(rep: dict, checks: set[str]) -> bool:
+def detected(rep: dict, checks: set[str], written: set[str], clean_flagged: set[str]) -> bool:
+    """A check detects the payload only if it flags a tensor the payload was written
+    into and the clean scan did not already flag: a false positive elsewhere in the
+    model is not a detection."""
     return any(x["check"] in checks and x["severity"] in ("medium", "high", "critical")
-              for x in rep["findings"])
+               and x["detail"].get("tensor") in written - clean_flagged
+               for x in rep["findings"])
 
 
 def main(argv=None):
@@ -40,6 +44,9 @@ def main(argv=None):
     clean = corpus.state_to_raw(model.state_dict())
     run = Run("E1", model=args.model, spread=args.spread)
     rng = np.random.default_rng(0)
+    clean_rep = corpus.scan_raw(clean)
+    clean_flagged = {x["detail"].get("tensor") for x in clean_rep["findings"]
+                     if x["severity"] in ("medium", "high", "critical")}
 
     for k in args.k:
         cap = capacity(clean, k, args.spread)
@@ -47,14 +54,15 @@ def main(argv=None):
             if size > cap:
                 continue
             poisoned = embed(clean, rng.bytes(size), k=k, spread=args.spread)
+            written = {n for n in poisoned if not np.array_equal(poisoned[n].data, clean[n].data)}
             rep = corpus.scan_raw(poisoned, base_raw=clean)
+            single = detected(rep, {"S3", "S4"}, written, clean_flagged)
+            base = detected(rep, {"S5"}, written, clean_flagged)
             run.record(model=args.model, k=k, spread=args.spread, payload_bytes=size,
-                       capacity_bytes=cap,
-                       single_file_detected=detected(rep, {"S3", "S4"}),
-                       base_detected=detected(rep, {"S5"}),
-                       verdict=rep["verdict"])
-            print(f"k={k} size={size:>8} single={detected(rep, {'S3','S4'})!s:5} "
-                  f"base={detected(rep, {'S5'})}")
+                       capacity_bytes=cap, tensors_written=len(written),
+                       clean_flagged=sorted(t for t in clean_flagged if t),
+                       single_file_detected=single, base_detected=base, verdict=rep["verdict"])
+            print(f"k={k} size={size:>8} tensors={len(written):>3} single={single!s:5} base={base}")
     print(f"recorded run {run.run_id}")
 
 

@@ -67,7 +67,8 @@ def main(argv=None):
         try:
             dt = max({t.dtype for t in samples.values()}, key=lambda d: sum(t.data.size for t in samples.values() if t.dtype == d))
             s3 = s3_precision_history(samples)
-            s4 = s4_bit_planes(samples)
+            shapes = {n: tuple(v) for n, v in info["shapes"].items()}
+            s4 = s4_bit_planes(samples, shapes=shapes)
             origin = next((f.detail["origin"] for f in s3 if f.code == "precision-origin"), None)
             sig = next((f.detail["signature"] for f in s4 if f.code == "lowbit-signature" and f.detail["dtype"] == dt), None)
             fps = [f for f in s3 + s4 if f.severity in FLAG]
@@ -89,7 +90,7 @@ def main(argv=None):
             for k in ks:
                 size = capacity(samples, k, names=[target])
                 poisoned = embed(samples, rng.bytes(size), k=k, names=[target])
-                found = [f for f in s3_precision_history(poisoned) + s4_bit_planes(poisoned)
+                found = [f for f in s3_precision_history(poisoned) + s4_bit_planes(poisoned, shapes=shapes)
                          if f.severity in FLAG and f.detail.get("tensor") == target]
                 det3 = any(f.check == "S3" for f in found)
                 det4 = any(f.check == "S4" for f in found)

@@ -198,3 +198,30 @@ def test_s4_constant_payload_flagged_against_role_peers():
 def test_role_strips_layer_numbers():
     from stowaway.weights import role
     assert role("model.layers.17.mlp.up_proj.weight") == "model.layers.#.mlp.up_proj.weight"
+
+
+def _downsample_model(seed=12):
+    """ResNet-like: large 4-D convs (fair-coin bit 0) and small 1-D BatchNorm
+    weights (bit 0 set in ~48.5%), both named layerN.downsample.M.weight."""
+    rng = np.random.default_rng(seed)
+    model = {}
+    for i in range(2, 5):
+        u = rng.standard_normal(131072).astype(np.float32).view(np.uint32).copy()
+        model[f"layer{i}.downsample.0.weight"] = RawTensor("F32", (512, 256, 1, 1), u)
+    for i in range(1, 5):
+        norm = rng.standard_normal(4096).astype(np.float32).view(np.uint32).copy()
+        norm = np.where(rng.random(4096) < 0.485, norm | 1, norm & ~np.uint32(1)).astype(np.uint32)
+        model[f"layer{i}.downsample.1.weight"] = RawTensor("F32", (4096,), norm)
+    return model
+
+
+def test_s4_peers_must_match_ndim():
+    model = _downsample_model()
+    assert not [f for f in s4_bit_planes(model) if f.code == "lowbit-anomaly"]
+    # without the ndim distinction (all shapes 1-D) the convs are read against norms
+    same = {n: (t.data.size,) for n, t in model.items()}
+    assert [f for f in s4_bit_planes(model, shapes=same) if f.code == "lowbit-anomaly"]
+    # sampled 1-D data with the full shapes given separately behaves like the full model
+    flat = {n: RawTensor("F32", (t.data.size,), t.data) for n, t in model.items()}
+    shapes = {n: t.shape for n, t in model.items()}
+    assert not [f for f in s4_bit_planes(flat, shapes=shapes) if f.code == "lowbit-anomaly"]

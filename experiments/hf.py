@@ -139,6 +139,10 @@ def sample(repo: str, filename: str, fetch: Fetch = http_fetch, chunk: int = 64 
     meta_path, data_path = cdir / "meta.json", cdir / "samples.npz"
     if meta_path.exists() and data_path.exists():
         info = json.loads(meta_path.read_text(encoding="utf-8"))
+        if "shapes" not in info:  # caches written before shapes were recorded
+            _, header = read_header(url or resolve_url(repo, filename), fetch)
+            info["shapes"] = {n: header[n]["shape"] for n in info["tensors"]}
+            meta_path.write_text(json.dumps(info, indent=1), encoding="utf-8")
         with np.load(data_path) as z:
             return {n: RawTensor.from_bytes(info["dtypes"][n], (int(z[n].size) // ITEMSIZE[info["dtypes"][n]],),
                                             z[n].tobytes())
@@ -169,6 +173,7 @@ def sample(repo: str, filename: str, fetch: Fetch = http_fetch, chunk: int = 64 
         "n_tensors_in_file": sum(1 for k in header if k != "__metadata__"),
         "file_params_by_dtype": dtypes,
         "tensors": names, "dtypes": {n: header[n]["dtype"] for n in names},
+        "shapes": {n: header[n]["shape"] for n in names},
         "chunk": chunk, "roles": roles, "sampled_bytes": int(sum(r.size for r in raw.values())),
     }
     cdir.mkdir(parents=True, exist_ok=True)

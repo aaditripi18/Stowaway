@@ -125,15 +125,19 @@ def _signature(stats: list[tuple[str, int, np.ndarray]], nbits: int):
     return sig, tau, True
 
 
-def s4_bit_planes(floats: dict[str, RawTensor], low_bits: dict[str, int] | None = None) -> list[Finding]:
+def s4_bit_planes(floats: dict[str, RawTensor], low_bits: dict[str, int] | None = None,
+                  shapes: dict[str, tuple] | None = None) -> list[Finding]:
     """Per-tensor low-bit statistics, read against the model's own signature.
 
     A tensor is flagged when one of its low bit planes departs from what the rest
     of the model shows: a payload pulls a structured model's bits towards 0.5,
     and structured payloads (text, zeros) bias bits in any model. An encrypted
     payload in a model whose low bits are already fair coins is, by design,
-    invisible here; that limit is what experiment E1 measures."""
+    invisible here; that limit is what experiment E1 measures.
+
+    `shapes` gives the tensors' full shapes when `floats` holds samples."""
     bits = S4_BITS if low_bits is None else low_bits
+    shapes = shapes or {}
     findings = []
     by_dtype: dict[str, list] = {}
     for name, t in sorted(floats.items()):
@@ -152,9 +156,15 @@ def s4_bit_planes(floats: dict[str, RawTensor], low_bits: dict[str, int] | None 
                                     f"{dtype} weights carry a low-bit signature (bit means "
                                     + ", ".join(f"{x:.2f}" for x in sig[:4]) + "); tensors are tested against it",
                                     {"dtype": dtype, "signature": [round(float(x), 4) for x in sig]}))
-        roles: dict[str, list] = {}
+        # Peers share the role and the number of dimensions: numbering alone
+        # merges module types (ResNet's downsample.0 is a conv, downsample.1 a
+        # BatchNorm), and those carry different low-bit statistics.
+        def key(name):
+            return role(name), len(shapes.get(name, floats[name].shape))
+
+        roles: dict[tuple, list] = {}
         for s in stats:
-            roles.setdefault(role(s[0]), []).append(s)
+            roles.setdefault(key(s[0]), []).append(s)
 
         for name, n, m in stats:
             # Reference: the other tensors of the same role (same name, other
@@ -163,7 +173,7 @@ def s4_bit_planes(floats: dict[str, RawTensor], low_bits: dict[str, int] | None 
             # routers and embeddings at 50% where the model sits at 39-44%), and
             # read against the whole model those look exactly like a payload.
             # Leaving the tensor itself out keeps a payload out of its own reference.
-            peers = [s for s in roles[role(name)] if s[0] != name]
+            peers = [s for s in roles[key(name)] if s[0] != name]
             if len(peers) >= 3:
                 sig, tau, _ = _signature(peers, kb)
                 against = f"its {len(peers)} role peers"
