@@ -70,3 +70,36 @@ def test_role_sampling_takes_peers_from_each_role():
     c = Counter(role(n) for n in names)
     assert all(c[f"layers.#.{r}.weight"] >= 4 for r in ("q_proj", "up_proj", "norm"))
     assert len(names) == 14 and len(set(names)) == 14  # topped up with two others
+
+
+def test_sample_pair_aligns_shared_tensors(tmp_path):
+    import numpy as np
+    from safetensors.numpy import save_file
+    rng = np.random.default_rng(0)
+    base_t = {f"layers.{i}.w": rng.standard_normal((64, 128)).astype(np.float32) for i in range(6)}
+    base_t["only_in_base"] = rng.standard_normal((64, 64)).astype(np.float32)
+    ft_t = dict(base_t)
+    ft_t["classifier"] = rng.standard_normal((64, 128)).astype(np.float32)  # new head
+    del ft_t["only_in_base"]
+    ft_t["layers.0.w"] = ft_t["layers.0.w"] + 0.01  # a trained layer
+    # different tensor order in the two files
+    base_path = tmp_path / "base.safetensors"; save_file(base_t, str(base_path))
+    ft_path = tmp_path / "ft.safetensors"; save_file({k: ft_t[k] for k in reversed(list(ft_t))}, str(ft_path))
+    bd, fd = base_path.read_bytes(), ft_path.read_bytes()
+
+    def fetch(url, start, end):
+        return (fd if url.endswith("ft.safetensors") else bd)[start:end + 1]
+
+    import experiments.hf as hf
+    orig = hf.resolve_url
+    hf.resolve_url = lambda repo, filename, revision="main": f"http://x/{filename}"
+    try:
+        ftr, br, info = hf.sample_pair("me/ft", "ft.safetensors", "me/base", "base.safetensors",
+                                       fetch=fetch, chunk=4096, max_tensors=10, roles=0)
+    finally:
+        hf.resolve_url = orig
+    assert "classifier" not in info["shared_tensors"] and "only_in_base" not in info["shared_tensors"]
+    assert set(info["shared_tensors"]) == set(f"layers.{i}.w" for i in range(6))
+    for n in info["shared_tensors"]:
+        assert ftr[n].to_bytes() == ft_t[n].tobytes()[:ftr[n].data.size * 4]
+        assert br[n].to_bytes() == base_t[n].tobytes()[:br[n].data.size * 4]

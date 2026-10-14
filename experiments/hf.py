@@ -14,6 +14,7 @@ import struct
 import time
 import urllib.error
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Callable
 
@@ -91,6 +92,53 @@ def _spaced(items: list, k: int) -> list:
     return [items[i] for i in sorted(set(idx))]
 
 
+def sample_pair(finetune: str, ft_file: str, base: str, base_file: str,
+                fetch: Fetch = http_fetch, chunk: int = 32 * 1024, max_tensors: int = 24,
+                roles: int = 6, workers: int = 6):
+    """Sample the same tensors from a fine-tune and its base, aligned by name,
+    dtype and shape. Returns (ft_raw, base_raw, info); each dict maps a shared
+    tensor name to a 1-D RawTensor of its first `chunk` bytes. Only tensors the
+    two models share (same name, dtype, shape) are returned. No disk cache: E4
+    reads each pair once."""
+    ft_url, base_url = resolve_url(finetune, ft_file), resolve_url(base, base_file)
+    ft_data_start, ft_header = read_header(ft_url, fetch)
+    base_data_start, base_header = read_header(base_url, fetch)
+
+    names = choose_tensors(ft_header, max_tensors, roles=roles)
+    shared = []
+    for n in names:
+        b = base_header.get(n)
+        f = ft_header[n]
+        if isinstance(b, dict) and b.get("dtype") == f["dtype"] and b.get("shape") == f["shape"] \
+                and f["dtype"] in FLOAT_LAYOUT:
+            shared.append(n)
+
+    def grab(url, data_start, header, name):
+        spec = header[name]
+        isz = ITEMSIZE[spec["dtype"]]
+        b, e = spec["data_offsets"]
+        length = min(e - b, chunk) // isz * isz
+        data = fetch(url, data_start + b, data_start + b + length - 1)
+        return name, RawTensor.from_bytes(spec["dtype"], (length // isz,), data)
+
+    ft_raw, base_raw = {}, {}
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        ft_fut = {n: pool.submit(grab, ft_url, ft_data_start, ft_header, n) for n in shared}
+        base_fut = {n: pool.submit(grab, base_url, base_data_start, base_header, n) for n in shared}
+        for n in shared:
+            ft_raw[n] = ft_fut[n].result()[1]
+            base_raw[n] = base_fut[n].result()[1]
+    # trim to the common length (chunk rounding can differ if dtypes matched but sizes rounded)
+    for n in shared:
+        m = min(ft_raw[n].data.size, base_raw[n].data.size)
+        ft_raw[n] = RawTensor(ft_raw[n].dtype, (m,), ft_raw[n].data[:m])
+        base_raw[n] = RawTensor(base_raw[n].dtype, (m,), base_raw[n].data[:m])
+    info = {"finetune": finetune, "base": base, "shared_tensors": shared,
+            "ft_tensors_in_file": sum(1 for k in ft_header if k != "__metadata__"),
+            "shapes": {n: ft_header[n]["shape"] for n in shared}}
+    return ft_raw, base_raw, info
+
+
 def choose_tensors(header: dict, max_tensors: int = 12, min_elements: int = 4096,
                    roles: int = 0, per_role: int = 4) -> list[str]:
     """Float tensors big enough for statistics.
@@ -134,7 +182,6 @@ def sample(repo: str, filename: str, fetch: Fetch = http_fetch, chunk: int = 64 
 
     Returns ({name: RawTensor (1-D, first `chunk` bytes)}, info), cached on disk
     per (chunk, max_tensors) so samples of different sizes never mix."""
-    from concurrent.futures import ThreadPoolExecutor
     cdir = _cache_dir(repo, filename, chunk, max_tensors, roles)
     meta_path, data_path = cdir / "meta.json", cdir / "samples.npz"
     if meta_path.exists() and data_path.exists():
