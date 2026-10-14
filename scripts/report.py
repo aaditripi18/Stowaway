@@ -20,6 +20,15 @@ def _latest_run(rows, experiment):
     return last, [r for r in runs if r["run_id"] == last]
 
 
+def _latest_runs_by_model(rows, experiment):
+    """{model: (run_id, records)} using each model's most recent run."""
+    out = {}
+    for model in sorted({r["model"] for r in rows if r["experiment"] == experiment}):
+        _, recs = _latest_run([r for r in rows if r.get("model") == model], experiment)
+        out[model] = (recs[0]["run_id"], recs)
+    return out
+
+
 def _fmt_size(n):
     for unit, div in (("MB", 1 << 20), ("KB", 1 << 10)):
         if n >= div:
@@ -43,45 +52,47 @@ def section_e0(rows):
 
 
 def section_e1(rows):
-    run_id, recs = _latest_run(rows, "E1")
-    if not recs:
+    runs = _latest_runs_by_model(rows, "E1")
+    if not runs:
         return "## E1 — detection vs payload size\n\n_No run yet._\n"
-    ks = sorted({r["k"] for r in recs})
-    sizes = sorted({r["payload_bytes"] for r in recs})
-    model = recs[0]["model"]
     out = ["## E1 — detection vs payload size", "",
-           f"Run `{run_id}`, model `{model}`, random (encrypted-style) payloads. "
-           "`single` = seen by S3/S4 from the file alone; `base` = seen by S5 given the clean base.", ""]
-    for k in ks:
-        out += [f"### low bits k = {k}", "",
-                "| Payload | Single-file (S3/S4) | With base (S5) |", "|---|---|---|"]
+           "Random (encrypted-style) payloads in the low k bits. `single` = seen by S3/S4 from "
+           "the file alone; `base` = seen by S5 given the clean model as the claimed base.", ""]
+    for model, (run_id, recs) in runs.items():
+        ks = sorted({r["k"] for r in recs})
+        sizes = sorted({r["payload_bytes"] for r in recs})
+        out += [f"### {model}", "", f"Run `{run_id}`.", "",
+                "| Payload | " + " | ".join(f"k={k} single | k={k} base" for k in ks) + " |",
+                "|---|" + "---|---|" * len(ks)]
         for size in sizes:
-            m = [r for r in recs if r["k"] == k and r["payload_bytes"] == size]
-            if not m:
-                continue
-            r = m[0]
-            s = "detected" if r["single_file_detected"] else "**missed**"
-            b = "detected" if r["base_detected"] else "missed"
-            out.append(f"| {_fmt_size(size)} | {s} | {b} |")
+            cells = []
+            for k in ks:
+                m = [r for r in recs if r["k"] == k and r["payload_bytes"] == size]
+                if not m:
+                    cells += ["–", "–"]
+                    continue
+                cells.append("detected" if m[0]["single_file_detected"] else "**missed**")
+                cells.append("detected" if m[0]["base_detected"] else "**missed**")
+            out.append(f"| {_fmt_size(size)} | " + " | ".join(cells) + " |")
         out.append("")
     return "\n".join(out)
 
 
 def section_e2(rows):
-    run_id, recs = _latest_run(rows, "E2")
-    if not recs:
+    runs = _latest_runs_by_model(rows, "E2")
+    if not runs:
         return "## E2 — accuracy cost of the payload\n\n_No run yet._\n"
-    model = recs[0]["model"]
-    base = [r for r in recs if r["payload_bytes"] == 0]
-    base_acc = base[0]["accuracy"] if base else None
-    n = recs[0].get("n_images")
-    out = ["## E2 — accuracy cost of the payload", "",
-           f"Run `{run_id}`, model `{model}`, top-1 on {n} Imagenette images. "
-           f"Clean baseline accuracy = **{base_acc:.4f}**." if base_acc is not None else "", "",
-           "| low bits k | Payload | Accuracy | Drop vs clean |", "|--:|---|--:|--:|"]
-    for r in sorted((r for r in recs if r["payload_bytes"]), key=lambda r: (r["k"], r["payload_bytes"])):
-        out.append(f"| {r['k']} | {_fmt_size(r['payload_bytes'])} | {r['accuracy']:.4f} | {r['accuracy_drop']:+.4f} |")
-    return "\n".join(out) + "\n"
+    out = ["## E2 — accuracy cost of the payload", ""]
+    for model, (run_id, recs) in runs.items():
+        base = [r for r in recs if r["payload_bytes"] == 0]
+        n = recs[0].get("n_images")
+        out += [f"### {model}", "", f"Run `{run_id}`, top-1 on {n} Imagenette images."
+                + (f" Clean accuracy **{base[0]['accuracy']:.4f}**." if base else ""), "",
+                "| low bits k | Payload | Accuracy | Drop vs clean |", "|--:|---|--:|--:|"]
+        for r in sorted((r for r in recs if r["payload_bytes"]), key=lambda r: (r["k"], r["payload_bytes"])):
+            out.append(f"| {r['k']} | {_fmt_size(r['payload_bytes'])} | {r['accuracy']:.4f} | {r['accuracy_drop']:+.4f} |")
+        out.append("")
+    return "\n".join(out)
 
 
 def main():

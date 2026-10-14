@@ -27,4 +27,5 @@ def test_report_tables_from_ledger(tmp_path, monkeypatch):
     text = (tmp_path / "RESULTS.md").read_text()
     assert "| m | dev | 3 | clean | 0 |" in text
     assert "| 1 KB | **missed** | detected |" in text
+    assert "### m" in text
     assert "| 8 | 1 KB | 0.8000 | +0.1000 |" in text
