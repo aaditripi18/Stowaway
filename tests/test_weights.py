@@ -141,3 +141,16 @@ def test_s4_constant_payload_in_structured_model_is_flagged():
     poisoned = embed(model, b"\xff" * 4000, k=8, spread=1, names=["layer0"])
     anomalies = [f for f in s4_bit_planes(poisoned) if f.code == "lowbit-anomaly"]
     assert [f.detail["tensor"] for f in anomalies] == ["layer0"]
+
+
+def test_widen_matches_torch_float():
+    torch = pytest.importorskip("torch")
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+    from scripts.run_s3_widened import widen
+    arr = np.random.default_rng(5).standard_normal(1000).astype(np.float32)
+    bf = RawTensor.from_float(arr, dtype="BF16")
+    wide = widen({"w": bf})["w"]
+    ref = torch.tensor(arr).to(torch.bfloat16).float().numpy()
+    assert np.array_equal(wide.to_float32(), ref)

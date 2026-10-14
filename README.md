@@ -11,15 +11,16 @@ survives format conversion because it is just numbers.
 Stowaway looks for what the code scanners do not, and measures the limit: the
 largest payload that no single-file check can see, and what hiding it costs the model.
 
-> Status: week 3 of 8. All five checks work and are tested; the first experiments
-> (E0–E2) have run on two ImageNet models. Preliminary findings are in
+> Status: week 4 of 8. All five checks work and are tested. Experiments so far:
+> two ImageNet models end to end (E0-E2), and single-file checks on samples of 70
+> public Hugging Face models (E0b, E1b, E1c). Preliminary findings are in
 > [docs/FINDINGS.md](docs/FINDINGS.md), and every number, with the commit that
 > produced it, in [docs/RESULTS.md](docs/RESULTS.md) (generated, never edited by
 > hand). See [PLAN.md](PLAN.md).
 >
-> Early result: a 4 MB random payload in ResNet-18's low 8 bits leaves accuracy
-> unchanged and passes every single-file check; a diff against the base model
-> catches it.
+> Early results: a 4 MB random payload in ResNet-18's low 8 bits leaves accuracy
+> unchanged and passes every single-file check. Across 39 popular float32 models,
+> the file alone exposes such a payload in 16 and says nothing about 23.
 
 ## Checks
 
@@ -70,6 +71,14 @@ export TORCH_HOME=$PWD/models/torch PYTHONPATH=.
 .venv/Scripts/python scripts/run_e1.py --model resnet18    # detection vs payload size
 .venv/Scripts/python scripts/run_e2.py --model resnet18    # accuracy cost (needs Imagenette in data/)
 .venv/Scripts/python scripts/report.py                     # regenerate docs/RESULTS.md
+```
+
+The Hugging Face survey samples tensors with HTTP range requests (no full downloads):
+
+```bash
+.venv/Scripts/python scripts/select_hf_models.py   # only to rebuild the frozen list
+.venv/Scripts/python scripts/run_hf_survey.py      # E0b + E1b, ~10 minutes
+.venv/Scripts/python scripts/run_s3_widened.py     # E1c, from the survey cache
 ```
 
 Nothing is trained: models are downloaded pretrained and only run forward. Every

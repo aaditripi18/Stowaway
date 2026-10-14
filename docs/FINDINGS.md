@@ -1,9 +1,62 @@
 # Findings (preliminary)
 
-> Status: week 3 of 8. Two vision models, one seed, one payload type (random
-> bytes). Every number below is in [RESULTS.md](RESULTS.md), generated from the
-> ledger with the commit that produced it. These are early results, not
-> conclusions.
+> Status: week 4 of 8. Two vision models end to end, plus single-file checks on
+> samples of 70 public Hugging Face models. One payload type (random bytes).
+> Every number below is in [RESULTS.md](RESULTS.md), generated from the ledger
+> with the commit that produced it. These are early results, not conclusions.
+
+## 0. Across 39 popular float32 models, the file alone exposes a payload in 16 and says nothing about 23
+
+E0b/E1b sampled up to 12 tensors (64 KB each) from the 40 most-downloaded
+non-gated float32 safetensors models (39 had testable samples) and filled the low
+bits of one tensor with random bytes:
+
+| What the weights look like | Models | Payload flagged from the file alone (k = 1, 4, 8) |
+|---|--:|---|
+| float32 file carrying only fp16 or bf16 precision | 14 | 14 / 14 at every k |
+| float32 with a low-bit signature | 2 | 2 / 2 at every k |
+| float32 with fair-coin low bits | 23 | **0 / 23** at every k |
+
+So for 59% of these models, a clean single-file scan certifies nothing about the
+weights; only a comparison with a trusted base (S5) can. The list is dominated
+by BERT-family and sentence-embedding models because those are the most
+downloaded; it is frozen in `results/hf_models.json`.
+
+## 0b. 36% of "float32" uploads are really half precision, and that is where S3 works
+
+14 of the 39 float32 files hold weights with only fp16 (13) or bf16 (1)
+precision: the low 13 or 16 bits of every value are zero, as when a model
+trained in half precision is saved with `.float()`. S3 catches a payload in all
+of them (E1b).
+
+E1c tests S3 directly on real bf16 weights: the samples of the 19 surveyed bf16
+models, widened to float32 exactly as `.float()` does (checked bit for bit
+against torch). S3 identified bf16 precision in 19 / 19, raised no false
+positive in any of them, and flagged a payload as small as 1 KB in 19 / 19 at
+k = 1, 4 and 8. Hypothesis H2 holds on real weights.
+
+Its limit: three of the 14 half-precision models keep one tensor in full float32
+(position embeddings in CLIP ViT-L/14 and ESM-2, a dense layer in XLM-R). S3
+flags those, and from a single file it cannot tell such a tensor from one whose
+low bits are filled with a random payload.
+
+## 0c. S4 is not usable yet on files stored as bf16 or fp16
+
+On files stored in 16-bit formats, S4 flagged clean tensors in 8 of 20 bf16 and
+7 of 11 fp16 models, and saw a payload in only 3 of 30. The cause is a design
+choice, not the data: S4 examines the "low 8 bits", which is the whole 7-bit bf16
+mantissa and 8 of fp16's 10 bits, so it tests bits that encode the value
+distribution itself (layer-norm weights near 1.0, router weights, AWQ scales).
+Those account for 29 of the 40 flagged tensors in the survey.
+
+The fix (examine only the low part of the mantissa, as for float32) will be
+validated on a fresh batch of 16-bit models, not on these, which are now the
+data the problem was found on.
+
+Smaller patterns among the remaining false positives: tensors stored with *less*
+precision than the rest of their model (a bit plane with mean exactly 0, e.g. a
+sentence-transformers `Dense` layer). A random payload moves bits towards 0.5,
+never to exactly 0, so these are harmless, but S4 still flags them.
 
 ## 1. A 4 MB payload can sit in ResNet-18 at no measurable cost and pass every single-file check
 
@@ -32,8 +85,8 @@ towards 50%, so on MobileNetV3-Small S4 detects every payload tested from the fi
 alone, down to 1 KB at k = 1 (the lowest single bit of each weight).
 
 So hypothesis H3 ("random low-bit payloads cannot be seen from one fp32 file") is
-true for some models and false for others. The next step is to measure how common
-such signatures are across many public models (week 3–4 survey).
+true for some models and false for others. The survey (section 0) puts numbers on
+it: a signature in 2 of 39 popular float32 models, fair-coin bits in 23.
 
 ## 3. The fair-coin assumption produced false alarms; the fix is post hoc
 
@@ -72,5 +125,7 @@ real fine-tune/base pairs in E4 rather than adjusted to this result.
   bits without a signature, or preserve the signature.
 - E2 measures accuracy; agreement of individual predictions with the clean model
   would be a more sensitive measure of cost.
-- Language models and bf16-trained models (where S3 applies) are not in the
-  experiments yet.
+- The survey tests detection on 64 KB samples, not whole files, and only the
+  single-file checks; accuracy cost (E2) is measured only on the two vision
+  models.
+- S4 on bf16/fp16 files needs the fix in section 0c and a fresh validation set.
