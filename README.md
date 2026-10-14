@@ -12,8 +12,9 @@ Stowaway looks for what the code scanners do not, and measures the limit: the
 largest payload that no single-file check can see, and what hiding it costs the model.
 
 > Status: week 4 of 8. All five checks work and are tested. Experiments so far:
-> two ImageNet models end to end (E0-E2), and single-file checks on samples of 70
-> public Hugging Face models (E0b, E1b, E1c). Preliminary findings are in
+> two ImageNet models end to end (E0-E2), and single-file checks on samples of 120
+> public Hugging Face models (E0b, E1b, E1c), 50 of them a held-out batch used once
+> to validate the revised S4 (E0c). Preliminary findings are in
 > [docs/FINDINGS.md](docs/FINDINGS.md), and every number, with the commit that
 > produced it, in [docs/RESULTS.md](docs/RESULTS.md) (generated, never edited by
 > hand). See [PLAN.md](PLAN.md).
@@ -77,7 +78,9 @@ The Hugging Face survey samples tensors with HTTP range requests (no full downlo
 
 ```bash
 .venv/Scripts/python scripts/select_hf_models.py   # only to rebuild the frozen list
-.venv/Scripts/python scripts/run_hf_survey.py      # E0b + E1b, ~10 minutes
+.venv/Scripts/python scripts/run_hf_survey.py --list hf_models.json         # dev batch, E0b + E1b
+.venv/Scripts/python scripts/run_hf_survey.py --list hf_models_batch2.json  # held-out batch
+.venv/Scripts/python scripts/compare_s4_rules.py --list hf_models_batch2.json  # E0c
 .venv/Scripts/python scripts/run_s3_widened.py     # E1c, from the survey cache
 ```
 

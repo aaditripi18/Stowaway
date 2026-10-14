@@ -295,6 +295,25 @@ Random bytes fill the low k bits of the sample of the largest tensor the clean s
 | `thenlper/gte-small` | F16 | F16 file | – | 0 | no / no / – |
 
 
+## E0c — week-4 S4 rule against the current one, same samples
+
+`hf_models.json`, run `E0c-2026-10-14T19:08:10Z-ed84250`. Models with at least one S4 false positive on the clean samples:
+
+| Stored as | Models | Week-4 rule | Current rule |
+|---|--:|--:|--:|
+| F32 | 40 | 1 | 1 |
+| BF16 | 20 | 9 | 0 |
+| F16 | 10 | 6 | 2 |
+
+`hf_models_batch2.json`, run `E0c-2026-10-14T19:08:08Z-ed84250`. Models with at least one S4 false positive on the clean samples:
+
+| Stored as | Models | Week-4 rule | Current rule |
+|---|--:|--:|--:|
+| F32 | 20 | 2 | 2 |
+| BF16 | 20 | 14 | 4 |
+| F16 | 10 | 5 | 5 |
+
+
 ## E1c — S3 on bf16 weights saved as float32
 
 Run `E1c-2026-10-14T18:23:11Z-16e0f45`. The survey's BF16 samples widened to float32 exactly as `model.float()` does, then a random payload in the low k bits of one tensor.
