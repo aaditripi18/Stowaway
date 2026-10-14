@@ -12,8 +12,6 @@ Every check returns Findings; none of them needs to run the model.
 """
 from __future__ import annotations
 
-import math
-
 import numpy as np
 
 from .bits import FLOAT_LAYOUT, RawTensor, informative
@@ -87,77 +85,73 @@ def s3_precision_history(floats: dict[str, RawTensor]) -> list[Finding]:
 
 # --- S4: bit-plane statistics -----------------------------------------------
 
-def _bitplane_bias(v: np.ndarray, bit: int) -> tuple[float, float]:
-    """Mean of one bit plane and a two-sided z-score against the fair-coin null.
-
-    In a natural float model the low mantissa bits are close to a fair coin, so a
-    plane whose mean is far from 0.5 is unusual. An all-zero plane (a payload that
-    never touched this bit, or cleared precision) also shows here."""
-    b = ((v >> np.uint64(bit)) & np.uint64(1)).astype(np.float64)
-    n = b.size
-    mean = float(b.mean())
-    z = (mean - 0.5) / (0.5 / math.sqrt(n)) if n else 0.0
-    return mean, z
+SIGNATURE_MIN_ELEMENTS = 4096  # tensors large enough to estimate the model's signature
+Z_FLAG = 6.0                   # |z| above this flags a tensor (strict: many tensors x bits)
 
 
-def _byte_chi2(v: np.ndarray, nbits: int) -> tuple[float, int]:
-    """Chi-square of the low-nbits value distribution against uniform."""
-    vals = (v & np.uint64((1 << nbits) - 1)).astype(np.int64)
-    k = 1 << nbits
-    obs = np.bincount(vals, minlength=k).astype(np.float64)
-    exp = v.size / k
-    return float(((obs - exp) ** 2 / exp).sum()), k - 1
+def _bit_means(v: np.ndarray, nbits: int) -> np.ndarray:
+    """Fraction of ones in each of the low `nbits` bit planes."""
+    return np.array([float(((v >> np.uint64(b)) & np.uint64(1)).mean()) for b in range(nbits)])
 
 
-def _chi2_sf(x: float, df: int) -> float:
-    """Survival function of the chi-square distribution (regularised upper gamma),
-    computed without SciPy so the package stays dependency-light."""
-    if x <= 0:
-        return 1.0
-    # Wilson–Hilferty normal approximation; adequate for the large df used here.
-    t = (x / df) ** (1 / 3)
-    mu, sigma = 1 - 2 / (9 * df), math.sqrt(2 / (9 * df))
-    z = (t - mu) / sigma
-    return 0.5 * math.erfc(z / math.sqrt(2))
+def _signature(stats: list[tuple[str, int, np.ndarray]], nbits: int):
+    """The model's own low-bit signature and how much clean tensors vary around it.
+
+    Clean models are not all fair coins in their low bits: torchvision's
+    MobileNetV3 has bit 0 set in ~67% of weights, consistently across every
+    tensor. So each tensor is tested against the median of the model's large
+    tensors (sig), with tau = the spread between tensors beyond sampling noise
+    (a random-effects null). With fewer than three tensors there is no
+    population, and the fair coin (0.5) is the fallback."""
+    big = [s for s in stats if s[1] >= SIGNATURE_MIN_ELEMENTS]
+    pool = big if len(big) >= 3 else stats if len(stats) >= 3 else []
+    if not pool:
+        return np.full(nbits, 0.5), np.zeros(nbits), False
+    m = np.array([s[2] for s in pool])
+    n = np.array([s[1] for s in pool], dtype=np.float64)
+    sig = np.median(m, axis=0)
+    mad = 1.4826 * np.median(np.abs(m - sig), axis=0)
+    sampling = np.median(sig * (1 - sig) / n[:, None], axis=0)
+    tau = np.sqrt(np.maximum(0.0, mad ** 2 - sampling))
+    return sig, tau, True
 
 
 def s4_bit_planes(floats: dict[str, RawTensor], low_bits: int = 8) -> list[Finding]:
-    """Per-tensor statistics on the low mantissa bits. Flags tensors whose low bits
-    depart from a natural model's: a biased bit plane, or a low-byte distribution
-    that is not uniform (both signatures of structured or partial payloads). An
-    encrypted payload that fills the low bits uniformly is, by design, invisible
-    here — that limit is the point of experiment E1."""
+    """Per-tensor low-bit statistics, read against the model's own signature.
+
+    A tensor is flagged when one of its low bit planes departs from what the rest
+    of the model shows: a payload pulls a structured model's bits towards 0.5,
+    and structured payloads (text, zeros) bias bits in any model. An encrypted
+    payload in a model whose low bits are already fair coins is, by design,
+    invisible here; that limit is what experiment E1 measures."""
     findings = []
+    by_dtype: dict[str, list] = {}
     for name, t in sorted(floats.items()):
-        u = t.data
-        info = informative(u, t.dtype)
-        v = u[info]
+        v = t.data[informative(t.data, t.dtype)]
         if v.size < MIN_ELEMENTS:
             continue
-        mant_bits = FLOAT_LAYOUT[t.dtype][1]
-        kb = min(low_bits, mant_bits)
+        kb = min(low_bits, FLOAT_LAYOUT[t.dtype][1])
+        by_dtype.setdefault(t.dtype, []).append((name, int(v.size), _bit_means(v, kb)))
 
-        worst_z, worst_bit = 0.0, -1
-        for bit in range(kb):
-            _, z = _bitplane_bias(v, bit)
-            if abs(z) > abs(worst_z):
-                worst_z, worst_bit = z, bit
-        # Bonferroni across the bits inspected; flag only strong departures.
-        if abs(worst_z) > 6.0:
-            findings.append(Finding("S4", "medium", "biased-bitplane",
-                                    f"tensor {name!r}: low bit {worst_bit} is biased "
-                                    f"(mean z-score {worst_z:+.1f} vs a fair coin)",
-                                    {"tensor": name, "bit": worst_bit, "z": round(worst_z, 2),
-                                     "elements": int(v.size)}))
-
-        chi2, df = _byte_chi2(v, kb)
-        p = _chi2_sf(chi2, df)
-        if p < 1e-6:
-            findings.append(Finding("S4", "medium", "nonuniform-low-bits",
-                                    f"tensor {name!r}: low {kb}-bit values are not uniform "
-                                    f"(chi-square p < 1e-6)",
-                                    {"tensor": name, "low_bits": kb, "chi2": round(chi2, 1),
-                                     "df": df, "elements": int(v.size)}))
+    for dtype, stats in by_dtype.items():
+        kb = len(stats[0][2])
+        sig, tau, has_pop = _signature(stats, kb)
+        if has_pop and np.max(np.abs(sig - 0.5)) > 0.02:
+            findings.append(Finding("S4", "info", "lowbit-signature",
+                                    f"{dtype} weights carry a low-bit signature (bit means "
+                                    + ", ".join(f"{x:.2f}" for x in sig[:4]) + "); tensors are tested against it",
+                                    {"dtype": dtype, "signature": [round(float(x), 4) for x in sig]}))
+        for name, n, m in stats:
+            se = np.sqrt(np.maximum(sig * (1 - sig), 1e-6) / n)
+            z = (m - sig) / np.sqrt(se ** 2 + tau ** 2)
+            b = int(np.argmax(np.abs(z)))
+            if abs(z[b]) > Z_FLAG:
+                findings.append(Finding("S4", "medium", "lowbit-anomaly",
+                                        f"tensor {name!r}: low bit {b} is set in {m[b]:.1%} of weights, "
+                                        f"against {sig[b]:.1%} across the model (z {z[b]:+.1f})",
+                                        {"tensor": name, "bit": b, "z": round(float(z[b]), 2),
+                                         "mean": round(float(m[b]), 4), "expected": round(float(sig[b]), 4),
+                                         "elements": n}))
     return findings
 
 

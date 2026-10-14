@@ -6,3 +6,5 @@ models/
 results/cache/
 private/
 *.egg-info/
+data/
+models/

@@ -55,15 +55,14 @@ def test_s4_flags_zeroed_low_bits():
     # A payload that sets the low byte to a constant makes bit planes maximally biased.
     model = _fp32_model(size=8192)
     poisoned = embed(model, b"\x00" * 1000, k=8, spread=1)
-    assert "biased-bitplane" in [f.code for f in s4_bit_planes(poisoned)]
+    assert "lowbit-anomaly" in [f.code for f in s4_bit_planes(poisoned)]
 
 
 def test_s4_flags_unencrypted_text_payload():
     model = _fp32_model(size=8192)
     # ASCII text is far from uniform in its low bits.
     poisoned = embed(model, b"the quick brown fox " * 200, k=8, spread=1)
-    codes_ = [f.code for f in s4_bit_planes(poisoned)]
-    assert "nonuniform-low-bits" in codes_ or "biased-bitplane" in codes_
+    assert "lowbit-anomaly" in [f.code for f in s4_bit_planes(poisoned)]
 
 
 def test_s4_misses_encrypted_payload_this_is_the_point():
@@ -97,3 +96,31 @@ def test_s5_quiet_on_honest_finetune():
 def test_s5_reports_when_no_shared_tensors():
     found = s5_differential(_fp32_model(), {"other": _fp32_model()["layer"]})
     assert found[0].code == "no-shared-tensors"
+
+
+# --- S4 against the model's own signature (found in E0 on MobileNetV3) --------
+
+def _structured_model(n_layers=6, size=8192, seed=3):
+    """Clean model whose bit 0 is set in ~2/3 of weights in every tensor, as in
+    torchvision's MobileNetV3."""
+    rng = np.random.default_rng(seed)
+    model = {}
+    for i in range(n_layers):
+        u = rng.standard_normal(size).astype(np.float32).view(np.uint32).copy()
+        ones = rng.random(size) < 2 / 3
+        u = np.where(ones, u | 1, u & ~np.uint32(1)).astype(np.uint32)
+        model[f"layer{i}"] = RawTensor("F32", (size,), u)
+    return model
+
+
+def test_s4_structured_clean_model_is_not_flagged():
+    found = s4_bit_planes(_structured_model())
+    assert [f.code for f in found] == ["lowbit-signature"]
+
+
+def test_s4_random_payload_breaks_structured_signature():
+    model = _structured_model()
+    payload = np.random.default_rng(9).bytes(4000)  # fills most of layer0's low byte
+    poisoned = embed(model, payload, k=8, spread=1, names=["layer0"])
+    anomalies = [f for f in s4_bit_planes(poisoned) if f.code == "lowbit-anomaly"]
+    assert [f.detail["tensor"] for f in anomalies] == ["layer0"]

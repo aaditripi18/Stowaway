@@ -8,6 +8,8 @@ dependencies = ["numpy>=1.24"]
 [project.optional-dependencies]
 # Used only to write test fixtures with the reference implementations.
 dev = ["pytest>=8.0", "torch>=2.2", "safetensors>=0.4", "gguf>=0.10"]
+# Experiments (E0-E2): pretrained models and the Imagenette eval.
+experiments = ["torchvision>=0.17", "pillow>=10"]
 
 [project.scripts]
 stowaway = "stowaway.cli:main"
