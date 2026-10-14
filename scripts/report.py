@@ -34,9 +34,11 @@ def section_e0(rows):
     lines = ["## E0 — false positives on clean models", "",
              f"Run `{run_id}`. Single-file checks (S3+S4) on clean ImageNet models; "
              "a value of 0 means the model is certified clean with no base needed.", "",
-             "| Model | Float tensors | Verdict | False positives |", "|---|--:|---|--:|"]
-    for r in sorted(recs, key=lambda r: r["model"]):
-        lines.append(f"| {r['model']} | {r['n_float_tensors']} | {r['verdict']} | {r['false_positives']} |")
+             "`dev` models were looked at while the checks were designed; `held out` models were not.", "",
+             "| Model | Split | Float tensors | Verdict | False positives |", "|---|---|--:|---|--:|"]
+    for r in sorted(recs, key=lambda r: (r.get("split", "dev") != "dev", r["model"])):
+        split = "held out" if r.get("split") == "held_out" else "dev"
+        lines.append(f"| {r['model']} | {split} | {r['n_float_tensors']} | {r['verdict']} | {r['false_positives']} |")
     return "\n".join(lines) + "\n"
 
 

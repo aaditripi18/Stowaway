@@ -27,10 +27,10 @@ def main(argv=None):
         by_check = {}
         for x in flags:
             by_check[x["check"]] = by_check.get(x["check"], 0) + 1
-        run.record(model=name, verdict=rep["verdict"], n_float_tensors=len(raw),
+        run.record(model=name, split="dev" if name in corpus.DEV else "held_out", verdict=rep["verdict"], n_float_tensors=len(raw),
                    false_positives=len(flags), by_check=by_check,
                    codes=sorted({x["code"] for x in flags}))
-        print(f"{name}: {rep['verdict']}  false positives={len(flags)}  {by_check}")
+        print(f"{name} [{'dev' if name in corpus.DEV else 'held out'}]: {rep['verdict']}  false positives={len(flags)}  {by_check}")
     print(f"recorded run {run.run_id}")
 
 

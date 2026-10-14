@@ -17,7 +17,17 @@ MODELS = ROOT / "models"
 VISION = {
     "resnet18": ("resnet18", "ResNet18_Weights"),
     "mobilenet_v3_small": ("mobilenet_v3_small", "MobileNet_V3_Small_Weights"),
+    # Held out: never looked at while designing the checks; E0 validates on these.
+    "mobilenet_v2": ("mobilenet_v2", "MobileNet_V2_Weights"),
+    "mobilenet_v3_large": ("mobilenet_v3_large", "MobileNet_V3_Large_Weights"),
+    "shufflenet_v2_x0_5": ("shufflenet_v2_x0_5", "ShuffleNet_V2_X0_5_Weights"),
+    "squeezenet1_1": ("squeezenet1_1", "SqueezeNet1_1_Weights"),
+    "mnasnet0_5": ("mnasnet0_5", "MNASNet0_5_Weights"),
+    "efficientnet_b0": ("efficientnet_b0", "EfficientNet_B0_Weights"),
+    "regnet_y_400mf": ("regnet_y_400mf", "RegNet_Y_400MF_Weights"),
 }
+# Models whose results were looked at while the checks were designed.
+DEV = {"resnet18", "mobilenet_v3_small"}
 
 
 def _torch_home():

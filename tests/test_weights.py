@@ -124,3 +124,20 @@ def test_s4_random_payload_breaks_structured_signature():
     poisoned = embed(model, payload, k=8, spread=1, names=["layer0"])
     anomalies = [f for f in s4_bit_planes(poisoned) if f.code == "lowbit-anomaly"]
     assert [f.detail["tensor"] for f in anomalies] == ["layer0"]
+
+
+def test_s4_stronger_signature_in_one_layer_type_is_not_flagged():
+    # MobileNetV3's squeeze-excitation layers: same signature, further from 0.5.
+    model = _structured_model()
+    u = model["layer5"].data
+    rng = np.random.default_rng(4)
+    ones = rng.random(u.size) < 0.85
+    model["layer5"] = RawTensor("F32", (u.size,), np.where(ones, u | 1, u & ~np.uint32(1)).astype(np.uint32))
+    assert not [f for f in s4_bit_planes(model) if f.code == "lowbit-anomaly"]
+
+
+def test_s4_constant_payload_in_structured_model_is_flagged():
+    model = _structured_model()
+    poisoned = embed(model, b"\xff" * 4000, k=8, spread=1, names=["layer0"])
+    anomalies = [f for f in s4_bit_planes(poisoned) if f.code == "lowbit-anomaly"]
+    assert [f.detail["tensor"] for f in anomalies] == ["layer0"]

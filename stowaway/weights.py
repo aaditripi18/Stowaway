@@ -141,11 +141,21 @@ def s4_bit_planes(floats: dict[str, RawTensor], low_bits: int = 8) -> list[Findi
                                     f"{dtype} weights carry a low-bit signature (bit means "
                                     + ", ".join(f"{x:.2f}" for x in sig[:4]) + "); tensors are tested against it",
                                     {"dtype": dtype, "signature": [round(float(x), 4) for x in sig]}))
+        # Where the model has a signature, only movement towards (or past) the fair
+        # coin counts: that is what a random payload does, while clean layers of a
+        # different type can carry a stronger version of the same signature
+        # (MobileNetV3's squeeze-excitation layers). Where it has none, any
+        # departure counts, which keeps text or constant payloads visible.
+        # This rule was chosen after seeing MobileNetV3 in E0; it is validated on
+        # models that were not used to choose it.
+        structured = np.abs(sig - 0.5) > 0.02
+        toward_coin = -np.sign(sig - 0.5)
         for name, n, m in stats:
             se = np.sqrt(np.maximum(sig * (1 - sig), 1e-6) / n)
             z = (m - sig) / np.sqrt(se ** 2 + tau ** 2)
-            b = int(np.argmax(np.abs(z)))
-            if abs(z[b]) > Z_FLAG:
+            score = np.where(structured, z * toward_coin, np.abs(z))
+            b = int(np.argmax(score))
+            if score[b] > Z_FLAG:
                 findings.append(Finding("S4", "medium", "lowbit-anomaly",
                                         f"tensor {name!r}: low bit {b} is set in {m[b]:.1%} of weights, "
                                         f"against {sig[b]:.1%} across the model (z {z[b]:+.1f})",
