@@ -8,3 +8,4 @@ private/
 *.egg-info/
 data/
 models/
+results/*.log

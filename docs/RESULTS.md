@@ -4,7 +4,7 @@
 
 ## E0 — false positives on clean models
 
-Run `E0-2026-10-14T17:57:14Z-0f16d2e`. Single-file checks (S3+S4) on clean ImageNet models; 0 means no false alarm on an unmodified model. It does not mean a payload would be seen: that is E1.
+Run `E0-2026-10-14T18:53:02Z-7fd9378`. Single-file checks (S3+S4) on clean ImageNet models; 0 means no false alarm on an unmodified model. It does not mean a payload would be seen: that is E1.
 
 `dev` models were looked at while the checks were designed; `held out` models were not.
 
@@ -16,7 +16,7 @@ Run `E0-2026-10-14T17:57:14Z-0f16d2e`. Single-file checks (S3+S4) on clean Image
 | mnasnet0_5 | held out | 262 | clean | 0 |
 | mobilenet_v2 | held out | 262 | clean | 0 |
 | mobilenet_v3_large | held out | 266 | clean | 0 |
-| regnet_y_400mf | held out | 331 | clean | 0 |
+| regnet_y_400mf | held out | 331 | suspicious | 1 |
 | shufflenet_v2_x0_5 | held out | 282 | suspicious | 1 |
 | squeezenet1_1 | held out | 52 | clean | 0 |
 
@@ -27,20 +27,20 @@ Random (encrypted-style) payloads in the low k bits. `single` = seen by S3/S4 fr
 
 ### mobilenet_v3_small
 
-Run `E1-2026-10-14T18:00:54Z-f89d821`.
+Run `E1-2026-10-14T18:53:47Z-7fd9378`.
 
 | Payload | k=1 single | k=1 base | k=4 single | k=4 base | k=8 single | k=8 base | k=16 single | k=16 base |
 |---|---|---|---|---|---|---|---|---|
 | 1 KB | detected | detected | detected | detected | detected | detected | detected | **missed** |
 | 4 KB | detected | detected | detected | detected | detected | detected | detected | **missed** |
 | 16 KB | detected | detected | detected | detected | detected | detected | detected | **missed** |
-| 64 KB | detected | detected | detected | detected | detected | detected | detected | **missed** |
-| 256 KB | detected | detected | detected | detected | detected | detected | detected | **missed** |
-| 1 MB | – | – | detected | detected | detected | detected | detected | **missed** |
+| 64 KB | **missed** | detected | detected | detected | detected | detected | detected | **missed** |
+| 256 KB | detected | detected | **missed** | detected | detected | detected | detected | **missed** |
+| 1 MB | – | – | detected | detected | detected | detected | **missed** | **missed** |
 
 ### resnet18
 
-Run `E1-2026-10-14T18:00:35Z-f89d821`.
+Run `E1-2026-10-14T18:53:15Z-7fd9378`.
 
 | Payload | k=1 single | k=1 base | k=4 single | k=4 base | k=8 single | k=8 base | k=16 single | k=16 base |
 |---|---|---|---|---|---|---|---|---|
@@ -106,7 +106,7 @@ Run `E2-2026-10-14T18:01:38Z-f89d821`, top-1 on 500 Imagenette images. Clean acc
 
 ## E0b / E1b — single-file checks on public Hugging Face models (`hf_models.json`)
 
-Runs `E0b-2026-10-14T18:30:53Z-edb3957` and `E1b-2026-10-14T18:30:53Z-edb3957`. Sampling: 6 roles x 4 layers (role peers for S4), up to 24 tensors, first 32 KB of each, fetched with HTTP range requests; the list is frozen in `results/hf_models.json`. Groups come from what S3/S4 measure on the clean samples.
+Runs `E0b-2026-10-14T18:54:10Z-7fd9378` and `E1b-2026-10-14T18:54:10Z-7fd9378`. Sampling: 6 roles x 4 layers (role peers for S4), up to 24 tensors, first 32 KB of each, fetched with HTTP range requests; the list is frozen in `results/hf_models.json`. Groups come from what S3/S4 measure on the clean samples.
 
 ### E0b — what the weights look like, and false positives
 
@@ -208,6 +208,91 @@ Random bytes fill the low k bits of the sample of the largest tensor the clean s
 | `openai/whisper-large-v3` | F16 | F16 file | – | 0 | no / no / – |
 | `openai/whisper-large-v3-turbo` | F16 | F16 file | – | 0 | no / no / – |
 | `stabilityai/stable-diffusion-xl-base-1.0` | F16 | F16 file | – | 0 | no / no / – |
+
+## E0b / E1b — single-file checks on public Hugging Face models (`hf_models_batch2.json`)
+
+Runs `E0b-2026-10-14T18:57:50Z-7fd9378` and `E1b-2026-10-14T18:57:51Z-7fd9378`. Sampling: 6 roles x 4 layers (role peers for S4), up to 24 tensors, first 32 KB of each, fetched with HTTP range requests; the list is frozen in `results/hf_models_batch2.json`. Groups come from what S3/S4 measure on the clean samples.
+
+### E0b — what the weights look like, and false positives
+
+| Group | Models | Models with a false positive | Flagged tensors / sampled |
+|---|--:|--:|--:|
+| F32 file, bfloat16 precision | 1 | 1 | 4 / 24 |
+| F32 file, float16 precision | 5 | 0 | 0 / 120 |
+| F32, fair-coin low bits | 15 | 2 | 2 / 360 |
+| BF16 file | 19 | 4 | 5 / 388 |
+| F16 file | 10 | 5 | 6 / 218 |
+
+50 models sampled, 0 could not be.
+
+### E1b — would the file alone expose a random low-bit payload?
+
+Random bytes fill the low k bits of the sample of the largest tensor the clean scan did not flag. Cells: models where S3 or S4 flagged that tensor / models tested.
+
+| Group | k=1 | k=4 | k=8 |
+|---|--:|--:|--:|
+| F32 file, bfloat16 precision | 0 / 1 | 0 / 1 | – |
+| F32 file, float16 precision | 5 / 5 | 5 / 5 | 5 / 5 |
+| F32, fair-coin low bits | 0 / 15 | 0 / 15 | 0 / 15 |
+| BF16 file | 2 / 19 | 2 / 19 | – |
+| F16 file | 2 / 9 | 3 / 9 | – |
+
+1 model(s) excluded: every sampled tensor was flagged on the clean scan.
+
+### Per model
+
+| Model | Stored | Group | Signature (bits 0–3) | False positives | Payload seen at k=1 / 4 / 8 |
+|---|---|---|---|--:|---|
+| `deepseek-ai/DeepSeek-V3.2` | F32 | F32 file, bfloat16 precision | 0.00, 0.00, 0.00, 0.00 | 4 | no / no / – |
+| `BAAI/bge-base-en` | F32 | F32 file, float16 precision | 0.00, 0.00, 0.00, 0.00 | 0 | yes / yes / yes |
+| `FacebookAI/xlm-roberta-large` | F32 | F32 file, float16 precision | 0.00, 0.00, 0.00, 0.00 | 0 | yes / yes / yes |
+| `MahmoudAshraf/mms-300m-1130-forced-aligner` | F32 | F32 file, float16 precision | 0.00, 0.00, 0.00, 0.00 | 0 | yes / yes / yes |
+| `facebook/bart-large-mnli` | F32 | F32 file, float16 precision | 0.00, 0.00, 0.00, 0.00 | 0 | yes / yes / yes |
+| `openai/whisper-small` | F32 | F32 file, float16 precision | 0.00, 0.00, 0.00, 0.00 | 0 | yes / yes / yes |
+| `BAAI/bge-reranker-large` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `E-MIMIC/inclusively-reformulation-it5` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `NeoQuasar/Kronos-Tokenizer-base` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `audeering/wav2vec2-large-robust-24-ft-age-gender` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `autogluon/chronos-2-small` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `autogluon/chronos-bolt-tiny` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `depth-anything/Depth-Anything-V2-Small-hf` | F32 | F32, fair-coin low bits | – | 1 | no / no / no |
+| `distilbert/distilbert-base-uncased-finetuned-sst-2-english` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `facebook/dinov2-base` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `facebook/dinov2-small` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `mlx-community/parakeet-tdt-0.6b-v3` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `nomic-ai/nomic-embed-text-v1` | F32 | F32, fair-coin low bits | – | 1 | no / no / no |
+| `sentence-transformers/all-MiniLM-L12-v2` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `sentence-transformers/all-distilroberta-v1` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `w11wo/indonesian-roberta-base-posp-tagger` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `Qwen/Qwen2.5-3B-Instruct` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Qwen/Qwen3-1.7B` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Qwen/Qwen3-32B` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Qwen/Qwen3-4B-Instruct-2507` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Qwen/Qwen3-VL-4B-Instruct` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Qwen/Qwen3.5-2B` | BF16 | BF16 file | – | 0 | yes / yes / – |
+| `Qwen/Qwen3.6-35B-A3B` | BF16 | BF16 file | 0.48, 0.50 | 2 | no / no / – |
+| `Qwen/Qwen3.6-35B-A3B-FP8` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Qwen/Qwen3.8-27B-FP8` | BF16 | BF16 file | – | 1 | no / no / – |
+| `deepseek-ai/DeepSeek-V4-Flash-0731` | BF16 | BF16 file | – | 0 | no / no / – |
+| `dphn/dolphin-2.9.1-yi-1.5-34b` | BF16 | BF16 file | – | 1 | no / no / – |
+| `google/gemma-4-E2B-it` | BF16 | BF16 file | – | 0 | no / no / – |
+| `google/gemma-4-E4B-it` | BF16 | BF16 file | – | 0 | no / no / – |
+| `lmstudio-community/Qwen3.8-27B-MLX-4bit` | BF16 | BF16 file | – | 0 | no / no / – |
+| `lmstudio-community/Qwen3.8-27B-MLX-5bit` | BF16 | BF16 file | – | 0 | no / no / – |
+| `lmstudio-community/Qwen3.8-27B-MLX-6bit` | BF16 | BF16 file | – | 0 | no / no / – |
+| `lmstudio-community/Qwen3.8-27B-MLX-8bit` | BF16 | BF16 file | – | 1 | no / no / – |
+| `nvidia/Qwen3.6-35B-A3B-NVFP4` | BF16 | BF16 file | 0.48, 0.50 | 0 | yes / yes / – |
+| `openai/gpt-oss-120b` | BF16 | BF16 file | 0.45, 0.50 | 0 | no / no / – |
+| `EleutherAI/pythia-70m-deduped` | F16 | F16 file | – | 0 | no / no / – |
+| `Qwen/Qwen2.5-32B-Instruct-AWQ` | F16 | F16 file | 0.53, 0.53, 0.53 | 1 | no / yes / – |
+| `Qwen/Qwen3-4B-Instruct-2507-FP8` | F16 | F16 file | – | 2 | yes / no / – |
+| `bigscience/bloomz-560m` | F16 | F16 file | – | 0 | no / no / – |
+| `jinaai/jina-embeddings-v2-small-en` | F16 | F16 file | – | 0 | no / no / – |
+| `llava-hf/llava-1.5-7b-hf` | F16 | F16 file | – | 0 | no / no / – |
+| `prism-ml/Bonsai-27B-mlx-1bit` | F16 | F16 file | 0.00, 0.00, 0.00 | 1 | yes / yes / – |
+| `prism-ml/Ternary-Bonsai-27B-mlx-2bit` | F16 | F16 file | 0.00, 0.00, 0.00 | 1 | yes / yes / – |
+| `remsky/kokoro-inno-clone-tuner` | F16 | F16 file | – | 1 | no / no / – |
+| `thenlper/gte-small` | F16 | F16 file | – | 0 | no / no / – |
 
 
 ## E1c — S3 on bf16 weights saved as float32
