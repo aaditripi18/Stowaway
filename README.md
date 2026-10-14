@@ -11,9 +11,9 @@ survives format conversion because it is just numbers.
 Stowaway looks for what the code scanners do not, and measures the limit: the
 largest payload that no single-file check can see, and what hiding it costs the model.
 
-> Status: week 1 of 8. Format parsers, pickle analysis (S1) and byte coverage (S2)
-> work and are tested. Weight statistics (S3–S5) and the experiments are next.
-> See [PLAN.md](PLAN.md).
+> Status: week 2 of 8. All five checks (S1–S5) work and are tested. The embedding
+> toolkit that generates positive samples for the experiments is in place. The
+> experiments (E0–E5) and the browser demo are next. See [PLAN.md](PLAN.md).
 
 ## Checks
 
@@ -21,9 +21,13 @@ largest payload that no single-file check can see, and what hiding it costs the 
 |---|---|---|
 | S1 | Pickle imports, found by a restricted unpickler and an opcode walk; nothing is ever executed | done |
 | S2 | Byte coverage: every byte belongs to a header, a tensor or zero padding | done |
-| S3 | Precision history: low bits that should be zero, given how the model was trained | week 2 |
-| S4 | Bit-plane statistics per tensor | week 2 |
-| S5 | Bit-level diff against the claimed base model | week 2 |
+| S3 | Precision history: low bits that should be zero, given how the model was trained | done |
+| S4 | Bit-plane statistics per tensor (a biased plane or a non-uniform low byte) | done |
+| S5 | Bit-level diff against the claimed base model (`--base`) | done |
+
+A random payload in the low bits of a genuinely fp32-trained model is invisible to
+single-file statistics (S3/S4) by design — that limit is what experiment E1 will
+measure. When the claimed base model is available, S5 catches it regardless of size.
 
 Formats: `.safetensors`, PyTorch zip (`.pt`/`.pth`/`.bin`), legacy PyTorch, plain
 pickle (protocols 0–5) and GGUF. Formats are detected from content, never from the

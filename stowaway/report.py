@@ -9,7 +9,7 @@ import hashlib
 from collections import Counter
 from pathlib import Path
 
-from . import coverage, pickle_scan
+from . import coverage, pickle_scan, weights
 from .formats import open_model
 from .model import SEVERITIES
 
@@ -24,8 +24,11 @@ def _sha256(f) -> str:
     return h.hexdigest()
 
 
-def scan(path: str | Path) -> dict:
+def scan(path: str | Path, base: str | Path | None = None) -> dict:
+    """Scan one model file. If `base` is given, also run the S5 differential
+    against that model (its claimed base)."""
     path = Path(path)
+    base_floats = weights.load_base(base, open_model) if base is not None else None
     with open(path, "rb") as f:
         mf = open_model(path, f)
         findings = list(mf.findings)
@@ -35,6 +38,7 @@ def scan(path: str | Path) -> dict:
             findings += pickle_scan.analyse(label, data)
         if mf.format != "unknown":
             findings += coverage.check(mf, f)
+            findings += weights.analyse(mf, f, base_floats)
         digest = _sha256(f)
 
     rank = {s: i for i, s in enumerate(SEVERITIES)}
