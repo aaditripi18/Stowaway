@@ -44,20 +44,37 @@ def finetunes_of(base: str, limit: int) -> list[dict]:
         return json.loads(r.read())
 
 
+def _float_params(model: dict) -> int:
+    params = (model.get("safetensors") or {}).get("parameters") or {}
+    return sum(v for k, v in params.items() if k in hf.FLOAT_LAYOUT)
+
+
+def base_params(base: str) -> int:
+    import urllib.request
+    with urllib.request.urlopen(urllib.request.Request(
+            f"{API}/{base}?expand[]=safetensors", headers={"User-Agent": "stowaway-survey"}), timeout=60) as r:
+        return _float_params(json.loads(r.read()))
+
+
 def pick(bases: list[str], per_base: int, scan: int) -> list[dict]:
     pairs = []
     for base in bases:
+        bp = base_params(base)
         kept = 0
         for m in finetunes_of(base, scan):
             if kept >= per_base:
                 break
-            if m.get("gated") or hf.primary_dtype(m) != "F32":
+            if m.get("gated") or hf.primary_dtype(m) != "F32" or hf.weights_file(m) is None:
                 continue
-            f = hf.weights_file(m)
-            if f is None:
+            fp = _float_params(m)
+            # A genuine fine-tune keeps the architecture: same float-parameter count
+            # as the base, give or take a small task head. Models that declare the
+            # base but are distilled or resized (different hidden size) are excluded;
+            # S5 needs shared tensors of matching shape to diff.
+            if not bp or not 0.97 <= fp / bp <= 1.10:
                 continue
-            pairs.append({"base": base, "finetune": m["id"], "file": f,
-                          "params": m["safetensors"]["parameters"]})
+            pairs.append({"base": base, "finetune": m["id"], "file": hf.weights_file(m),
+                          "base_params": bp, "finetune_params": fp})
             kept += 1
     return pairs
 

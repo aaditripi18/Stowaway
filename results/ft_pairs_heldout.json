@@ -11,124 +11,106 @@
    "base": "FacebookAI/roberta-base",
    "finetune": "deepset/roberta-base-squad2",
    "file": "model.safetensors",
-   "params": {
-    "F32": 124056578,
-    "I64": 514
-   }
+   "base_params": 124697433,
+   "finetune_params": 124056578
   },
   {
    "base": "FacebookAI/roberta-base",
    "finetune": "fakespot-ai/roberta-base-ai-text-detection-v1",
    "file": "model.safetensors",
-   "params": {
-    "F32": 124647170
-   }
+   "base_params": 124697433,
+   "finetune_params": 124647170
   },
   {
    "base": "FacebookAI/roberta-base",
    "finetune": "OpenMed/OpenMed-PII-SuperMedical-Base-125M-v1",
    "file": "model.safetensors",
-   "params": {
-    "F32": 124136554
-   }
+   "base_params": 124697433,
+   "finetune_params": 124136554
   },
   {
    "base": "FacebookAI/roberta-base",
    "finetune": "Oxidane/tmr-ai-text-detector",
    "file": "model.safetensors",
-   "params": {
-    "F32": 124647170
-   }
+   "base_params": 124697433,
+   "finetune_params": 124647170
   },
   {
    "base": "FacebookAI/roberta-base",
    "finetune": "mediabiasgroup/roberta-babe-ft",
    "file": "model.safetensors",
-   "params": {
-    "I64": 514,
-    "F32": 124647170
-   }
+   "base_params": 124697433,
+   "finetune_params": 124647170
   },
   {
    "base": "google/vit-base-patch16-224-in21k",
    "finetune": "amunchet/rorshark-vit-base",
    "file": "model.safetensors",
-   "params": {
-    "F32": 85800194
-   }
+   "base_params": 86389248,
+   "finetune_params": 85800194
   },
   {
    "base": "google/vit-base-patch16-224-in21k",
    "finetune": "giacomoarienti/nsfw-classifier",
    "file": "model.safetensors",
-   "params": {
-    "F32": 85802501
-   }
+   "base_params": 86389248,
+   "finetune_params": 85802501
   },
   {
    "base": "google/vit-base-patch16-224-in21k",
    "finetune": "dima806/man_woman_face_image_detection",
    "file": "model.safetensors",
-   "params": {
-    "F32": 85800194
-   }
+   "base_params": 86389248,
+   "finetune_params": 85800194
   },
   {
    "base": "google/vit-base-patch16-224-in21k",
    "finetune": "dima806/deepfake_vs_real_image_detection",
    "file": "model.safetensors",
-   "params": {
-    "F32": 85800194
-   }
+   "base_params": 86389248,
+   "finetune_params": 85800194
   },
   {
    "base": "google/vit-base-patch16-224-in21k",
    "finetune": "dima806/skin_types_image_detection",
    "file": "model.safetensors",
-   "params": {
-    "F32": 85800963
-   }
+   "base_params": 86389248,
+   "finetune_params": 85800963
   },
   {
    "base": "FacebookAI/xlm-roberta-base",
    "finetune": "Arunavaonly/Bangla-twoclass-Sentiment-Analyzer",
    "file": "model.safetensors",
-   "params": {
-    "F32": 278045955
-   }
+   "base_params": 278885778,
+   "finetune_params": 278045955
   },
   {
    "base": "FacebookAI/xlm-roberta-base",
    "finetune": "papluca/xlm-roberta-base-language-detection",
    "file": "model.safetensors",
-   "params": {
-    "I64": 514,
-    "F32": 278059028
-   }
-  },
-  {
-   "base": "FacebookAI/xlm-roberta-base",
-   "finetune": "heydariAI/persian-embeddings",
-   "file": "model.safetensors",
-   "params": {
-    "F32": 559890432
-   }
+   "base_params": 278885778,
+   "finetune_params": 278059028
   },
   {
    "base": "FacebookAI/xlm-roberta-base",
    "finetune": "jobvector/jv_text_classificator",
    "file": "model.safetensors",
-   "params": {
-    "F32": 278047493
-   }
+   "base_params": 278885778,
+   "finetune_params": 278047493
   },
   {
    "base": "FacebookAI/xlm-roberta-base",
    "finetune": "bardsai/eu-pii-anonimization-multilang-v2-preview",
    "file": "model.safetensors",
-   "params": {
-    "F32": 277508424
-   }
+   "base_params": 278885778,
+   "finetune_params": 277508424
+  },
+  {
+   "base": "FacebookAI/xlm-roberta-base",
+   "finetune": "OpenMed/OpenMed-PII-BigMed-Large-278M-v1",
+   "file": "model.safetensors",
+   "base_params": 278885778,
+   "finetune_params": 277534570
   }
  ]
 }

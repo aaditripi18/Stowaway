@@ -78,6 +78,17 @@ def resolve_url(repo: str, filename: str, revision: str = "main") -> str:
     return f"https://huggingface.co/{repo}/resolve/{revision}/{filename}"
 
 
+def weights_file_for(repo: str) -> str:
+    """The top-level safetensors file of a model, from its API record."""
+    with urllib.request.urlopen(urllib.request.Request(
+            f"{API}/{repo}?expand[]=siblings", headers={"User-Agent": "stowaway-survey"}), timeout=60) as r:
+        model = json.loads(r.read())
+    f = weights_file(model)
+    if f is None:
+        raise ValueError(f"{repo} has no top-level safetensors file")
+    return f
+
+
 def read_header(url: str, fetch: Fetch) -> tuple[int, dict]:
     (n,) = struct.unpack("<Q", fetch(url, 0, 7))
     if n > 100 * 1024 * 1024:

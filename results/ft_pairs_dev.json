@@ -9,125 +9,87 @@
  "pairs": [
   {
    "base": "google-bert/bert-base-uncased",
-   "finetune": "GuardrailsAI/prompt-saturation-attack-detector",
-   "file": "model.safetensors",
-   "params": {
-    "F32": 4386178
-   }
-  },
-  {
-   "base": "google-bert/bert-base-uncased",
    "finetune": "tomaarsen/span-marker-bert-base-uncased-acronyms",
    "file": "model.safetensors",
-   "params": {
-    "I64": 512,
-    "F32": 109488387
-   }
+   "base_params": 110106428,
+   "finetune_params": 109488387
   },
   {
    "base": "google-bert/bert-base-uncased",
    "finetune": "pritamdeb68/BERTAIDetector",
    "file": "model.safetensors",
-   "params": {
-    "F32": 109483778
-   }
+   "base_params": 110106428,
+   "finetune_params": 109483778
   },
   {
    "base": "google-bert/bert-base-uncased",
    "finetune": "dannashao/bert-base-uncased-finetuned-advanced-srl_arg",
    "file": "model.safetensors",
-   "params": {
-    "F32": 108937788
-   }
+   "base_params": 110106428,
+   "finetune_params": 108937788
   },
   {
    "base": "google-bert/bert-base-uncased",
-   "finetune": "boltuix/bert-lite",
+   "finetune": "logasanjeev/bert-emotion-classifier",
    "file": "model.safetensors",
-   "params": {
-    "F32": 11201594
-   }
+   "base_params": 110106428,
+   "finetune_params": 109503772
+  },
+  {
+   "base": "google-bert/bert-base-uncased",
+   "finetune": "mila-ai4h/Mila-Suicide-Prevention-Output-Guardrail",
+   "file": "model.safetensors",
+   "base_params": 110106428,
+   "finetune_params": 109483778
   },
   {
    "base": "distilbert/distilbert-base-uncased",
    "finetune": "cybersectony/phishing-email-detection-distilbert_v2.4.1",
    "file": "model.safetensors",
-   "params": {
-    "F32": 66956548
-   }
+   "base_params": 66985530,
+   "finetune_params": 66956548
   },
   {
    "base": "distilbert/distilbert-base-uncased",
    "finetune": "mirth/chonky_distilbert_base_uncased_1",
    "file": "model.safetensors",
-   "params": {
-    "F32": 66364418
-   }
+   "base_params": 66985530,
+   "finetune_params": 66364418
   },
   {
    "base": "distilbert/distilbert-base-uncased",
    "finetune": "eliasalbouzidi/distilbert-nsfw-text-classifier",
    "file": "model.safetensors",
-   "params": {
-    "F32": 66955010
-   }
+   "base_params": 66985530,
+   "finetune_params": 66955010
   },
   {
    "base": "distilbert/distilbert-base-uncased",
    "finetune": "prdev/mini-gte",
    "file": "model.safetensors",
-   "params": {
-    "F32": 66362880
-   }
+   "base_params": 66985530,
+   "finetune_params": 66362880
   },
   {
    "base": "distilbert/distilbert-base-uncased",
    "finetune": "tabularisai/robust-sentiment-analysis",
    "file": "model.safetensors",
-   "params": {
-    "F32": 66957317
-   }
+   "base_params": 66985530,
+   "finetune_params": 66957317
   },
   {
    "base": "openai-community/gpt2",
-   "finetune": "garak-llm/attackgeneration-toxicity_gpt2",
+   "finetune": "11mlabs/indri-0.1-124m-tts",
    "file": "model.safetensors",
-   "params": {
-    "F32": 124439808
-   }
+   "base_params": 137022720,
+   "finetune_params": 139614720
   },
   {
    "base": "openai-community/gpt2",
-   "finetune": "joaosollatori/small-agentic-model-1.5B",
+   "finetune": "aneforge/gpt2",
    "file": "model.safetensors",
-   "params": {
-    "F32": 124439808
-   }
-  },
-  {
-   "base": "openai-community/gpt2",
-   "finetune": "MiniLLM/init-gpt2-120M",
-   "file": "model.safetensors",
-   "params": {
-    "F32": 124439808
-   }
-  },
-  {
-   "base": "openai-community/gpt2",
-   "finetune": "drwahl/2tpg",
-   "file": "model.safetensors",
-   "params": {
-    "F32": 124439808
-   }
-  },
-  {
-   "base": "openai-community/gpt2",
-   "finetune": "harpertoken/chat",
-   "file": "model.safetensors",
-   "params": {
-    "F32": 124440576,
-    "BOOL": 12582912
-   }
+   "base_params": 137022720,
+   "finetune_params": 137022720
   }
  ]
 }
