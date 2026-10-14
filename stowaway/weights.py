@@ -210,12 +210,32 @@ def role(name: str) -> str:
 
 # --- S5: differential against a base model ----------------------------------
 
+# Honest fine-tuning changes weights by whole magnitudes: in every one of 189
+# fine-tuned float32 tensors measured (E4, dev), the changes reached the top
+# mantissa bit (22) at the 99th percentile. A payload in the low k bits reaches
+# only bit k-1. So a tensor whose changes stay below (mantissa - MARGIN) bits did
+# not change the way fine-tuning does. MARGIN = 3 leaves a gap below the honest
+# floor; the cutoff is 20 bits for float32, 7 for fp16, 4 for bf16.
+S5_MARGIN = 3
+S5_PERCENTILE = 99.0  # of changed elements; robust to a few coincidental high flips
+
+
+def _highest_changed_bit(xor: np.ndarray, mant_bits: int) -> np.ndarray:
+    """Per element, the highest mantissa bit set in `xor` (-1 if none)."""
+    mant = xor & np.uint64((1 << mant_bits) - 1)
+    hi = np.full(mant.size, -1, dtype=np.int64)
+    for b in range(mant_bits):
+        hi = np.where((mant >> np.uint64(b)) & np.uint64(1), b, hi)
+    return hi
+
+
 def s5_differential(floats: dict[str, RawTensor], base: dict[str, RawTensor]) -> list[Finding]:
-    """Compare against the claimed base model, tensor by tensor. An honest fine-tune
-    changes whole weights in the layers it trained; a payload changes only the low
-    bits, and often in layers a fine-tune would leave frozen. Any shared tensor that
-    differs *only* in its low bits is reported, at any size — this is the strongest
-    check when a base model is available."""
+    """Compare against the claimed base model, tensor by tensor. Honest fine-tuning
+    changes whole weights, reaching the top of the mantissa; a payload changes only
+    the low bits. A shared tensor whose changes stay in the low bits did not change
+    the way fine-tuning does, and is flagged at any payload size — the strongest
+    check when a base model is available. The cutoff is calibrated in E4 from real
+    fine-tune/base pairs, not guessed."""
     findings = []
     shared = sorted(set(floats) & set(base))
     if not shared:
@@ -228,20 +248,22 @@ def s5_differential(floats: dict[str, RawTensor], base: dict[str, RawTensor]) ->
         if a.dtype != b.dtype or a.data.shape != b.data.shape:
             continue
         diff = a.data != b.data
-        if not diff.any():
-            continue
         changed = int(diff.sum())
+        if changed < MIN_ELEMENTS:
+            continue
         mant_bits = FLOAT_LAYOUT[a.dtype][1]
-        # Of the changed elements, how many differ only within the low bits?
-        xor = (a.data[diff].astype(np.uint64) ^ b.data[diff].astype(np.uint64))
-        high_mask = np.uint64(~((1 << (mant_bits // 2)) - 1) & ((1 << 64) - 1))
-        low_only = int((xor & high_mask == 0).sum())
-        frac_low = low_only / changed
-        if frac_low > 0.98 and changed >= MIN_ELEMENTS:
+        cutoff = mant_bits - S5_MARGIN
+        xor = a.data[diff].astype(np.uint64) ^ b.data[diff].astype(np.uint64)
+        hi = _highest_changed_bit(xor, mant_bits)
+        reach = float(np.percentile(hi, S5_PERCENTILE))
+        if reach <= cutoff:
             findings.append(Finding("S5", "high", "low-bit-only-change",
                                     f"tensor {name!r} differs from the base model in {changed} elements, "
-                                    f"{frac_low:.0%} of them only in the low bits - not how a fine-tune changes weights",
-                                    {"tensor": name, "changed": changed, "low_only_fraction": round(frac_low, 4)}))
+                                    f"but the changes reach only bit {int(reach)} of {mant_bits} "
+                                    f"(fine-tuning reaches the top bit) - a low-bit payload, not training",
+                                    {"tensor": name, "changed": changed,
+                                     "highest_changed_bit_p99": round(reach, 1),
+                                     "cutoff": cutoff, "mantissa_bits": mant_bits}))
     return findings
 
 
