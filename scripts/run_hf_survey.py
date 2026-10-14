@@ -1,7 +1,7 @@
 """E0b + E1b: the single-file checks on public Hugging Face models, from samples.
 
 For each model in results/hf_models.json, sample up to 12 float tensors (first
-256 KB of each) with range requests, then:
+64 KB of each) with range requests, then:
 
   E0b  run S3 and S4 on the clean samples: false positives, the precision the
        weights actually carry (S3), and whether the low bits carry a signature (S4)

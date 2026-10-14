@@ -100,16 +100,19 @@ def choose_tensors(header: dict, max_tensors: int = 12, min_elements: int = 4096
     return [cands[i][1] for i in sorted(set(idx))]
 
 
-def _cache_dir(repo: str, filename: str) -> Path:
-    return CACHE / repo.replace("/", "__") / filename.replace("/", "__")
+def _cache_dir(repo: str, filename: str, chunk: int, max_tensors: int) -> Path:
+    return CACHE / repo.replace("/", "__") / f"{filename.replace('/', '__')}.{chunk}x{max_tensors}"
 
 
-def sample(repo: str, filename: str, fetch: Fetch = http_fetch, chunk: int = 256 * 1024,
-           max_tensors: int = 12, url: str | None = None) -> tuple[dict[str, RawTensor], dict]:
+def sample(repo: str, filename: str, fetch: Fetch = http_fetch, chunk: int = 64 * 1024,
+           max_tensors: int = 12, url: str | None = None,
+           workers: int = 6) -> tuple[dict[str, RawTensor], dict]:
     """Sample tensors of one remote safetensors file.
 
-    Returns ({name: RawTensor (1-D, first `chunk` bytes)}, info), cached on disk."""
-    cdir = _cache_dir(repo, filename)
+    Returns ({name: RawTensor (1-D, first `chunk` bytes)}, info), cached on disk
+    per (chunk, max_tensors) so samples of different sizes never mix."""
+    from concurrent.futures import ThreadPoolExecutor
+    cdir = _cache_dir(repo, filename, chunk, max_tensors)
     meta_path, data_path = cdir / "meta.json", cdir / "samples.npz"
     if meta_path.exists() and data_path.exists():
         info = json.loads(meta_path.read_text(encoding="utf-8"))
@@ -121,15 +124,18 @@ def sample(repo: str, filename: str, fetch: Fetch = http_fetch, chunk: int = 256
     url = url or resolve_url(repo, filename)
     base, header = read_header(url, fetch)
     names = choose_tensors(header, max_tensors)
-    tensors, raw = {}, {}
-    for name in names:
+    def one(name):
         spec = header[name]
         isz = ITEMSIZE[spec["dtype"]]
         b, e = spec["data_offsets"]
         length = min(e - b, chunk) // isz * isz
-        data = fetch(url, base + b, base + b + length - 1)
-        tensors[name] = RawTensor.from_bytes(spec["dtype"], (length // isz,), data)
-        raw[name] = np.frombuffer(data, dtype=np.uint8)
+        return name, spec["dtype"], isz, fetch(url, base + b, base + b + length - 1)
+
+    tensors, raw = {}, {}
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        for name, dtype, isz, data in pool.map(one, names):  # map keeps the order
+            tensors[name] = RawTensor.from_bytes(dtype, (len(data) // isz,), data)
+            raw[name] = np.frombuffer(data, dtype=np.uint8)
     dtypes = {}
     for spec in header.values():
         if isinstance(spec, dict) and "dtype" in spec:
