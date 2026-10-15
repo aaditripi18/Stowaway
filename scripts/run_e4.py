@@ -24,7 +24,8 @@ import numpy as np
 from experiments import hf
 from experiments.ledger import Run
 from stowaway.bits import FLOAT_LAYOUT
-from stowaway.weights import role
+from stowaway.embed import embed
+from stowaway.weights import role, s5_differential
 
 RESULTS = Path(__file__).resolve().parent.parent / "results"
 
@@ -49,6 +50,8 @@ def main(argv=None):
     args = ap.parse_args(argv)
     pairs = json.loads((RESULTS / f"ft_pairs_{args.split}.json").read_text(encoding="utf-8"))["pairs"]
     run = Run("E4", split=args.split, n_pairs=len(pairs))
+    val = Run("E4val", split=args.split, n_pairs=len(pairs)) if args.split == "heldout" else None
+    rng = np.random.default_rng(0)
 
     for p in pairs:
         try:
@@ -71,7 +74,38 @@ def main(argv=None):
                        frac_changed=round(frac_changed, 4),
                        hi_bit_p99=int(top), hi_bit_max=int(hi[changed].max()) if changed.any() else 0)
         print(f"{p['finetune']}: {changed_tensors}/{len(info['shared_tensors'])} shared tensors changed", flush=True)
-    print(f"recorded run {run.run_id}")
+
+        if args.split == "heldout":
+            # Validation: the recalibrated S5 on this honest pair (false positives),
+            # and on the pair with a random payload added at several depths (detection).
+            honest = [f for f in s5_differential(ft, base) if f.code == "low-bit-only-change"]
+            val.record(kind="honest", finetune=p["finetune"], base=p["base"],
+                       shared=len(info["shared_tensors"]), s5_false_positives=len(honest),
+                       fp_tensors=[f.detail["tensor"] for f in honest])
+            payload_targets = [n for n in info["shared_tensors"] if ft[n].data.size >= 4096]
+            target = payload_targets[0] if payload_targets else None
+            catch = {}
+            for k in (8, 16, 20, 21, 22):
+                if target is None:
+                    break
+                # Scenario A: a payload placed in a tensor that otherwise matches the
+                # base (a frozen layer, or the base passed off as a fine-tune). This is
+                # what S5 defends against: the tensor should differ only in low bits.
+                on_base = embed({target: base[target]}, rng.bytes(2048), k=k)[target]
+                a = [f for f in s5_differential({**base, target: on_base}, base)
+                     if f.code == "low-bit-only-change" and f.detail["tensor"] == target]
+                # Scenario B: the payload hides inside a tensor the fine-tune genuinely
+                # trained. The tensor already differs from base across all bits, so the
+                # low-bit payload is camouflaged -- S5 cannot see it.
+                in_trained = embed({target: ft[target]}, rng.bytes(2048), k=k)[target]
+                b = [f for f in s5_differential({**ft, target: in_trained}, base)
+                     if f.code == "low-bit-only-change" and f.detail["tensor"] == target]
+                val.record(kind="payload", finetune=p["finetune"], base=p["base"], target=target, k=k,
+                           detected_on_base=bool(a), detected_in_trained=bool(b))
+                catch[k] = ("Y" if a else "n") + ("Y" if b else "n")
+            print(f"    S5: honest FP={len(honest)}; on-base/in-trained by k: "
+                  + " ".join(f"{k}:{v}" for k, v in catch.items()), flush=True)
+    print(f"recorded run {run.run_id}" + (f" and {val.run_id}" if args.split == "heldout" else ""))
 
 
 if __name__ == "__main__":
