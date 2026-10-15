@@ -7,6 +7,46 @@
 > Every number below is in [RESULTS.md](RESULTS.md), generated from the ledger
 > with the commit that produced it. These are early results, not conclusions.
 
+## An adaptive placement evades the single-file checks; the base diff is the backstop (E3)
+
+E3 stress-tests S3/S4 the way a defence should be: assume the person hiding the
+data knows how the checks work and places random bytes where the checks are
+weakest, then measure what gets through. Three placements, from the weaknesses
+found earlier, all using ordinary parameters of the embedder (which tensors, how
+thinly spread):
+
+- **spread_all** — the low bits of every float tensor, one weight in 64, so each
+  tensor's bit-plane means barely move.
+- **role_fill** — fill every tensor of one role, so the peers S4 reads a tensor
+  against are changed too.
+- **fair_only** — only tensors whose low bits are already fair coins, where S4
+  has no signal.
+
+Result on the two vision models:
+
+- On **MobileNetV3-Small** (whose low bits carry a signature, so the naive attack
+  of E1 was caught), **spread_all evades S4 at every size up to 1 MB**. Thinning
+  the payload across 1 weight in 64 keeps every bit-plane mean inside the z = 6
+  threshold. This is a real evasion of the single-file checks on a model where
+  the obvious attack failed.
+- **role_fill** is a weaker evasion than expected: S4 still catches it from 4 KB,
+  because filling a role shifts its peers together but the model-wide fallback and
+  the remaining roles still expose it.
+- On **ResNet-18** (already fair coins) every placement evades single-file, as the
+  naive attack already did — there is simply no single-file signal to begin with.
+
+In every case the **base diff (S5) catches the payload**, with one corner: a 1 KB
+payload spread at 1:64 over MobileNetV3 touches ~98 tensors with fewer than the
+256 changed elements per tensor S5 requires, so S5 skips them and misses it
+(caught from 4 KB up). That per-tensor floor is a deliberate guard against noise;
+lowering it needs its own held-out validation, so it is recorded, not changed.
+
+The headline holds and sharpens: single-file statistics have a fundamental blind
+spot — a payload thin enough moves no statistic far enough — and the comparison
+against a trusted base is the check that does not depend on where in the file the
+bytes go. The scanner's own output already says as much: on a clean single-file
+scan, "no finding" is not "no payload".
+
 ## S5 recalibrated: honest fine-tuning never hides in the low bits (E4)
 
 Week 3 set S5's cutoff — how low a tensor's changes must stay to look like a

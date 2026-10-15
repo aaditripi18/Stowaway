@@ -327,6 +327,30 @@ Run `E1c-2026-10-14T18:23:11Z-16e0f45`. The survey's BF16 samples widened to flo
 | whole sampled tensor | 19 / 19 | 19 / 19 | 19 / 19 |
 
 
+## E3 - robustness of the single-file checks
+
+Random payloads placed where S3/S4 are weakest. `single` = S3 or S4 flagged a written tensor; `base` = S5 (given the clean base) did. Each cell is the smallest payload at which the placement is **caught**, or — if it is missed at every size up to 1 MB.
+
+### mobilenet_v3_small
+
+Run `E3-2026-10-15T05:52:11Z-cc25257`, k = 4.
+
+| Placement | single-file caught from | with base caught from |
+|---|---|---|
+| role_fill | 4 KB | 1 KB |
+| spread_all | — (missed) | 4 KB |
+
+### resnet18
+
+Run `E3-2026-10-15T05:51:53Z-cc25257`, k = 4.
+
+| Placement | single-file caught from | with base caught from |
+|---|---|---|
+| fair_only | — (missed) | 1 KB |
+| role_fill | — (missed) | 1 KB |
+| spread_all | — (missed) | 1 KB |
+
+
 ## E4 — S5 calibrated on real fine-tune/base pairs
 
 On 189 changed tensors across 8 dev fine-tunes, the 99th-percentile highest changed mantissa bit is 22–22 (median 22) of 23: honest fine-tuning reaches the top of the mantissa. S5 flags a tensor whose changes reach only below bit 20.
