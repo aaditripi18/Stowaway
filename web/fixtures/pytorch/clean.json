@@ -1,0 +1,1 @@
+{"file":"clean.pt","findings":[],"format":"pytorch-zip","report_version":1,"sha256":"af9cf09734b2a336664f39a04beaa907add58d35379fe9730e51cca53aaaf3b2","size":3319,"tensors":{"bytes":320,"count":7,"dtypes":{"F32":6,"I64":1}},"verdict":"clean"}

@@ -134,13 +134,15 @@ function renderChecks(rep: Report): void {
   let ran = 0;
   for (const id of ["S1", "S2", "S3", "S4", "S5"]) {
     const fs = (byCheck.get(id) ?? []).filter((f) => ["medium", "high", "critical"].includes(f.severity));
+    const supported = ["safetensors", "gguf", "pytorch-zip", "torchscript", "pickle"].includes(rep.format);
+    const hasPickle = ["pytorch-zip", "torchscript", "pickle"].includes(rep.format);
     let icon: string, color: string, label: string;
     if (id === "S5") {
       icon = "horizontal_rule"; color = "text-outline"; label = "NEEDS BASE";
-    } else if (!BUILD_RUNS.has(id) || rep.format !== "safetensors") {
+    } else if (!supported) {
       icon = "horizontal_rule"; color = "text-outline"; label = "PYTHON TOOL";
-    } else if (id === "S1" && rep.format === "safetensors") {
-      icon = "check_circle"; color = "text-secondary"; label = "N/A"; ran++; // safetensors has no pickle data
+    } else if (id === "S1" && !hasPickle) {
+      icon = "check_circle"; color = "text-secondary"; label = "N/A"; ran++; // no pickle data in this format
     } else if (fs.length) {
       icon = "warning"; color = "text-tertiary-container"; label = `${fs.length} FINDING${fs.length === 1 ? "" : "S"}`; ran++;
     } else {

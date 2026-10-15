@@ -47,3 +47,13 @@ def test_pickle_golden_matches_fresh_analyse(path):
 def test_gguf_golden_matches_fresh_scan(path):
     golden = (path.with_suffix(".json")).read_text(encoding="utf-8").strip()
     assert canon(scan(path)) == golden
+
+
+pt_fixtures = sorted((FIX / "pytorch").glob("*.pt")) if (FIX / "pytorch").exists() else []
+
+
+@pytest.mark.skipif(not pt_fixtures, reason="run web/test/gen_fixtures.py first")
+@pytest.mark.parametrize("path", pt_fixtures, ids=lambda p: p.stem)
+def test_pytorch_golden_matches_fresh_scan(path):
+    golden = (path.with_suffix(".json")).read_text(encoding="utf-8").strip()
+    assert canon(scan(path)) == golden

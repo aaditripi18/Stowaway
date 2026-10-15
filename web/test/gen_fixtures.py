@@ -90,6 +90,44 @@ def main():
     gen_weights()
     gen_s5()
     gen_gguf()
+    gen_pytorch()
+
+
+def gen_pytorch():
+    """PyTorch zip fixtures: a clean checkpoint, one with an appended blob, one
+    with a code payload in the pickle, and one with an extra zip entry."""
+    import torch
+    import zipfile
+    d = FIX / "pytorch"
+    d.mkdir(parents=True, exist_ok=True)
+
+    def golden(name, path):
+        rep = scan(path)
+        (d / f"{name}.json").write_text(canon(rep) + "\n", encoding="utf-8")
+        print(f"pytorch/{name}: {rep['format']} {rep['verdict']} ({len(rep['findings'])} findings)")
+
+    torch.manual_seed(0)
+    sd = torch.nn.Sequential(torch.nn.Linear(8, 6), torch.nn.BatchNorm1d(6)).state_dict()
+    torch.save(sd, d / "clean.pt")
+    golden("clean", d / "clean.pt")
+
+    raw = (d / "clean.pt").read_bytes()
+    (d / "trailing.pt").write_bytes(raw + b"MZ" + bytes(range(256)) * 4)
+    golden("trailing", d / "trailing.pt")
+
+    import copy
+    torch.save(sd, d / "extra_entry.pt")
+    with zipfile.ZipFile(d / "extra_entry.pt", "a") as zf:
+        zf.writestr("archive/data/loader.py", "print('hi')")
+    golden("extra_entry", d / "extra_entry.pt")
+
+    # A code payload: an object whose __reduce__ names a dangerous global.
+    class Evil:
+        def __reduce__(self):
+            return exec, ("pass",)
+    torch.save({"w": sd["0.weight"], "x": Evil()}, d / "evil.pt")
+    golden("evil", d / "evil.pt")
+    copy.copy  # keep import tidy
 
 
 def gen_gguf():

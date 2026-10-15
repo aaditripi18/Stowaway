@@ -130,8 +130,8 @@ def parse_zip(path: Path, f) -> ModelFile:
     try:
         zf = zipfile.ZipFile(f)
         infos = zf.infolist()
-    except (zipfile.BadZipFile, OSError) as e:
-        mf.findings.append(Finding("parse", "high", "bad-zip", f"not a readable zip: {e}"))
+    except (zipfile.BadZipFile, OSError):
+        mf.findings.append(Finding("parse", "high", "bad-zip", "not a readable zip archive"))
         return mf
 
     regions = _eocd_regions(f, size)
@@ -205,7 +205,7 @@ def parse_zip(path: Path, f) -> ModelFile:
             _add_tensors(mf, res.obj, storage_base, storage_len)
         else:
             mf.findings.append(Finding("parse", "medium", "structure-unreadable",
-                                       f"could not rebuild the checkpoint structure: {res.error}"))
+                                       "could not rebuild the checkpoint structure"))
     return mf
 
 
@@ -231,7 +231,7 @@ def parse_pickles(path: Path, f) -> ModelFile:
         try:
             end = _pickle_end(f)
         except Exception as e:
-            mf.findings.append(Finding("parse", "medium", "malformed-pickle", f"pickle at {start} does not parse: {e}"))
+            mf.findings.append(Finding("parse", "medium", "malformed-pickle", f"pickle at {start} does not parse cleanly"))
             mf.pickles.append((f"pickle@{start}", start, size))
             mf.regions.append(Region(start, size, "header", f"pickle@{start}"))
             return mf
