@@ -27,29 +27,29 @@ Random (encrypted-style) payloads in the low k bits. `single` = seen by S3/S4 fr
 
 ### mobilenet_v3_small
 
-Run `E1-2026-10-14T18:53:47Z-7fd9378`.
+Run `E1-2026-10-15T05:48:53Z-0102234`.
 
-| Payload | k=1 single | k=1 base | k=4 single | k=4 base | k=8 single | k=8 base | k=16 single | k=16 base |
-|---|---|---|---|---|---|---|---|---|
-| 1 KB | detected | detected | detected | detected | detected | detected | detected | **missed** |
-| 4 KB | detected | detected | detected | detected | detected | detected | detected | **missed** |
-| 16 KB | detected | detected | detected | detected | detected | detected | detected | **missed** |
-| 64 KB | **missed** | detected | detected | detected | detected | detected | detected | **missed** |
-| 256 KB | detected | detected | **missed** | detected | detected | detected | detected | **missed** |
-| 1 MB | – | – | detected | detected | detected | detected | **missed** | **missed** |
+| Payload | k=8 single | k=8 base | k=16 single | k=16 base |
+|---|---|---|---|---|
+| 1 KB | detected | detected | detected | detected |
+| 4 KB | detected | detected | detected | detected |
+| 16 KB | detected | detected | detected | detected |
+| 64 KB | detected | detected | detected | detected |
+| 256 KB | detected | detected | detected | detected |
+| 1 MB | detected | detected | **missed** | detected |
 
 ### resnet18
 
-Run `E1-2026-10-14T18:53:15Z-7fd9378`.
+Run `E1-2026-10-15T05:48:33Z-0102234`.
 
-| Payload | k=1 single | k=1 base | k=4 single | k=4 base | k=8 single | k=8 base | k=16 single | k=16 base |
-|---|---|---|---|---|---|---|---|---|
-| 1 KB | **missed** | detected | **missed** | detected | **missed** | detected | **missed** | **missed** |
-| 4 KB | **missed** | detected | **missed** | detected | **missed** | detected | **missed** | **missed** |
-| 16 KB | **missed** | detected | **missed** | detected | **missed** | detected | **missed** | **missed** |
-| 64 KB | **missed** | detected | **missed** | detected | **missed** | detected | **missed** | **missed** |
-| 256 KB | **missed** | detected | **missed** | detected | **missed** | detected | **missed** | **missed** |
-| 1 MB | **missed** | detected | **missed** | detected | **missed** | detected | **missed** | **missed** |
+| Payload | k=8 single | k=8 base | k=16 single | k=16 base |
+|---|---|---|---|---|
+| 1 KB | **missed** | detected | **missed** | detected |
+| 4 KB | **missed** | detected | **missed** | detected |
+| 16 KB | **missed** | detected | **missed** | detected |
+| 64 KB | **missed** | detected | **missed** | detected |
+| 256 KB | **missed** | detected | **missed** | detected |
+| 1 MB | **missed** | detected | **missed** | detected |
 
 
 ## E2 — accuracy cost of the payload
@@ -325,4 +325,20 @@ Run `E1c-2026-10-14T18:23:11Z-16e0f45`. The survey's BF16 samples widened to flo
 |---|--:|--:|--:|
 | 1 KB | 19 / 19 | 19 / 19 | 19 / 19 |
 | whole sampled tensor | 19 / 19 | 19 / 19 | 19 / 19 |
+
+
+## E4 — S5 calibrated on real fine-tune/base pairs
+
+On 189 changed tensors across 8 dev fine-tunes, the 99th-percentile highest changed mantissa bit is 22–22 (median 22) of 23: honest fine-tuning reaches the top of the mantissa. S5 flags a tensor whose changes reach only below bit 20.
+
+Held-out validation (`E4val-2026-10-15T05:44:02Z-0102234`): 15 honest pairs, **0** S5 false positives.
+
+Payload detection (caught / tested):
+
+| Placement | k=8 | k=16 | k=20 | k=21 | k=22 |
+|---|--:|--:|--:|--:|--:|
+| tensor matching base | 10 / 10 | 10 / 10 | 10 / 10 | 10 / 10 | 0 / 10 |
+| tensor the fine-tune trained | 0 / 10 | 0 / 10 | 0 / 10 | 0 / 10 | 0 / 10 |
+
+A payload in a tensor that should match the base is caught up to the cutoff; one hidden inside a genuinely trained tensor is camouflaged by the training changes.
 

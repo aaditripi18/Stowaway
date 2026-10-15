@@ -1,9 +1,51 @@
 # Findings (preliminary)
 
-> Status: week 4 of 8 (S4 revised and validated on a fresh batch). Two vision models end to end, plus single-file checks on
-> samples of 120 public Hugging Face models (70 dev, 50 held out). One payload type (random bytes).
+> Status: week 5 of 8 (S4 and S5 both revised and validated on held-out models).
+> Two vision models end to end, single-file checks on samples of 120 public
+> Hugging Face models (70 dev, 50 held out), and S5 calibrated on 20 real
+> fine-tune/base pairs (dev + held out). One payload type (random bytes).
 > Every number below is in [RESULTS.md](RESULTS.md), generated from the ledger
 > with the commit that produced it. These are early results, not conclusions.
+
+## S5 recalibrated: honest fine-tuning never hides in the low bits (E4)
+
+Week 3 set S5's cutoff — how low a tensor's changes must stay to look like a
+payload rather than training — at half the mantissa (11 of 23 float32 bits), by
+guess. A payload at k = 16 changed bits above it and was missed on both vision
+models.
+
+E4 measured the real boundary. For every tensor a fine-tune changed, it took
+base XOR fine-tune and recorded the highest mantissa bit that differs. Across
+**189 changed tensors in 8 dev fine-tunes** (BERT, DistilBERT, GPT-2 fine-tunes),
+the 99th-percentile highest changed bit was the **top mantissa bit (22) in every
+single tensor**: honest fine-tuning moves whole magnitudes, never just low bits.
+
+S5 now flags a tensor whose changes reach only below bit (mantissa − 3): 20 bits
+for float32, 7 for fp16, 4 for bf16. Validated once on **15 held-out pairs**
+(RoBERTa, XLM-R, ViT fine-tunes, chosen and committed before their weights were
+read):
+
+- **0 honest false positives.**
+- A payload in a tensor that should match the base is caught at k = 8, 16, 20, 21
+  (10 / 10 pairs with sampled weights), and missed at k = 22 — above the cutoff,
+  and a 22-bit payload is a change so large it is not plausibly hidden.
+- E1 rerun confirms the week-3 k = 16 blind spot is closed on both vision models
+  at every payload size.
+
+**A real limit.** S5 only catches a payload in a tensor that otherwise matches
+the base. A payload hidden inside a tensor the fine-tune genuinely trained is
+camouflaged — the tensor already differs from the base across all bits — and was
+caught in 0 / 10 held-out pairs at every k. So S5 defends the frozen parts of a
+claimed fine-tune (and any model passed off as base + payload), not the trained
+parts. A distributor who confines a payload to tensors they did train, and
+declares a plausible amount of fine-tuning, defeats S5; catching that needs the
+single-file checks, which for most float32 models (section 0) see nothing.
+
+**Lineage aside.** Selecting these pairs surfaced that many top "fine-tunes" of a
+base are not: several declare `base_model: X` but are distilled or resized to a
+different hidden size (e.g. a 128-wide model citing bert-base-uncased, which is
+768-wide). They were excluded from E4 by a parameter-count gate. That labels are
+this unreliable is the premise of roadmap project #2.
 
 ## 0. Across 39 popular float32 models, the file alone exposes a payload in 16 and says nothing about 23
 

@@ -11,13 +11,14 @@ survives format conversion because it is just numbers.
 Stowaway looks for what the code scanners do not, and measures the limit: the
 largest payload that no single-file check can see, and what hiding it costs the model.
 
-> Status: week 4 of 8. All five checks work and are tested. Experiments so far:
-> two ImageNet models end to end (E0-E2), and single-file checks on samples of 120
-> public Hugging Face models (E0b, E1b, E1c), 50 of them a held-out batch used once
-> to validate the revised S4 (E0c). Preliminary findings are in
-> [docs/FINDINGS.md](docs/FINDINGS.md), and every number, with the commit that
-> produced it, in [docs/RESULTS.md](docs/RESULTS.md) (generated, never edited by
-> hand). See [PLAN.md](PLAN.md).
+> Status: week 5 of 8. All five checks work and are tested; S4 and S5 have both
+> been revised and validated on held-out models. Experiments: two ImageNet models
+> end to end (E0-E2); single-file checks on samples of 120 public Hugging Face
+> models (E0b, E1b, E1c), 50 a held-out batch used once to validate the revised S4
+> (E0c); and S5's cutoff calibrated on 20 real fine-tune/base pairs (E4).
+> Preliminary findings are in [docs/FINDINGS.md](docs/FINDINGS.md), and every
+> number, with the commit that produced it, in [docs/RESULTS.md](docs/RESULTS.md)
+> (generated, never edited by hand). See [PLAN.md](PLAN.md).
 >
 > Early results: a 4 MB random payload in ResNet-18's low 8 bits leaves accuracy
 > unchanged and passes every single-file check. Across 39 popular float32 models,
@@ -31,7 +32,7 @@ largest payload that no single-file check can see, and what hiding it costs the 
 | S2 | Byte coverage: every byte belongs to a header, a tensor or zero padding | done |
 | S3 | Precision history: low bits that should be zero, given how the model was trained | done |
 | S4 | Bit-plane statistics per tensor (a biased plane or a non-uniform low byte) | done |
-| S5 | Bit-level diff against the claimed base model (`--base`) | done |
+| S5 | Bit-level diff against the claimed base model (`--base`), cutoff calibrated on real fine-tunes | done |
 
 A random payload in the low bits of a genuinely fp32-trained model is invisible to
 single-file statistics (S3/S4) by design — that limit is what experiment E1 will
