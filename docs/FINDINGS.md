@@ -1,6 +1,6 @@
 # Findings (preliminary)
 
-> Status: week 5 of 8 (S4 and S5 both revised and validated on held-out models).
+> Status: week 5 of 8. S3, S4, S5 all revised and validated on held-out models.
 > Two vision models end to end, single-file checks on samples of 120 public
 > Hugging Face models (70 dev, 50 held out), and S5 calibrated on 20 real
 > fine-tune/base pairs (dev + held out). One payload type (random bytes).
@@ -126,7 +126,7 @@ are filled with a random payload. (With role sampling these standalone tensors a
 rarely sampled, so the S3 false-positive count in the dev rerun dropped to zero;
 that is a sampling effect, not a change to S3.)
 
-## 0c. S4 on 16-bit files: fixed for bf16 (validated on unseen models), not for fp16
+## 0c. S4 on 16-bit files: fixed and validated on unseen models
 
 The week-4 S4 flagged clean tensors in many models stored as bf16 or fp16. Two
 causes, both found on the week-4 models (now the dev set):
@@ -157,22 +157,45 @@ old rule against new on identical samples (E0c):
 | fp16 | 6 → 2 of 10 | **5 → 5 of 10** |
 | float32 | 1 → 1 of 40 | **2 → 2 of 20** |
 
-So the fix holds up on unseen bf16 models (a 71% reduction), less well than the
-dev set suggested, and does nothing for fp16. What is still flagged on the fresh
-batch: tensors with no role peers in the sample, read against the whole model
-(embeddings, `lm_head`, FP8 scales, MoE expert blocks: 7 of 13 flags); tensors
-stored with *less* precision than the rest (a bit plane with mean exactly 0,
-which a payload cannot produce but S4 still flags); and layer-0/3 norms of
-heavily quantized MLX releases and AWQ scales. Detection of a random payload in
-16-bit files stays low (2 / 19 bf16, 2–3 / 9 fp16), because their low bits are
-mostly fair coins.
+That first revision fixed bf16 (14 → 4 of 20 on a fresh batch) but did nothing
+for fp16 (5 → 5 of 10). The flags that remained shared one shape: almost all were
+bit planes *further* from a fair coin than their reference — a bit stuck at 0 in
+a quantized embedding or `lm_head`, a norm with fewer than half its low bits set.
+A random payload can never produce that: it only adds entropy, pushing a bit
+plane *towards* 0.5.
 
-Practical reading: on bf16/fp16 files S4 is still not reliable enough to act on
-alone; a clean result there means as little as on fair-coin float32 models.
+So the current S4 (commit 67404c6) flags a bit plane only when it is *nearer* 0.5
+than its reference, and skips quantization-scale tensors (AWQ `.scales`, FP8
+`weight_scale_inv`), which are not weights and follow the quantization grid. This
+loses detection of constant, zero or text payloads — they bias a bit *away* from
+0.5, exactly like low precision, and cannot be told apart from one file — which
+is left to the base diff (S5).
 
-The fresh batch is not a random sample: by the selection rule, many of its "bf16"
-models are quantized releases (FP8, NVFP4, MLX 4–8 bit) in which only norms,
-embeddings and scales are bf16, and four are MLX variants of one Qwen3.8-27B.
+Validated once on a **third fresh batch** of 40 16-bit models (20 bf16, 20 fp16),
+chosen by the same rule and committed before their weights were read
+(`results/hf_models_batch3.json`). Models with an S4 false positive, the first
+revision against the current rule on identical samples (E0c):
+
+| Stored as | dev batches | batch 2 | **batch 3 (held out): first → current** |
+|---|---|---|---|
+| bf16 | 10 → 2 of 40* | 14 → 4 of 20 | **5 → 1 of 20** |
+| fp16 | — | 5 → 5 of 10 | **1 → 0 of 20** |
+
+<sub>*dev bf16/fp16 recount under the current rule; the per-batch comparison is in RESULTS.md.</sub>
+
+So on fully unseen models the current rule flags **1 of 20 bf16 and 0 of 20 fp16**.
+The one bf16 flag is an NVFP4 4-bit-quantized release. The batch-3 fp16 models are
+mostly AWQ/GPTQ, which the first revision already passed, so the larger fp16 gain
+shows on the dev batches (10 → 2 of 40), not here.
+
+Detection of a random payload in 16-bit files stays low (≈2 / 20 bf16, 2 / 20
+fp16): their low bits are mostly fair coins, where no single-file check has a
+signal. So a clean S4 on a 16-bit file still means little — the base diff is the
+check to rely on — but S4 no longer *cries wolf* on clean quantized models.
+
+The batches are not random samples: by the selection rule, many "bf16" and "fp16"
+models are quantized releases (FP8, NVFP4, AWQ, GPTQ, MLX) in which only norms,
+embeddings and scales keep 16-bit precision.
 
 Two weaknesses of the role rule, found on dev models after it was written:
 
@@ -257,4 +280,4 @@ real fine-tune/base pairs in E4 rather than adjusted to this result.
 - The survey tests detection on 64 KB samples, not whole files, and only the
   single-file checks; accuracy cost (E2) is measured only on the two vision
   models.
-- S4 on fp16 files is not fixed (section 0c); S4 role peers need a better estimate of clean spread for small groups.
+- S4 role peers still need a better estimate of clean spread for very small groups (RegNet case); the two residual bf16 flags are extreme sub-4-bit quantized models.

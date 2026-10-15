@@ -4,7 +4,7 @@
 
 ## E0 — false positives on clean models
 
-Run `E0-2026-10-14T18:53:02Z-7fd9378`. Single-file checks (S3+S4) on clean ImageNet models; 0 means no false alarm on an unmodified model. It does not mean a payload would be seen: that is E1.
+Run `E0-2026-10-15T06:17:45Z-4f92aaa`. Single-file checks (S3+S4) on clean ImageNet models; 0 means no false alarm on an unmodified model. It does not mean a payload would be seen: that is E1.
 
 `dev` models were looked at while the checks were designed; `held out` models were not.
 
@@ -17,7 +17,7 @@ Run `E0-2026-10-14T18:53:02Z-7fd9378`. Single-file checks (S3+S4) on clean Image
 | mobilenet_v2 | held out | 262 | clean | 0 |
 | mobilenet_v3_large | held out | 266 | clean | 0 |
 | regnet_y_400mf | held out | 331 | suspicious | 1 |
-| shufflenet_v2_x0_5 | held out | 282 | suspicious | 1 |
+| shufflenet_v2_x0_5 | held out | 282 | clean | 0 |
 | squeezenet1_1 | held out | 52 | clean | 0 |
 
 
@@ -294,6 +294,74 @@ Random bytes fill the low k bits of the sample of the largest tensor the clean s
 | `remsky/kokoro-inno-clone-tuner` | F16 | F16 file | – | 1 | no / no / – |
 | `thenlper/gte-small` | F16 | F16 file | – | 0 | no / no / – |
 
+## E0b / E1b — single-file checks on public Hugging Face models (`hf_models_batch3.json`)
+
+Runs `E0b-2026-10-15T06:18:53Z-e896b57` and `E1b-2026-10-15T06:18:54Z-e896b57`. Sampling: 6 roles x 4 layers (role peers for S4), up to 24 tensors, first 32 KB of each, fetched with HTTP range requests; the list is frozen in `results/hf_models_batch3.json`. Groups come from what S3/S4 measure on the clean samples.
+
+### E0b — what the weights look like, and false positives
+
+| Group | Models | Models with a false positive | Flagged tensors / sampled |
+|---|--:|--:|--:|
+| BF16 file | 20 | 1 | 1 / 437 |
+| F16 file | 19 | 0 | 0 / 434 |
+
+39 models sampled, 1 could not be.
+
+- `cyankiwi/Qwen3.6-27B-AWQ-INT4`: no float tensors large enough to sample
+
+### E1b — would the file alone expose a random low-bit payload?
+
+Random bytes fill the low k bits of the sample of the largest tensor the clean scan did not flag. Cells: models where S3 or S4 flagged that tensor / models tested.
+
+| Group | k=1 | k=4 | k=8 |
+|---|--:|--:|--:|
+| BF16 file | 3 / 20 | 3 / 20 | – |
+| F16 file | 1 / 19 | 1 / 19 | – |
+
+### Per model
+
+| Model | Stored | Group | Signature (bits 0–3) | False positives | Payload seen at k=1 / 4 / 8 |
+|---|---|---|---|--:|---|
+| `CMSManhattan/JiRackUltra_1b` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Qwen/Qwen2.5-VL-3B-Instruct` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Qwen/Qwen3-14B-AWQ` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Qwen/Qwen3-8B-AWQ` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Qwen/Qwen3-Embedding-8B` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Qwen/Qwen3-Reranker-4B` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Qwen/Qwen3-TTS-12Hz-1.7B-Base` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Qwen/Qwen3-VL-2B-Instruct` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Qwen/Qwen3.5-0.8B` | BF16 | BF16 file | – | 0 | yes / yes / – |
+| `Qwen/Qwen3.5-27B` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Qwen/Qwen3.6-27B` | BF16 | BF16 file | – | 0 | no / no / – |
+| `Qwen/Qwen3.8-Flash-Next` | BF16 | BF16 file | – | 0 | no / no / – |
+| `deepseek-ai/DeepSeek-OCR` | BF16 | BF16 file | 0.31, 0.52 | 0 | yes / yes / – |
+| `jinaai/jina-embeddings-v3` | BF16 | BF16 file | – | 0 | no / no / – |
+| `mistralai/Mistral-7B-Instruct-v0.3` | BF16 | BF16 file | – | 0 | no / no / – |
+| `mistralai/Voxtral-Mini-4B-Realtime-2602` | BF16 | BF16 file | – | 0 | no / no / – |
+| `unsloth/Qwen3.8-27B-NVFP4` | BF16 | BF16 file | – | 1 | no / no / – |
+| `vikhyatk/moondream2` | BF16 | BF16 file | 0.40, 0.53 | 0 | yes / yes / – |
+| `zai-org/GLM-5.3` | BF16 | BF16 file | – | 0 | no / no / – |
+| `EleutherAI/pythia-14m` | F16 | F16 file | – | 0 | no / no / – |
+| `EleutherAI/pythia-70m` | F16 | F16 file | – | 0 | no / no / – |
+| `LGAI-EXAONE/EXAONE-3.5-7.8B-Instruct-AWQ` | F16 | F16 file | – | 0 | no / no / – |
+| `MoritzLaurer/mDeBERTa-v3-base-xnli-multilingual-nli-2mil7` | F16 | F16 file | – | 0 | no / no / – |
+| `Orion-zhen/Qwen2.5-Coder-7B-Instruct-AWQ` | F16 | F16 file | – | 0 | no / no / – |
+| `QuantTrio/Qwen3-VL-30B-A3B-Instruct-AWQ` | F16 | F16 file | 0.00, 0.00, 0.00 | 0 | no / no / – |
+| `Qwen/Qwen2.5-32B-Instruct-GPTQ-Int4` | F16 | F16 file | 0.00, 0.00, 0.00 | 0 | no / no / – |
+| `Qwen/Qwen2.5-3B-Instruct-AWQ` | F16 | F16 file | – | 0 | no / no / – |
+| `Qwen/Qwen2.5-72B-Instruct-AWQ` | F16 | F16 file | 0.00, 0.00, 0.00 | 0 | no / no / – |
+| `Qwen/Qwen2.5-Coder-32B-Instruct-AWQ` | F16 | F16 file | 0.00, 0.00, 0.00 | 0 | no / no / – |
+| `Qwen/Qwen2.5-Coder-7B-Instruct-AWQ` | F16 | F16 file | – | 0 | no / no / – |
+| `ZhengPeng7/BiRefNet` | F16 | F16 file | – | 0 | no / no / – |
+| `casperhansen/llama-3.3-70b-instruct-awq` | F16 | F16 file | – | 0 | no / no / – |
+| `cyankiwi/gemma-4-26B-A4B-it-AWQ-4bit` | F16 | F16 file | 0.00, 0.00, 0.00 | 0 | no / no / – |
+| `distil-whisper/distil-large-v3` | F16 | F16 file | – | 0 | no / no / – |
+| `gabor-hosu/e5-mistral-7b-instruct-bnb-4bit` | F16 | F16 file | 0.00, 0.00, 0.00 | 0 | yes / yes / – |
+| `llamafactory/tiny-random-Llama-3` | F16 | F16 file | – | 0 | no / no / – |
+| `microsoft/phi-2` | F16 | F16 file | – | 0 | no / no / – |
+| `mixedbread-ai/mxbai-rerank-xsmall-v1` | F16 | F16 file | – | 0 | no / no / – |
+
 
 ## E0c — week-4 S4 rule against the current one, same samples
 
@@ -312,6 +380,13 @@ Random bytes fill the low k bits of the sample of the largest tensor the clean s
 | F32 | 20 | 2 | 2 |
 | BF16 | 20 | 14 | 4 |
 | F16 | 10 | 5 | 5 |
+
+`hf_models_batch3.json`, run `E0c-2026-10-15T06:26:14Z-e896b57`. Models with at least one S4 false positive on the clean samples:
+
+| Stored as | Models | Week-4 rule | Current rule |
+|---|--:|--:|--:|
+| BF16 | 20 | 5 | 1 |
+| F16 | 20 | 1 | 0 |
 
 
 ## E1c — S3 on bf16 weights saved as float32

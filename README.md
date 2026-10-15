@@ -31,7 +31,7 @@ largest payload that no single-file check can see, and what hiding it costs the 
 | S1 | Pickle imports, found by a restricted unpickler and an opcode walk; nothing is ever executed | done |
 | S2 | Byte coverage: every byte belongs to a header, a tensor or zero padding | done |
 | S3 | Precision history: low bits that should be zero, given how the model was trained | done |
-| S4 | Bit-plane statistics per tensor (a biased plane or a non-uniform low byte) | done |
+| S4 | Bit-plane statistics vs role peers; flags bits driven toward a fair coin | done |
 | S5 | Bit-level diff against the claimed base model (`--base`), cutoff calibrated on real fine-tunes | done |
 
 A random payload in the low bits of a genuinely fp32-trained model is invisible to
