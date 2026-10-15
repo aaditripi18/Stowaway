@@ -141,6 +141,12 @@ def s4_bit_planes(floats: dict[str, RawTensor], low_bits: dict[str, int] | None 
     findings = []
     by_dtype: dict[str, list] = {}
     for name, t in sorted(floats.items()):
+        # Quantization metadata (AWQ `.scales`, FP8 `weight_scale_inv`) is not
+        # weights and its low bits follow the quantization grid, not a model
+        # signature; S4 would read it as anomalous. It is also a poor place to
+        # hide a payload (few values, read at load time).
+        if "scale" in name.lower():
+            continue
         v = t.data[informative(t.data, t.dtype)]
         if v.size < MIN_ELEMENTS:
             continue
@@ -180,22 +186,24 @@ def s4_bit_planes(floats: dict[str, RawTensor], low_bits: dict[str, int] | None 
             else:
                 sig, tau, _ = model_ref
                 against = "the model"
-            # Where the reference has a signature, only movement towards (or past)
-            # the fair coin counts: that is what a random payload does, while clean
-            # tensors can carry a stronger version of the same signature
-            # (MobileNetV3's squeeze-excitation layers). Where it has none, any
-            # departure counts, which keeps text or constant payloads visible.
-            structured = np.abs(sig - 0.5) > 0.02
-            toward_coin = -np.sign(sig - 0.5)
+            # A random payload adds entropy, so it moves a bit plane *towards* the
+            # fair coin (0.5) and never away from it. So the only suspicious
+            # direction is closer to 0.5 than the reference. Flagging any departure
+            # (the earlier rule) also flagged tensors that are *further* from 0.5 --
+            # clean low-precision tensors whose low bit is stuck at 0, common in
+            # 16-bit and quantized files -- which a payload could never produce
+            # (Hugging Face fp16 survey, week 5). This loses constant/zero payloads,
+            # which bias a bit away from 0.5 and are indistinguishable from
+            # precision from one file; the base diff (S5) catches those.
             se = np.sqrt(np.maximum(sig * (1 - sig), 1e-6) / n)
-            z = (m - sig) / np.sqrt(se ** 2 + tau ** 2)
-            score = np.where(structured, z * toward_coin, np.abs(z))
-            b = int(np.argmax(score))
-            if score[b] > Z_FLAG:
+            denom = np.sqrt(se ** 2 + tau ** 2)
+            closer = (np.abs(sig - 0.5) - np.abs(m - 0.5)) / denom  # >0: m nearer 0.5 than ref
+            b = int(np.argmax(closer))
+            if closer[b] > Z_FLAG:
                 findings.append(Finding("S4", "medium", "lowbit-anomaly",
                                         f"tensor {name!r}: low bit {b} is set in {m[b]:.1%} of weights, "
-                                        f"against {sig[b]:.1%} in {against} (z {z[b]:+.1f})",
-                                        {"tensor": name, "bit": b, "z": round(float(z[b]), 2),
+                                        f"nearer a fair coin than {sig[b]:.1%} in {against} (z {closer[b]:+.1f})",
+                                        {"tensor": name, "bit": b, "z": round(float(closer[b]), 2),
                                          "mean": round(float(m[b]), 4), "expected": round(float(sig[b]), 4),
                                          "reference": "role" if len(peers) >= 3 else "model",
                                          "elements": n}))

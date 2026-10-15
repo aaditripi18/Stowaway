@@ -51,18 +51,14 @@ def test_s4_clean_fp32_has_no_findings():
     assert s4_bit_planes(_fp32_model(size=8192)) == []
 
 
-def test_s4_flags_zeroed_low_bits():
-    # A payload that sets the low byte to a constant makes bit planes maximally biased.
+def test_s4_does_not_flag_payloads_that_bias_away_from_half():
+    # S4 detects the random-payload signature (bits driven towards a fair coin).
+    # A constant or text payload biases bits AWAY from 0.5, which is
+    # indistinguishable from a clean low-precision tensor, so S4 leaves it to S5.
     model = _fp32_model(size=8192)
-    poisoned = embed(model, b"\x00" * 1000, k=8, spread=1)
-    assert "lowbit-anomaly" in [f.code for f in s4_bit_planes(poisoned)]
-
-
-def test_s4_flags_unencrypted_text_payload():
-    model = _fp32_model(size=8192)
-    # ASCII text is far from uniform in its low bits.
-    poisoned = embed(model, b"the quick brown fox " * 200, k=8, spread=1)
-    assert "lowbit-anomaly" in [f.code for f in s4_bit_planes(poisoned)]
+    for payload in (b"\x00" * 1000, b"\xff" * 1000, b"the quick brown fox " * 200):
+        poisoned = embed(model, payload, k=8, spread=1)
+        assert "lowbit-anomaly" not in [f.code for f in s4_bit_planes(poisoned)]
 
 
 def test_s4_misses_encrypted_payload_this_is_the_point():
@@ -136,11 +132,11 @@ def test_s4_stronger_signature_in_one_layer_type_is_not_flagged():
     assert not [f for f in s4_bit_planes(model) if f.code == "lowbit-anomaly"]
 
 
-def test_s4_constant_payload_in_structured_model_is_flagged():
+def test_s4_constant_payload_in_structured_model_is_not_flagged():
+    # \xff pushes bit 0 to 1.0, away from 0.5: not the random-payload signature.
     model = _structured_model()
     poisoned = embed(model, b"\xff" * 4000, k=8, spread=1, names=["layer0"])
-    anomalies = [f for f in s4_bit_planes(poisoned) if f.code == "lowbit-anomaly"]
-    assert [f.detail["tensor"] for f in anomalies] == ["layer0"]
+    assert not [f for f in s4_bit_planes(poisoned) if f.code == "lowbit-anomaly"]
 
 
 def test_widen_matches_torch_float():
@@ -163,33 +159,41 @@ def test_s4_examines_the_same_mantissa_fraction_in_every_format():
     assert S4_BITS == {"F32": 8, "F16": 3, "BF16": 2}
 
 
-def _bf16_layers(n_layers=5, size=8192, seed=11):
-    """A bf16 model in the shape of a transformer checkpoint: per layer, a
-    projection (values near 0) and a layer-norm gain (values near 1.0, spanning
-    only a few bf16 steps, so every mantissa bit reflects the distribution)."""
+def _biased_bf16(size, frac_bit0, seed):
+    """A bf16 tensor whose bit 0 is set in `frac_bit0` of informative values."""
     rng = np.random.default_rng(seed)
+    u = RawTensor.from_float((0.02 * rng.standard_normal(size)).astype(np.float32), dtype="BF16").data
+    ones = rng.random(size) < frac_bit0
+    u = np.where(ones, u | np.uint16(1), u & ~np.uint16(1)).astype(np.uint16)
+    return RawTensor("BF16", (size,), u)
+
+
+def _bf16_layers(n_layers=5, size=8192):
+    """A bf16 checkpoint where most tensors are biased on bit 0 (~42%, as real
+    bf16 norm/projection weights are) but each layer's router is a fair coin
+    (~50%), like the routers and embeddings that sit at 0.5 in real models."""
     model = {}
     for i in range(n_layers):
-        for proj in ("self_attn.q_proj", "self_attn.k_proj", "self_attn.v_proj", "mlp.up_proj"):
-            model[f"layers.{i}.{proj}.weight"] = RawTensor.from_float(
-                (0.02 * rng.standard_normal(size)).astype(np.float32), dtype="BF16")
-        model[f"layers.{i}.input_layernorm.weight"] = RawTensor.from_float(
-            (1.0 + 0.02 * rng.standard_normal(size)).astype(np.float32), dtype="BF16")
+        for j, proj in enumerate(("self_attn.q_proj", "mlp.up_proj", "input_layernorm")):
+            model[f"layers.{i}.{proj}.weight"] = _biased_bf16(size, 0.42, seed=100 + i * 10 + j)
+        model[f"layers.{i}.mlp.gate.router.weight"] = _biased_bf16(size, 0.50, seed=900 + i)
     return model
 
 
-def test_s4_role_peers_keep_layernorm_from_looking_like_a_payload():
+def test_s4_role_peers_keep_a_fair_coin_type_from_looking_like_a_payload():
+    # The routers sit at 0.5 while the model sits at 0.42; a payload also sits at
+    # 0.5, so against the whole model a clean router looks like one. Role peers fix it.
     model = _bf16_layers()
     assert not [f for f in s4_bit_planes(model) if f.code == "lowbit-anomaly"]
-    # read against the whole model (no role peers), the norms are flagged
     renamed = {f"t{chr(97 + i)}": t for i, t in enumerate(model.values())}  # no digits: no peers
-    assert [f for f in s4_bit_planes(renamed) if f.code == "lowbit-anomaly"]
+    flagged = [f.detail["mean"] for f in s4_bit_planes(renamed) if f.code == "lowbit-anomaly"]
+    assert flagged and all(abs(m - 0.5) < 0.02 for m in flagged)  # the fair-coin routers
 
 
-def test_s4_constant_payload_flagged_against_role_peers():
+def test_s4_random_payload_flagged_against_role_peers():
     model = _bf16_layers()
-    target = "layers.2.mlp.up_proj.weight"
-    poisoned = embed(model, b"\xff" * 2000, k=2, names=[target])
+    target = "layers.2.mlp.up_proj.weight"  # biased at 0.42; a random payload pulls it to 0.5
+    poisoned = embed(model, np.random.default_rng(1).bytes(2000), k=2, names=[target])
     flagged = [f for f in s4_bit_planes(poisoned) if f.code == "lowbit-anomaly"]
     assert [f.detail["tensor"] for f in flagged] == [target]
     assert flagged[0].detail["reference"] == "role"
@@ -202,26 +206,30 @@ def test_role_strips_layer_numbers():
 
 def _downsample_model(seed=12):
     """ResNet-like: large 4-D convs (fair-coin bit 0) and small 1-D BatchNorm
-    weights (bit 0 set in ~48.5%), both named layerN.downsample.M.weight."""
+    weights (bit 0 biased to ~42%), both named layerN.downsample.M.weight. The
+    convs sit at 0.5; read against the biased norms they would look like a
+    payload, so they must not share a peer group with them."""
     rng = np.random.default_rng(seed)
     model = {}
-    for i in range(2, 5):
+    for i in range(1, 5):
         u = rng.standard_normal(131072).astype(np.float32).view(np.uint32).copy()
         model[f"layer{i}.downsample.0.weight"] = RawTensor("F32", (512, 256, 1, 1), u)
     for i in range(1, 5):
         norm = rng.standard_normal(4096).astype(np.float32).view(np.uint32).copy()
-        norm = np.where(rng.random(4096) < 0.485, norm | 1, norm & ~np.uint32(1)).astype(np.uint32)
+        norm = np.where(rng.random(4096) < 0.42, norm | 1, norm & ~np.uint32(1)).astype(np.uint32)
         model[f"layer{i}.downsample.1.weight"] = RawTensor("F32", (4096,), norm)
     return model
 
 
-def test_s4_peers_must_match_ndim():
+def test_s4_peers_group_by_role_and_ndim():
+    # Conv (4-D, fair coin) and BatchNorm (1-D, biased) share a role name. They
+    # must land in separate peer groups, or the conv is read against the norms.
+    from stowaway.weights import role
     model = _downsample_model()
+    keys = {(role(n), len(t.shape)) for n, t in model.items()}
+    assert ("layer#.downsample.#.weight", 4) in keys and ("layer#.downsample.#.weight", 1) in keys
     assert not [f for f in s4_bit_planes(model) if f.code == "lowbit-anomaly"]
-    # without the ndim distinction (all shapes 1-D) the convs are read against norms
-    same = {n: (t.data.size,) for n, t in model.items()}
-    assert [f for f in s4_bit_planes(model, shapes=same) if f.code == "lowbit-anomaly"]
-    # sampled 1-D data with the full shapes given separately behaves like the full model
+    # sampled 1-D data with the full shapes supplied separately stays clean too
     flat = {n: RawTensor("F32", (t.data.size,), t.data) for n, t in model.items()}
     shapes = {n: t.shape for n, t in model.items()}
     assert not [f for f in s4_bit_planes(flat, shapes=shapes) if f.code == "lowbit-anomaly"]
