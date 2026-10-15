@@ -33,6 +33,11 @@ describe("the page cannot exfiltrate the file", () => {
     expect(html).toMatch(/default-src 'none'/);
   });
 
+  it("loads nothing from an external origin (fonts, styles, scripts are self-hosted)", () => {
+    const html = readFileSync(join(WEB, "index.html"), "utf-8");
+    expect(html).not.toMatch(/https?:\/\//);
+  });
+
   it("uses no network API anywhere in src/", () => {
     const forbidden = /\b(fetch|XMLHttpRequest|WebSocket|EventSource|sendBeacon|importScripts)\b/;
     const offenders: string[] = [];

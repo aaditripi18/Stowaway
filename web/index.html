@@ -1,26 +1,233 @@
 <!doctype html>
-<html lang="en">
+<html class="dark" lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- The page technically cannot send your file anywhere: no network
-         connection of any kind is allowed. This is the enforced version of
-         "nothing is uploaded". connect-src 'none' blocks fetch, XHR, WebSocket,
-         EventSource and sendBeacon; the rest lock down what may load. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- The page technically cannot send your file anywhere. connect-src 'none'
+         blocks every outbound connection (fetch, XHR, WebSocket, EventSource,
+         sendBeacon); default-src 'none' blocks everything not listed; all assets
+         are same-origin ('self'). This is the enforced form of "nothing is
+         uploaded". -->
     <meta
       http-equiv="Content-Security-Policy"
       content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'"
     />
     <title>Stowaway</title>
   </head>
-  <body>
-    <main id="app">
-      <h1>Stowaway</h1>
-      <p>Drop a <code>.safetensors</code> file to scan it. It never leaves this page.</p>
-      <div id="drop">Drop a model file here, or click to choose</div>
-      <input id="file" type="file" hidden />
-      <pre id="report" hidden></pre>
+  <body class="bg-surface font-body-md text-body-md text-on-surface antialiased">
+    <header class="fixed top-0 left-0 right-0 h-16 z-50 bg-surface-container-lowest/90 backdrop-blur-md border-b border-outline-variant/30">
+      <div class="w-full px-gutter md:px-margin h-full flex items-center justify-between gap-space-md">
+        <div class="flex items-center gap-space-lg">
+          <div class="flex items-center gap-space-sm">
+            <div class="w-7 h-7 rounded bg-surface-container-high border border-primary/30 flex items-center justify-center text-primary">
+              <span class="material-symbols-outlined text-[18px]">shield_lock</span>
+            </div>
+            <div class="flex flex-col">
+              <span class="font-headline-md text-title-sm font-bold tracking-tight text-on-surface leading-none">STOWAWAY</span>
+              <span class="font-label-xs text-label-xs text-on-surface-variant/80 tracking-wider hidden sm:block">FIND WHAT MODEL SCANNERS MISS</span>
+            </div>
+          </div>
+          <div class="relative group hidden lg:flex items-center gap-space-xs px-space-sm py-1 rounded bg-surface-container border border-secondary/20">
+            <span class="w-2 h-2 rounded-full bg-secondary"></span>
+            <span class="font-label-xs text-label-xs text-secondary tracking-widest font-semibold uppercase">RUNS IN YOUR BROWSER</span>
+            <span class="material-symbols-outlined text-[14px] text-secondary/70">lock</span>
+            <div class="absolute left-0 top-full mt-1.5 hidden group-hover:flex flex-col w-80 p-space-sm rounded bg-surface-container-high border border-outline-variant shadow-2xl z-50 pointer-events-none">
+              <div class="flex items-center gap-1.5 text-secondary font-label-xs text-label-xs font-semibold uppercase">
+                <span class="material-symbols-outlined text-[14px]">verified_user</span>No upload, enforced by the page
+              </div>
+              <p class="font-code-inline text-code-inline text-on-surface-variant mt-1">
+                The page's Content-Security-Policy sets <code class="text-primary">connect-src 'none'</code>, so the browser blocks every network request. The file is read and scanned in ordinary browser JavaScript; it never leaves this tab.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center gap-space-sm">
+          <a class="font-label-xs text-label-xs text-on-surface-variant hover:text-on-surface uppercase tracking-wider hidden sm:block" href="#how">How it works</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="w-full min-h-screen pt-16 bg-surface">
+      <div class="w-full max-w-7xl mx-auto px-gutter md:px-margin py-space-lg flex flex-col gap-space-lg">
+
+        <!-- STATE 1: EMPTY -->
+        <section class="flex flex-col items-center justify-center py-space-xl gap-space-lg" id="empty-state">
+          <div class="text-center max-w-2xl flex flex-col items-center gap-space-xs">
+            <div class="inline-flex items-center gap-space-xs px-space-sm py-0.5 rounded bg-surface-container text-secondary font-label-xs text-label-xs uppercase tracking-widest mb-space-xs">
+              <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>Client-side model-file scanner
+            </div>
+            <h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight">Inspect model weights before you load them</h1>
+            <p class="font-body-lg text-body-lg text-on-surface-variant">
+              Drop a model file to check it for unsafe pickle code, bytes the format does not account for, and data hidden in the weights — without uploading a single byte.
+            </p>
+          </div>
+
+          <div class="relative group w-full max-w-3xl bg-surface-container-low hover:bg-surface-container transition-all cursor-pointer rounded-xl p-space-xl flex flex-col items-center justify-center text-center shadow-lg" id="drop-zone">
+            <input accept=".safetensors,.pt,.pth,.bin,.ckpt,.gguf" class="hidden" id="file-input" type="file" />
+            <div class="w-14 h-14 rounded-full bg-surface-container-high group-hover:scale-105 group-hover:bg-primary/10 transition-all flex items-center justify-center text-primary mb-space-md">
+              <span class="material-symbols-outlined text-[30px]">neurology</span>
+            </div>
+            <h3 class="font-headline-md text-headline-md text-on-surface tracking-tight mb-space-xs">Drop a model file to scan it</h3>
+            <p class="font-body-md text-body-md text-on-surface-variant max-w-lg mb-space-md">
+              <code class="text-primary font-code-inline text-code-inline">.safetensors</code> is scanned in full here;
+              <code class="text-primary font-code-inline text-code-inline">.pt</code>,
+              <code class="text-primary font-code-inline text-code-inline">.gguf</code> and the rest are read by the Python tool for now. Files never leave your browser.
+            </p>
+            <div class="flex items-center gap-space-sm">
+              <button class="px-space-md py-space-sm bg-primary text-on-primary rounded font-label-md text-label-md font-bold uppercase tracking-wider hover:opacity-90 transition-opacity flex items-center gap-1.5 shadow-md" id="browse-btn" type="button">
+                <span class="material-symbols-outlined text-[16px]">file_open</span> Choose a file
+              </button>
+            </div>
+            <div class="mt-space-lg flex items-center gap-space-sm text-label-xs font-label-xs text-on-surface-variant/70">
+              <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px] text-secondary">verified_user</span> Scanned in this tab</span>
+              <span>•</span>
+              <span>Read into memory, nothing sent</span>
+            </div>
+          </div>
+
+          <div class="w-full max-w-3xl p-space-md rounded bg-surface-container-lowest hover:bg-surface-container-low transition-colors flex flex-col sm:flex-row items-center justify-between gap-space-md" id="base-model-drop">
+            <div class="flex items-center gap-space-sm">
+              <div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center text-outline">
+                <span class="material-symbols-outlined text-[18px]">difference</span>
+              </div>
+              <div class="flex flex-col text-left">
+                <span class="font-title-sm text-title-sm text-on-surface font-semibold">Compare against a base model (optional)</span>
+                <span class="font-body-md text-body-md text-on-surface-variant">Add the claimed base model to diff the weights bit by bit (the S5 check). Ported to the browser soon; available now in the Python tool.</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- STATE 2: SCANNING -->
+        <section class="hidden flex-col items-center justify-center py-space-xl gap-space-lg" id="scanning-state">
+          <div class="w-full max-w-2xl bg-surface-container-low rounded-xl p-space-lg flex flex-col gap-space-md shadow-xl">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-space-sm">
+                <div class="w-8 h-8 rounded bg-primary/20 text-primary flex items-center justify-center animate-spin">
+                  <span class="material-symbols-outlined text-[18px]">autorenew</span>
+                </div>
+                <div class="flex flex-col">
+                  <span class="font-title-sm text-title-sm text-on-surface font-bold tracking-tight" id="scan-file-label">model.safetensors</span>
+                  <span class="font-label-xs text-label-xs text-on-surface-variant" id="scan-sub">Reading in this tab</span>
+                </div>
+              </div>
+              <span class="font-code-inline text-code-inline text-primary font-bold" id="scan-percent"></span>
+            </div>
+            <div class="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden relative">
+              <div class="h-full bg-primary-container rounded-full transition-all duration-300" id="scan-progress-bar"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- STATE 3: RESULT DASHBOARD -->
+        <div class="hidden flex-col gap-space-lg w-full" id="result-dashboard">
+          <div class="w-full rounded-xl p-space-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md transition-colors" id="verdict-banner">
+            <div class="flex items-start md:items-center gap-space-md">
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" id="verdict-icon-container">
+                <span class="material-symbols-outlined text-[28px]" id="verdict-icon">warning</span>
+              </div>
+              <div class="flex flex-col">
+                <div class="flex items-center gap-space-xs flex-wrap">
+                  <span class="font-label-xs text-label-xs uppercase px-2 py-0.5 rounded font-bold tracking-widest" id="verdict-tag">VERDICT</span>
+                  <span class="font-label-xs text-label-xs text-on-surface-variant font-code-inline" id="verdict-timestamp"></span>
+                </div>
+                <h2 class="font-headline-md text-headline-md text-on-surface tracking-tight mt-1" id="verdict-headline"></h2>
+                <p class="font-body-md text-body-md text-on-surface-variant mt-0.5" id="verdict-subtext"></p>
+              </div>
+            </div>
+            <div class="flex items-center gap-space-xs shrink-0 self-end md:self-center">
+              <button class="px-space-md py-space-sm bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-label-md rounded font-semibold uppercase tracking-wider flex items-center gap-1.5 transition-colors" id="export-btn">
+                <span class="material-symbols-outlined text-[16px]">download</span> Export report JSON
+              </button>
+              <button class="px-space-md py-space-sm bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md rounded font-semibold uppercase tracking-wider flex items-center gap-1.5 transition-colors" id="rescan-btn">
+                <span class="material-symbols-outlined text-[16px]">restart_alt</span> Scan another
+              </button>
+            </div>
+          </div>
+
+          <section class="grid grid-cols-2 md:grid-cols-5 gap-space-sm w-full" id="fact-tiles">
+            <div class="p-space-md rounded bg-surface-container-low flex flex-col justify-between">
+              <span class="font-label-xs text-label-xs uppercase text-on-surface-variant tracking-wider">File</span>
+              <div class="mt-space-sm"><span class="font-code-inline text-code-inline text-on-surface font-bold truncate block" id="tile-file"></span>
+                <span class="font-label-xs text-label-xs text-secondary flex items-center gap-0.5 mt-0.5"><span class="material-symbols-outlined text-[12px]">verified</span> Local only</span></div>
+            </div>
+            <div class="p-space-md rounded bg-surface-container-low flex flex-col justify-between">
+              <span class="font-label-xs text-label-xs uppercase text-on-surface-variant tracking-wider">Format</span>
+              <div class="mt-space-sm"><span class="font-code-inline text-code-inline text-primary font-bold" id="tile-format"></span>
+                <span class="font-label-xs text-label-xs text-on-surface-variant mt-0.5 block" id="tile-dtypes"></span></div>
+            </div>
+            <div class="p-space-md rounded bg-surface-container-low flex flex-col justify-between">
+              <span class="font-label-xs text-label-xs uppercase text-on-surface-variant tracking-wider">Size</span>
+              <div class="mt-space-sm"><span class="font-code-inline text-code-inline text-on-surface font-bold block" id="tile-size"></span>
+                <span class="font-label-xs text-label-xs text-on-surface-variant font-code-inline mt-0.5 block" id="tile-size-bytes"></span></div>
+            </div>
+            <div class="p-space-md rounded bg-surface-container-low flex flex-col justify-between">
+              <span class="font-label-xs text-label-xs uppercase text-on-surface-variant tracking-wider">Tensors</span>
+              <div class="mt-space-sm"><span class="font-code-inline text-code-inline text-on-surface font-bold block" id="tile-tensors"></span>
+                <span class="font-label-xs text-label-xs text-on-surface-variant mt-0.5 block" id="tile-tensor-detail"></span></div>
+            </div>
+            <div class="p-space-md rounded bg-surface-container-low flex flex-col justify-between col-span-2 md:col-span-1">
+              <div class="flex items-center justify-between">
+                <span class="font-label-xs text-label-xs uppercase text-on-surface-variant tracking-wider">SHA-256</span>
+                <button class="text-primary hover:text-on-surface text-label-xs font-label-xs flex items-center gap-0.5" id="copy-hash" title="Copy full SHA-256">
+                  <span class="material-symbols-outlined text-[14px]">content_copy</span><span>Copy</span></button>
+              </div>
+              <div class="mt-space-sm"><span class="font-code-inline text-code-inline text-on-surface font-semibold tracking-wider block" id="tile-sha"></span></div>
+            </div>
+          </section>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg w-full">
+            <main class="lg:col-span-8 flex flex-col gap-space-md">
+              <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-space-sm bg-surface-container-low p-space-sm rounded">
+                <div class="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0" id="filter-buttons"></div>
+                <div class="flex items-center bg-surface-container px-2.5 py-1 rounded min-w-[180px]">
+                  <span class="material-symbols-outlined text-[16px] text-on-surface-variant mr-1.5">search</span>
+                  <input class="bg-transparent text-on-surface font-code-inline text-code-inline focus:outline-none w-full placeholder:text-outline" id="findings-search" placeholder="Filter findings…" type="text" />
+                </div>
+              </div>
+              <div class="flex flex-col gap-space-sm" id="findings-list"></div>
+              <div class="hidden flex-col items-center justify-center p-space-xl bg-surface-container-low rounded-xl text-center" id="clean-reassurance">
+                <div class="w-12 h-12 rounded-full bg-secondary/10 text-secondary flex items-center justify-center mb-space-sm">
+                  <span class="material-symbols-outlined text-[28px]">check_circle</span>
+                </div>
+                <h3 class="font-headline-md text-headline-md text-on-surface font-bold">Nothing hidden here</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant max-w-md mt-1" id="clean-reassurance-text"></p>
+              </div>
+            </main>
+
+            <aside class="lg:col-span-4 flex flex-col gap-space-md" id="explainer-strip">
+              <div class="bg-surface-container-low rounded p-space-md flex flex-col gap-space-sm">
+                <div class="flex items-center justify-between">
+                  <span class="font-label-xs text-label-xs font-bold uppercase tracking-wider text-outline">Checks</span>
+                  <span class="font-label-xs text-label-xs text-secondary font-code-inline" id="checks-ran"></span>
+                </div>
+                <div class="flex flex-col gap-space-xs mt-space-xs font-code-inline text-code-inline" id="check-list"></div>
+              </div>
+              <div class="bg-surface-container-low rounded p-space-md flex flex-col gap-space-xs" id="how">
+                <span class="font-label-xs text-label-xs font-bold uppercase tracking-wider text-outline">What each check does</span>
+                <div class="space-y-1.5 font-code-inline text-code-inline text-on-surface-variant mt-space-xs" id="check-legend"></div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </div>
     </main>
+
+    <div class="fixed bottom-6 right-6 z-50 transform translate-y-16 opacity-0 transition-all duration-300 pointer-events-none px-space-md py-space-sm rounded bg-surface-container-highest text-on-surface font-code-inline text-code-inline shadow-2xl flex items-center gap-2" id="toast">
+      <span class="material-symbols-outlined text-secondary text-[18px]">check</span><span id="toast-text"></span>
+    </div>
+
+    <footer class="w-full bg-surface-container-lowest border-t border-outline-variant/30 py-space-lg">
+      <div class="w-full px-gutter md:px-margin flex flex-col md:flex-row items-center justify-between gap-space-md">
+        <div class="flex items-center gap-space-sm">
+          <span class="font-headline-md text-title-sm font-bold tracking-tight text-on-surface">STOWAWAY</span>
+          <span class="font-label-xs text-label-xs text-on-surface-variant">scans locally in your browser</span>
+        </div>
+        <div class="flex items-center gap-space-md font-label-xs text-label-xs text-outline">
+          <span class="text-secondary">CSP: connect-src 'none'</span><span>•</span><span>no upload, no telemetry</span>
+        </div>
+      </div>
+    </footer>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
