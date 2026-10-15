@@ -1,0 +1,410 @@
+{
+ "selected": "2026-10-15",
+ "rule": [
+  "Rule (fixed before any model is sampled): walk the most-downloaded public models",
+  "that ship safetensors, skip gated ones and ones without a top-level weights file,",
+  "classify each by the float dtype holding most of its parameters, and keep the",
+  "first N of each dtype. The frozen list keeps the survey reproducible after the",
+  "rankings change."
+ ],
+ "scanned": 1000,
+ "skipped": {
+  "gated": 38,
+  "no_file": 11,
+  "no_float": 21,
+  "in_earlier_list": 120
+ },
+ "excluded_lists": [
+  "hf_models.json",
+  "hf_models_batch2.json"
+ ],
+ "models": [
+  {
+   "repo": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+   "file": "model.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 1928677440
+   },
+   "rank": 90
+  },
+  {
+   "repo": "Qwen/Qwen3-14B-AWQ",
+   "file": "model-00001-of-00002.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "I32": 13212057600,
+    "BF16": 1556249600
+   },
+   "rank": 93
+  },
+  {
+   "repo": "Qwen/Qwen3.5-0.8B",
+   "file": "model.safetensors-00001-of-00001.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "F32": 2592,
+    "BF16": 873436192
+   },
+   "rank": 96
+  },
+  {
+   "repo": "CMSManhattan/JiRackUltra_1b",
+   "file": "model.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 1777088000
+   },
+   "rank": 103
+  },
+  {
+   "repo": "Qwen/Qwen3-VL-2B-Instruct",
+   "file": "model.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 2127532032
+   },
+   "rank": 106
+  },
+  {
+   "repo": "Qwen/Qwen3-Reranker-4B",
+   "file": "model-00001-of-00002.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 4021784576
+   },
+   "rank": 107
+  },
+  {
+   "repo": "vikhyatk/moondream2",
+   "file": "model.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 1927237104
+   },
+   "rank": 110
+  },
+  {
+   "repo": "Qwen/Qwen3.6-27B",
+   "file": "model-00001-of-00015.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 27781427952
+   },
+   "rank": 115
+  },
+  {
+   "repo": "Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice",
+   "file": "model.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 1916676352
+   },
+   "rank": 118
+  },
+  {
+   "repo": "Qwen/Qwen3-8B-AWQ",
+   "file": "model-00001-of-00002.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 1244967936,
+    "I32": 6945767424
+   },
+   "rank": 119
+  },
+  {
+   "repo": "Qwen/Qwen3.8-Flash-Next",
+   "file": "model-00001-of-00131.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 179999981424,
+    "I64": 35
+   },
+   "rank": 120
+  },
+  {
+   "repo": "Qwen/Qwen3-Embedding-8B",
+   "file": "model-00001-of-00004.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 7567295488
+   },
+   "rank": 126
+  },
+  {
+   "repo": "mistralai/Mistral-7B-Instruct-v0.3",
+   "file": "consolidated.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 7248023552
+   },
+   "rank": 128
+  },
+  {
+   "repo": "deepseek-ai/DeepSeek-OCR",
+   "file": "model-00001-of-000001.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 3336106240
+   },
+   "rank": 130
+  },
+  {
+   "repo": "Qwen/Qwen2.5-VL-3B-Instruct",
+   "file": "model-00001-of-00002.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 3754622976
+   },
+   "rank": 132
+  },
+  {
+   "repo": "mistralai/Voxtral-Mini-4B-Realtime-2602",
+   "file": "model.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 4429679360
+   },
+   "rank": 135
+  },
+  {
+   "repo": "unsloth/Qwen3.8-27B-NVFP4",
+   "file": "model.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 1758366992,
+    "F8_E4M3": 10624696320,
+    "U8": 7486832640
+   },
+   "rank": 138
+  },
+  {
+   "repo": "Qwen/Qwen3.5-27B",
+   "file": "model.safetensors-00001-of-00011.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 27781419504,
+    "F32": 8448
+   },
+   "rank": 141
+  },
+  {
+   "repo": "jinaai/jina-embeddings-v3",
+   "file": "model.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 572310396
+   },
+   "rank": 144
+  },
+  {
+   "repo": "zai-org/GLM-5.3",
+   "file": "model-00001-of-00141.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 2103729152,
+    "F8_E4M3": 751226191872,
+    "F32": 19456
+   },
+   "rank": 147
+  },
+  {
+   "repo": "Qwen/Qwen2.5-Coder-32B-Instruct-AWQ",
+   "file": "model-00001-of-00005.safetensors",
+   "dtype": "F16",
+   "params": {
+    "I32": 31205621760,
+    "F16": 1558254592
+   },
+   "rank": 273
+  },
+  {
+   "repo": "gabor-hosu/e5-mistral-7b-instruct-bnb-4bit",
+   "file": "model.safetensors",
+   "dtype": "F16",
+   "params": {
+    "F32": 486912,
+    "F16": 131338240,
+    "U8": 7197502862
+   },
+   "rank": 289
+  },
+  {
+   "repo": "LGAI-EXAONE/EXAONE-3.5-7.8B-Instruct-AWQ",
+   "file": "model-00001-of-00002.safetensors",
+   "dtype": "F16",
+   "params": {
+    "F16": 839127040,
+    "I32": 6979321856
+   },
+   "rank": 296
+  },
+  {
+   "repo": "MoritzLaurer/mDeBERTa-v3-base-xnli-multilingual-nli-2mil7",
+   "file": "model.safetensors",
+   "dtype": "F16",
+   "params": {
+    "I64": 512,
+    "F16": 278811651
+   },
+   "rank": 304
+  },
+  {
+   "repo": "cyankiwi/gemma-4-26B-A4B-it-AWQ-4bit",
+   "file": "model-00001-of-00004.safetensors",
+   "dtype": "F16",
+   "params": {
+    "I32": 23948165120,
+    "F16": 1857771086
+   },
+   "rank": 315
+  },
+  {
+   "repo": "casperhansen/llama-3.3-70b-instruct-awq",
+   "file": "model-00001-of-00009.safetensors",
+   "dtype": "F16",
+   "params": {
+    "I32": 68451041280,
+    "F16": 2102665216
+   },
+   "rank": 321
+  },
+  {
+   "repo": "ZhengPeng7/BiRefNet",
+   "file": "model.safetensors",
+   "dtype": "F16",
+   "params": {
+    "I64": 497664,
+    "F16": 220202578
+   },
+   "rank": 342
+  },
+  {
+   "repo": "cyankiwi/Qwen3.6-27B-AWQ-INT4",
+   "file": "model-00001-of-00004.safetensors",
+   "dtype": "F16",
+   "params": {
+    "I64": 814,
+    "I32": 25471057920,
+    "F16": 3329252864,
+    "BF16": 524817648
+   },
+   "rank": 358
+  },
+  {
+   "repo": "Qwen/Qwen2.5-Coder-7B-Instruct-AWQ",
+   "file": "model-00001-of-00002.safetensors",
+   "dtype": "F16",
+   "params": {
+    "I32": 6525288448,
+    "F16": 1090328064
+   },
+   "rank": 362
+  },
+  {
+   "repo": "Orion-zhen/Qwen2.5-Coder-7B-Instruct-AWQ",
+   "file": "model-00001-of-00002.safetensors",
+   "dtype": "F16",
+   "params": {
+    "I32": 6525288448,
+    "F16": 1090328064
+   },
+   "rank": 369
+  },
+  {
+   "repo": "mixedbread-ai/mxbai-rerank-xsmall-v1",
+   "file": "model.safetensors",
+   "dtype": "F16",
+   "params": {
+    "F16": 70830337
+   },
+   "rank": 386
+  },
+  {
+   "repo": "EleutherAI/pythia-14m",
+   "file": "model.safetensors",
+   "dtype": "F16",
+   "params": {
+    "F16": 14067712
+   },
+   "rank": 390
+  },
+  {
+   "repo": "distil-whisper/distil-large-v3",
+   "file": "model.safetensors",
+   "dtype": "F16",
+   "params": {
+    "F16": 756405760
+   },
+   "rank": 445
+  },
+  {
+   "repo": "microsoft/phi-2",
+   "file": "model-00001-of-00002.safetensors",
+   "dtype": "F16",
+   "params": {
+    "F16": 2779683840
+   },
+   "rank": 470
+  },
+  {
+   "repo": "Qwen/Qwen2.5-72B-Instruct-AWQ",
+   "file": "model-00001-of-00011.safetensors",
+   "dtype": "F16",
+   "params": {
+    "I32": 70464307200,
+    "F16": 2493554688
+   },
+   "rank": 473
+  },
+  {
+   "repo": "llamafactory/tiny-random-Llama-3",
+   "file": "model.safetensors",
+   "dtype": "F16",
+   "params": {
+    "F16": 4112464
+   },
+   "rank": 479
+  },
+  {
+   "repo": "Qwen/Qwen2.5-3B-Instruct-AWQ",
+   "file": "model.safetensors",
+   "dtype": "F16",
+   "params": {
+    "I32": 2774532096,
+    "F16": 622571520
+   },
+   "rank": 503
+  },
+  {
+   "repo": "Qwen/Qwen2.5-32B-Instruct-GPTQ-Int4",
+   "file": "model-00001-of-00005.safetensors",
+   "dtype": "F16",
+   "params": {
+    "I32": 31205621760,
+    "F16": 1558254592
+   },
+   "rank": 514
+  },
+  {
+   "repo": "QuantTrio/Qwen3-VL-30B-A3B-Instruct-AWQ",
+   "file": "model-00001-of-00006.safetensors",
+   "dtype": "F16",
+   "params": {
+    "I32": 29896998912,
+    "F16": 1173755120
+   },
+   "rank": 519
+  },
+  {
+   "repo": "EleutherAI/pythia-70m",
+   "file": "model.safetensors",
+   "dtype": "F16",
+   "params": {
+    "F16": 70426672,
+    "U8": 25165824
+   },
+   "rank": 522
+  }
+ ]
+}
