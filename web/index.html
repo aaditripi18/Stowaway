@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- The page technically cannot send your file anywhere: no network
+         connection of any kind is allowed. This is the enforced version of
+         "nothing is uploaded". connect-src 'none' blocks fetch, XHR, WebSocket,
+         EventSource and sendBeacon; the rest lock down what may load. -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <title>Stowaway</title>
+  </head>
+  <body>
+    <main id="app">
+      <h1>Stowaway</h1>
+      <p>Drop a <code>.safetensors</code> file to scan it. It never leaves this page.</p>
+      <div id="drop">Drop a model file here, or click to choose</div>
+      <input id="file" type="file" hidden />
+      <pre id="report" hidden></pre>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
