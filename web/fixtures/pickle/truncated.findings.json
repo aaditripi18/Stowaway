@@ -1,0 +1,1 @@
+[{"check":"S1","code":"dangerous-import","detail":{"module":"builtins","name":"exec","stream":"truncated"},"message":"truncated: imports builtins.exec (code execution gadget)","severity":"critical"},{"check":"S1","code":"malformed-pickle","detail":{"stream":"truncated"},"message":"truncated: pickle data does not parse cleanly","severity":"medium"}]

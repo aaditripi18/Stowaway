@@ -1,0 +1,1 @@
+[{"check":"S1","code":"dangerous-import","detail":{"module":"builtins","name":"exec","stream":"evil_exec_p2"},"message":"evil_exec_p2: imports builtins.exec (code execution gadget)","severity":"critical"}]

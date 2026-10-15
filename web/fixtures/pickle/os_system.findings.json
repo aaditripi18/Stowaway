@@ -1,0 +1,1 @@
+[{"check":"S1","code":"dangerous-import","detail":{"module":"nt","name":"system","stream":"os_system"},"message":"os_system: imports nt.system (code execution gadget)","severity":"critical"}]

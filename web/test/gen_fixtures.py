@@ -22,6 +22,9 @@ sys.path.insert(0, str(ROOT))
 FIX = ROOT / "web" / "fixtures"
 
 from stowaway.report import scan  # noqa: E402
+from stowaway import pickle_scan as ps  # noqa: E402
+
+PICKLE_FIX = FIX / "pickle"
 
 
 def canon(o) -> str:
@@ -82,6 +85,51 @@ def main():
 
     big = struct.pack("<Q", 10**9) + b"{}"
     write("bad_header_length", big)
+
+    gen_pickles()
+
+
+def _findings_json(label, data) -> str:
+    findings = ps.analyse(label, data)
+    rows = [{"check": f.check, "severity": f.severity, "code": f.code, "message": f.message, "detail": f.detail}
+            for f in findings]
+    return canon(rows)
+
+
+def gen_pickles():
+    """Raw pickle streams and the golden S1 findings for the TypeScript
+    analysePickles parity test (direct, not via a full scan — the pickle/.pt
+    format dispatch is ported with the PyTorch parser)."""
+    import pickle
+    PICKLE_FIX.mkdir(parents=True, exist_ok=True)
+
+    class Evil:
+        def __reduce__(self):
+            return exec, ("pass",)
+
+    class OsSystem:
+        def __reduce__(self):
+            import os
+            return os.system, ("true",)
+
+    class Unknown:
+        def __reduce__(self):
+            import itertools
+            return itertools.chain, ([],)
+
+    cases = {}
+    for proto in (0, 2, 4):
+        cases[f"evil_exec_p{proto}"] = pickle.dumps({"x": Evil()}, protocol=proto)
+    cases["os_system"] = pickle.dumps(OsSystem(), protocol=4)
+    cases["unknown_import"] = pickle.dumps(Unknown(), protocol=4)
+    cases["clean_data"] = pickle.dumps({"a": [1, 2, 3], "b": "hello", "c": (4, 5)}, protocol=4)
+    evil = pickle.dumps({"x": Evil()}, protocol=4)
+    cases["truncated"] = evil[:-3]  # breaks STOP; exec already emitted
+
+    for name, data in cases.items():
+        (PICKLE_FIX / f"{name}.pkl").write_bytes(data)
+        (PICKLE_FIX / f"{name}.findings.json").write_text(_findings_json(name, data) + "\n", encoding="utf-8")
+        print(f"pickle/{name}: {len(ps.analyse(name, data))} findings")
 
 
 if __name__ == "__main__":

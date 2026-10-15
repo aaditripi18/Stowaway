@@ -1,0 +1,1 @@
+[{"check":"S1","code":"unknown-import","detail":{"module":"itertools","name":"chain","stream":"unknown_import"},"message":"unknown_import: imports itertools.chain","severity":"medium"}]

@@ -276,6 +276,8 @@ def analyse(label: str, data: bytes) -> list[Finding]:
                                 f"{label}: imports {mod}.{nm}" + (" (code execution gadget)" if kind == "dangerous" else ""),
                                 {"stream": label, "module": mod, "name": nm}))
     if res.error and op_err:
-        findings.append(Finding("S1", "medium", "malformed-pickle", f"{label}: pickle does not parse: {op_err}",
+        # The specific exception text differs between interpreters, so the message
+        # is kept generic to stay identical across the Python and TypeScript cores.
+        findings.append(Finding("S1", "medium", "malformed-pickle", f"{label}: pickle data does not parse cleanly",
                                 {"stream": label}))
     return findings
