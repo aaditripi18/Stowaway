@@ -92,15 +92,17 @@ def parse(path: Path, f) -> ModelFile:
                 raise ValueError(f"tensor {name!r} has {n_dims} dims")
             ne = tuple(r.unpack("<Q") for _ in range(n_dims))
             infos.append((name, ne, r.unpack("<I"), r.unpack("<Q")))
-    except (ValueError, struct.error) as e:
-        mf.findings.append(Finding("parse", "high", "bad-gguf", f"could not parse GGUF header: {e}"))
+    except (ValueError, struct.error):
+        # The specific exception text differs between interpreters; keep it generic
+        # so the Python and TypeScript cores report this identically.
+        mf.findings.append(Finding("parse", "high", "bad-gguf", "could not parse the GGUF header"))
         return mf
 
     mf.metadata = meta
     header_end = f.tell()
     alignment = meta.get("general.alignment", 32)
     if not isinstance(alignment, int) or alignment <= 0 or alignment & (alignment - 1):
-        mf.findings.append(Finding("parse", "medium", "bad-alignment", f"general.alignment is {alignment!r}"))
+        mf.findings.append(Finding("parse", "medium", "bad-alignment", "general.alignment is not a positive power of two"))
         alignment = 32
     data_start = _align(header_end, alignment)
     mf.regions.append(Region(0, header_end, "header", "gguf header"))

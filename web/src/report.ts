@@ -5,6 +5,7 @@ import { Reader } from "./bytes.js";
 import * as coverage from "./coverage.js";
 import { Finding, ModelFile, newModelFile, SEVERITIES } from "./model.js";
 import { parse as parseSafetensors } from "./formats/safetensors.js";
+import { parse as parseGguf } from "./formats/gguf.js";
 import { analysePickles } from "./pickle_scan.js";
 import { analyseWeights, RawFloats } from "./weights.js";
 
@@ -26,6 +27,7 @@ function detect(r: Reader): string {
 export function openModel(r: Reader): ModelFile {
   const kind = detect(r);
   if (kind === "safetensors") return parseSafetensors(r.bytes);
+  if (kind === "gguf") return parseGguf(r.bytes);
   if (kind === "unknown") {
     // Exactly as stowaway/formats/__init__.py for an unrecognised file.
     const mf = newModelFile("unknown", r.size);

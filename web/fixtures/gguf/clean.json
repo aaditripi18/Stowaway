@@ -1,0 +1,1 @@
+{"file":"clean.gguf","findings":[],"format":"gguf","report_version":1,"sha256":"24824512a5f9d96898e5bbc955a5e48006e9ad80fe80d3fba0b2753ec8f9e42b","size":8512,"tensors":{"bytes":8272,"count":2,"dtypes":{"F16":1,"F32":1}},"verdict":"clean"}

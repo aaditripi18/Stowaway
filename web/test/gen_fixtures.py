@@ -89,6 +89,46 @@ def main():
     gen_pickles()
     gen_weights()
     gen_s5()
+    gen_gguf()
+
+
+def gen_gguf():
+    """GGUF fixtures: clean, trailing data, and a dirty alignment-padding byte."""
+    import gguf as gguf_lib
+    d = FIX / "gguf"
+    d.mkdir(parents=True, exist_ok=True)
+
+    def build(path):
+        rng = np.random.default_rng(1)
+        w = gguf_lib.GGUFWriter(str(path), "llama")
+        w.add_uint32("answer", 42)
+        w.add_string("name", "fixture")
+        w.add_tensor("blk.0.weight", rng.standard_normal((32, 64)).astype(np.float32))
+        w.add_tensor("blk.1.weight", rng.standard_normal((40,)).astype(np.float16))
+        w.write_header_to_file(); w.write_kv_data_to_file(); w.write_tensors_to_file(); w.close()
+
+    def golden(name, path):
+        rep = scan(path)
+        (d / f"{name}.json").write_text(canon(rep) + "\n", encoding="utf-8")
+        print(f"gguf/{name}: {rep['verdict']} ({len(rep['findings'])} findings)")
+
+    build(d / "clean.gguf")
+    golden("clean", d / "clean.gguf")
+
+    raw = (d / "clean.gguf").read_bytes()
+    (d / "trailing.gguf").write_bytes(raw + np.random.default_rng(0).bytes(4096))
+    golden("trailing", d / "trailing.gguf")
+
+    # Flip a byte inside the header alignment padding (between the header and the
+    # first aligned tensor) to trigger S2 dirty-padding.
+    with open(d / "clean.gguf", "rb") as f:
+        mf = __import__("stowaway.formats", fromlist=["open_model"]).open_model(Path(d / "clean.gguf"), f)
+    pad = [r for r in mf.regions if r.kind == "padding" and r.end > r.start]
+    buf = bytearray(raw)
+    if pad:
+        buf[pad[0].start] = 0x41
+    (d / "dirty_padding.gguf").write_bytes(bytes(buf))
+    golden("dirty_padding", d / "dirty_padding.gguf")
 
 
 def _biased_f32(shape, frac_bit0, seed):
