@@ -85,15 +85,20 @@
             </div>
           </div>
 
-          <div class="w-full max-w-3xl p-space-md rounded bg-surface-container-lowest hover:bg-surface-container-low transition-colors flex flex-col sm:flex-row items-center justify-between gap-space-md" id="base-model-drop">
+          <div class="w-full max-w-3xl p-space-md rounded bg-surface-container-lowest hover:bg-surface-container-low transition-colors cursor-pointer flex flex-col sm:flex-row items-center justify-between gap-space-md" id="base-model-drop">
+            <input accept=".safetensors,.pt,.pth,.bin,.ckpt,.gguf" class="hidden" id="base-input" type="file" />
             <div class="flex items-center gap-space-sm">
               <div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center text-outline">
                 <span class="material-symbols-outlined text-[18px]">difference</span>
               </div>
               <div class="flex flex-col text-left">
                 <span class="font-title-sm text-title-sm text-on-surface font-semibold">Compare against a base model (optional)</span>
-                <span class="font-body-md text-body-md text-on-surface-variant">Add the claimed base model to diff the weights bit by bit (the S5 check). Ported to the browser soon; available now in the Python tool.</span>
+                <span class="font-body-md text-body-md text-on-surface-variant" id="base-slot-text">Add the claimed base model to diff the weights bit by bit (the S5 check).</span>
               </div>
+            </div>
+            <div class="flex items-center gap-space-sm shrink-0">
+              <span class="hidden items-center gap-1 font-label-xs text-label-xs text-secondary" id="base-attached"><span class="material-symbols-outlined text-[14px]">check_circle</span><span id="base-name"></span></span>
+              <button class="px-space-md py-1.5 bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-xs text-label-xs font-semibold rounded whitespace-nowrap uppercase tracking-wider" id="base-attach-btn" type="button">Attach base</button>
             </div>
           </div>
         </section>
@@ -202,6 +207,11 @@
                   <span class="font-label-xs text-label-xs text-secondary font-code-inline" id="checks-ran"></span>
                 </div>
                 <div class="flex flex-col gap-space-xs mt-space-xs font-code-inline text-code-inline" id="check-list"></div>
+                <div class="mt-space-xs p-space-sm rounded bg-surface-container flex flex-col gap-space-xs">
+                  <span class="font-title-sm text-title-sm text-on-surface font-semibold">Compare against a base model</span>
+                  <p class="font-label-xs text-label-xs text-on-surface-variant leading-relaxed" id="result-base-status">Add the claimed base model (e.g. the unmodified upstream weights) to run the S5 bit-for-bit diff.</p>
+                  <button class="mt-1 px-3 py-1.5 bg-surface-container-high hover:bg-surface-container-highest text-primary font-label-xs text-label-xs font-bold uppercase tracking-wider rounded transition-colors flex items-center justify-center gap-1.5" id="result-base-btn" type="button"><span class="material-symbols-outlined text-[14px]">difference</span> <span id="result-base-btn-text">Attach base model</span></button>
+                </div>
               </div>
               <div class="bg-surface-container-low rounded p-space-md flex flex-col gap-space-xs" id="how">
                 <span class="font-label-xs text-label-xs font-bold uppercase tracking-wider text-outline">What each check does</span>

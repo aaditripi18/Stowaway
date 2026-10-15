@@ -2,8 +2,9 @@
 // core, and render the report into the dashboard. No network, no fabricated data
 // — every value shown comes from scan().
 import "./styles.css";
-import { scan } from "./report.js";
+import { scan, loadBaseFloats } from "./report.js";
 import type { Finding } from "./model.js";
+import type { RawFloats } from "./weights.js";
 
 type Report = {
   file: string; sha256: string; size: number; format: string;
@@ -40,6 +41,8 @@ const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&l
 
 let lastReport: Report | null = null;
 let lastBytes: Uint8Array | null = null;
+let baseFloats: RawFloats | null = null;
+let baseName: string | null = null;
 
 function show(state: "empty" | "scanning" | "result"): void {
   for (const [id, want] of [["empty-state", "empty"], ["scanning-state", "scanning"], ["result-dashboard", "result"]] as const) {
@@ -65,12 +68,49 @@ async function handle(file: File): Promise<void> {
   await new Promise((r) => setTimeout(r, 30));
   const bytes = new Uint8Array(await file.arrayBuffer());
   $<HTMLDivElement>("scan-progress-bar").style.width = "80%";
-  const rep = (await scan(bytes)) as unknown as Report;
+  const rep = (await scan(bytes, baseFloats ?? undefined)) as unknown as Report;
   rep.file = file.name;
   lastReport = rep;
   lastBytes = bytes;
   render(rep);
   show("result");
+}
+
+async function attachBase(file: File): Promise<void> {
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  try {
+    baseFloats = loadBaseFloats(bytes);
+  } catch {
+    baseFloats = null; baseName = null;
+    toast("Could not read that base model");
+    return;
+  }
+  baseName = file.name;
+  updateBaseUi();
+  toast(`Base model attached: ${file.name}`);
+  // If a model was already scanned, re-run it with the base so S5 applies now.
+  if (lastBytes) {
+    const rep = (await scan(lastBytes, baseFloats)) as unknown as Report;
+    rep.file = lastReport?.file ?? "";
+    lastReport = rep;
+    render(rep);
+  }
+}
+
+function updateBaseUi(): void {
+  const attached = baseName !== null;
+  const slot = $("base-attached");
+  slot.classList.toggle("hidden", !attached);
+  slot.classList.toggle("flex", attached);
+  if (attached) $("base-name").textContent = baseName!;
+  $("base-slot-text").textContent = attached
+    ? "Base model attached — scans now include the S5 bit-for-bit diff."
+    : "Add the claimed base model to diff the weights bit by bit (the S5 check).";
+  $("result-base-status").textContent = attached
+    ? `Comparing against ${baseName}. S5 runs on every scan while this base is attached.`
+    : "Add the claimed base model (e.g. the unmodified upstream weights) to run the S5 bit-for-bit diff.";
+  $("result-base-btn-text").textContent = attached ? "Change base model" : "Attach base model";
+  ($("base-attach-btn") as HTMLElement).textContent = attached ? "Change" : "Attach base";
 }
 
 function render(rep: Report): void {
@@ -137,7 +177,7 @@ function renderChecks(rep: Report): void {
     const supported = ["safetensors", "gguf", "pytorch-zip", "torchscript", "pickle"].includes(rep.format);
     const hasPickle = ["pytorch-zip", "torchscript", "pickle"].includes(rep.format);
     let icon: string, color: string, label: string;
-    if (id === "S5") {
+    if (id === "S5" && !baseFloats) {
       icon = "horizontal_rule"; color = "text-outline"; label = "NEEDS BASE";
     } else if (!supported) {
       icon = "horizontal_rule"; color = "text-outline"; label = "PYTHON TOOL";
@@ -289,6 +329,21 @@ drop.addEventListener("dragleave", () => drop.classList.remove("bg-surface-conta
 drop.addEventListener("drop", (e) => {
   e.preventDefault(); drop.classList.remove("bg-surface-container");
   const f = e.dataTransfer?.files?.[0]; if (f) void handle(f);
+});
+
+// Base-model attachment (empty-state slot and result-view button share one input).
+const baseInput = $<HTMLInputElement>("base-input");
+const openBase = (e?: Event) => { e?.stopPropagation(); baseInput.click(); };
+$("base-model-drop").addEventListener("click", openBase);
+$("base-attach-btn").addEventListener("click", openBase);
+$("result-base-btn").addEventListener("click", openBase);
+baseInput.addEventListener("change", () => { if (baseInput.files?.[0]) void attachBase(baseInput.files[0]); });
+const baseDrop = $("base-model-drop");
+baseDrop.addEventListener("dragover", (e) => { e.preventDefault(); baseDrop.classList.add("bg-surface-container"); });
+baseDrop.addEventListener("dragleave", () => baseDrop.classList.remove("bg-surface-container"));
+baseDrop.addEventListener("drop", (e) => {
+  e.preventDefault(); baseDrop.classList.remove("bg-surface-container");
+  const f = e.dataTransfer?.files?.[0]; if (f) void attachBase(f);
 });
 
 $("rescan-btn").addEventListener("click", () => { input.value = ""; show("empty"); });

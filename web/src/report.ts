@@ -8,7 +8,7 @@ import { parse as parseSafetensors } from "./formats/safetensors.js";
 import { parse as parseGguf } from "./formats/gguf.js";
 import { parseZip, parsePickles } from "./formats/pytorch.js";
 import { analysePickles } from "./pickle_scan.js";
-import { analyseWeights, RawFloats } from "./weights.js";
+import { analyseWeights, loadFloats, RawFloats } from "./weights.js";
 
 export const REPORT_VERSION = 1;
 
@@ -50,6 +50,12 @@ export function openModel(r: Reader): ModelFile {
     detail: { recognised_as: kind },
   });
   return mf;
+}
+
+// Load a base model's float tensors so S5 can diff a scan against it.
+export function loadBaseFloats(bytes: Uint8Array): RawFloats {
+  const r = new Reader(bytes);
+  return loadFloats(openModel(r), r);
 }
 
 async function sha256Hex(bytes: Uint8Array): Promise<string> {
