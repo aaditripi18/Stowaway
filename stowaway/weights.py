@@ -158,9 +158,9 @@ def s4_bit_planes(floats: dict[str, RawTensor], low_bits: dict[str, int] | None 
         model_ref = _signature(stats, kb)
         sig, _, has_pop = model_ref
         if has_pop and np.max(np.abs(sig - 0.5)) > 0.02:
+            means = ", ".join(str(round(float(x), 2)) for x in sig[:4])
             findings.append(Finding("S4", "info", "lowbit-signature",
-                                    f"{dtype} weights carry a low-bit signature (bit means "
-                                    + ", ".join(f"{x:.2f}" for x in sig[:4]) + "); tensors are tested against it",
+                                    f"{dtype} weights carry a low-bit signature (bit means {means}); tensors are tested against it",
                                     {"dtype": dtype, "signature": [round(float(x), 4) for x in sig]}))
         # Peers share the role and the number of dimensions: numbering alone
         # merges module types (ResNet's downsample.0 is a conv, downsample.1 a
@@ -200,11 +200,14 @@ def s4_bit_planes(floats: dict[str, RawTensor], low_bits: dict[str, int] | None 
             closer = (np.abs(sig - 0.5) - np.abs(m - 0.5)) / denom  # >0: m nearer 0.5 than ref
             b = int(np.argmax(closer))
             if closer[b] > Z_FLAG:
+                mean, expected, z = round(float(m[b]), 4), round(float(sig[b]), 4), round(float(closer[b]), 2)
+                # Message uses the same rounded values as the detail, so the Python
+                # and TypeScript cores format the numbers identically (see canon).
                 findings.append(Finding("S4", "medium", "lowbit-anomaly",
-                                        f"tensor {name!r}: low bit {b} is set in {m[b]:.1%} of weights, "
-                                        f"nearer a fair coin than {sig[b]:.1%} in {against} (z {closer[b]:+.1f})",
-                                        {"tensor": name, "bit": b, "z": round(float(closer[b]), 2),
-                                         "mean": round(float(m[b]), 4), "expected": round(float(sig[b]), 4),
+                                        f"tensor {name!r}: low bit {b} is nearer a fair coin ({mean}) than {against} "
+                                        f"({expected}); z {z}",
+                                        {"tensor": name, "bit": b, "z": z,
+                                         "mean": mean, "expected": expected,
                                          "reference": "role" if len(peers) >= 3 else "model",
                                          "elements": n}))
     return findings

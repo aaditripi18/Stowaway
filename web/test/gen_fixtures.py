@@ -87,6 +87,60 @@ def main():
     write("bad_header_length", big)
 
     gen_pickles()
+    gen_weights()
+    gen_s5()
+
+
+def _biased_f32(shape, frac_bit0, seed):
+    rng = np.random.default_rng(seed)
+    u = rng.standard_normal(shape).astype(np.float32).view(np.uint32).copy()
+    ones = rng.random(shape) < frac_bit0
+    u = np.where(ones, u | np.uint32(1), u & ~np.uint32(1)).astype(np.uint32)
+    return u.view(np.float32)
+
+
+def _payload_low_byte(arr, seed):
+    rng = np.random.default_rng(seed)
+    u = arr.view(np.uint32).copy()
+    u = ((u & ~np.uint32(0xFF)) | rng.integers(0, 256, size=u.shape, dtype=np.uint32)).astype(np.uint32)
+    return u.view(np.float32)
+
+
+def gen_weights():
+    """safetensors that exercise S3 and S4, so the TypeScript weight checks are
+    covered by the full-scan parity test."""
+    # Structured fp32 model: bit 0 set in ~67% of weights across five role peers.
+    sig = {f"blk.{i}.w": _biased_f32((64, 64), 0.67, seed=10 + i) for i in range(5)}
+    write("weights_signature", st_bytes(sig))
+    # Same, but a random payload in one tensor's low byte pulls it towards 0.5.
+    payload = dict(sig)
+    payload["blk.0.w"] = _payload_low_byte(sig["blk.0.w"].copy(), seed=99)
+    write("weights_payload", st_bytes(payload))
+    # bf16 weights saved as fp32: the low 16 bits are zero (S3 precision-origin).
+    rng = np.random.default_rng(3)
+    bf = {}
+    for i in range(4):
+        f = (0.02 * rng.standard_normal((64, 64))).astype(np.float32)
+        u = f.view(np.uint32)
+        u = ((u + np.uint32(0x8000)) & ~np.uint32(0xFFFF)).astype(np.uint32)  # round to bf16, widen
+        bf[f"blk.{i}.w"] = u.view(np.float32)
+    write("weights_bf16_origin", st_bytes(bf))
+
+
+def gen_s5():
+    """A base model and the same model with a random low-bit payload in one
+    tensor, for the S5 differential parity test."""
+    d = FIX / "s5"
+    d.mkdir(parents=True, exist_ok=True)
+    rng = np.random.default_rng(7)
+    base = {f"layer.{i}.weight": rng.standard_normal((128, 64)).astype(np.float32) for i in range(3)}
+    (d / "base.safetensors").write_bytes(st_bytes(base))
+    poisoned = dict(base)
+    poisoned["layer.1.weight"] = _payload_low_byte(base["layer.1.weight"].copy(), seed=42)
+    (d / "poisoned.safetensors").write_bytes(st_bytes(poisoned))
+    rep = scan(d / "poisoned.safetensors", base=d / "base.safetensors")
+    (d / "poisoned.json").write_text(canon(rep) + "\n", encoding="utf-8")
+    print(f"s5/poisoned: {rep['verdict']} ({len(rep['findings'])} findings)")
 
 
 def _findings_json(label, data) -> str:

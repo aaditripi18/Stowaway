@@ -20,10 +20,11 @@ const CHECKS: Record<string, { title: string; what: string }> = {
   S4: { title: "Bit-plane statistics", what: "Low bits pulled toward a coin flip, versus peer layers." },
   S5: { title: "Base-model diff", what: "Changes confined to the low bits, versus the claimed base." },
 };
-// Checks this browser build actually runs. S3–S5 and non-safetensors formats are
-// handled by the Python tool until they are ported; the UI says so rather than
-// pretending they ran.
-const BUILD_RUNS = new Set(["S1", "S2"]);
+// Checks this browser build runs on safetensors. S5 needs a base model to diff
+// against (not yet collected by this UI); non-safetensors formats are read by the
+// Python tool until their parsers are ported. The strip says so rather than
+// pretending a check ran.
+const BUILD_RUNS = new Set(["S1", "S2", "S3", "S4"]);
 
 const SEV_CHIP: Record<string, string> = {
   critical: "bg-error/20 text-error",
@@ -134,7 +135,9 @@ function renderChecks(rep: Report): void {
   for (const id of ["S1", "S2", "S3", "S4", "S5"]) {
     const fs = (byCheck.get(id) ?? []).filter((f) => ["medium", "high", "critical"].includes(f.severity));
     let icon: string, color: string, label: string;
-    if (!BUILD_RUNS.has(id)) {
+    if (id === "S5") {
+      icon = "horizontal_rule"; color = "text-outline"; label = "NEEDS BASE";
+    } else if (!BUILD_RUNS.has(id) || rep.format !== "safetensors") {
       icon = "horizontal_rule"; color = "text-outline"; label = "PYTHON TOOL";
     } else if (id === "S1" && rep.format === "safetensors") {
       icon = "check_circle"; color = "text-secondary"; label = "N/A"; ran++; // safetensors has no pickle data

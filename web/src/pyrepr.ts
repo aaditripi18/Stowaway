@@ -15,3 +15,9 @@ export function pyRepr(s: string): string {
   }
   return out + quote;
 }
+
+// Python's str() for a float embedded in a message: integer-valued floats keep
+// a trailing ".0" (str(0.0) == "0.0"), unlike canon() which strips it in detail.
+export function pyStr(x: number): string {
+  return Number.isInteger(x) ? x.toFixed(1) : String(x);
+}
