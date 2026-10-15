@@ -1,0 +1,9 @@
+# Binary fixtures and assets must never get line-ending conversion.
+*.safetensors binary
+*.pkl binary
+*.pt binary
+*.gguf binary
+*.woff2 binary
+*.npz binary
+*.png binary
+*.jpg binary
