@@ -1,0 +1,1 @@
+{"file":"clean.safetensors","findings":[],"format":"safetensors","report_version":1,"sha256":"179709294c878892333d8a81064e5cd3b63ebd6e2a1f04dad080207d465749b8","size":8660,"tensors":{"bytes":8420,"count":3,"dtypes":{"F16":1,"F32":1,"I64":1}},"verdict":"clean"}

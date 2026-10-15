@@ -1,0 +1,1 @@
+{"file":"bad_header_length.safetensors","findings":[{"check":"parse","code":"unknown-format","detail":{},"message":"not a recognised model format","severity":"medium"}],"format":"unknown","report_version":1,"sha256":"f98183f9da976cb32fda0bd411da17313e1ddfdc467204bb8578315525181f94","size":10,"tensors":{"bytes":0,"count":0,"dtypes":{}},"verdict":"suspicious"}
