@@ -323,6 +323,94 @@ def section_e4b(rows):
     return "\n".join(out) + "\n"
 
 
+# The S5 rule E6's base detection is scored with. E4b (PLAN.md, phase 2) decides
+# whether this stays the E4 rule or becomes a refinement; change it here only by
+# that decision.
+E6_S5 = lambda r: r.get("changed", 0) >= 256 and r["p99"] <= r["cutoff"]  # noqa: E731
+
+
+def e6_records(rows):
+    """The latest E6 run of each model."""
+    return {m: recs for m, (_, recs) in _latest_runs_by_model(rows, "E6").items()}
+
+
+def e6_hypotheses(rows):
+    by_model = e6_records(rows)
+    if not by_model:
+        return []
+    out = []
+    worst = {}
+    for m, recs in by_model.items():
+        cells = [r for r in recs if r.get("kind") == "cell" and r["payload"] == "random"
+                 and r["payload_bytes"] <= 1 << 20 and r["k"] <= 8]
+        if cells:
+            worst[m] = min(r["agreement"] for r in cells)
+    ok5 = all(v >= 0.99 for v in worst.values()) if worst else None
+    out.append({"id": "H5", "statement": "A random payload of up to 1 MB at k <= 8 leaves >= 99% of top-1 predictions "
+                "unchanged, on every model and seed.", "verdict": "pending" if ok5 is None else
+                ("supported" if ok5 else "not supported"),
+                "evidence": ", ".join(f"{m} {100 * v:.1f}%" for m, v in sorted(worst.items(), key=lambda x: x[1]))})
+
+    def caught(kind, key):
+        n = c = 0
+        for recs in by_model.values():
+            for r in recs:
+                if r.get("kind") == "cell" and r["payload"] == kind and r["seed"] == 0:
+                    n += 1
+                    if key == "single":
+                        c += r["single_file_detected"]
+                    else:
+                        c += any(E6_S5(x) for x in r["s5_stats"].values())
+        return c, n
+    single = {k: caught(k, "single") for k in ("random", "zeros", "text")}
+    base = {k: caught(k, "base") for k in ("random", "zeros", "text")}
+    ok6 = (single["zeros"][0] < single["random"][0] and single["text"][0] < single["random"][0]
+           and base["zeros"][0] >= base["random"][0] and base["text"][0] >= base["random"][0]) if single["random"][1] else None
+    out.append({"id": "H6", "statement": "S4's one-sided rule costs what it says: zero and text payloads are caught "
+                "from the file alone less often than random ones, and the base diff catches them at least as often.",
+                "verdict": "pending" if ok6 is None else ("supported" if ok6 else "not supported"),
+                "evidence": "file alone " + ", ".join(f"{k} {c}/{n}" for k, (c, n) in single.items())
+                + "; with base " + ", ".join(f"{k} {c}/{n}" for k, (c, n) in base.items())})
+    return out
+
+
+def section_e6(rows):
+    by_model = e6_records(rows)
+    if not by_model:
+        return "## E6 — nine models, five payload types\n\n_No run yet._\n"
+    out = ["## E6 — nine models, five payload types (PLAN.md, phase 2)", "",
+           "Seed 0 for every payload type; random payloads also at seeds 1-2. `file` = S3/S4 from the planted "
+           "file alone; `base` = S5 with the clean model as base; `agree` = share of 1,000 Imagenette images whose "
+           "top-1 prediction is unchanged (minimum over the seeds).", ""]
+    kinds = ("random", "zeros", "text", "compressed", "executable")
+    for m in sorted(by_model, key=lambda m: (m not in ("resnet18", "mobilenet_v3_small"), m)):
+        recs = by_model[m]
+        clean = next((r for r in recs if r.get("kind") == "clean"), None)
+        out += [f"### {m}" + (f" (clean top-1 {clean['accuracy']:.3f})" if clean else ""), "",
+                "| Payload | k | " + " | ".join(_fmt_size(s) for s in sorted({r['payload_bytes'] for r in recs if r.get('kind') == 'cell'})) + " |",
+                "|---|--:|" + "---|" * len({r['payload_bytes'] for r in recs if r.get('kind') == 'cell'})]
+        sizes = sorted({r["payload_bytes"] for r in recs if r.get("kind") == "cell"})
+        for kind in kinds:
+            for k in sorted({r["k"] for r in recs if r.get("kind") == "cell"}):
+                cells = []
+                for size in sizes:
+                    rs = [r for r in recs if r.get("kind") == "cell" and r["payload"] == kind and r["k"] == k
+                          and r["payload_bytes"] == size]
+                    if not rs:
+                        cells.append("–")
+                        continue
+                    f = sum(r["single_file_detected"] for r in rs)
+                    b = sum(any(E6_S5(x) for x in r["s5_stats"].values()) for r in rs)
+                    agree = min(r["agreement"] for r in rs)
+                    cells.append(f"file {f}/{len(rs)}, base {b}/{len(rs)}, agree {100 * agree:.1f}%")
+                out.append(f"| {kind} | {k} | " + " | ".join(cells) + " |")
+        out.append("")
+    hs = e6_hypotheses(rows)
+    out += ["### Verdicts", "", "| | Hypothesis | Verdict | Evidence |", "|---|---|---|---|"]
+    out += [f"| {h['id']} | {h['statement']} | **{h['verdict']}** | {h['evidence']} |" for h in hs]
+    return "\n".join(out) + "\n"
+
+
 E5_TOOLS = ("picklescan", "modelscan", "fickling", "fickling-ml", "stowaway", "stowaway+base")
 
 
@@ -400,7 +488,7 @@ def main():
         "# Results", "",
         "> Generated by `scripts/report.py` from `results/ledger.jsonl`. Do not edit by hand.", "",
         section_e0(rows), "", section_e1(rows), "", section_e2(rows), "",
-        section_hf(rows), "", section_e0c(rows), "", section_e1c(rows), "", section_e3(rows), "", section_e4(rows), "", section_e4b(rows), "", section_e5(rows),
+        section_hf(rows), "", section_e0c(rows), "", section_e1c(rows), "", section_e3(rows), "", section_e4(rows), "", section_e4b(rows), "", section_e5(rows), "", section_e6(rows),
     ])
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(body + "\n", encoding="utf-8")
