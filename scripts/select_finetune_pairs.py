@@ -32,6 +32,14 @@ HELD_OUT_BASES = [
     "google/vit-base-patch16-224-in21k",
     "FacebookAI/xlm-roberta-base",
 ]
+# E4b (PLAN.md, phase 2): bases never used before, for the one-time whole-file
+# validation of S5b. Written with --split fresh only; dev/heldout are not redone.
+FRESH_BASES = [
+    "sentence-transformers/all-MiniLM-L6-v2",
+    "albert/albert-base-v2",
+    "distilbert/distilroberta-base",
+    "google-bert/bert-base-cased",
+]
 
 
 def finetunes_of(base: str, limit: int) -> list[dict]:
@@ -83,9 +91,22 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--per-base", type=int, default=5)
     ap.add_argument("--scan", type=int, default=40)
+    ap.add_argument("--split", choices=["dev+heldout", "fresh"], default="dev+heldout")
     args = ap.parse_args(argv)
-    for split, bases in (("dev", DEV_BASES), ("heldout", HELD_OUT_BASES)):
-        pairs = pick(bases, args.per_base, args.scan)
+    splits = (("fresh", FRESH_BASES),) if args.split == "fresh" else (("dev", DEV_BASES), ("heldout", HELD_OUT_BASES))
+    used = set()
+    for old in ("dev", "heldout"):
+        f = RESULTS / f"ft_pairs_{old}.json"
+        if f.exists():
+            used |= {p["finetune"] for p in json.loads(f.read_text(encoding="utf-8"))["pairs"]}
+    for split, bases in splits:
+        pairs = [p for p in pick(bases, args.per_base + (5 if split == "fresh" else 0), args.scan)
+                 if split != "fresh" or p["finetune"] not in used]
+        if split == "fresh":
+            by_base: dict[str, list] = {}
+            for p in pairs:
+                by_base.setdefault(p["base"], []).append(p)
+            pairs = [p for b in bases for p in by_base.get(b, [])[:args.per_base]]
         out = {
             "selected": time.strftime("%Y-%m-%d", time.gmtime()),
             "split": split, "bases": bases, "pairs": pairs,

@@ -1,0 +1,152 @@
+{
+ "selected": "2026-10-16",
+ "split": "fresh",
+ "bases": [
+  "sentence-transformers/all-MiniLM-L6-v2",
+  "albert/albert-base-v2",
+  "distilbert/distilroberta-base",
+  "google-bert/bert-base-cased"
+ ],
+ "pairs": [
+  {
+   "base": "sentence-transformers/all-MiniLM-L6-v2",
+   "finetune": "abdur197/fine-tuned-column-mapper",
+   "file": "model.safetensors",
+   "base_params": 22713216,
+   "finetune_params": 22713216
+  },
+  {
+   "base": "sentence-transformers/all-MiniLM-L6-v2",
+   "finetune": "anass1209/resume-job-matcher-all-MiniLM-L6-v2",
+   "file": "model.safetensors",
+   "base_params": 22713216,
+   "finetune_params": 22713216
+  },
+  {
+   "base": "sentence-transformers/all-MiniLM-L6-v2",
+   "finetune": "Tamkimd/tamev-micro-minilm",
+   "file": "model.safetensors",
+   "base_params": 22713216,
+   "finetune_params": 22762368
+  },
+  {
+   "base": "sentence-transformers/all-MiniLM-L6-v2",
+   "finetune": "codersan/FaMiniLM",
+   "file": "model.safetensors",
+   "base_params": 22713216,
+   "finetune_params": 22713216
+  },
+  {
+   "base": "sentence-transformers/all-MiniLM-L6-v2",
+   "finetune": "anuragwagh0/hinglish-minilm",
+   "file": "model.safetensors",
+   "base_params": 22713216,
+   "finetune_params": 22713216
+  },
+  {
+   "base": "albert/albert-base-v2",
+   "finetune": "dejanseo/sentiment",
+   "file": "model.safetensors",
+   "base_params": 11842272,
+   "finetune_params": 11688967
+  },
+  {
+   "base": "albert/albert-base-v2",
+   "finetune": "shekar-ai/albert-base-v2-persian-zwnj-shiraz-mlm",
+   "file": "model.safetensors",
+   "base_params": 11842272,
+   "finetune_params": 12255744
+  },
+  {
+   "base": "albert/albert-base-v2",
+   "finetune": "ilsilfverskiold/classify-clickbait-titles",
+   "file": "model.safetensors",
+   "base_params": 11842272,
+   "finetune_params": 11685122
+  },
+  {
+   "base": "albert/albert-base-v2",
+   "finetune": "abullard1/albert-v2-steam-review-constructiveness-classifier",
+   "file": "model.safetensors",
+   "base_params": 11842272,
+   "finetune_params": 11685122
+  },
+  {
+   "base": "albert/albert-base-v2",
+   "finetune": "peeyush01/albert-paraphrase-detector",
+   "file": "model.safetensors",
+   "base_params": 11842272,
+   "finetune_params": 11685122
+  },
+  {
+   "base": "distilbert/distilroberta-base",
+   "finetune": "OpenMed/OpenMed-PII-Italian-FastClinical-Small-82M-v1",
+   "file": "model.safetensors",
+   "base_params": 82760793,
+   "finetune_params": 81586252
+  },
+  {
+   "base": "distilbert/distilroberta-base",
+   "finetune": "paulgp85/econ-ai-detector-distilroberta-v3",
+   "file": "model.safetensors",
+   "base_params": 82760793,
+   "finetune_params": 82119938
+  },
+  {
+   "base": "distilbert/distilroberta-base",
+   "finetune": "tomaarsen/distilroberta-base-nli-v4",
+   "file": "model.safetensors",
+   "base_params": 82760793,
+   "finetune_params": 82118400
+  },
+  {
+   "base": "distilbert/distilroberta-base",
+   "finetune": "greatakela/gnlp_hw1_encoder",
+   "file": "model.safetensors",
+   "base_params": 82760793,
+   "finetune_params": 82118400
+  },
+  {
+   "base": "distilbert/distilroberta-base",
+   "finetune": "quanap5/distilroberta-base-sentence-transformer",
+   "file": "model.safetensors",
+   "base_params": 82760793,
+   "finetune_params": 82118400
+  },
+  {
+   "base": "google-bert/bert-base-cased",
+   "finetune": "tomaarsen/span-marker-bert-base-fewnerd-fine-super",
+   "file": "model.safetensors",
+   "base_params": 108932934,
+   "finetune_params": 108414787
+  },
+  {
+   "base": "google-bert/bert-base-cased",
+   "finetune": "imranali291/genderize",
+   "file": "model.safetensors",
+   "base_params": 108932934,
+   "finetune_params": 109483778
+  },
+  {
+   "base": "google-bert/bert-base-cased",
+   "finetune": "HUMADEX/german_medical_ner",
+   "file": "model.safetensors",
+   "base_params": 108932934,
+   "finetune_params": 107729677
+  },
+  {
+   "base": "google-bert/bert-base-cased",
+   "finetune": "StatsGary/bert-cola-finetuned",
+   "file": "model.safetensors",
+   "base_params": 108932934,
+   "finetune_params": 108311810
+  },
+  {
+   "base": "google-bert/bert-base-cased",
+   "finetune": "bucketresearch/politicalBiasBERT",
+   "file": "model.safetensors",
+   "base_params": 108932934,
+   "finetune_params": 108312579
+  }
+ ]
+}

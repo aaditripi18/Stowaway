@@ -140,3 +140,11 @@ changed elements at the highest changed bit is >= a threshold T.
 3. **Decision:** S5b replaces S5 if, on the fresh batch, it has a false positive
    in at most 1 honest model, and catches every payload that S5 catches in case
    (a). Either way both rules' numbers are reported.
+
+**Amendment (same day, before the dev run).** A payload written into a tensor
+that training also changed (case b) can leave the highest changed bit set by the
+training tail, which hides its ceiling from S5b. So dev also evaluates **S5c**:
+flag a tensor if some bit j <= the cutoff is the highest changed bit of at least
+a share T of the changed elements (a payload at k puts ~50% at j = k-1, whatever
+else changed). Dev chooses between S5b and S5c, and T; the fresh batch then
+judges the chosen rule once, by the decision rule above.
