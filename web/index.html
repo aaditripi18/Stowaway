@@ -3,241 +3,424 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- The page technically cannot send your file anywhere. connect-src 'none'
-         blocks every outbound connection (fetch, XHR, WebSocket, EventSource,
-         sendBeacon); default-src 'none' blocks everything not listed; all assets
-         are same-origin ('self'). This is the enforced form of "nothing is
-         uploaded". -->
+    <!-- Same policy as the scanner page: nothing loads from, or is sent to, any
+         other origin. Fonts and styles are self-hosted. -->
     <meta
       http-equiv="Content-Security-Policy"
       content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'"
     />
-    <title>Stowaway</title>
+    <title>Stowaway — what hides in a model's weights</title>
+    <meta name="description" content="Stowaway scans .safetensors, .pt and .gguf model files for payloads hidden in the weights, unaccounted bytes and unsafe pickle code, in your browser, and measures what a single-file scan cannot see." />
   </head>
-  <body class="bg-surface font-body-md text-body-md text-on-surface antialiased">
-    <header class="fixed top-0 left-0 right-0 h-16 z-50 bg-surface-container-lowest/90 backdrop-blur-md border-b border-outline-variant/30">
-      <div class="w-full px-gutter md:px-margin h-full flex items-center justify-between gap-space-md">
-        <div class="flex items-center gap-space-lg">
-          <div class="flex items-center gap-space-sm">
-            <div class="w-7 h-7 rounded bg-surface-container-high border border-primary/30 flex items-center justify-center text-primary">
-              <span class="material-symbols-outlined text-[18px]">shield_lock</span>
-            </div>
-            <div class="flex flex-col">
-              <span class="font-headline-md text-title-sm font-bold tracking-tight text-on-surface leading-none">STOWAWAY</span>
-              <span class="font-label-xs text-label-xs text-on-surface-variant/80 tracking-wider hidden sm:block">FIND WHAT MODEL SCANNERS MISS</span>
-            </div>
-          </div>
-          <div class="relative group hidden lg:flex items-center gap-space-xs px-space-sm py-1 rounded bg-surface-container border border-secondary/20">
-            <span class="w-2 h-2 rounded-full bg-secondary"></span>
-            <span class="font-label-xs text-label-xs text-secondary tracking-widest font-semibold uppercase">RUNS IN YOUR BROWSER</span>
-            <span class="material-symbols-outlined text-[14px] text-secondary/70">lock</span>
-            <div class="absolute left-0 top-full mt-1.5 hidden group-hover:flex flex-col w-80 p-space-sm rounded bg-surface-container-high border border-outline-variant shadow-2xl z-50 pointer-events-none">
-              <div class="flex items-center gap-1.5 text-secondary font-label-xs text-label-xs font-semibold uppercase">
-                <span class="material-symbols-outlined text-[14px]">verified_user</span>No upload, enforced by the page
-              </div>
-              <p class="font-code-inline text-code-inline text-on-surface-variant mt-1">
-                The page's Content-Security-Policy sets <code class="text-primary">connect-src 'none'</code>, so the browser blocks every network request. The file is read and scanned in ordinary browser JavaScript; it never leaves this tab.
-              </p>
-            </div>
-          </div>
-        </div>
-        <div class="flex items-center gap-space-sm">
-          <a class="font-label-xs text-label-xs text-on-surface-variant hover:text-on-surface uppercase tracking-wider hidden sm:block" href="#how">How it works</a>
-        </div>
+  <body class="bg-surface font-body-md text-body-md text-on-surface antialiased selection:bg-primary-container selection:text-surface">
+    <header class="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant">
+      <div class="h-14 max-w-[1100px] mx-auto px-margin md:px-margin-lg flex items-center justify-between">
+        <a class="flex items-center gap-2 group" href="./">
+          <span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+          <span class="font-code-sm text-code-sm tracking-wider uppercase font-semibold text-on-surface group-hover:text-primary transition-colors">STOWAWAY</span>
+        </a>
+        <nav class="hidden md:flex items-center gap-space-lg">
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="#findings">Findings</a>
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="#checks">Checks</a>
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="scan.html">Scan</a>
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="#reproduce">Reproduce</a>
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="https://github.com/aaditripi18/Stowaway" rel="noopener" target="_blank">GitHub</a>
+        </nav>
+        <a class="inline-flex items-center bg-primary-container text-surface font-code-sm text-code-sm font-semibold px-3 py-1.5 rounded hover:brightness-110 active:scale-[0.99] transition-all" href="scan.html">Scan a model</a>
       </div>
     </header>
 
-    <main class="w-full min-h-screen pt-16 bg-surface">
-      <div class="w-full max-w-7xl mx-auto px-gutter md:px-margin py-space-lg flex flex-col gap-space-lg">
+    <main class="w-full pt-14 bg-surface">
+      <div class="max-w-[1100px] mx-auto px-margin md:px-margin-lg">
 
-        <!-- STATE 1: EMPTY -->
-        <section class="flex flex-col items-center justify-center py-space-xl gap-space-lg" id="empty-state">
-          <div class="text-center max-w-2xl flex flex-col items-center gap-space-xs">
-            <div class="inline-flex items-center gap-space-xs px-space-sm py-0.5 rounded bg-surface-container text-secondary font-label-xs text-label-xs uppercase tracking-widest mb-space-xs">
-              <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>Client-side model-file scanner
-            </div>
-            <h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight">Inspect model weights before you load them</h1>
-            <p class="font-body-lg text-body-lg text-on-surface-variant">
-              Drop a model file to check it for unsafe pickle code, bytes the format does not account for, and data hidden in the weights — without uploading a single byte.
-            </p>
-          </div>
-
-          <div class="relative group w-full max-w-3xl bg-surface-container-low hover:bg-surface-container transition-all cursor-pointer rounded-xl p-space-xl flex flex-col items-center justify-center text-center shadow-lg" id="drop-zone">
-            <input accept=".safetensors,.pt,.pth,.bin,.ckpt,.gguf" class="hidden" id="file-input" type="file" />
-            <div class="w-14 h-14 rounded-full bg-surface-container-high group-hover:scale-105 group-hover:bg-primary/10 transition-all flex items-center justify-center text-primary mb-space-md">
-              <span class="material-symbols-outlined text-[30px]">neurology</span>
-            </div>
-            <h3 class="font-headline-md text-headline-md text-on-surface tracking-tight mb-space-xs">Drop a model file to scan it</h3>
-            <p class="font-body-md text-body-md text-on-surface-variant max-w-lg mb-space-md">
-              <code class="text-primary font-code-inline text-code-inline">.safetensors</code>,
-              <code class="text-primary font-code-inline text-code-inline">.pt</code> and
-              <code class="text-primary font-code-inline text-code-inline">.gguf</code> are scanned here (checks S1–S4); comparing against a base model (S5) is in the Python tool. Files never leave your browser.
-            </p>
-            <div class="flex items-center gap-space-sm">
-              <button class="px-space-md py-space-sm bg-primary text-on-primary rounded font-label-md text-label-md font-bold uppercase tracking-wider hover:opacity-90 transition-opacity flex items-center gap-1.5 shadow-md" id="browse-btn" type="button">
-                <span class="material-symbols-outlined text-[16px]">file_open</span> Choose a file
-              </button>
-            </div>
-            <div class="mt-space-lg flex items-center gap-space-sm text-label-xs font-label-xs text-on-surface-variant/70">
-              <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px] text-secondary">verified_user</span> Scanned in this tab</span>
-              <span>•</span>
-              <span>Read into memory, nothing sent</span>
-            </div>
-          </div>
-
-          <div class="w-full max-w-3xl p-space-md rounded bg-surface-container-lowest hover:bg-surface-container-low transition-colors cursor-pointer flex flex-col sm:flex-row items-center justify-between gap-space-md" id="base-model-drop">
-            <input accept=".safetensors,.pt,.pth,.bin,.ckpt,.gguf" class="hidden" id="base-input" type="file" />
-            <div class="flex items-center gap-space-sm">
-              <div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center text-outline">
-                <span class="material-symbols-outlined text-[18px]">difference</span>
+        <!-- HERO -->
+        <section class="py-12 border-b border-hair">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-start">
+            <div class="lg:col-span-7 flex flex-col gap-space-lg max-w-xl">
+              <div class="inline-flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-primary-container"></span>
+                <span class="font-label-mono text-label-mono uppercase tracking-wider text-primary">Preliminary findings · week 5 of 8 · 2026</span>
               </div>
-              <div class="flex flex-col text-left">
-                <span class="font-title-sm text-title-sm text-on-surface font-semibold">Compare against a base model (optional)</span>
-                <span class="font-body-md text-body-md text-on-surface-variant" id="base-slot-text">Add the claimed base model to diff the weights bit by bit (the S5 check).</span>
+              <h1 class="font-headline-xl text-headline-xl font-semibold text-on-surface tracking-tight leading-[1.12]">What can hide in a model's weights that no scanner sees?</h1>
+              <p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+                Stowaway inspects <span class="font-code-md text-code-md text-on-surface">.safetensors</span>, <span class="font-code-md text-code-md text-on-surface">.pt</span> and <span class="font-code-md text-code-md text-on-surface">.gguf</span> files for payloads in the weights, unaccounted bytes and unsafe pickle code — entirely in your browser, nothing uploaded — and shows that reading one file is not enough.
+              </p>
+              <div class="flex flex-wrap items-center gap-space-sm pt-space-xs">
+                <a class="inline-flex items-center justify-center bg-primary-container text-surface font-code-sm text-code-sm font-semibold px-4 py-2 rounded-sm hover:brightness-110 active:scale-[0.99] transition-all" href="scan.html">Scan a model</a>
+                <a class="inline-flex items-center justify-center border border-[#353c52] hover:bg-panel-hover text-on-surface font-code-sm text-code-sm px-4 py-2 rounded-sm transition-colors" href="#findings">Read the findings</a>
+                <a class="inline-flex items-center justify-center border border-[#353c52] hover:bg-panel-hover text-on-surface font-code-sm text-code-sm px-4 py-2 rounded-sm transition-colors" href="#reproduce">Reproduce it</a>
               </div>
             </div>
-            <div class="flex items-center gap-space-sm shrink-0">
-              <span class="hidden items-center gap-1 font-label-xs text-label-xs text-secondary" id="base-attached"><span class="material-symbols-outlined text-[14px]">check_circle</span><span id="base-name"></span></span>
-              <button class="px-space-md py-1.5 bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-xs text-label-xs font-semibold rounded whitespace-nowrap uppercase tracking-wider" id="base-attach-btn" type="button">Attach base</button>
+
+            <!-- Illustration: the low byte of each float32 spells a message. -->
+            <figure class="lg:col-span-5 flex flex-col bg-panel border border-panel-line rounded p-space-md sm:p-space-lg">
+              <div class="flex items-center justify-between pb-space-sm border-b border-hair">
+                <span class="font-label-mono text-label-mono uppercase tracking-wider text-outline">float32 weights, as hex</span>
+                <span class="font-label-mono text-label-mono text-primary-container">low byte = payload</span>
+              </div>
+              <div class="py-space-md font-code-sm text-[9px] sm:text-code-sm leading-relaxed overflow-x-auto text-[#8c93a8]" aria-hidden="true">
+                <div class="grid grid-cols-1 gap-0.5 select-none whitespace-pre" id="hex-grid">
+                  <div>3f84 9b<b>53</b>   bf02 4e<b>54</b>   3e71 d0<b>4f</b>   3f19 a2<b>57</b></div>
+                  <div>3e92 c1<b>41</b>   be80 18<b>57</b>   3f77 e4<b>41</b>   bf33 09<b>59</b></div>
+                  <div>3d40 88<b>5f</b>   be11 fe<b>43</b>   3f5c 2d<b>41</b>   3e0b 91<b>52</b></div>
+                  <div>beaa 34<b>52</b>   3f2a 10<b>49</b>   3ec8 d7<b>45</b>   bf41 aa<b>52</b></div>
+                  <div>3e65 72<b>5f</b>   be99 03<b>50</b>   3f08 cd<b>41</b>   3da2 5b<b>59</b></div>
+                  <div>3f14 ee<b>4c</b>   be22 9f<b>4f</b>   3f40 12<b>41</b>   3e83 bc<b>44</b></div>
+                </div>
+                <div class="mt-space-sm font-label-mono text-label-mono text-outline">read the cyan bytes in order: <span class="text-primary-container">STOWAWAY_CARRIER_PAYLOAD</span></div>
+              </div>
+              <figcaption class="mt-space-xs pt-space-md border-t border-hair flex flex-col gap-1">
+                <div class="font-label-mono text-label-mono uppercase tracking-wider text-outline flex items-center justify-between">
+                  <span>Hidden in ResNet-18</span>
+                  <span class="text-primary-container">Δ top-1 accuracy: 0.0</span>
+                </div>
+                <div class="font-code-md text-5xl font-bold text-white tracking-tight py-1">4 MB</div>
+                <p class="font-body-sm text-body-sm text-on-surface-variant leading-snug">
+                  of random data in the low bits of ResNet-18's weights leaves top-1 accuracy exactly unchanged (66.8% before and after). The single-file checks missed every payload size tested; only a diff against the base model caught them.
+                </p>
+              </figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <!-- KEY NUMBERS -->
+        <section class="border-b border-hair bg-[#121622]">
+          <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-hair">
+            <div class="py-space-md px-space-lg flex items-center gap-space-sm">
+              <span class="w-1.5 h-1.5 rounded-full bg-primary-container shrink-0"></span>
+              <span class="font-code-md text-code-md text-on-surface font-semibold">5 checks · 146 tests</span>
+            </div>
+            <div class="py-space-md px-space-lg flex items-center gap-space-sm">
+              <span class="w-1.5 h-1.5 rounded-full bg-outline shrink-0"></span>
+              <span class="font-code-md text-code-md text-on-surface font-semibold">39 popular float32 models surveyed</span>
+            </div>
+            <div class="py-space-md px-space-lg flex items-center gap-space-sm">
+              <span class="w-1.5 h-1.5 rounded-full bg-tertiary shrink-0"></span>
+              <span class="font-code-md text-code-md text-on-surface font-semibold">16 of 39 expose a payload from the file alone; 23 reveal nothing</span>
             </div>
           </div>
         </section>
 
-        <!-- STATE 2: SCANNING -->
-        <section class="hidden flex-col items-center justify-center py-space-xl gap-space-lg" id="scanning-state">
-          <div class="w-full max-w-2xl bg-surface-container-low rounded-xl p-space-lg flex flex-col gap-space-md shadow-xl">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-space-sm">
-                <div class="w-8 h-8 rounded bg-primary/20 text-primary flex items-center justify-center animate-spin">
-                  <span class="material-symbols-outlined text-[18px]">autorenew</span>
-                </div>
-                <div class="flex flex-col">
-                  <span class="font-title-sm text-title-sm text-on-surface font-bold tracking-tight" id="scan-file-label">model.safetensors</span>
-                  <span class="font-label-xs text-label-xs text-on-surface-variant" id="scan-sub">Reading in this tab</span>
-                </div>
-              </div>
-              <span class="font-code-inline text-code-inline text-primary font-bold" id="scan-percent"></span>
+        <!-- 01 THE PROBLEM -->
+        <section class="py-12 border-b border-hair scroll-mt-14" id="problem">
+          <div class="flex flex-col gap-space-lg">
+            <div class="flex items-baseline gap-space-md">
+              <span class="font-label-mono text-label-mono text-primary font-bold">01</span>
+              <h2 class="font-headline-lg text-headline-lg font-semibold text-on-surface">The problem</h2>
             </div>
-            <div class="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden relative">
-              <div class="h-full bg-primary-container rounded-full transition-all duration-300" id="scan-progress-bar"></div>
+            <div class="max-w-3xl flex flex-col gap-space-sm text-on-surface-variant font-body-lg text-body-lg">
+              <p>Model scanners such as picklescan and ModelScan look for <em>code</em> hidden in pickle data, and converting a model to <span class="font-code-md text-code-md text-on-surface">.safetensors</span> removes code entirely — so safetensors files are trusted by default.</p>
+              <p>But a payload does not need to be code. It can sit in the low bits of the weights, in bytes appended after the last tensor, or in alignment padding. It survives format conversion because it is just numbers, and a loader that later pulls it out and runs it is small enough to live anywhere. Stowaway looks where the code scanners do not, and measures how much can hide before anything notices.</p>
             </div>
           </div>
         </section>
 
-        <!-- STATE 3: RESULT DASHBOARD -->
-        <div class="hidden flex-col gap-space-lg w-full" id="result-dashboard">
-          <div class="w-full rounded-xl p-space-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md transition-colors" id="verdict-banner">
-            <div class="flex items-start md:items-center gap-space-md">
-              <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" id="verdict-icon-container">
-                <span class="material-symbols-outlined text-[28px]" id="verdict-icon">warning</span>
+        <!-- 02 WHAT IT CHECKS -->
+        <section class="py-12 border-b border-hair scroll-mt-14" id="checks">
+          <div class="flex flex-col gap-space-lg">
+            <div class="flex items-baseline gap-space-md">
+              <span class="font-label-mono text-label-mono text-primary font-bold">02</span>
+              <h2 class="font-headline-lg text-headline-lg font-semibold text-on-surface">What it checks</h2>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-space-md">
+              <div class="bg-panel border border-panel-line p-space-md flex flex-col gap-space-sm">
+                <span class="self-start font-label-mono text-label-mono font-semibold text-primary px-1.5 py-0.5 bg-primary/10 rounded">S1</span>
+                <h3 class="font-headline-sm text-headline-sm text-on-surface">Pickle imports</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">Unsafe code in pickle data, found by a restricted unpickler and an opcode walk. Nothing is ever executed.</p>
               </div>
-              <div class="flex flex-col">
-                <div class="flex items-center gap-space-xs flex-wrap">
-                  <span class="font-label-xs text-label-xs uppercase px-2 py-0.5 rounded font-bold tracking-widest" id="verdict-tag">VERDICT</span>
-                  <span class="font-label-xs text-label-xs text-on-surface-variant font-code-inline" id="verdict-timestamp"></span>
-                </div>
-                <h2 class="font-headline-md text-headline-md text-on-surface tracking-tight mt-1" id="verdict-headline"></h2>
-                <p class="font-body-md text-body-md text-on-surface-variant mt-0.5" id="verdict-subtext"></p>
+              <div class="bg-panel border border-panel-line p-space-md flex flex-col gap-space-sm">
+                <span class="self-start font-label-mono text-label-mono font-semibold text-primary px-1.5 py-0.5 bg-primary/10 rounded">S2</span>
+                <h3 class="font-headline-sm text-headline-sm text-on-surface">Byte coverage</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">Every byte must belong to a header, a tensor or zero padding. Anything else is reported with its offset.</p>
+              </div>
+              <div class="bg-panel border border-panel-line p-space-md flex flex-col gap-space-sm">
+                <span class="self-start font-label-mono text-label-mono font-semibold text-primary px-1.5 py-0.5 bg-primary/10 rounded">S3</span>
+                <h3 class="font-headline-sm text-headline-sm text-on-surface">Precision history</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">Low bits that should be zero — e.g. fp16 or bf16 weights saved as float32 — but are not.</p>
+              </div>
+              <div class="bg-panel border border-panel-line p-space-md flex flex-col gap-space-sm">
+                <span class="self-start font-label-mono text-label-mono font-semibold text-primary px-1.5 py-0.5 bg-primary/10 rounded">S4</span>
+                <h3 class="font-headline-sm text-headline-sm text-on-surface">Bit-plane statistics</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">Low bits pulled toward a fair coin, measured against the tensor's role peers in the same model.</p>
+              </div>
+              <div class="bg-panel border border-primary-container/40 p-space-md flex flex-col gap-space-sm">
+                <span class="self-start font-label-mono text-label-mono font-semibold text-primary-container px-1.5 py-0.5 bg-primary-container/10 rounded">S5</span>
+                <h3 class="font-headline-sm text-headline-sm text-on-surface">Base-model diff</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">A bit-level diff against the claimed base model: changes confined to the low bits are a payload, not training.</p>
               </div>
             </div>
-            <div class="flex items-center gap-space-xs shrink-0 self-end md:self-center">
-              <button class="px-space-md py-space-sm bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-label-md rounded font-semibold uppercase tracking-wider flex items-center gap-1.5 transition-colors" id="export-btn">
-                <span class="material-symbols-outlined text-[16px]">download</span> Export report JSON
-              </button>
-              <button class="px-space-md py-space-sm bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md rounded font-semibold uppercase tracking-wider flex items-center gap-1.5 transition-colors" id="rescan-btn">
-                <span class="material-symbols-outlined text-[16px]">restart_alt</span> Scan another
-              </button>
+            <p class="font-body-sm text-body-sm text-outline">Formats are detected from content, never the extension: safetensors, PyTorch zip (.pt/.pth/.bin), plain pickle and GGUF.</p>
+          </div>
+        </section>
+
+        <!-- 03 THE EXPERIMENTS -->
+        <section class="py-12 border-b border-hair scroll-mt-14" id="findings">
+          <div class="flex flex-col gap-space-lg">
+            <div class="flex items-baseline gap-space-md">
+              <span class="font-label-mono text-label-mono text-primary font-bold">03</span>
+              <h2 class="font-headline-lg text-headline-lg font-semibold text-on-surface">The experiments</h2>
+            </div>
+            <p class="font-body-lg text-body-lg text-on-surface max-w-3xl">A payload is just numbers. It survives conversion to a "safe" format, costs the model nothing measurable, and no code scanner looks at it. So the question is which models give it away from the file alone.</p>
+            <div class="w-full overflow-x-auto border border-hair rounded bg-panel">
+              <div class="p-space-md border-b border-hair">
+                <span class="font-code-sm text-code-sm font-semibold text-on-surface uppercase tracking-wider">Where a random payload hides, by what the model's weights look like</span>
+              </div>
+              <table class="w-full text-left border-collapse min-w-[520px]">
+                <thead>
+                  <tr class="bg-panel-hover border-b border-hair">
+                    <th class="py-space-md px-space-lg font-label-mono text-label-mono uppercase tracking-wider text-[#8c93a8]">What the weights look like</th>
+                    <th class="py-space-md px-space-lg font-label-mono text-label-mono uppercase tracking-wider text-[#8c93a8] text-right">Models</th>
+                    <th class="py-space-md px-space-lg font-label-mono text-label-mono uppercase tracking-wider text-[#8c93a8] text-right">Payload seen from the file alone</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-hair font-body-md text-body-md">
+                  <tr>
+                    <td class="py-space-md px-space-lg text-on-surface">float32 file carrying only fp16 or bf16 precision</td>
+                    <td class="py-space-md px-space-lg font-code-md text-code-md text-right text-on-surface-variant">14</td>
+                    <td class="py-space-md px-space-lg font-code-md text-code-md text-right text-on-surface">14 / 14 at every k</td>
+                  </tr>
+                  <tr>
+                    <td class="py-space-md px-space-lg text-on-surface">float32 with a low-bit signature</td>
+                    <td class="py-space-md px-space-lg font-code-md text-code-md text-right text-on-surface-variant">2</td>
+                    <td class="py-space-md px-space-lg font-code-md text-code-md text-right text-on-surface">2 / 2 at every k</td>
+                  </tr>
+                  <tr>
+                    <td class="py-space-md px-space-lg text-on-surface">float32 with fair-coin low bits</td>
+                    <td class="py-space-md px-space-lg font-code-md text-code-md text-right text-on-surface-variant">23</td>
+                    <td class="py-space-md px-space-lg text-right"><span class="inline-block bg-primary-container/15 text-primary-container font-code-md text-code-md px-2 py-0.5 rounded font-medium">0 / 23 at every k</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="font-body-sm text-body-sm text-outline">The 40 most-downloaded non-gated float32 safetensors models on Hugging Face (39 had testable samples); random bytes in the low k = 1, 4 or 8 bits of one sampled tensor. For 23 of 39, a clean single-file scan certifies nothing about the weights.</p>
+          </div>
+        </section>
+
+        <!-- 04 WHAT ONE FILE CAN'T SEE -->
+        <section class="py-12 border-b border-hair scroll-mt-14" id="one-file">
+          <div class="flex flex-col gap-space-lg">
+            <div class="flex items-baseline gap-space-md">
+              <span class="font-label-mono text-label-mono text-primary font-bold">04</span>
+              <h2 class="font-headline-lg text-headline-lg font-semibold text-on-surface">What one file can't see</h2>
+            </div>
+            <div class="bg-panel border-l-2 border-primary-container p-space-lg">
+              <p class="font-headline-md text-headline-md font-semibold text-on-surface leading-snug">Random bytes in ResNet-18's low 8 bits, up to 4 MB, leave top-1 accuracy exactly unchanged and pass both single-file checks at every size tested. Only a bit-for-bit diff against the base model catches them.</p>
+            </div>
+            <span class="font-label-mono text-label-mono uppercase tracking-wider text-outline">Random payload in the low 8 bits · caught (cyan) or missed (grey), by payload size</span>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+              <div class="bg-panel border border-panel-line rounded p-space-lg flex flex-col gap-space-md">
+                <div class="flex items-center justify-between border-b border-hair pb-space-sm gap-2">
+                  <span class="font-headline-sm text-headline-sm text-on-surface">ResNet-18</span>
+                  <span class="font-label-mono text-label-mono text-outline uppercase">fair-coin low bits</span>
+                </div>
+                <div class="matrix font-label-mono text-label-mono">
+                  <span></span><span>1K</span><span>4K</span><span>16K</span><span>64K</span><span>256K</span><span>1M</span>
+                  <span class="lane">Single file (S3/S4)</span><i class="miss"></i><i class="miss"></i><i class="miss"></i><i class="miss"></i><i class="miss"></i><i class="miss"></i>
+                  <span class="lane">Base diff (S5)</span><i class="hit"></i><i class="hit"></i><i class="hit"></i><i class="hit"></i><i class="hit"></i><i class="hit"></i>
+                </div>
+                <div class="pt-space-sm border-t border-hair flex items-center justify-between gap-2 font-label-mono text-label-mono">
+                  <span class="text-outline">Top-1 accuracy, 500 Imagenette images</span>
+                  <span class="text-on-surface font-semibold">66.8% → 66.8% (up to 4 MB)</span>
+                </div>
+              </div>
+              <div class="bg-panel border border-panel-line rounded p-space-lg flex flex-col gap-space-md">
+                <div class="flex items-center justify-between border-b border-hair pb-space-sm gap-2">
+                  <span class="font-headline-sm text-headline-sm text-on-surface">MobileNetV3-Small</span>
+                  <span class="font-label-mono text-label-mono text-primary-container uppercase">low-bit signature</span>
+                </div>
+                <div class="matrix font-label-mono text-label-mono">
+                  <span></span><span>1K</span><span>4K</span><span>16K</span><span>64K</span><span>256K</span><span>1M</span>
+                  <span class="lane">Single file (S3/S4)</span><i class="hit"></i><i class="hit"></i><i class="hit"></i><i class="hit"></i><i class="hit"></i><i class="hit"></i>
+                  <span class="lane">Base diff (S5)</span><i class="hit"></i><i class="hit"></i><i class="hit"></i><i class="hit"></i><i class="hit"></i><i class="hit"></i>
+                </div>
+                <div class="pt-space-sm border-t border-hair flex items-center justify-between gap-2 font-label-mono text-label-mono">
+                  <span class="text-outline">Top-1 accuracy, 500 Imagenette images</span>
+                  <span class="text-on-surface font-semibold">66.2% → 66.2% (up to 1 MB)</span>
+                </div>
+              </div>
+            </div>
+            <p class="font-body-sm text-body-sm text-outline max-w-3xl">MobileNetV3-Small's low bits carry a signature (bit 0 set in ~67% of values) that a random payload disturbs, so the naive attack is seen from the file. An attacker who knows the checks can still evade them: spreading the payload over one weight in 64 keeps every statistic inside the threshold at every size up to 1 MB. The base diff catches that from 4 KB.</p>
+          </div>
+        </section>
+
+        <!-- 05 FOUR HYPOTHESES -->
+        <section class="py-12 border-b border-hair scroll-mt-14" id="hypotheses">
+          <div class="flex flex-col gap-space-lg">
+            <div class="flex items-baseline gap-space-md">
+              <span class="font-label-mono text-label-mono text-primary font-bold">05</span>
+              <h2 class="font-headline-lg text-headline-lg font-semibold text-on-surface">Four hypotheses</h2>
+            </div>
+            <div class="flex flex-col gap-space-sm">
+              <div class="hyp bg-panel border border-panel-line p-space-md rounded flex flex-col md:flex-row md:items-center justify-between gap-space-sm">
+                <div class="flex gap-space-sm max-w-3xl">
+                  <span class="shrink-0 self-start font-label-mono text-label-mono font-semibold text-outline px-1.5 py-0.5 bg-panel-hover rounded">H1</span>
+                  <div class="flex flex-col gap-1">
+                    <span class="font-body-md text-body-md text-on-surface">S1 matches picklescan on code payloads, and every weight-payload model passes picklescan and a safetensors conversion untouched.</span>
+                    <span class="font-body-sm text-body-sm text-on-surface-variant">Evidence: not yet run. The side-by-side with picklescan and ModelScan is experiment E5, scheduled for the remaining weeks.</span>
+                  </div>
+                </div>
+                <span class="verdict self-start md:self-center shrink-0 bg-surface-container-high text-secondary border border-outline-variant">Not yet tested</span>
+              </div>
+              <div class="hyp bg-panel border border-panel-line p-space-md rounded flex flex-col md:flex-row md:items-center justify-between gap-space-sm">
+                <div class="flex gap-space-sm max-w-3xl">
+                  <span class="shrink-0 self-start font-label-mono text-label-mono font-semibold text-primary px-1.5 py-0.5 bg-primary/10 rounded">H2</span>
+                  <div class="flex flex-col gap-1">
+                    <span class="font-body-md text-body-md text-on-surface">In a model stored at higher precision than it was trained in, a payload of 1 KB or more is caught by S3 with no false positives.</span>
+                    <span class="font-body-sm text-body-sm text-on-surface-variant">Evidence: on 19 real bf16 models widened to float32, S3 identified bf16 precision in 19 / 19, raised 0 false positives, and caught a 1 KB payload in 19 / 19 at k = 1, 4 and 8.</span>
+                  </div>
+                </div>
+                <span class="verdict self-start md:self-center shrink-0 bg-primary-container/15 text-primary-container border border-primary-container/30">Supported</span>
+              </div>
+              <div class="hyp bg-panel border border-panel-line p-space-md rounded flex flex-col md:flex-row md:items-center justify-between gap-space-sm">
+                <div class="flex gap-space-sm max-w-3xl">
+                  <span class="shrink-0 self-start font-label-mono text-label-mono font-semibold text-primary px-1.5 py-0.5 bg-primary/10 rounded">H3</span>
+                  <div class="flex flex-col gap-1">
+                    <span class="font-body-md text-body-md text-on-surface">In a genuinely float32-trained model, an encrypted low-bit payload cannot be seen from one file.</span>
+                    <span class="font-body-sm text-body-sm text-on-surface-variant">Evidence: true for the 23 of 39 surveyed models with fair-coin low bits and for ResNet-18; false for the 2 with a low-bit signature, such as MobileNetV3-Small.</span>
+                  </div>
+                </div>
+                <span class="verdict self-start md:self-center shrink-0 bg-surface-container-high text-secondary border border-outline-variant">Model-dependent</span>
+              </div>
+              <div class="hyp bg-panel border border-panel-line p-space-md rounded flex flex-col md:flex-row md:items-center justify-between gap-space-sm">
+                <div class="flex gap-space-sm max-w-3xl">
+                  <span class="shrink-0 self-start font-label-mono text-label-mono font-semibold text-primary px-1.5 py-0.5 bg-primary/10 rounded">H4</span>
+                  <div class="flex flex-col gap-1">
+                    <span class="font-body-md text-body-md text-on-surface">A diff against the claimed base model catches a payload in any tensor the fine-tune did not train.</span>
+                    <span class="font-body-sm text-body-sm text-on-surface-variant">Evidence: caught in 10 / 10 held-out pairs for payloads in the low k = 8, 16, 20 and 21 bits. Limits: a payload inside a tensor the fine-tune did train is camouflaged (0 / 10), and a 1 KB payload spread at 1:64 stays under S5's per-tensor floor.</span>
+                  </div>
+                </div>
+                <span class="verdict self-start md:self-center shrink-0 bg-primary-container/15 text-primary-container border border-primary-container/30">Supported, with limits</span>
+              </div>
+            </div>
+            <p class="font-label-mono text-label-mono text-outline">Hypotheses were written before any experiment ran (PLAN.md).</p>
+          </div>
+        </section>
+
+        <!-- 06 WHAT WE LEARNED -->
+        <section class="py-12 border-b border-hair scroll-mt-14" id="learned">
+          <div class="flex flex-col gap-space-lg">
+            <div class="flex items-baseline gap-space-md">
+              <span class="font-label-mono text-label-mono text-primary font-bold">06</span>
+              <h2 class="font-headline-lg text-headline-lg font-semibold text-on-surface">What we learned</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+              <div class="bg-panel border border-panel-line p-space-lg rounded flex flex-col gap-space-xs">
+                <h3 class="font-headline-md text-headline-md text-on-surface">A clean scan is not a clean model.</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant">For most popular float32 models, single-file statistics have no signal: a payload thin enough moves no number far enough. The check that does not depend on where the bytes go needs the trusted base model to diff against.</p>
+              </div>
+              <div class="bg-panel border border-panel-line p-space-lg rounded flex flex-col gap-space-xs">
+                <h3 class="font-headline-md text-headline-md text-on-surface">Whether one file is enough depends on the model.</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant">Some models' low bits are fair coins that hide anything; others carry a signature a payload disturbs. We measure which, rather than assume.</p>
+              </div>
+              <div class="bg-panel border border-panel-line p-space-lg rounded flex flex-col gap-space-xs">
+                <h3 class="font-headline-md text-headline-md text-on-surface">A third of "float32" uploads are really half precision.</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant">14 of 39 top models are saved as float32 but hold only fp16 or bf16 precision, leaving a block of zero low bits — exactly where a payload would go, and exactly where S3 sees it.</p>
+              </div>
+              <div class="bg-panel border border-panel-line p-space-lg rounded flex flex-col gap-space-xs">
+                <h3 class="font-headline-md text-headline-md text-on-surface">The strong check has a blind spot too.</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant">A payload confined to tensors the distributor genuinely trained is camouflaged by the training, so even the base diff misses it. We report the limit rather than hide it.</p>
+              </div>
             </div>
           </div>
+        </section>
 
-          <section class="grid grid-cols-2 md:grid-cols-5 gap-space-sm w-full" id="fact-tiles">
-            <div class="p-space-md rounded bg-surface-container-low flex flex-col justify-between">
-              <span class="font-label-xs text-label-xs uppercase text-on-surface-variant tracking-wider">File</span>
-              <div class="mt-space-sm"><span class="font-code-inline text-code-inline text-on-surface font-bold truncate block" id="tile-file"></span>
-                <span class="font-label-xs text-label-xs text-secondary flex items-center gap-0.5 mt-0.5"><span class="material-symbols-outlined text-[12px]">verified</span> Local only</span></div>
+        <!-- 07 VALIDATED ON UNSEEN MODELS -->
+        <section class="py-12 border-b border-hair scroll-mt-14" id="validated">
+          <div class="flex flex-col gap-space-lg">
+            <div class="flex items-baseline gap-space-md">
+              <span class="font-label-mono text-label-mono text-primary font-bold">07</span>
+              <h2 class="font-headline-lg text-headline-lg font-semibold text-on-surface">Validated on unseen models</h2>
             </div>
-            <div class="p-space-md rounded bg-surface-container-low flex flex-col justify-between">
-              <span class="font-label-xs text-label-xs uppercase text-on-surface-variant tracking-wider">Format</span>
-              <div class="mt-space-sm"><span class="font-code-inline text-code-inline text-primary font-bold" id="tile-format"></span>
-                <span class="font-label-xs text-label-xs text-on-surface-variant mt-0.5 block" id="tile-dtypes"></span></div>
+            <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-hair border border-hair bg-panel rounded">
+              <div class="p-space-lg flex flex-col gap-1">
+                <span class="font-code-md text-headline-xl font-bold text-white tracking-tight">0</span>
+                <span class="font-label-mono text-label-mono uppercase tracking-wider text-primary-container">S5 false positives</span>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">on 15 held-out honest fine-tune / base pairs (RoBERTa, XLM-R and ViT fine-tunes).</p>
+              </div>
+              <div class="p-space-lg flex flex-col gap-1">
+                <span class="font-code-md text-headline-xl font-bold text-white tracking-tight">10 / 10</span>
+                <span class="font-label-mono text-label-mono uppercase tracking-wider text-primary-container">S5 detections</span>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">held-out pairs where S5 caught a payload in a tensor that should match the base, at k = 8, 16, 20 and 21.</p>
+              </div>
+              <div class="p-space-lg flex flex-col gap-1">
+                <span class="font-code-md text-headline-xl font-bold text-white tracking-tight">5 → 1 of 20</span>
+                <span class="font-label-mono text-label-mono uppercase tracking-wider text-primary-container">S4 false-positive models</span>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">on a fresh batch of bf16 models, first revision of S4 against the current rule (and 1 → 0 of 20 for fp16).</p>
+              </div>
             </div>
-            <div class="p-space-md rounded bg-surface-container-low flex flex-col justify-between">
-              <span class="font-label-xs text-label-xs uppercase text-on-surface-variant tracking-wider">Size</span>
-              <div class="mt-space-sm"><span class="font-code-inline text-code-inline text-on-surface font-bold block" id="tile-size"></span>
-                <span class="font-label-xs text-label-xs text-on-surface-variant font-code-inline mt-0.5 block" id="tile-size-bytes"></span></div>
-            </div>
-            <div class="p-space-md rounded bg-surface-container-low flex flex-col justify-between">
-              <span class="font-label-xs text-label-xs uppercase text-on-surface-variant tracking-wider">Tensors</span>
-              <div class="mt-space-sm"><span class="font-code-inline text-code-inline text-on-surface font-bold block" id="tile-tensors"></span>
-                <span class="font-label-xs text-label-xs text-on-surface-variant mt-0.5 block" id="tile-tensor-detail"></span></div>
-            </div>
-            <div class="p-space-md rounded bg-surface-container-low flex flex-col justify-between col-span-2 md:col-span-1">
-              <div class="flex items-center justify-between">
-                <span class="font-label-xs text-label-xs uppercase text-on-surface-variant tracking-wider">SHA-256</span>
-                <button class="text-primary hover:text-on-surface text-label-xs font-label-xs flex items-center gap-0.5" id="copy-hash" title="Copy full SHA-256">
-                  <span class="material-symbols-outlined text-[14px]">content_copy</span><span>Copy</span></button>
-              </div>
-              <div class="mt-space-sm"><span class="font-code-inline text-code-inline text-on-surface font-semibold tracking-wider block" id="tile-sha"></span></div>
-            </div>
-          </section>
-
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg w-full">
-            <main class="lg:col-span-8 flex flex-col gap-space-md">
-              <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-space-sm bg-surface-container-low p-space-sm rounded">
-                <div class="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0" id="filter-buttons"></div>
-                <div class="flex items-center bg-surface-container px-2.5 py-1 rounded min-w-[180px]">
-                  <span class="material-symbols-outlined text-[16px] text-on-surface-variant mr-1.5">search</span>
-                  <input class="bg-transparent text-on-surface font-code-inline text-code-inline focus:outline-none w-full placeholder:text-outline" id="findings-search" placeholder="Filter findings…" type="text" />
-                </div>
-              </div>
-              <div class="flex flex-col gap-space-sm" id="findings-list"></div>
-              <div class="hidden flex-col items-center justify-center p-space-xl bg-surface-container-low rounded-xl text-center" id="clean-reassurance">
-                <div class="w-12 h-12 rounded-full bg-secondary/10 text-secondary flex items-center justify-center mb-space-sm">
-                  <span class="material-symbols-outlined text-[28px]">check_circle</span>
-                </div>
-                <h3 class="font-headline-md text-headline-md text-on-surface font-bold">Nothing hidden here</h3>
-                <p class="font-body-md text-body-md text-on-surface-variant max-w-md mt-1" id="clean-reassurance-text"></p>
-              </div>
-            </main>
-
-            <aside class="lg:col-span-4 flex flex-col gap-space-md" id="explainer-strip">
-              <div class="bg-surface-container-low rounded p-space-md flex flex-col gap-space-sm">
-                <div class="flex items-center justify-between">
-                  <span class="font-label-xs text-label-xs font-bold uppercase tracking-wider text-outline">Checks</span>
-                  <span class="font-label-xs text-label-xs text-secondary font-code-inline" id="checks-ran"></span>
-                </div>
-                <div class="flex flex-col gap-space-xs mt-space-xs font-code-inline text-code-inline" id="check-list"></div>
-                <div class="mt-space-xs p-space-sm rounded bg-surface-container flex flex-col gap-space-xs">
-                  <span class="font-title-sm text-title-sm text-on-surface font-semibold">Compare against a base model</span>
-                  <p class="font-label-xs text-label-xs text-on-surface-variant leading-relaxed" id="result-base-status">Add the claimed base model (e.g. the unmodified upstream weights) to run the S5 bit-for-bit diff.</p>
-                  <button class="mt-1 px-3 py-1.5 bg-surface-container-high hover:bg-surface-container-highest text-primary font-label-xs text-label-xs font-bold uppercase tracking-wider rounded transition-colors flex items-center justify-center gap-1.5" id="result-base-btn" type="button"><span class="material-symbols-outlined text-[14px]">difference</span> <span id="result-base-btn-text">Attach base model</span></button>
-                </div>
-              </div>
-              <div class="bg-surface-container-low rounded p-space-md flex flex-col gap-space-xs" id="how">
-                <span class="font-label-xs text-label-xs font-bold uppercase tracking-wider text-outline">What each check does</span>
-                <div class="space-y-1.5 font-code-inline text-code-inline text-on-surface-variant mt-space-xs" id="check-legend"></div>
-              </div>
-            </aside>
+            <p class="font-body-sm text-body-sm text-outline">Each detector was frozen, then run once on a batch of models committed before their weights were read, so these numbers were not tuned on the models they describe.</p>
           </div>
-        </div>
+        </section>
+
+        <!-- 08 REPRODUCE -->
+        <section class="py-12 border-b border-hair scroll-mt-14" id="reproduce">
+          <div class="flex flex-col gap-space-lg">
+            <div class="flex items-baseline gap-space-md">
+              <span class="font-label-mono text-label-mono text-primary font-bold">08</span>
+              <h2 class="font-headline-lg text-headline-lg font-semibold text-on-surface">Reproduce</h2>
+            </div>
+            <div class="bg-panel border border-panel-line rounded flex flex-col">
+              <div class="flex items-center justify-between px-space-md py-space-sm border-b border-hair bg-[#121622]">
+                <div class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-panel-line"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-panel-line"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-panel-line"></span>
+                  <span class="font-label-mono text-label-mono text-outline ml-2">from a clone of the repo</span>
+                </div>
+                <button class="font-code-sm text-code-sm text-outline hover:text-on-surface transition-colors flex items-center gap-1" data-copy-target="reproduce-cmds" id="copy-btn" type="button">
+                  <span class="material-symbols-outlined text-[15px]">content_copy</span><span data-copy-label>copy</span>
+                </button>
+              </div>
+              <div class="p-space-lg font-code-md text-code-md text-on-surface overflow-x-auto leading-relaxed whitespace-pre" id="reproduce-cmds"><span class="text-[#8c93a8] select-none"># install and run the 106 Python tests</span>
+<span class="text-primary-container select-none">$ </span>pip install -e ".[dev]" &amp;&amp; python -m pytest
+<span class="text-[#8c93a8] select-none"># scan one file (exit status: 0 clean, 1 suspicious, 2 dangerous)</span>
+<span class="text-primary-container select-none">$ </span>python -m stowaway scan model.safetensors
+<span class="text-[#8c93a8] select-none"># add the S5 diff against the claimed base model</span>
+<span class="text-primary-container select-none">$ </span>python -m stowaway scan finetune.safetensors --base base.safetensors
+<span class="text-[#8c93a8] select-none"># the Hugging Face survey (range requests, no full downloads), then regenerate RESULTS.md</span>
+<span class="text-primary-container select-none">$ </span>python scripts/run_hf_survey.py --list hf_models.json
+<span class="text-primary-container select-none">$ </span>python scripts/report.py</div>
+            </div>
+            <p class="font-body-sm text-body-sm text-outline leading-relaxed">Nothing is trained: models are downloaded pretrained and only run forward. Every run appends to <span class="font-code-sm text-code-sm">results/ledger.jsonl</span> with the git commit that produced it, and <span class="font-code-sm text-code-sm">docs/RESULTS.md</span> is generated from that ledger, never edited by hand. 146 tests: 106 Python, and 40 for the browser build, including parity tests that require byte-identical JSON reports to the Python tool on every fixture.</p>
+          </div>
+        </section>
+
+        <!-- 09 LIMITATIONS -->
+        <section class="py-12 scroll-mt-14" id="limitations">
+          <div class="flex flex-col gap-space-lg">
+            <div class="flex items-baseline gap-space-md">
+              <span class="font-label-mono text-label-mono text-primary font-bold">09</span>
+              <h2 class="font-headline-lg text-headline-lg font-semibold text-on-surface">Limitations</h2>
+            </div>
+            <ul class="flex flex-col gap-space-sm font-body-md text-body-md text-on-surface-variant max-w-3xl">
+              <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>These are preliminary results: two vision models end to end, one seed, and random payloads only.</span></li>
+              <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>Single-file statistics cannot see a small or thinly spread encrypted payload in a fair-coin model.</span></li>
+              <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>The base diff needs the real base model, and misses a payload inside a tensor the fine-tune genuinely trained.</span></li>
+              <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>The survey tests 64 KB samples, not whole files, and is weighted to the most downloaded models, not a random sample.</span></li>
+              <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>Legacy (pre-1.6) torch files and compressed zip entries are read by the command-line tool, not the browser.</span></li>
+            </ul>
+          </div>
+        </section>
       </div>
     </main>
 
-    <div class="fixed bottom-6 right-6 z-50 transform translate-y-16 opacity-0 transition-all duration-300 pointer-events-none px-space-md py-space-sm rounded bg-surface-container-highest text-on-surface font-code-inline text-code-inline shadow-2xl flex items-center gap-2" id="toast">
-      <span class="material-symbols-outlined text-secondary text-[18px]">check</span><span id="toast-text"></span>
-    </div>
-
-    <footer class="w-full bg-surface-container-lowest border-t border-outline-variant/30 py-space-lg">
-      <div class="w-full px-gutter md:px-margin flex flex-col md:flex-row items-center justify-between gap-space-md">
-        <div class="flex items-center gap-space-sm">
-          <span class="font-headline-md text-title-sm font-bold tracking-tight text-on-surface">STOWAWAY</span>
-          <span class="font-label-xs text-label-xs text-on-surface-variant">scans locally in your browser</span>
+    <footer class="w-full bg-surface-container-lowest border-t border-outline-variant py-space-xl">
+      <div class="max-w-[1100px] mx-auto px-margin md:px-margin-lg flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+        <div class="flex flex-col gap-space-xs">
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+            <span class="font-code-sm text-code-sm uppercase tracking-wider font-semibold text-on-surface">STOWAWAY</span>
+          </div>
+          <p class="font-body-sm text-body-sm text-on-surface-variant">Every claim on this page is a test you can run.</p>
         </div>
-        <div class="flex items-center gap-space-md font-label-xs text-label-xs text-outline">
-          <span class="text-secondary">CSP: connect-src 'none'</span><span>•</span><span>no upload, no telemetry</span>
+        <div class="flex items-center gap-space-lg">
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary transition-colors" href="https://github.com/aaditripi18/Stowaway" rel="noopener" target="_blank">GitHub</a>
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary transition-colors" href="#findings">Findings</a>
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary transition-colors" href="scan.html">Scan</a>
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary transition-colors" href="#reproduce">Reproduce</a>
         </div>
       </div>
     </footer>
-    <script type="module" src="/src/main.ts"></script>
+    <script type="module" src="/src/site.ts"></script>
   </body>
 </html>

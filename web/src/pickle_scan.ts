@@ -99,6 +99,32 @@ function readOp(r: PickleReader): Op {
   }
 }
 function op(name: string): Op { return { name, arg: null }; }
+
+// Opcodes without an argument that pickletools knows. readOp() falls through to
+// its default case for these AND for bytes that are not opcodes at all (lenient
+// on purpose, to stay aligned inside a known pickle), so detection must tell
+// them apart.
+const NO_ARG_OPS = new Set([..."(.012N]ael)t}dsuRbQo"].map((ch) => ch.charCodeAt(0)).concat(
+  [0x81, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8f, 0x90, 0x91, 0x92, 0x97, 0x98]));
+
+// Protocols 0 and 1 have no \x80 marker, so a file is a pickle if its opcodes
+// parse up to a STOP that is not the first opcode. Mirrors _is_old_pickle() in
+// stowaway/formats/__init__.py.
+export function isOldPickle(data: Uint8Array): boolean {
+  const r = new PickleReader(data, new DataView(data.buffer, data.byteOffset, data.byteLength));
+  try {
+    for (let i = 0; i <= 1_000_000; i++) {
+      const code = data[r.pos];
+      if (code === undefined) return false;
+      const { name } = readOp(r);
+      if (name === "STOP") return i > 0;
+      if (name === String(code) && !NO_ARG_OPS.has(code)) return false; // not a pickle opcode
+    }
+  } catch {
+    return false;
+  }
+  return false;
+}
 function stripQuotes(s: string): string {
   const t = s.trim();
   if (t.length >= 2 && (t[0] === "'" || t[0] === '"') && t[t.length - 1] === t[0]) return t.slice(1, -1);

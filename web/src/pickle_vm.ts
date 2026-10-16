@@ -40,7 +40,19 @@ function toNums(x: unknown): number[] {
   return [];
 }
 
-const INT_OPS = new Set(["BININT", "BININT1", "BININT2", "LONG1", "INT"]);
+// Protocol-0 string arguments. UNICODE lines use raw-unicode-escape (\uXXXX and
+// \UXXXXXXXX are the only escapes); STRING lines are a quoted Python repr.
+function rawUnicodeEscape(s: string): string {
+  return s.replace(/\\u([0-9a-fA-F]{4})|\\U([0-9a-fA-F]{8})/g, (_, a, b) => String.fromCodePoint(parseInt(a ?? b, 16)));
+}
+function unquote(s: string): string {
+  const t = s.trim();
+  if (t.length < 2 || (t[0] !== "'" && t[0] !== '"') || t[t.length - 1] !== t[0]) throw new Error("insecure string pickle");
+  return t.slice(1, -1).replace(/\\(x[0-9a-fA-F]{2}|.)/g, (_, e: string) =>
+    e[0] === "x" ? String.fromCharCode(parseInt(e.slice(1), 16)) : ({ n: "\n", t: "\t", r: "\r", "0": "\0" } as Record<string, string>)[e] ?? e);
+}
+
+const INT_OPS =new Set(["BININT", "BININT1", "BININT2", "LONG1", "INT"]);
 
 export class SafeUnpickler {
   pos = 0;
@@ -116,6 +128,29 @@ export class SafeUnpickler {
         case 0x75: { const items = this.popMark(); const d = this.top(); if (d instanceof Map) for (let i = 0; i < items.length; i += 2) d.set(items[i], items[i + 1]); break; } // SETITEMS 'u'
         case 0x61: { const v = this.stack.pop(); const l = this.top(); if (Array.isArray(l)) l.push(v); break; } // APPEND 'a'
         case 0x65: { const items = this.popMark(); const l = this.top(); if (Array.isArray(l)) l.push(...items); break; } // APPENDS 'e'
+        // --- protocols 0 and 1 (text opcodes), plus the rest of the stack ops ---
+        case 0x30: this.stack.pop(); break;                        // POP '0'
+        case 0x31: this.popMark(); break;                          // POP_MARK '1'
+        case 0x32: this.stack.push(this.top()); break;             // DUP '2'
+        case 0x64: { const items = this.popMark(); const d = new Map(); for (let i = 0; i < items.length; i += 2) d.set(items[i], items[i + 1]); this.stack.push(d); break; } // DICT 'd'
+        case 0x6c: this.stack.push(this.popMark()); break;         // LIST 'l'
+        case 0x70: this.memo.set(parseInt(this.line(), 10), this.top()); break; // PUT 'p'
+        case 0x67: this.stack.push(this.memo.get(parseInt(this.line(), 10))); break; // GET 'g'
+        case 0x49: { const s = this.line(); this.stack.push(s === "01" ? true : s === "00" ? false : parseInt(s, 10)); break; } // INT 'I'
+        case 0x4c: this.stack.push(parseInt(this.line().replace(/L$/, ""), 10)); break; // LONG 'L'
+        case 0x46: this.stack.push(parseFloat(this.line())); break; // FLOAT 'F'
+        case 0x56: this.stack.push(rawUnicodeEscape(this.line())); break; // UNICODE 'V'
+        case 0x53: this.stack.push(unquote(this.line())); break;   // STRING 'S'
+        case 0x54: this.stack.push(new TextDecoder("latin1").decode(this.take(this.u4()))); break; // BINSTRING 'T'
+        case 0x8d: this.stack.push(this.dec.decode(this.take(this.u8()))); break; // BINUNICODE8
+        case 0x8e: this.stack.push(this.take(this.u8())); break;   // BINBYTES8
+        case 0x8f: this.stack.push(new Set()); break;              // EMPTY_SET
+        case 0x90: { const items = this.popMark(); const s = this.top(); if (s instanceof Set) for (const x of items) s.add(x); break; } // ADDITEMS
+        case 0x91: this.stack.push(new Set(this.popMark())); break; // FROZENSET
+        case 0x50: this.stack.push(this.persistentLoad(this.line())); break; // PERSID 'P'
+        case 0x69: { const mod = this.line(), name = this.line(); const args = this.popMark(); this.stack.push(this.callReduce(this.findClass(mod, name), args)); break; } // INST 'i'
+        case 0x6f: { const items = this.popMark(); const cls = items.shift(); this.stack.push(this.callReduce(cls, items)); break; } // OBJ 'o'
+        case 0x92: { this.stack.pop(); const args = this.stack.pop(); const cls = this.stack.pop(); this.stack.push(this.callReduce(cls, Array.isArray(args) ? args : [])); break; } // NEWOBJ_EX
         default: throw new Error(`unsupported opcode 0x${op.toString(16)} at ${this.pos - 1}`);
       }
       void INT_OPS;

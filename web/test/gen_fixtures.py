@@ -230,8 +230,8 @@ def _findings_json(label, data) -> str:
 
 def gen_pickles():
     """Raw pickle streams and the golden S1 findings for the TypeScript
-    analysePickles parity test (direct, not via a full scan — the pickle/.pt
-    format dispatch is ported with the PyTorch parser)."""
+    analysePickles parity test, plus full-file reports (write_pickle_reports)
+    that check the pickle format dispatch end to end."""
     import pickle
     PICKLE_FIX.mkdir(parents=True, exist_ok=True)
 
@@ -262,6 +262,17 @@ def gen_pickles():
         (PICKLE_FIX / f"{name}.pkl").write_bytes(data)
         (PICKLE_FIX / f"{name}.findings.json").write_text(_findings_json(name, data) + "\n", encoding="utf-8")
         print(f"pickle/{name}: {len(ps.analyse(name, data))} findings")
+    write_pickle_reports()
+
+
+def write_pickle_reports():
+    """Golden full-file reports for the pickle fixtures, so the browser's format
+    detection (including protocols 0 and 1, which have no 0x80 marker) is
+    checked end to end, not only analysePickles()."""
+    for path in sorted(PICKLE_FIX.glob("*.pkl")):
+        rep = scan(path)
+        (PICKLE_FIX / f"{path.stem}.json").write_text(canon(rep) + "\n", encoding="utf-8")
+        print(f"pickle/{path.stem}: {rep['format']} {rep['verdict']}")
 
 
 if __name__ == "__main__":

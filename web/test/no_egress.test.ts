@@ -1,5 +1,5 @@
 // The page technically cannot send the file anywhere. Two independent guards:
-//   1. index.html declares a Content-Security-Policy with connect-src 'none',
+//   1. both pages declare a Content-Security-Policy with connect-src 'none',
 //      which makes the browser block every outbound connection (fetch, XHR,
 //      WebSocket, EventSource, sendBeacon).
 //   2. the scanner's own source uses no network API at all, so there is nothing
@@ -26,17 +26,22 @@ function tsFiles(dir: string): string[] {
 }
 
 describe("the page cannot exfiltrate the file", () => {
-  it("declares connect-src 'none' in the CSP", () => {
-    const html = readFileSync(join(WEB, "index.html"), "utf-8");
-    expect(html).toMatch(/Content-Security-Policy/);
-    expect(html).toMatch(/connect-src 'none'/);
-    expect(html).toMatch(/default-src 'none'/);
-  });
+  // Both pages ship the same policy; scan.html is the one that reads files.
+  for (const page of ["index.html", "scan.html"]) {
+    it(`${page} declares connect-src 'none' in the CSP`, () => {
+      const html = readFileSync(join(WEB, page), "utf-8");
+      expect(html).toMatch(/Content-Security-Policy/);
+      expect(html).toMatch(/connect-src 'none'/);
+      expect(html).toMatch(/default-src 'none'/);
+    });
 
-  it("loads nothing from an external origin (fonts, styles, scripts are self-hosted)", () => {
-    const html = readFileSync(join(WEB, "index.html"), "utf-8");
-    expect(html).not.toMatch(/https?:\/\//);
-  });
+    it(`${page} loads nothing from an external origin (fonts, styles, scripts are self-hosted)`, () => {
+      const html = readFileSync(join(WEB, page), "utf-8");
+      // Plain links a person clicks (<a href>) are not loads; everything else is.
+      const loads = html.replace(/<a\s[^>]*>/g, "");
+      expect(loads).not.toMatch(/https?:\/\//);
+    });
+  }
 
   it("uses no network API anywhere in src/", () => {
     const forbidden = /\b(fetch|XMLHttpRequest|WebSocket|EventSource|sendBeacon|importScripts)\b/;

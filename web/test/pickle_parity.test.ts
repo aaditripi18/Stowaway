@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { analysePickles } from "../src/pickle_scan.js";
+import { scan } from "../src/report.js";
 import { canon } from "../src/canon.js";
 
 const DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "fixtures", "pickle");
@@ -19,4 +20,23 @@ describe("S1 pickle findings parity", () => {
       expect(canon(analysePickles(name, bytes))).toEqual(golden);
     });
   }
+});
+
+// Full-file parity: format detection must route every pickle fixture, including
+// protocol 0 (no 0x80 marker), to the pickle scanner exactly as Python does.
+describe("pickle full-report parity", () => {
+  for (const name of names) {
+    it(name, async () => {
+      const bytes = new Uint8Array(readFileSync(join(DIR, `${name}.pkl`)));
+      const golden = readFileSync(join(DIR, `${name}.json`), "utf-8").trimEnd();
+      const rep = await scan(bytes);
+      rep.file = `${name}.pkl`; // Python uses the file name
+      expect(canon(rep)).toEqual(golden);
+    });
+  }
+
+  it("does not mistake plain text for an old pickle", async () => {
+    const rep = await scan(new TextEncoder().encode("hello world, this is not a model\n"));
+    expect(rep.format).toBe("unknown");
+  });
 });

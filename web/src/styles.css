@@ -10,7 +10,7 @@
 @font-face {
   font-family: "Hanken Grotesk";
   font-style: normal;
-  font-weight: 600 700;
+  font-weight: 100 900; /* variable font: prose at 400, headings at 600 */
   font-display: swap;
   src: url("/fonts/hanken-grotesk.woff2") format("woff2");
 }
@@ -45,3 +45,18 @@
 html, body { margin: 0; padding: 0; }
 body { overscroll-behavior: none; }
 ::-webkit-scrollbar { display: none; }
+
+/* --- landing page ---------------------------------------------------------- */
+/* Hero illustration: the low byte of each weight is the payload. */
+#hex-grid b { color: #38bdf8; background: rgb(56 189 248 / 0.1); padding: 0 0.125rem; font-weight: 700; }
+
+/* "What one file can't see": one row per check, one cell per payload size. */
+.matrix { display: grid; grid-template-columns: minmax(7.5rem, auto) repeat(6, minmax(0, 1fr)); gap: 0.375rem; align-items: center; color: #87929a; text-align: center; }
+.matrix .lane { text-align: left; color: #bdc8d1; }
+.matrix i { display: block; height: 1.25rem; border-radius: 0.125rem; }
+.matrix i.hit { background: rgb(56 189 248 / 0.75); }
+.matrix i.miss { background: #262a34; border: 1px solid #3e484f; }
+
+.verdict { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.6875rem; line-height: 1rem; letter-spacing: 0.04em; text-transform: uppercase; padding: 0.25rem 0.625rem; border-radius: 0.125rem; white-space: nowrap; }
+
+html { scroll-behavior: smooth; }

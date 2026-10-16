@@ -21,7 +21,8 @@ largest payload that no single-file check can see, and what hiding it costs the 
 > (generated, never edited by hand). See [PLAN.md](PLAN.md).
 >
 > Early results: a 4 MB random payload in ResNet-18's low 8 bits leaves accuracy
-> unchanged and passes every single-file check. Across 39 popular float32 models,
+> unchanged, and the single-file checks miss such payloads at every size tested
+> (1 KB to 1 MB). Across 39 popular float32 models,
 > the file alone exposes such a payload in 16 and says nothing about 23.
 
 ## Checks

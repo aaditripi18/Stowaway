@@ -1,0 +1,238 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- The page technically cannot send your file anywhere. connect-src 'none'
+         blocks every outbound connection (fetch, XHR, WebSocket, EventSource,
+         sendBeacon); default-src 'none' blocks everything not listed; all assets
+         are same-origin ('self'). This is the enforced form of "nothing is
+         uploaded". -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <title>Scan a model file — Stowaway</title>
+    <meta name="description" content="Scan a .safetensors, .pt or .gguf model file in your browser. Nothing is uploaded: the page's Content-Security-Policy blocks every network request." />
+  </head>
+  <body class="bg-surface font-body-md text-body-md text-on-surface antialiased selection:bg-primary-container selection:text-surface">
+    <header class="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant">
+      <div class="h-14 max-w-[1100px] mx-auto px-margin md:px-margin-lg flex items-center justify-between">
+        <a class="flex items-center gap-2 group" href="./">
+          <span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+          <span class="font-code-sm text-code-sm tracking-wider uppercase font-semibold text-on-surface group-hover:text-primary transition-colors">STOWAWAY</span>
+        </a>
+        <nav class="hidden md:flex items-center gap-space-lg">
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="./#findings">Findings</a>
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="./#checks">Checks</a>
+          <a aria-current="page" class="font-code-sm text-code-sm text-primary border-b border-primary py-1" href="scan.html">Scan</a>
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="./#reproduce">Reproduce</a>
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="https://github.com/aaditripi18/Stowaway" rel="noopener" target="_blank">GitHub</a>
+        </nav>
+        <a class="md:hidden font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface" href="./">← Findings</a>
+      </div>
+    </header>
+
+    <main class="w-full pt-14 bg-surface min-h-[calc(100vh-120px)]">
+      <div class="max-w-[1100px] mx-auto px-margin md:px-margin-lg py-space-xl flex flex-col gap-space-lg">
+
+        <!-- Title and privacy guarantee -->
+        <div class="flex flex-col gap-3">
+          <h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight">Scan a model file</h1>
+          <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">Checks a model for unsafe pickle code, bytes the format does not account for, and data hidden in the weights — the same checks as the Python tool, run in this tab.</p>
+          <div class="flex items-start gap-2.5 px-3.5 py-2.5 rounded bg-surface-container-low border border-outline-variant/80">
+            <span class="material-symbols-outlined text-[18px] text-primary-container shrink-0">lock</span>
+            <p class="font-code-sm text-code-sm text-on-surface-variant">
+              <strong class="text-on-surface font-semibold">Your file never leaves this page.</strong>
+              The page's Content-Security-Policy sets <code class="text-primary">connect-src 'none'</code>, so the browser blocks every network request. The file is read into memory and scanned here.
+            </p>
+          </div>
+        </div>
+
+        <!-- STATE 1: EMPTY -->
+        <section class="flex flex-col gap-4" id="empty-state">
+          <div class="relative group cursor-pointer border-2 border-dashed border-[#353c52] hover:border-primary-container bg-[#141824]/60 hover:bg-[#141824] transition-all rounded p-8 sm:p-10 text-center flex flex-col items-center justify-center" id="drop-zone">
+            <input accept=".safetensors,.pt,.pth,.bin,.ckpt,.gguf" class="hidden" id="file-input" type="file" />
+            <div class="w-12 h-12 rounded bg-surface-container flex items-center justify-center mb-3 group-hover:scale-105 transition-transform border border-outline-variant/50">
+              <span class="material-symbols-outlined text-primary-container text-2xl">memory</span>
+            </div>
+            <div class="flex flex-col items-center gap-1 mb-4">
+              <span class="font-headline-sm text-headline-sm text-on-surface">
+                Drop a <span class="font-code-md text-primary">.safetensors</span>, <span class="font-code-md text-primary">.pt</span> or <span class="font-code-md text-primary">.gguf</span> file to scan it
+              </span>
+              <span class="font-code-sm text-code-sm text-outline">Also reads .pth, .bin and .ckpt. The format is detected from the content, not the name.</span>
+            </div>
+            <button class="bg-[#1f2433] hover:bg-[#282f42] text-on-surface border border-[#353c52] px-4 py-2 font-label-mono text-xs uppercase tracking-wider rounded transition-colors inline-flex items-center gap-2" id="browse-btn" type="button">
+              <span class="material-symbols-outlined text-base text-primary">file_upload</span>Choose a file
+            </button>
+          </div>
+
+          <div class="border border-hair bg-[#10141f] hover:bg-[#131826] transition-colors cursor-pointer rounded p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3" id="base-model-drop">
+            <input accept=".safetensors,.pt,.pth,.bin,.ckpt,.gguf" class="hidden" id="base-input" type="file" />
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-outline text-xl shrink-0">difference</span>
+              <div>
+                <span class="font-code-sm text-code-sm font-semibold text-on-surface">Compare against a base model (optional)</span>
+                <p class="font-body-sm text-body-sm text-outline" id="base-slot-text">Add the claimed base model to diff the weights bit for bit (the S5 check).</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 shrink-0">
+              <span class="hidden items-center gap-1 font-label-mono text-label-mono text-ok" id="base-attached"><span class="material-symbols-outlined text-[14px]">check_circle</span><span class="truncate max-w-[14rem]" id="base-name"></span><button class="ml-1 text-outline hover:text-error underline underline-offset-2" id="base-remove-btn" type="button">remove</button></span>
+              <button class="font-label-mono text-xs uppercase tracking-wider text-on-surface-variant hover:text-on-surface hover:border-outline border border-[#2b3347] bg-[#171b26] px-3.5 py-1.5 rounded transition-all inline-flex items-center gap-2" id="base-attach-btn" type="button">
+                <span class="material-symbols-outlined text-sm">library_add</span><span id="base-attach-text">Select base model</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- STATE 2: SCANNING -->
+        <section class="hidden flex-col items-center py-space-xl" id="scanning-state">
+          <div class="w-full max-w-2xl bg-surface-container-low border border-outline-variant/70 rounded p-space-lg flex flex-col gap-space-md">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-space-sm">
+                <span class="material-symbols-outlined text-primary-container text-[22px] animate-spin">progress_activity</span>
+                <div class="flex flex-col">
+                  <span class="font-code-sm text-code-sm text-on-surface font-semibold" id="scan-file-label"></span>
+                  <span class="font-label-mono text-label-mono text-outline" id="scan-sub">Reading and scanning in this tab</span>
+                </div>
+              </div>
+              <span class="font-code-sm text-code-sm text-primary-container" id="scan-percent"></span>
+            </div>
+            <div class="w-full h-1 bg-surface-container-high rounded overflow-hidden">
+              <div class="h-full bg-primary-container transition-all duration-300" id="scan-progress-bar"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- STATE 3: RESULT DASHBOARD -->
+        <section class="hidden flex-col gap-6" id="result-dashboard">
+          <div class="border-l-4 p-4 rounded-r" id="verdict-banner">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="flex items-start sm:items-center gap-3">
+                <span class="material-symbols-outlined text-2xl shrink-0" id="verdict-icon"></span>
+                <div>
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="font-label-mono text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider" id="verdict-tag"></span>
+                    <span class="font-label-mono text-[11px] text-outline" id="verdict-timestamp"></span>
+                  </div>
+                  <p class="font-headline-sm text-headline-sm text-on-surface mt-1" id="verdict-headline"></p>
+                  <p class="font-body-sm text-body-sm text-on-surface-variant" id="verdict-subtext"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3" id="fact-tiles">
+            <div class="bg-surface-container-low border border-outline-variant/70 rounded p-3 flex flex-col justify-between min-w-0">
+              <span class="font-label-mono text-[10px] text-outline uppercase tracking-wider">File name</span>
+              <div class="mt-2 min-w-0">
+                <span class="font-code-sm text-code-sm font-semibold text-on-surface truncate block" id="tile-file"></span>
+                <span class="font-label-mono text-[10px] text-ok">read locally</span>
+              </div>
+            </div>
+            <div class="bg-surface-container-low border border-outline-variant/70 rounded p-3 flex flex-col justify-between min-w-0">
+              <span class="font-label-mono text-[10px] text-outline uppercase tracking-wider">Format</span>
+              <div class="mt-2 min-w-0">
+                <span class="font-code-sm text-code-sm font-semibold text-primary block" id="tile-format"></span>
+                <span class="font-label-mono text-[10px] text-outline truncate block" id="tile-dtypes"></span>
+              </div>
+            </div>
+            <div class="bg-surface-container-low border border-outline-variant/70 rounded p-3 flex flex-col justify-between min-w-0">
+              <span class="font-label-mono text-[10px] text-outline uppercase tracking-wider">Size</span>
+              <div class="mt-2 min-w-0">
+                <span class="font-code-sm text-code-sm font-semibold text-on-surface block" id="tile-size"></span>
+                <span class="font-label-mono text-[10px] text-outline truncate block" id="tile-size-bytes"></span>
+              </div>
+            </div>
+            <div class="bg-surface-container-low border border-outline-variant/70 rounded p-3 flex flex-col justify-between min-w-0">
+              <span class="font-label-mono text-[10px] text-outline uppercase tracking-wider">Tensors</span>
+              <div class="mt-2 min-w-0">
+                <span class="font-code-sm text-code-sm font-semibold text-on-surface block" id="tile-tensors"></span>
+                <span class="font-label-mono text-[10px] text-outline truncate block" id="tile-tensor-detail"></span>
+              </div>
+            </div>
+            <div class="bg-surface-container-low border border-outline-variant/70 rounded p-3 flex flex-col justify-between col-span-2 sm:col-span-1 min-w-0">
+              <span class="font-label-mono text-[10px] text-outline uppercase tracking-wider">SHA-256</span>
+              <div class="mt-2 flex items-center justify-between gap-1 min-w-0">
+                <span class="font-code-sm text-code-sm font-semibold text-on-surface truncate" id="tile-sha"></span>
+                <button class="p-1 hover:bg-surface-container-highest rounded text-on-surface-variant hover:text-primary transition-colors" id="copy-hash" title="Copy full SHA-256" type="button">
+                  <span class="material-symbols-outlined text-[15px]">content_copy</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <div class="lg:col-span-8 flex flex-col gap-4 min-w-0">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1">
+                <div class="flex items-center gap-2">
+                  <span class="font-headline-sm text-headline-sm text-on-surface">Findings</span>
+                  <span class="font-label-mono text-[11px] px-2 py-0.5 rounded border" id="findings-count"></span>
+                </div>
+                <div class="flex items-center bg-surface-container-low border border-outline-variant/70 px-2.5 py-1 rounded sm:w-56">
+                  <span class="material-symbols-outlined text-[16px] text-outline mr-1.5">search</span>
+                  <input class="bg-transparent text-on-surface font-code-sm text-code-sm focus:outline-none w-full placeholder:text-outline" id="findings-search" placeholder="Filter findings…" type="text" />
+                </div>
+              </div>
+              <div class="flex items-center gap-1 flex-wrap" id="filter-buttons"></div>
+              <div class="flex flex-col gap-3" id="findings-list"></div>
+              <div class="hidden flex-col items-center justify-center p-space-xl bg-surface-container-low border border-outline-variant/70 rounded text-center" id="clean-reassurance">
+                <span class="material-symbols-outlined text-ok text-[28px] mb-2">check_circle</span>
+                <h3 class="font-headline-sm text-headline-sm text-on-surface">Nothing found by these checks</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant max-w-md mt-1" id="clean-reassurance-text"></p>
+              </div>
+            </div>
+
+            <aside class="lg:col-span-4 flex flex-col gap-4">
+              <div class="bg-surface-container-low border border-outline-variant/80 rounded p-4 flex flex-col gap-3">
+                <div class="flex items-center justify-between border-b border-outline-variant/50 pb-2">
+                  <span class="font-headline-sm text-headline-sm text-on-surface">Checks</span>
+                  <span class="font-label-mono text-[10px] text-outline uppercase" id="checks-ran"></span>
+                </div>
+                <div class="flex flex-col gap-2 font-code-sm text-code-sm" id="check-list"></div>
+                <div class="p-3 rounded bg-surface-container-lowest border border-outline-variant/40 flex flex-col gap-2">
+                  <span class="font-code-sm text-code-sm font-semibold text-on-surface">Compare against a base model</span>
+                  <p class="font-body-sm text-body-sm text-outline" id="result-base-status">Add the claimed base model (e.g. the unmodified upstream weights) to run the S5 bit-for-bit diff.</p>
+                  <button class="px-3 py-1.5 bg-[#171b26] hover:bg-[#1f2433] border border-[#2b3347] text-primary font-label-mono text-[11px] uppercase tracking-wider rounded transition-colors flex items-center justify-center gap-1.5" id="result-base-btn" type="button">
+                    <span class="material-symbols-outlined text-[14px]">difference</span><span id="result-base-btn-text">Attach base model</span>
+                  </button>
+                  <button class="hidden font-label-mono text-[11px] uppercase tracking-wider text-outline hover:text-error" id="result-base-remove-btn" type="button">Remove base model</button>
+                </div>
+              </div>
+              <div class="bg-surface-container-low border border-outline-variant/80 rounded p-4" id="how">
+                <span class="font-label-mono text-label-mono font-semibold text-on-surface block mb-2 uppercase tracking-wider">What each check does</span>
+                <div class="flex flex-col gap-2 font-body-sm text-body-sm text-outline" id="check-legend"></div>
+              </div>
+              <div class="flex flex-col gap-2">
+                <button class="font-label-mono text-xs uppercase tracking-wider px-3 py-2.5 bg-[#1b202f] hover:bg-[#252c40] border border-[#2b3347] w-full text-center rounded text-on-surface transition-colors" id="export-btn" type="button">Export report (JSON)</button>
+                <button class="font-label-mono text-xs uppercase tracking-wider px-3 py-2.5 bg-primary-container hover:brightness-110 active:scale-[0.99] text-surface font-semibold w-full text-center rounded transition-all" id="rescan-btn" type="button">Scan another</button>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <div class="fixed bottom-6 right-6 z-50 translate-y-16 opacity-0 transition-all duration-300 pointer-events-none px-space-md py-space-sm rounded bg-surface-container-highest border border-outline-variant text-on-surface font-code-sm text-code-sm shadow-2xl flex items-center gap-2" id="toast">
+      <span class="material-symbols-outlined text-ok text-[18px]">check</span><span id="toast-text"></span>
+    </div>
+
+    <footer class="w-full bg-surface-container-lowest border-t border-outline-variant py-space-xl">
+      <div class="max-w-[1100px] mx-auto px-margin md:px-margin-lg flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+        <div class="flex flex-col gap-space-xs">
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+            <span class="font-code-sm text-code-sm uppercase tracking-wider font-semibold text-on-surface">STOWAWAY</span>
+          </div>
+          <p class="font-body-sm text-body-sm text-on-surface-variant">Scanned in your browser · CSP <code class="text-primary">connect-src 'none'</code> · no upload, no telemetry.</p>
+        </div>
+        <div class="flex items-center gap-space-lg">
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary transition-colors" href="https://github.com/aaditripi18/Stowaway" rel="noopener" target="_blank">GitHub</a>
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary transition-colors" href="./#findings">Findings</a>
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary transition-colors" href="./#reproduce">Reproduce</a>
+        </div>
+      </div>
+    </footer>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

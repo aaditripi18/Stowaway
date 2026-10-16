@@ -7,7 +7,7 @@ import { Finding, ModelFile, newModelFile, SEVERITIES } from "./model.js";
 import { parse as parseSafetensors } from "./formats/safetensors.js";
 import { parse as parseGguf } from "./formats/gguf.js";
 import { parseZip, parsePickles } from "./formats/pytorch.js";
-import { analysePickles } from "./pickle_scan.js";
+import { analysePickles, isOldPickle } from "./pickle_scan.js";
 import { analyseWeights, loadFloats, RawFloats } from "./weights.js";
 
 export const REPORT_VERSION = 1;
@@ -22,6 +22,7 @@ function detect(r: Reader): string {
   if (r.size >= 1 && r.bytes[0] === 0x80) return "pickle";
   if (r.size >= 4 && r.bytes[0] === 0x50 && r.bytes[1] === 0x4b && r.bytes[2] === 0x03 && r.bytes[3] === 0x04)
     return "zip";
+  if (isOldPickle(r.bytes)) return "pickle"; // protocols 0 and 1 have no 0x80 marker
   return "unknown";
 }
 

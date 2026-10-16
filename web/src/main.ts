@@ -3,6 +3,7 @@
 // — every value shown comes from scan().
 import "./styles.css";
 import { scan, loadBaseFloats } from "./report.js";
+import { copyText } from "./clipboard.js";
 import type { Finding } from "./model.js";
 import type { RawFloats } from "./weights.js";
 
@@ -15,29 +16,28 @@ type Report = {
 
 // What each check does, in plain words — matching the Python package exactly.
 const CHECKS: Record<string, { title: string; what: string }> = {
-  S1: { title: "Pickle imports", what: "Unsafe code in pickle data, found without ever running it." },
-  S2: { title: "Byte coverage", what: "Bytes that belong to no header, tensor or zero padding." },
-  S3: { title: "Precision history", what: "Low bits that should be zero for the stored precision." },
-  S4: { title: "Bit-plane statistics", what: "Low bits pulled toward a coin flip, versus peer layers." },
+  S1: { title: "Pickle code", what: "Unsafe code in pickle data, found without ever running it." },
+  S2: { title: "Unaccounted bytes", what: "Bytes that belong to no header, tensor or zero padding." },
+  S3: { title: "Precision", what: "Low bits that should be zero for the stored precision." },
+  S4: { title: "Bit statistics", what: "Low bits pulled toward a coin flip, versus peer layers." },
   S5: { title: "Base-model diff", what: "Changes confined to the low bits, versus the claimed base." },
 };
-// Checks this browser build runs on safetensors. S5 needs a base model to diff
-// against (not yet collected by this UI); non-safetensors formats are read by the
-// Python tool until their parsers are ported. The strip says so rather than
-// pretending a check ran.
-const BUILD_RUNS = new Set(["S1", "S2", "S3", "S4"]);
+const PARSED_FORMATS = ["safetensors", "gguf", "pytorch-zip", "torchscript", "pickle"];
+const PICKLE_FORMATS = ["pytorch-zip", "torchscript", "pickle"];
+const FLAGGED = ["medium", "high", "critical"];
 
 const SEV_CHIP: Record<string, string> = {
-  critical: "bg-error/20 text-error",
-  high: "bg-tertiary-container/20 text-tertiary-container",
-  medium: "bg-surface-container text-tertiary-container",
-  low: "bg-surface-container text-primary",
-  info: "bg-surface-container text-on-surface-variant",
+  critical: "bg-error/20 text-error border-error/30",
+  high: "bg-error/15 text-error border-error/25",
+  medium: "bg-warn/15 text-warn border-warn/30",
+  low: "bg-primary-container/15 text-primary-container border-primary-container/30",
+  info: "bg-surface-container-high text-outline border-outline-variant/50",
 };
 const SEV_RANK = ["info", "low", "medium", "high", "critical"];
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]!));
+const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
 let lastReport: Report | null = null;
 let lastBytes: Uint8Array | null = null;
@@ -61,29 +61,40 @@ function fmtSize(n: number): string {
 
 async function handle(file: File): Promise<void> {
   $("scan-file-label").textContent = file.name;
-  $("scan-percent").textContent = "";
+  $("scan-percent").textContent = fmtSize(file.size);
   $<HTMLDivElement>("scan-progress-bar").style.width = "40%";
   show("scanning");
   // Let the spinner paint before the (synchronous) scan.
   await new Promise((r) => setTimeout(r, 30));
-  const bytes = new Uint8Array(await file.arrayBuffer());
-  $<HTMLDivElement>("scan-progress-bar").style.width = "80%";
-  const rep = (await scan(bytes, baseFloats ?? undefined)) as unknown as Report;
-  rep.file = file.name;
-  lastReport = rep;
-  lastBytes = bytes;
-  render(rep);
-  show("result");
+  try {
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    $<HTMLDivElement>("scan-progress-bar").style.width = "80%";
+    const rep = (await scan(bytes, baseFloats ?? undefined)) as unknown as Report;
+    rep.file = file.name;
+    lastReport = rep;
+    lastBytes = bytes;
+    render(rep);
+    show("result");
+    window.scrollTo({ top: 0 });
+  } catch (err) {
+    // A file too large for memory, or a parser bug: say so rather than spin forever.
+    show("empty");
+    toast(`Could not scan ${file.name}: ${err instanceof Error ? err.message : String(err)}`, false);
+  } finally {
+    input.value = "";
+  }
 }
 
 async function attachBase(file: File): Promise<void> {
-  const bytes = new Uint8Array(await file.arrayBuffer());
   try {
-    baseFloats = loadBaseFloats(bytes);
+    baseFloats = loadBaseFloats(new Uint8Array(await file.arrayBuffer()));
   } catch {
     baseFloats = null; baseName = null;
-    toast("Could not read that base model");
+    updateBaseUi();
+    toast("Could not read that base model", false);
     return;
+  } finally {
+    baseInput.value = "";
   }
   baseName = file.name;
   updateBaseUi();
@@ -102,15 +113,30 @@ function updateBaseUi(): void {
   const slot = $("base-attached");
   slot.classList.toggle("hidden", !attached);
   slot.classList.toggle("flex", attached);
-  if (attached) $("base-name").textContent = baseName!;
+  $("base-name").textContent = baseName ?? "";
+  $("base-name").title = baseName ?? "";
   $("base-slot-text").textContent = attached
     ? "Base model attached — scans now include the S5 bit-for-bit diff."
-    : "Add the claimed base model to diff the weights bit by bit (the S5 check).";
+    : "Add the claimed base model to diff the weights bit for bit (the S5 check).";
   $("result-base-status").textContent = attached
     ? `Comparing against ${baseName}. S5 runs on every scan while this base is attached.`
     : "Add the claimed base model (e.g. the unmodified upstream weights) to run the S5 bit-for-bit diff.";
   $("result-base-btn-text").textContent = attached ? "Change base model" : "Attach base model";
-  ($("base-attach-btn") as HTMLElement).textContent = attached ? "Change" : "Attach base";
+  $("base-attach-text").textContent = attached ? "Change" : "Select base model";
+  $("result-base-remove-btn").classList.toggle("hidden", !attached);
+}
+
+async function removeBase(e?: Event): Promise<void> {
+  e?.stopPropagation();
+  baseFloats = null; baseName = null;
+  updateBaseUi();
+  toast("Base model removed");
+  if (lastBytes) { // re-run without the base so the result no longer includes S5
+    const rep = (await scan(lastBytes)) as unknown as Report;
+    rep.file = lastReport?.file ?? "";
+    lastReport = rep;
+    render(rep);
+  }
 }
 
 function render(rep: Report): void {
@@ -121,36 +147,25 @@ function render(rep: Report): void {
 }
 
 function renderVerdict(rep: Report): void {
-  const banner = $("verdict-banner"), iconBox = $("verdict-icon-container"), icon = $("verdict-icon");
+  const banner = $("verdict-banner"), icon = $("verdict-icon");
   const tag = $("verdict-tag"), head = $("verdict-headline"), sub = $("verdict-subtext");
-  const base = "w-full rounded-xl p-space-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md transition-colors ";
-  const flags = rep.findings.filter((f) => ["medium", "high", "critical"].includes(f.severity));
-  if (rep.verdict === "clean") {
-    banner.className = base + "bg-secondary/15";
-    iconBox.className = "w-12 h-12 rounded-xl flex items-center justify-center shrink-0 bg-secondary/20 text-secondary";
-    icon.textContent = "verified_user";
-    tag.className = "font-label-xs text-label-xs uppercase px-2 py-0.5 rounded font-bold tracking-widest bg-secondary/20 text-secondary";
-    tag.textContent = "VERDICT: CLEAN";
-    head.textContent = "No payloads or unaccounted bytes found";
-    sub.textContent = "The checks this build ran found nothing. A clean result is not a guarantee — see what each check covers.";
-  } else if (rep.verdict === "suspicious") {
-    banner.className = base + "bg-tertiary-container/15";
-    iconBox.className = "w-12 h-12 rounded-xl flex items-center justify-center shrink-0 bg-tertiary-container/20 text-tertiary-container";
-    icon.textContent = "warning";
-    tag.className = "font-label-xs text-label-xs uppercase px-2 py-0.5 rounded font-bold tracking-widest bg-tertiary-container/20 text-tertiary-container";
-    tag.textContent = "VERDICT: SUSPICIOUS";
-    head.textContent = "Something here is worth a closer look";
-    sub.textContent = `${flags.length} finding${flags.length === 1 ? "" : "s"} at medium severity or above.`;
-  } else {
-    banner.className = base + "bg-error-container/20";
-    iconBox.className = "w-12 h-12 rounded-xl flex items-center justify-center shrink-0 bg-error-container text-on-error-container";
-    icon.textContent = "gpp_bad";
-    tag.className = "font-label-xs text-label-xs uppercase px-2 py-0.5 rounded font-bold tracking-widest bg-error/20 text-error";
-    tag.textContent = "VERDICT: DANGEROUS";
-    head.textContent = "This file carries something dangerous";
-    sub.textContent = `${flags.length} finding${flags.length === 1 ? "" : "s"} at medium severity or above, including high-severity items.`;
-  }
-  $("verdict-timestamp").textContent = `${rep.format} • scanned in your browser`;
+  const flags = rep.findings.filter((f) => FLAGGED.includes(f.severity));
+  const look = {
+    clean: { color: "ok", icon: "verified_user", head: "No payloads or unaccounted bytes found",
+      sub: "The checks that ran found nothing. A clean result is not a guarantee — see what each check covers." },
+    suspicious: { color: "warn", icon: "warning", head: "Something here is worth a closer look",
+      sub: `${plural(flags.length, "finding")} at medium severity or above.` },
+    dangerous: { color: "error", icon: "gpp_bad", head: "This file carries something dangerous",
+      sub: `${plural(flags.length, "finding")} at medium severity or above, including high-severity items.` },
+  }[rep.verdict];
+  banner.className = `border-l-4 border-${look.color} bg-${look.color}/10 p-4 rounded-r`;
+  icon.className = `material-symbols-outlined text-2xl shrink-0 text-${look.color}`;
+  icon.textContent = look.icon;
+  tag.className = `font-label-mono text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider bg-${look.color}/20 text-${look.color}`;
+  tag.textContent = `Verdict: ${rep.verdict}`;
+  head.textContent = look.head;
+  sub.textContent = look.sub;
+  $("verdict-timestamp").textContent = `${rep.format} · scanned in your browser`;
 }
 
 function renderTiles(rep: Report): void {
@@ -159,11 +174,13 @@ function renderTiles(rep: Report): void {
   $("tile-format").textContent = rep.format;
   const dt = Object.entries(rep.tensors.dtypes).map(([k, v]) => `${k}×${v}`).join("  ");
   $("tile-dtypes").textContent = dt || "—";
+  $("tile-dtypes").title = dt;
   $("tile-size").textContent = fmtSize(rep.size);
-  $("tile-size-bytes").textContent = `${rep.size.toLocaleString()} B`;
-  $("tile-tensors").textContent = `${rep.tensors.count} tensor${rep.tensors.count === 1 ? "" : "s"}`;
+  $("tile-size-bytes").textContent = `${rep.size.toLocaleString()} bytes`;
+  $("tile-tensors").textContent = plural(rep.tensors.count, "tensor");
   $("tile-tensor-detail").textContent = rep.tensors.bytes ? `${fmtSize(rep.tensors.bytes)} of weights` : "";
   $("tile-sha").textContent = rep.sha256 ? rep.sha256.slice(0, 8) + "…" + rep.sha256.slice(-6) : "—";
+  $("tile-sha").title = rep.sha256;
 }
 
 function renderChecks(rep: Report): void {
@@ -171,36 +188,47 @@ function renderChecks(rep: Report): void {
   list.innerHTML = "";
   const byCheck = new Map<string, Finding[]>();
   for (const f of rep.findings) (byCheck.get(f.check) ?? byCheck.set(f.check, []).get(f.check)!).push(f);
-  let ran = 0;
-  for (const id of ["S1", "S2", "S3", "S4", "S5"]) {
-    const fs = (byCheck.get(id) ?? []).filter((f) => ["medium", "high", "critical"].includes(f.severity));
-    const supported = ["safetensors", "gguf", "pytorch-zip", "torchscript", "pickle"].includes(rep.format);
-    const hasPickle = ["pytorch-zip", "torchscript", "pickle"].includes(rep.format);
-    let icon: string, color: string, label: string;
-    if (id === "S5" && !baseFloats) {
-      icon = "horizontal_rule"; color = "text-outline"; label = "NEEDS BASE";
-    } else if (!supported) {
-      icon = "horizontal_rule"; color = "text-outline"; label = "PYTHON TOOL";
-    } else if (id === "S1" && !hasPickle) {
-      icon = "check_circle"; color = "text-secondary"; label = "N/A"; ran++; // no pickle data in this format
-    } else if (fs.length) {
-      icon = "warning"; color = "text-tertiary-container"; label = `${fs.length} FINDING${fs.length === 1 ? "" : "S"}`; ran++;
-    } else {
-      icon = "check_circle"; color = "text-secondary"; label = "CLEAN"; ran++;
-    }
+  const parsed = PARSED_FORMATS.includes(rep.format);
+  // Structural problems (duplicate keys, sizes that disagree, unknown format)
+  // come from the parser, not S1–S5; show them so the verdict is explained.
+  const structural = (byCheck.get("parse") ?? []).filter((f) => FLAGGED.includes(f.severity));
+  if (structural.length) {
+    const color = structural.some((f) => f.severity !== "medium") ? "error" : "warn";
     const row = document.createElement("div");
-    row.className = "flex items-center justify-between p-2 rounded bg-surface-container";
-    row.innerHTML = `<div class="flex items-center gap-2"><span class="material-symbols-outlined ${color} text-[16px]">${icon}</span><span class="text-on-surface">${id}: ${CHECKS[id]!.title}</span></div><span class="font-label-xs text-label-xs ${color} font-bold">${label}</span>`;
+    row.className = "flex items-center justify-between gap-2 p-2 rounded bg-surface-container-lowest border border-outline-variant/40";
+    row.innerHTML = `<span class="font-semibold text-on-surface">File structure</span>` +
+      `<span class="font-label-mono text-[10px] px-2 py-0.5 rounded font-semibold uppercase whitespace-nowrap bg-${color}/15 text-${color} border border-${color}/30">${plural(structural.length, "finding")}</span>`;
     list.appendChild(row);
   }
-  $("checks-ran").textContent = `${ran} / 5 RAN HERE`;
+  let ran = 0;
+  for (const id of ["S1", "S2", "S3", "S4", "S5"]) {
+    const fs = (byCheck.get(id) ?? []).filter((f) => FLAGGED.includes(f.severity));
+    const dangerous = fs.some((f) => f.severity !== "medium");
+    let color: string, label: string;
+    if (!parsed) {
+      color = "outline"; label = "Not run: format not read";
+    } else if (id === "S5" && !baseFloats) {
+      color = "outline"; label = "Needs a base model";
+    } else if (id === "S1" && !PICKLE_FORMATS.includes(rep.format)) {
+      color = "ok"; label = "N/A: no pickle data"; ran++;
+    } else if (fs.length) {
+      color = dangerous ? "error" : "warn"; label = plural(fs.length, "finding"); ran++;
+    } else {
+      color = "ok"; label = "Clean"; ran++;
+    }
+    const row = document.createElement("div");
+    row.className = "flex items-center justify-between gap-2 p-2 rounded bg-surface-container-lowest border border-outline-variant/40";
+    row.innerHTML = `<div class="flex flex-col min-w-0"><span class="font-semibold text-on-surface">${id} ${esc(CHECKS[id]!.title.toLowerCase())}</span></div>` +
+      `<span class="font-label-mono text-[10px] px-2 py-0.5 rounded font-semibold uppercase whitespace-nowrap bg-${color}/15 text-${color} border border-${color}/30">${esc(label)}</span>`;
+    list.appendChild(row);
+  }
+  $("checks-ran").textContent = `${ran} / 5 ran here`;
   const legend = $("check-legend");
   legend.innerHTML = "";
   for (const id of ["S1", "S2", "S3", "S4", "S5"]) {
-    const row = document.createElement("div");
-    row.className = "flex gap-2";
-    row.innerHTML = `<span class="text-primary font-bold shrink-0">${id}</span><span>${esc(CHECKS[id]!.what)}</span>`;
-    legend.appendChild(row);
+    const p = document.createElement("p");
+    p.innerHTML = `<strong class="text-on-surface-variant font-semibold">${id} (${esc(CHECKS[id]!.title)}):</strong> ${esc(CHECKS[id]!.what)}`;
+    legend.appendChild(p);
   }
 }
 
@@ -213,32 +241,38 @@ function hexPreview(bytes: Uint8Array, start: number, length: number): string {
     const hex = [...row].map((b) => b.toString(16).padStart(2, "0")).join(" ");
     const ascii = [...row].map((b) => (b >= 0x20 && b < 0x7f ? String.fromCharCode(b) : ".")).join("");
     const off = (start + i).toString(16).padStart(8, "0");
-    lines.push(`<div><span class="text-outline">${off}:</span> ${hex.padEnd(47)}  <span class="text-primary-container">${esc(ascii)}</span></div>`);
+    lines.push(`<span class="text-[#575e74]">${off}: </span><span class="text-primary-container">${hex.padEnd(47)}</span>  <span class="text-on-surface">${esc(ascii)}</span>`);
   }
-  return `<div class="bg-surface-container-lowest p-space-sm rounded overflow-x-auto font-code-inline text-[11px] leading-tight text-on-surface-variant mt-space-xs"><div class="text-outline mb-1 text-label-xs font-label-xs font-bold uppercase tracking-wider">First ${n} byte${n === 1 ? "" : "s"} at offset ${start}</div><div class="space-y-0.5 select-all">${lines.join("")}</div></div>`;
+  return `<div class="rounded border border-outline-variant/70 bg-[#0c1018] p-3 overflow-x-auto">` +
+    `<div class="border-b border-outline-variant/40 pb-1.5 mb-2 font-label-mono text-[10px] text-outline uppercase tracking-wider">First ${plural(n, "byte")} at offset ${start} (0x${start.toString(16)})</div>` +
+    `<pre class="font-code-sm text-code-sm leading-relaxed text-[#8c93a8]">${lines.join("\n")}</pre></div>`;
 }
 
 function detailRows(detail: Record<string, unknown>): string {
   const entries = Object.entries(detail).filter(([k]) => !["start", "end"].includes(k));
   if (!entries.length) return "";
   const cells = entries.map(([k, v]) =>
-    `<div><span class="block text-label-xs font-label-xs text-outline uppercase">${esc(k)}</span><span class="text-on-surface font-semibold break-all">${esc(String(v))}</span></div>`).join("");
-  return `<div class="grid grid-cols-2 sm:grid-cols-4 gap-space-xs bg-surface-container p-space-sm rounded font-code-inline text-code-inline text-on-surface-variant">${cells}</div>`;
+    `<div class="min-w-0"><span class="text-outline uppercase block">${esc(k)}</span><span class="text-on-surface font-semibold break-all">${esc(typeof v === "object" ? JSON.stringify(v) : String(v))}</span></div>`).join("");
+  return `<div class="grid grid-cols-2 sm:grid-cols-3 gap-2 py-2 px-3 bg-surface-container rounded border border-outline-variant/50 font-label-mono text-[11px]">${cells}</div>`;
 }
 
 function renderFindings(rep: Report): void {
   const list = $("findings-list");
   list.innerHTML = "";
+  ($("findings-search") as HTMLInputElement).value = "";
   const findings = [...rep.findings].sort((a, b) => SEV_RANK.indexOf(b.severity) - SEV_RANK.indexOf(a.severity));
+  const flagged = findings.filter((f) => FLAGGED.includes(f.severity)).length;
+  const count = $("findings-count");
+  count.textContent = `${findings.length} total · ${flagged} flagged`;
+  count.className = `font-label-mono text-[11px] px-2 py-0.5 rounded border ${flagged ? (rep.verdict === "dangerous" ? SEV_CHIP.critical : SEV_CHIP.medium) : SEV_CHIP.info}`;
+
   const clean = $("clean-reassurance");
   const actionable = findings.filter((f) => f.severity !== "info");
-  if (actionable.length === 0) {
-    clean.classList.remove("hidden"); clean.classList.add("flex");
-    $("clean-reassurance-text").textContent =
-      "Every byte is accounted for and no finding was raised by the checks this build ran. See the panel for what is and isn't covered.";
-  } else {
-    clean.classList.add("hidden"); clean.classList.remove("flex");
-  }
+  clean.classList.toggle("hidden", actionable.length > 0);
+  clean.classList.toggle("flex", actionable.length === 0);
+  $("clean-reassurance-text").textContent = findings.length
+    ? "Only informational notes were raised. See the panel for what each check covers."
+    : "Every byte is accounted for and no check raised a finding. See the panel for what is and isn't covered.";
 
   const counts: Record<string, number> = { all: findings.length };
   for (const s of SEV_RANK) counts[s] = findings.filter((f) => f.severity === s).length;
@@ -246,110 +280,125 @@ function renderFindings(rep: Report): void {
 
   findings.forEach((f, i) => {
     const card = document.createElement("article");
-    card.className = `finding-card ${f.severity} bg-surface-container-low rounded p-space-md transition-all flex flex-col gap-space-sm`;
-    const bodyId = `finding-${i}-body`, iconId = `finding-${i}-icon`;
+    card.className = `finding-card sev-${f.severity} bg-surface-container-low border border-outline-variant/80 rounded overflow-hidden`;
+    card.dataset.severity = f.severity;
+    const bodyId = `finding-${i}-body`;
     const d = f.detail as Record<string, unknown>;
     const hex = typeof d.start === "number" && typeof d.bytes === "number" && lastBytes
       ? hexPreview(lastBytes, d.start as number, d.bytes as number) : "";
+    const body = detailRows(d) + hex;
     card.innerHTML = `
-      <div class="flex items-start justify-between cursor-pointer" data-toggle="${bodyId}">
-        <div class="flex items-start gap-space-sm">
-          <span class="px-2 py-0.5 rounded font-label-xs text-label-xs font-bold uppercase tracking-wider ${SEV_CHIP[f.severity]} shrink-0 mt-0.5">${esc(f.severity)} • ${esc(f.check)}</span>
-          <div class="flex flex-col">
-            <div class="flex items-center gap-2 flex-wrap"><span class="font-code-inline text-code-inline font-bold text-on-surface">[${esc(f.check)}: ${esc(f.code)}]</span></div>
-            <span class="font-body-md text-body-md text-on-surface-variant mt-0.5">${esc(f.message)}</span>
+      <div class="p-4 bg-[#161a26] ${body ? "cursor-pointer" : ""}" ${body ? `data-toggle="${bodyId}"` : ""}>
+        <div class="flex items-start justify-between gap-2">
+          <div class="flex flex-wrap items-center gap-2 min-w-0">
+            <span class="text-[11px] font-label-mono uppercase px-2 py-0.5 rounded font-semibold border ${SEV_CHIP[f.severity]}">${esc(f.severity)}</span>
+            <span class="font-code-sm text-code-sm text-on-surface font-semibold break-all">[${esc(f.check)}: ${esc(f.code)}]</span>
           </div>
+          ${body ? `<span class="material-symbols-outlined text-[20px] text-outline transition-transform duration-200 -rotate-90 shrink-0">expand_more</span>` : ""}
         </div>
-        <button aria-label="Expand" class="text-on-surface-variant hover:text-on-surface p-1" type="button">
-          <span class="material-symbols-outlined text-[20px] transition-transform duration-200" id="${iconId}">expand_more</span>
-        </button>
+        <p class="font-body-md text-body-md text-on-surface mt-2 break-words">${esc(f.message)}</p>
       </div>
-      <div class="flex-col gap-space-sm pt-space-xs hidden" id="${bodyId}">${detailRows(d)}${hex}</div>`;
+      ${body ? `<div class="hidden p-4 bg-surface-container-lowest flex-col gap-3" id="${bodyId}">${body}</div>` : ""}`;
     list.appendChild(card);
   });
 
   list.querySelectorAll<HTMLElement>("[data-toggle]").forEach((el) => {
     el.addEventListener("click", () => {
       const body = $(el.dataset.toggle!);
-      const icon = body.previousElementSibling ? null : null;
-      const open = body.classList.toggle("hidden");
-      body.classList.toggle("flex", !open);
+      const closed = body.classList.toggle("hidden");
+      body.classList.toggle("flex", !closed);
       const ic = el.querySelector(".material-symbols-outlined") as HTMLElement | null;
-      if (ic) ic.style.transform = open ? "rotate(-90deg)" : "rotate(0deg)";
+      ic?.classList.toggle("-rotate-90", closed);
     });
   });
 }
 
+let activeFilter = "all";
+
 function renderFilters(counts: Record<string, number>): void {
   const bar = $("filter-buttons");
   bar.innerHTML = "";
+  activeFilter = "all";
   const make = (key: string, label: string) => {
     const b = document.createElement("button");
-    const active = key === "all";
-    b.className = `filter-btn px-2.5 py-1 rounded font-label-xs text-label-xs ${active ? "font-bold bg-primary-container text-on-primary" : "text-on-surface-variant hover:bg-surface-container"}`;
+    b.type = "button";
+    b.dataset.filter = key;
     b.textContent = `${label} (${counts[key] ?? 0})`;
-    b.addEventListener("click", () => applyFilter(key, b));
+    b.addEventListener("click", () => { activeFilter = key; applyFilters(); });
     return b;
   };
   bar.appendChild(make("all", "All"));
   for (const s of ["critical", "high", "medium", "low", "info"]) if (counts[s]) bar.appendChild(make(s, s[0]!.toUpperCase() + s.slice(1)));
+  applyFilters();
 }
 
-function applyFilter(key: string, btn: HTMLElement): void {
-  $("filter-buttons").querySelectorAll(".filter-btn").forEach((b) =>
-    (b as HTMLElement).className = "filter-btn px-2.5 py-1 rounded font-label-xs text-label-xs text-on-surface-variant hover:bg-surface-container");
-  btn.className = "filter-btn px-2.5 py-1 rounded font-label-xs text-label-xs font-bold bg-primary-container text-on-primary";
-  $("findings-list").querySelectorAll<HTMLElement>(".finding-card").forEach((card) =>
-    card.classList.toggle("hidden", !(key === "all" || card.classList.contains(key))));
+// Severity filter and text search combine: a card shows only if it passes both.
+function applyFilters(): void {
+  $("filter-buttons").querySelectorAll<HTMLElement>("button").forEach((b) => {
+    const on = b.dataset.filter === activeFilter;
+    b.className = `px-2.5 py-1 rounded font-label-mono text-[11px] uppercase border transition-colors ${on
+      ? "bg-primary-container text-surface border-primary-container font-semibold"
+      : "text-on-surface-variant border-outline-variant/60 hover:bg-surface-container"}`;
+  });
+  const q = ($("findings-search") as HTMLInputElement).value.toLowerCase();
+  $("findings-list").querySelectorAll<HTMLElement>(".finding-card").forEach((card) => {
+    const sevOk = activeFilter === "all" || card.dataset.severity === activeFilter;
+    const textOk = !q || (card.textContent ?? "").toLowerCase().includes(q);
+    card.classList.toggle("hidden", !(sevOk && textOk));
+  });
 }
 
-function search(query: string): void {
-  const q = query.toLowerCase();
-  $("findings-list").querySelectorAll<HTMLElement>(".finding-card").forEach((card) =>
-    card.classList.toggle("hidden", !card.innerText.toLowerCase().includes(q)));
-}
-
-function toast(text: string): void {
+let toastTimer: ReturnType<typeof setTimeout> | undefined;
+function toast(text: string, ok = true): void {
   const t = $("toast");
   $("toast-text").textContent = text;
+  const ic = t.querySelector(".material-symbols-outlined")!;
+  ic.textContent = ok ? "check" : "error";
+  ic.className = `material-symbols-outlined text-[18px] ${ok ? "text-ok" : "text-error"}`;
   t.classList.remove("translate-y-16", "opacity-0");
-  t.classList.add("translate-y-0", "opacity-100");
-  setTimeout(() => { t.classList.add("translate-y-16", "opacity-0"); t.classList.remove("translate-y-0", "opacity-100"); }, 2000);
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.add("translate-y-16", "opacity-0"), ok ? 2000 : 5000);
 }
 
 // --- wiring ----------------------------------------------------------------
 const input = $<HTMLInputElement>("file-input");
-$("drop-zone").addEventListener("click", () => input.click());
-$("browse-btn").addEventListener("click", (e) => { e.stopPropagation(); input.click(); });
-input.addEventListener("change", () => { if (input.files?.[0]) void handle(input.files[0]); });
-
-const drop = $("drop-zone");
-drop.addEventListener("dragover", (e) => { e.preventDefault(); drop.classList.add("bg-surface-container"); });
-drop.addEventListener("dragleave", () => drop.classList.remove("bg-surface-container"));
-drop.addEventListener("drop", (e) => {
-  e.preventDefault(); drop.classList.remove("bg-surface-container");
-  const f = e.dataTransfer?.files?.[0]; if (f) void handle(f);
-});
-
-// Base-model attachment (empty-state slot and result-view button share one input).
 const baseInput = $<HTMLInputElement>("base-input");
+
+function dropTarget(el: HTMLElement, onFile: (f: File) => void, openPicker: () => void): void {
+  el.addEventListener("click", openPicker);
+  el.addEventListener("dragover", (e) => { e.preventDefault(); el.classList.add("!border-primary-container", "!bg-panel-hover"); });
+  el.addEventListener("dragleave", () => el.classList.remove("!border-primary-container", "!bg-panel-hover"));
+  el.addEventListener("drop", (e) => {
+    e.preventDefault(); el.classList.remove("!border-primary-container", "!bg-panel-hover");
+    const f = e.dataTransfer?.files?.[0]; if (f) onFile(f);
+  });
+}
+
+const openFile = (e?: Event) => { e?.stopPropagation(); input.click(); };
 const openBase = (e?: Event) => { e?.stopPropagation(); baseInput.click(); };
-$("base-model-drop").addEventListener("click", openBase);
+dropTarget($("drop-zone"), (f) => void handle(f), () => input.click());
+dropTarget($("base-model-drop"), (f) => void attachBase(f), () => baseInput.click());
+$("browse-btn").addEventListener("click", openFile);
 $("base-attach-btn").addEventListener("click", openBase);
 $("result-base-btn").addEventListener("click", openBase);
+$("base-remove-btn").addEventListener("click", (e) => void removeBase(e));
+$("result-base-remove-btn").addEventListener("click", (e) => void removeBase(e));
+// Inputs sit inside their drop zones: stop their clicks bubbling back to the zone.
+input.addEventListener("click", (e) => e.stopPropagation());
+baseInput.addEventListener("click", (e) => e.stopPropagation());
+input.addEventListener("change", () => { if (input.files?.[0]) void handle(input.files[0]); });
 baseInput.addEventListener("change", () => { if (baseInput.files?.[0]) void attachBase(baseInput.files[0]); });
-const baseDrop = $("base-model-drop");
-baseDrop.addEventListener("dragover", (e) => { e.preventDefault(); baseDrop.classList.add("bg-surface-container"); });
-baseDrop.addEventListener("dragleave", () => baseDrop.classList.remove("bg-surface-container"));
-baseDrop.addEventListener("drop", (e) => {
-  e.preventDefault(); baseDrop.classList.remove("bg-surface-container");
-  const f = e.dataTransfer?.files?.[0]; if (f) void attachBase(f);
-});
 
-$("rescan-btn").addEventListener("click", () => { input.value = ""; show("empty"); });
-$("findings-search").addEventListener("keyup", (e) => search((e.target as HTMLInputElement).value));
+// Don't let a file dropped beside the drop zone navigate the tab away to it.
+window.addEventListener("dragover", (e) => e.preventDefault());
+window.addEventListener("drop", (e) => e.preventDefault());
+
+$("rescan-btn").addEventListener("click", () => { show("empty"); window.scrollTo({ top: 0 }); });
+$("findings-search").addEventListener("input", applyFilters);
 $("copy-hash").addEventListener("click", async () => {
-  if (lastReport?.sha256) { await navigator.clipboard.writeText(lastReport.sha256); toast("SHA-256 copied"); }
+  if (!lastReport?.sha256) return;
+  if (await copyText(lastReport.sha256)) toast("SHA-256 copied");
+  else toast("Clipboard unavailable", false);
 });
 $("export-btn").addEventListener("click", () => {
   if (!lastReport) return;
@@ -357,7 +406,7 @@ $("export-btn").addEventListener("click", () => {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url; a.download = `${lastReport.file}.stowaway.json`; a.click();
-  URL.revokeObjectURL(url);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 });
 
 show("empty");
