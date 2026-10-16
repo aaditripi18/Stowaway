@@ -1,0 +1,1265 @@
+{
+ "clean.gguf": {
+  "fickling": {
+   "verdict": "not scanned"
+  },
+  "fickling-ml": {
+   "verdict": "not scanned"
+  },
+  "modelscan": {
+   "errors": [],
+   "issues": [],
+   "scanned": 0,
+   "skipped": 1,
+   "total_issues": 0,
+   "total_issues_by_severity": {
+    "CRITICAL": 0,
+    "HIGH": 0,
+    "LOW": 0,
+    "MEDIUM": 0
+   },
+   "verdict": "not scanned"
+  },
+  "picklescan": {
+   "globals": [],
+   "infected_files": 0,
+   "issues_count": 0,
+   "scan_err": false,
+   "scanned_files": 1,
+   "suspicious_count": 0,
+   "verdict": "clean"
+  },
+  "stowaway": {
+   "findings": [],
+   "verdict": "clean"
+  }
+ },
+ "clean.pt": {
+  "conversion": {
+   "bytes_in": 46826315,
+   "bytes_out": 46807448,
+   "outcome": "converted",
+   "stowaway_after": "clean",
+   "stowaway_after_findings": [],
+   "weight_payload_survives": false,
+   "weights_bit_identical": true
+  },
+  "fickling": {
+   "members": {
+    "clean/data.pkl": {
+     "errors": [],
+     "is_safe": false,
+     "results": [
+      "`from torch._utils import _rebuild_tensor_v2` imports a Python module that is not a part of the standard library; this can execute arbitrary code and is inherently unsafe\n`from torch import FloatStorage` imports a Python module that is not a part of the standard library; this can execute arbitrary c"
+     ],
+     "severity": "LIKELY_UNSAFE"
+    }
+   },
+   "verdict": "flagged"
+  },
+  "fickling-ml": {
+   "members": {
+    "clean/data.pkl": {
+     "severity": "LIKELY_SAFE",
+     "text": ""
+    }
+   },
+   "verdict": "clean"
+  },
+  "modelscan": {
+   "errors": [],
+   "issues": [],
+   "scanned": 1,
+   "skipped": 128,
+   "total_issues": 0,
+   "total_issues_by_severity": {
+    "CRITICAL": 0,
+    "HIGH": 0,
+    "LOW": 0,
+    "MEDIUM": 0
+   },
+   "verdict": "clean"
+  },
+  "picklescan": {
+   "globals": [
+    "collections.OrderedDict:Innocuous",
+    "torch.FloatStorage:Innocuous",
+    "torch.LongStorage:Innocuous",
+    "torch._utils._rebuild_tensor_v2:Innocuous"
+   ],
+   "infected_files": 0,
+   "issues_count": 0,
+   "scan_err": false,
+   "scanned_files": 1,
+   "suspicious_count": 0,
+   "verdict": "clean"
+  },
+  "stowaway": {
+   "findings": [],
+   "verdict": "clean"
+  }
+ },
+ "clean.safetensors": {
+  "fickling": {
+   "verdict": "not scanned"
+  },
+  "fickling-ml": {
+   "verdict": "not scanned"
+  },
+  "modelscan": {
+   "errors": [],
+   "issues": [],
+   "scanned": 0,
+   "skipped": 1,
+   "total_issues": 0,
+   "total_issues_by_severity": {
+    "CRITICAL": 0,
+    "HIGH": 0,
+    "LOW": 0,
+    "MEDIUM": 0
+   },
+   "verdict": "not scanned"
+  },
+  "picklescan": {
+   "globals": [],
+   "infected_files": 0,
+   "issues_count": 0,
+   "scan_err": false,
+   "scanned_files": 1,
+   "suspicious_count": 0,
+   "verdict": "clean"
+  },
+  "stowaway": {
+   "findings": [],
+   "verdict": "clean"
+  }
+ },
+ "clean_bf16origin.safetensors": {
+  "fickling": {
+   "verdict": "not scanned"
+  },
+  "fickling-ml": {
+   "verdict": "not scanned"
+  },
+  "modelscan": {
+   "errors": [],
+   "issues": [],
+   "scanned": 0,
+   "skipped": 1,
+   "total_issues": 0,
+   "total_issues_by_severity": {
+    "CRITICAL": 0,
+    "HIGH": 0,
+    "LOW": 0,
+    "MEDIUM": 0
+   },
+   "verdict": "not scanned"
+  },
+  "picklescan": {
+   "globals": [],
+   "infected_files": 0,
+   "issues_count": 0,
+   "scan_err": false,
+   "scanned_files": 1,
+   "suspicious_count": 0,
+   "verdict": "clean"
+  },
+  "stowaway": {
+   "findings": [],
+   "verdict": "clean"
+  }
+ },
+ "clean_legacy.pt": {
+  "conversion": {
+   "bytes_in": 46813944,
+   "bytes_out": 46807448,
+   "outcome": "converted",
+   "stowaway_after": "clean",
+   "stowaway_after_findings": [],
+   "weight_payload_survives": false,
+   "weights_bit_identical": true
+  },
+  "fickling": {
+   "members": {
+    "clean_legacy.pt": {
+     "errors": [],
+     "is_safe": false,
+     "results": [
+      "",
+      "",
+      "",
+      "`from torch._utils import _rebuild_tensor_v2` imports a Python module that is not a part of the standard library; this can execute arbitrary code and is inherently unsafe\n`from torch import FloatStorage` imports a Python module that is not a part of the standard library; this can execute arbitrary c",
+      "",
+      "The file has invalid opcode(s). It is either corrupted or attempting to bypass the pickle security analysis"
+     ],
+     "severity": "LIKELY_UNSAFE"
+    }
+   },
+   "verdict": "flagged"
+  },
+  "fickling-ml": {
+   "members": {
+    "clean_legacy.pt#0": {
+     "severity": "LIKELY_SAFE",
+     "text": ""
+    },
+    "clean_legacy.pt#1": {
+     "severity": "LIKELY_SAFE",
+     "text": ""
+    },
+    "clean_legacy.pt#2": {
+     "severity": "LIKELY_SAFE",
+     "text": ""
+    },
+    "clean_legacy.pt#3": {
+     "severity": "LIKELY_SAFE",
+     "text": ""
+    },
+    "clean_legacy.pt#4": {
+     "severity": "LIKELY_SAFE",
+     "text": ""
+    },
+    "clean_legacy.pt#5": {
+     "severity": "LIKELY_SAFE",
+     "text": ""
+    }
+   },
+   "verdict": "clean"
+  },
+  "modelscan": {
+   "errors": [],
+   "issues": [],
+   "scanned": 1,
+   "skipped": 0,
+   "total_issues": 0,
+   "total_issues_by_severity": {
+    "CRITICAL": 0,
+    "HIGH": 0,
+    "LOW": 0,
+    "MEDIUM": 0
+   },
+   "verdict": "clean"
+  },
+  "picklescan": {
+   "globals": [
+    "collections.OrderedDict:Innocuous",
+    "torch.FloatStorage:Innocuous",
+    "torch.LongStorage:Innocuous",
+    "torch._utils._rebuild_tensor_v2:Innocuous"
+   ],
+   "infected_files": 0,
+   "issues_count": 0,
+   "scan_err": false,
+   "scanned_files": 1,
+   "suspicious_count": 0,
+   "verdict": "clean"
+  },
+  "stowaway": {
+   "findings": [],
+   "verdict": "clean"
+  }
+ },
+ "clean_numpy.pkl": {
+  "fickling": {
+   "members": {
+    "clean_numpy.pkl": {
+     "errors": [],
+     "is_safe": false,
+     "results": [
+      "`from numpy._core.multiarray import _reconstruct` imports a Python module that is not a part of the standard library; this can execute arbitrary code and is inherently unsafe\n`from numpy import ndarray` imports a Python module that is not a part of the standard library; this can execute arbitrary co"
+     ],
+     "severity": "LIKELY_UNSAFE"
+    }
+   },
+   "verdict": "flagged"
+  },
+  "fickling-ml": {
+   "members": {
+    "clean_numpy.pkl#0": {
+     "severity": "LIKELY_SAFE",
+     "text": ""
+    }
+   },
+   "verdict": "clean"
+  },
+  "modelscan": {
+   "errors": [],
+   "issues": [],
+   "scanned": 1,
+   "skipped": 0,
+   "total_issues": 0,
+   "total_issues_by_severity": {
+    "CRITICAL": 0,
+    "HIGH": 0,
+    "LOW": 0,
+    "MEDIUM": 0
+   },
+   "verdict": "clean"
+  },
+  "picklescan": {
+   "globals": [
+    "numpy._core.multiarray._reconstruct:Innocuous",
+    "numpy.dtype:Innocuous",
+    "numpy.ndarray:Innocuous"
+   ],
+   "infected_files": 0,
+   "issues_count": 0,
+   "scan_err": false,
+   "scanned_files": 1,
+   "suspicious_count": 0,
+   "verdict": "clean"
+  },
+  "stowaway": {
+   "findings": [
+    "S1:unknown-import:medium"
+   ],
+   "verdict": "suspicious"
+  }
+ },
+ "code_builtins_getattr.pt": {
+  "conversion": {
+   "error": "UnpicklingError: Weights only load failed. This file can still be loaded, to do so you have two options, \u001b[1mdo those steps only if you trust the source of the checkpoint\u001b[0m. ",
+   "outcome": "load refused"
+  },
+  "fickling": {
+   "members": {
+    "code_builtins_getattr/data.pkl": {
+     "errors": [],
+     "is_safe": false,
+     "results": [
+      "`from torch._utils import _rebuild_tensor_v2` imports a Python module that is not a part of the standard library; this can execute arbitrary code and is inherently unsafe\n`from torch import FloatStorage` imports a Python module that is not a part of the standard library; this can execute arbitrary c"
+     ],
+     "severity": "LIKELY_OVERTLY_MALICIOUS"
+    }
+   },
+   "verdict": "flagged"
+  },
+  "fickling-ml": {
+   "members": {
+    "code_builtins_getattr/data.pkl": {
+     "severity": "LIKELY_UNSAFE",
+     "text": "`from __builtin__ import getattr` imports a Python module outside of the standard library that is not whitelisted; this could execute arbitrary code and is inherently unsafe"
+    }
+   },
+   "verdict": "flagged"
+  },
+  "modelscan": {
+   "errors": [],
+   "issues": [
+    {
+     "description": "Use of unsafe operator 'getattr' from module '__builtin__'",
+     "module": "__builtin__",
+     "operator": "getattr",
+     "severity": "CRITICAL"
+    }
+   ],
+   "scanned": 1,
+   "skipped": 8,
+   "total_issues": 1,
+   "total_issues_by_severity": {
+    "CRITICAL": 1,
+    "HIGH": 0,
+    "LOW": 0,
+    "MEDIUM": 0
+   },
+   "verdict": "flagged"
+  },
+  "picklescan": {
+   "globals": [
+    "__builtin__.getattr:Dangerous",
+    "collections.OrderedDict:Innocuous",
+    "torch.FloatStorage:Innocuous",
+    "torch._utils._rebuild_tensor_v2:Innocuous"
+   ],
+   "infected_files": 1,
+   "issues_count": 1,
+   "scan_err": false,
+   "scanned_files": 1,
+   "suspicious_count": 0,
+   "verdict": "flagged"
+  },
+  "stowaway": {
+   "findings": [
+    "S1:dangerous-import:critical"
+   ],
+   "verdict": "dangerous"
+  }
+ },
+ "code_eval.pt": {
+  "conversion": {
+   "error": "UnpicklingError: Weights only load failed. This file can still be loaded, to do so you have two options, \u001b[1mdo those steps only if you trust the source of the checkpoint\u001b[0m. ",
+   "outcome": "load refused"
+  },
+  "fickling": {
+   "members": {
+    "code_eval/data.pkl": {
+     "errors": [],
+     "is_safe": false,
+     "results": [
+      "`from torch._utils import _rebuild_tensor_v2` imports a Python module that is not a part of the standard library; this can execute arbitrary code and is inherently unsafe\n`from torch import FloatStorage` imports a Python module that is not a part of the standard library; this can execute arbitrary c"
+     ],
+     "severity": "OVERTLY_MALICIOUS"
+    }
+   },
+   "verdict": "flagged"
+  },
+  "fickling-ml": {
+   "members": {
+    "code_eval/data.pkl": {
+     "severity": "LIKELY_UNSAFE",
+     "text": "`from __builtin__ import eval` imports a Python module outside of the standard library that is not whitelisted; this could execute arbitrary code and is inherently unsafe"
+    }
+   },
+   "verdict": "flagged"
+  },
+  "modelscan": {
+   "errors": [],
+   "issues": [
+    {
+     "description": "Use of unsafe operator 'eval' from module '__builtin__'",
+     "module": "__builtin__",
+     "operator": "eval",
+     "severity": "CRITICAL"
+    }
+   ],
+   "scanned": 1,
+   "skipped": 8,
+   "total_issues": 1,
+   "total_issues_by_severity": {
+    "CRITICAL": 1,
+    "HIGH": 0,
+    "LOW": 0,
+    "MEDIUM": 0
+   },
+   "verdict": "flagged"
+  },
+  "picklescan": {
+   "globals": [
+    "__builtin__.eval:Dangerous",
+    "collections.OrderedDict:Innocuous",
+    "torch.FloatStorage:Innocuous",
+    "torch._utils._rebuild_tensor_v2:Innocuous"
+   ],
+   "infected_files": 1,
+   "issues_count": 1,
+   "scan_err": false,
+   "scanned_files": 1,
+   "suspicious_count": 0,
+   "verdict": "flagged"
+  },
+  "stowaway": {
+   "findings": [
+    "S1:dangerous-import:critical"
+   ],
+   "verdict": "dangerous"
+  }
+ },
+ "code_exec.pt": {
+  "conversion": {
+   "error": "UnpicklingError: Weights only load failed. This file can still be loaded, to do so you have two options, \u001b[1mdo those steps only if you trust the source of the checkpoint\u001b[0m. ",
+   "outcome": "load refused"
+  },
+  "fickling": {
+   "members": {
+    "code_exec/data.pkl": {
+     "errors": [],
+     "is_safe": false,
+     "results": [
+      "`from torch._utils import _rebuild_tensor_v2` imports a Python module that is not a part of the standard library; this can execute arbitrary code and is inherently unsafe\n`from torch import FloatStorage` imports a Python module that is not a part of the standard library; this can execute arbitrary c"
+     ],
+     "severity": "OVERTLY_MALICIOUS"
+    }
+   },
+   "verdict": "flagged"
+  },
+  "fickling-ml": {
+   "members": {
+    "code_exec/data.pkl": {
+     "severity": "LIKELY_UNSAFE",
+     "text": "`from __builtin__ import exec` imports a Python module outside of the standard library that is not whitelisted; this could execute arbitrary code and is inherently unsafe"
+    }
+   },
+   "verdict": "flagged"
+  },
+  "modelscan": {
+   "errors": [],
+   "issues": [
+    {
+     "description": "Use of unsafe operator 'exec' from module '__builtin__'",
+     "module": "__builtin__",
+     "operator": "exec",
+     "severity": "CRITICAL"
+    }
+   ],
+   "scanned": 1,
+   "skipped": 8,
+   "total_issues": 1,
+   "total_issues_by_severity": {
+    "CRITICAL": 1,
+    "HIGH": 0,
+    "LOW": 0,
+    "MEDIUM": 0
+   },
+   "verdict": "flagged"
+  },
+  "picklescan": {
+   "globals": [
+    "__builtin__.exec:Dangerous",
+    "collections.OrderedDict:Innocuous",
+    "torch.FloatStorage:Innocuous",
+    "torch._utils._rebuild_tensor_v2:Innocuous"
+   ],
+   "infected_files": 1,
+   "issues_count": 1,
+   "scan_err": false,
+   "scanned_files": 1,
+   "suspicious_count": 0,
+   "verdict": "flagged"
+  },
+  "stowaway": {
+   "findings": [
+    "S1:dangerous-import:critical"
+   ],
+   "verdict": "dangerous"
+  }
+ },
+ "code_exec_legacy.pt": {
+  "conversion": {
+   "error": "UnpicklingError: Weights only load failed. This file can still be loaded, to do so you have two options, \u001b[1mdo those steps only if you trust the source of the checkpoint\u001b[0m. ",
+   "outcome": "load refused"
+  },
+  "fickling": {
+   "members": {
+    "code_exec_legacy.pt": {
+     "errors": [],
+     "is_safe": false,
+     "results": [
+      "",
+      "",
+      "",
+      "`from torch._utils import _rebuild_tensor_v2` imports a Python module that is not a part of the standard library; this can execute arbitrary code and is inherently unsafe\n`from torch import FloatStorage` imports a Python module that is not a part of the standard library; this can execute arbitrary c",
+      ""
+     ],
+     "severity": "OVERTLY_MALICIOUS"
+    }
+   },
+   "verdict": "flagged"
+  },
+  "fickling-ml": {
+   "members": {
+    "code_exec_legacy.pt#0": {
+     "severity": "LIKELY_SAFE",
+     "text": ""
+    },
+    "code_exec_legacy.pt#1": {
+     "severity": "LIKELY_SAFE",
+     "text": ""
+    },
+    "code_exec_legacy.pt#2": {
+     "severity": "LIKELY_SAFE",
+     "text": ""
+    },
+    "code_exec_legacy.pt#3": {
+     "severity": "LIKELY_UNSAFE",
+     "text": "`from __builtin__ import exec` imports a Python module outside of the standard library that is not whitelisted; this could execute arbitrary code and is inherently unsafe"
+    },
+    "code_exec_legacy.pt#4": {
+     "severity": "LIKELY_SAFE",
+     "text": ""
+    }
+   },
+   "verdict": "flagged"
+  },
+  "modelscan": {
+   "errors": [],
+   "issues": [],
+   "scanned": 1,
+   "skipped": 0,
+   "total_issues": 0,
+   "total_issues_by_severity": {
+    "CRITICAL": 0,
+    "HIGH": 0,
+    "LOW": 0,
+    "MEDIUM": 0
+   },
+   "verdict": "clean"
+  },
+  "picklescan": {
+   "globals": [
+    "__builtin__.exec:Dangerous",
+    "collections.OrderedDict:Innocuous",
+    "torch.FloatStorage:Innocuous",
+    "torch._utils._rebuild_tensor_v2:Innocuous"
+   ],
+   "infected_files": 1,
+   "issues_count": 1,
+   "scan_err": false,
+   "scanned_files": 1,
+   "suspicious_count": 0,
+   "verdict": "flagged"
+  },
+  "stowaway": {
+   "findings": [
+    "S1:dangerous-import:critical"
+   ],
+   "verdict": "dangerous"
+  }
+ },
+ "code_exec_p0.pkl": {
+  "fickling": {
+   "members": {
+    "code_exec_p0.pkl": {
+     "errors": [
+      "Unexpected error (NotImplementedError): TODO: Add support for Opcode FLOAT"
+     ],
+     "is_safe": false,
+     "results": [],
+     "severity": "LIKELY_UNSAFE"
+    }
+   },
+   "verdict": "error"
+  },
+  "fickling-ml": {
+   "exception": "NotImplementedError: TODO: Add support for Opcode FLOAT",
+   "verdict": "error"
+  },
+  "modelscan": {
+   "errors": [],
+   "issues": [
+    {
+     "description": "Use of unsafe operator 'exec' from module '__builtin__'",
+     "module": "__builtin__",
+     "operator": "exec",
+     "severity": "CRITICAL"
+    }
+   ],
+   "scanned": 1,
+   "skipped": 0,
+   "total_issues": 1,
+   "total_issues_by_severity": {
+    "CRITICAL": 1,
+    "HIGH": 0,
+    "LOW": 0,
+    "MEDIUM": 0
+   },
+   "verdict": "flagged"
+  },
+  "picklescan": {
+   "globals": [
+    "__builtin__.exec:Dangerous"
+   ],
+   "infected_files": 1,
+   "issues_count": 1,
+   "scan_err": false,
+   "scanned_files": 1,
+   "suspicious_count": 0,
+   "verdict": "flagged"
+  },
+  "stowaway": {
+   "findings": [
+    "S1:dangerous-import:critical"
+   ],
+   "verdict": "dangerous"
+  }
+ },
+ "code_exec_p2.pkl": {
+  "fickling": {
+   "members": {
+    "code_exec_p2.pkl": {
+     "errors": [],
+     "is_safe": false,
+     "results": [
+      "`from __builtin__ import exec` imports a Python module that is not a part of the standard library; this can execute arbitrary code and is inherently unsafe\nCall to `exec('pass')` is almost certainly evidence of a malicious pickle file\nCall to `exec('pass')` is almost certainly evidence of a maliciou"
+     ],
+     "severity": "OVERTLY_MALICIOUS"
+    }
+   },
+   "verdict": "flagged"
+  },
+  "fickling-ml": {
+   "members": {
+    "code_exec_p2.pkl#0": {
+     "severity": "LIKELY_UNSAFE",
+     "text": "`from __builtin__ import exec` imports a Python module outside of the standard library that is not whitelisted; this could execute arbitrary code and is inherently unsafe"
+    }
+   },
+   "verdict": "flagged"
+  },
+  "modelscan": {
+   "errors": [],
+   "issues": [
+    {
+     "description": "Use of unsafe operator 'exec' from module '__builtin__'",
+     "module": "__builtin__",
+     "operator": "exec",
+     "severity": "CRITICAL"
+    }
+   ],
+   "scanned": 1,
+   "skipped": 0,
+   "total_issues": 1,
+   "total_issues_by_severity": {
+    "CRITICAL": 1,
+    "HIGH": 0,
+    "LOW": 0,
+    "MEDIUM": 0
+   },
+   "verdict": "flagged"
+  },
+  "picklescan": {
+   "globals": [
+    "__builtin__.exec:Dangerous"
+   ],
+   "infected_files": 1,
+   "issues_count": 1,
+   "scan_err": false,
+   "scanned_files": 1,
+   "suspicious_count": 0,
+   "verdict": "flagged"
+  },
+  "stowaway": {
+   "findings": [
+    "S1:dangerous-import:critical"
+   ],
+   "verdict": "dangerous"
+  }
+ },
+ "code_os_system.pt": {
+  "conversion": {
+   "error": "UnpicklingError: Weights only load failed. In PyTorch 2.6, we changed the default value of the `weights_only` argument in `torch.load` from `False` to `True`. Re-running `torch.load` with `weights_only` set to `False`",
+   "outcome": "load refused"
+  },
+  "fickling": {
+   "members": {
+    "code_os_system/data.pkl": {
+     "errors": [],
+     "is_safe": false,
+     "results": [
+      "`from torch._utils import _rebuild_tensor_v2` imports a Python module that is not a part of the standard library; this can execute arbitrary code and is inherently unsafe\n`from torch import FloatStorage` imports a Python module that is not a part of the standard library; this can execute arbitrary c"
+     ],
+     "severity": "LIKELY_OVERTLY_MALICIOUS"
+    }
+   },
+   "verdict": "flagged"
+  },
+  "fickling-ml": {
+   "members": {
+    "code_os_system/data.pkl": {
+     "severity": "LIKELY_UNSAFE",
+     "text": "`from nt import system` imports a Python module outside of the standard library that is not whitelisted; this could execute arbitrary code and is inherently unsafe"
+    }
+   },
+   "verdict": "flagged"
+  },
+  "modelscan": {
+   "errors": [],
+   "issues": [
+    {
+     "description": "Use of unsafe operator 'system' from module 'nt'",
+     "module": "nt",
+     "operator": "system",
+     "severity": "CRITICAL"
+    }
+   ],
+   "scanned": 1,
+   "skipped": 8,
+   "total_issues": 1,
+   "total_issues_by_severity": {
+    "CRITICAL": 1,
+    "HIGH": 0,
+    "LOW": 0,
+    "MEDIUM": 0
+   },
+   "verdict": "flagged"
+  },
+  "picklescan": {
+   "globals": [
+    "collections.OrderedDict:Innocuous",
+    "nt.system:Dangerous",
+    "torch.FloatStorage:Innocuous",
+    "torch._utils._rebuild_tensor_v2:Innocuous"
+   ],
+   "infected_files": 1,
+   "issues_count": 1,
+   "scan_err": false,
+   "scanned_files": 1,
+   "suspicious_count": 0,
+   "verdict": "flagged"
+  },
+  "stowaway": {
+   "findings": [
+    "S1:dangerous-import:critical"
+   ],
+   "verdict": "dangerous"
+  }
+ },
+ "code_os_system_legacy.pt": {
+  "conversion": {
+   "error": "UnpicklingError: Weights only load failed. In PyTorch 2.6, we changed the default value of the `weights_only` argument in `torch.load` from `False` to `True`. Re-running `torch.load` with `weights_only` set to `False`",
+   "outcome": "load refused"
+  },
+  "fickling": {
+   "members": {
+    "code_os_system_legacy.pt": {
+     "errors": [],
+     "is_safe": false,
+     "results": [
+      "",
+      "",
+      "",
+      "`from torch._utils import _rebuild_tensor_v2` imports a Python module that is not a part of the standard library; this can execute arbitrary code and is inherently unsafe\n`from torch import FloatStorage` imports a Python module that is not a part of the standard library; this can execute arbitrary c",
+      ""
+     ],
+     "severity": "LIKELY_OVERTLY_MALICIOUS"
+    }
+   },
+   "verdict": "flagged"
+  },
+  "fickling-ml": {
+   "members": {
+    "code_os_system_legacy.pt#0": {
+     "severity": "LIKELY_SAFE",
+     "text": ""
+    },
+    "code_os_system_legacy.pt#1": {
+     "severity": "LIKELY_SAFE",
+     "text": ""
+    },
+    "code_os_system_legacy.pt#2": {
+     "severity": "LIKELY_SAFE",
+     "text": ""
+    },
+    "code_os_system_legacy.pt#3": {
+     "severity": "LIKELY_UNSAFE",
+     "text": "`from nt import system` imports a Python module outside of the standard library that is not whitelisted; this could execute arbitrary code and is inherently unsafe"
+    },
+    "code_os_system_legacy.pt#4": {
+     "severity": "LIKELY_SAFE",
+     "text": ""
+    }
+   },
+   "verdict": "flagged"
+  },
+  "modelscan": {
+   "errors": [],
+   "issues": [],
+   "scanned": 1,
+   "skipped": 0,
+   "total_issues": 0,
+   "total_issues_by_severity": {
+    "CRITICAL": 0,
+    "HIGH": 0,
+    "LOW": 0,
+    "MEDIUM": 0
+   },
+   "verdict": "clean"
+  },
+  "picklescan": {
+   "globals": [
+    "collections.OrderedDict:Innocuous",
+    "nt.system:Dangerous",
+    "torch.FloatStorage:Innocuous",
+    "torch._utils._rebuild_tensor_v2:Innocuous"
+   ],
+   "infected_files": 1,
+   "issues_count": 1,
+   "scan_err": false,
+   "scanned_files": 1,
+   "suspicious_count": 0,
+   "verdict": "flagged"
+  },
+  "stowaway": {
+   "findings": [
+    "S1:dangerous-import:critical"
+   ],
+   "verdict": "dangerous"
+  }
+ },
+ "extra_entry.pt": {
+  "conversion": {
+   "bytes_in": 46830457,
+   "bytes_out": 46807448,
+   "outcome": "converted",
+   "stowaway_after": "clean",
+   "stowaway_after_findings": [],
+   "weight_payload_survives": false,
+   "weights_bit_identical": true
+  },
+  "fickling": {
+   "members": {
+    "clean/data.pkl": {
+     "errors": [],
+     "is_safe": false,
+     "results": [
+      "`from torch._utils import _rebuild_tensor_v2` imports a Python module that is not a part of the standard library; this can execute arbitrary code and is inherently unsafe\n`from torch import FloatStorage` imports a Python module that is not a part of the standard library; this can execute arbitrary c"
+     ],
+     "severity": "LIKELY_UNSAFE"
+    },
+    "clean/extra/payload.bin": {
+     "errors": [],
+     "is_safe": false,
+     "results": [
+      "The file has invalid opcode(s). It is either corrupted or attempting to bypass the pickle security analysis"
+     ],
+     "severity": "LIKELY_UNSAFE"
+    }
+   },
+   "verdict": "flagged"
+  },
+  "fickling-ml": {
+   "members": {
+    "clean/data.pkl": {
+     "severity": "LIKELY_SAFE",
+     "text": ""
+    }
+   },
+   "verdict": "clean"
+  },
+  "modelscan": {
+   "errors": [],
+   "issues": [],
+   "scanned": 1,
+   "skipped": 129,
+   "total_issues": 0,
+   "total_issues_by_severity": {
+    "CRITICAL": 0,
+    "HIGH": 0,
+    "LOW": 0,
+    "MEDIUM": 0
+   },
+   "verdict": "clean"
+  },
+  "picklescan": {
+   "globals": [
+    "collections.OrderedDict:Innocuous",
+    "torch.FloatStorage:Innocuous",
+    "torch.LongStorage:Innocuous",
+    "torch._utils._rebuild_tensor_v2:Innocuous"
+   ],
+   "infected_files": 0,
+   "issues_count": 0,
+   "scan_err": false,
+   "scanned_files": 1,
+   "suspicious_count": 0,
+   "verdict": "clean"
+  },
+  "stowaway": {
+   "findings": [
+    "S2:unaccounted-bytes:high",
+    "S2:unexpected-zip-entry:medium"
+   ],
+   "verdict": "dangerous"
+  }
+ },
+ "trailing.gguf": {
+  "fickling": {
+   "verdict": "not scanned"
+  },
+  "fickling-ml": {
+   "verdict": "not scanned"
+  },
+  "modelscan": {
+   "errors": [],
+   "issues": [],
+   "scanned": 0,
+   "skipped": 1,
+   "total_issues": 0,
+   "total_issues_by_severity": {
+    "CRITICAL": 0,
+    "HIGH": 0,
+    "LOW": 0,
+    "MEDIUM": 0
+   },
+   "verdict": "not scanned"
+  },
+  "picklescan": {
+   "globals": [],
+   "infected_files": 0,
+   "issues_count": 0,
+   "scan_err": false,
+   "scanned_files": 1,
+   "suspicious_count": 0,
+   "verdict": "clean"
+  },
+  "stowaway": {
+   "findings": [
+    "S2:trailing-data:high"
+   ],
+   "verdict": "dangerous"
+  }
+ },
+ "trailing.safetensors": {
+  "fickling": {
+   "verdict": "not scanned"
+  },
+  "fickling-ml": {
+   "verdict": "not scanned"
+  },
+  "modelscan": {
+   "errors": [],
+   "issues": [],
+   "scanned": 0,
+   "skipped": 1,
+   "total_issues": 0,
+   "total_issues_by_severity": {
+    "CRITICAL": 0,
+    "HIGH": 0,
+    "LOW": 0,
+    "MEDIUM": 0
+   },
+   "verdict": "not scanned"
+  },
+  "picklescan": {
+   "globals": [],
+   "infected_files": 0,
+   "issues_count": 0,
+   "scan_err": false,
+   "scanned_files": 1,
+   "suspicious_count": 0,
+   "verdict": "clean"
+  },
+  "stowaway": {
+   "findings": [
+    "S2:trailing-data:high"
+   ],
+   "verdict": "dangerous"
+  }
+ },
+ "weight.pt": {
+  "conversion": {
+   "bytes_in": 46827595,
+   "bytes_out": 46807448,
+   "outcome": "converted",
+   "stowaway_after": "clean",
+   "stowaway_after_findings": [],
+   "weight_payload_survives": true,
+   "weights_bit_identical": true
+  },
+  "fickling": {
+   "members": {
+    "weight/data.pkl": {
+     "errors": [],
+     "is_safe": false,
+     "results": [
+      "`from torch._utils import _rebuild_tensor_v2` imports a Python module that is not a part of the standard library; this can execute arbitrary code and is inherently unsafe\n`from torch import FloatStorage` imports a Python module that is not a part of the standard library; this can execute arbitrary c"
+     ],
+     "severity": "LIKELY_UNSAFE"
+    }
+   },
+   "verdict": "flagged"
+  },
+  "fickling-ml": {
+   "members": {
+    "weight/data.pkl": {
+     "severity": "LIKELY_SAFE",
+     "text": ""
+    }
+   },
+   "verdict": "clean"
+  },
+  "modelscan": {
+   "errors": [],
+   "issues": [],
+   "scanned": 1,
+   "skipped": 128,
+   "total_issues": 0,
+   "total_issues_by_severity": {
+    "CRITICAL": 0,
+    "HIGH": 0,
+    "LOW": 0,
+    "MEDIUM": 0
+   },
+   "verdict": "clean"
+  },
+  "picklescan": {
+   "globals": [
+    "collections.OrderedDict:Innocuous",
+    "torch.FloatStorage:Innocuous",
+    "torch.LongStorage:Innocuous",
+    "torch._utils._rebuild_tensor_v2:Innocuous"
+   ],
+   "infected_files": 0,
+   "issues_count": 0,
+   "scan_err": false,
+   "scanned_files": 1,
+   "suspicious_count": 0,
+   "verdict": "clean"
+  },
+  "stowaway": {
+   "findings": [],
+   "verdict": "clean"
+  },
+  "stowaway+base": {
+   "findings": [
+    "S5:low-bit-only-change:high"
+   ],
+   "verdict": "dangerous"
+  }
+ },
+ "weight.safetensors": {
+  "fickling": {
+   "verdict": "not scanned"
+  },
+  "fickling-ml": {
+   "verdict": "not scanned"
+  },
+  "modelscan": {
+   "errors": [],
+   "issues": [],
+   "scanned": 0,
+   "skipped": 1,
+   "total_issues": 0,
+   "total_issues_by_severity": {
+    "CRITICAL": 0,
+    "HIGH": 0,
+    "LOW": 0,
+    "MEDIUM": 0
+   },
+   "verdict": "not scanned"
+  },
+  "picklescan": {
+   "globals": [],
+   "infected_files": 0,
+   "issues_count": 0,
+   "scan_err": false,
+   "scanned_files": 1,
+   "suspicious_count": 0,
+   "verdict": "clean"
+  },
+  "stowaway": {
+   "findings": [],
+   "verdict": "clean"
+  },
+  "stowaway+base": {
+   "findings": [
+    "S5:low-bit-only-change:high"
+   ],
+   "verdict": "dangerous"
+  }
+ },
+ "weight_bf16origin.pt": {
+  "conversion": {
+   "bytes_in": 46834315,
+   "bytes_out": 46807448,
+   "outcome": "converted",
+   "stowaway_after": "flagged",
+   "stowaway_after_findings": [
+    "S3:precision-anomaly:high",
+    "S4:lowbit-anomaly:medium"
+   ],
+   "weight_payload_survives": true,
+   "weights_bit_identical": true
+  },
+  "fickling": {
+   "members": {
+    "weight_bf16origin/data.pkl": {
+     "errors": [],
+     "is_safe": false,
+     "results": [
+      "`from torch._utils import _rebuild_tensor_v2` imports a Python module that is not a part of the standard library; this can execute arbitrary code and is inherently unsafe\n`from torch import FloatStorage` imports a Python module that is not a part of the standard library; this can execute arbitrary c"
+     ],
+     "severity": "LIKELY_UNSAFE"
+    }
+   },
+   "verdict": "flagged"
+  },
+  "fickling-ml": {
+   "members": {
+    "weight_bf16origin/data.pkl": {
+     "severity": "LIKELY_SAFE",
+     "text": ""
+    }
+   },
+   "verdict": "clean"
+  },
+  "modelscan": {
+   "errors": [],
+   "issues": [],
+   "scanned": 1,
+   "skipped": 128,
+   "total_issues": 0,
+   "total_issues_by_severity": {
+    "CRITICAL": 0,
+    "HIGH": 0,
+    "LOW": 0,
+    "MEDIUM": 0
+   },
+   "verdict": "clean"
+  },
+  "picklescan": {
+   "globals": [
+    "collections.OrderedDict:Innocuous",
+    "torch.FloatStorage:Innocuous",
+    "torch.LongStorage:Innocuous",
+    "torch._utils._rebuild_tensor_v2:Innocuous"
+   ],
+   "infected_files": 0,
+   "issues_count": 0,
+   "scan_err": false,
+   "scanned_files": 1,
+   "suspicious_count": 0,
+   "verdict": "clean"
+  },
+  "stowaway": {
+   "findings": [
+    "S3:precision-anomaly:high",
+    "S4:lowbit-anomaly:medium"
+   ],
+   "verdict": "dangerous"
+  },
+  "stowaway+base": {
+   "findings": [
+    "S3:precision-anomaly:high",
+    "S4:lowbit-anomaly:medium",
+    "S5:low-bit-only-change:high"
+   ],
+   "verdict": "dangerous"
+  }
+ },
+ "weight_bf16origin.safetensors": {
+  "fickling": {
+   "verdict": "not scanned"
+  },
+  "fickling-ml": {
+   "verdict": "not scanned"
+  },
+  "modelscan": {
+   "errors": [],
+   "issues": [],
+   "scanned": 0,
+   "skipped": 1,
+   "total_issues": 0,
+   "total_issues_by_severity": {
+    "CRITICAL": 0,
+    "HIGH": 0,
+    "LOW": 0,
+    "MEDIUM": 0
+   },
+   "verdict": "not scanned"
+  },
+  "picklescan": {
+   "globals": [],
+   "infected_files": 0,
+   "issues_count": 0,
+   "scan_err": false,
+   "scanned_files": 1,
+   "suspicious_count": 0,
+   "verdict": "clean"
+  },
+  "stowaway": {
+   "findings": [
+    "S3:precision-anomaly:high",
+    "S4:lowbit-anomaly:medium"
+   ],
+   "verdict": "dangerous"
+  },
+  "stowaway+base": {
+   "findings": [
+    "S3:precision-anomaly:high",
+    "S4:lowbit-anomaly:medium",
+    "S5:low-bit-only-change:high"
+   ],
+   "verdict": "dangerous"
+  }
+ }
+}

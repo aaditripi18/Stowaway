@@ -14,9 +14,10 @@ GGUF files, and measures the limit: how much can hide before a single-file check
 notices, what hiding it costs the model, and what only a comparison with the base
 model can catch.
 
-> Status: week 5 of 8, preliminary. Two vision models end to end, single-file
+> Status: all eight planned weeks done. Two vision models end to end, single-file
 > checks on samples of 120 public Hugging Face models (70 dev, 50 held out), and
-> S5 calibrated on 20 real fine-tune/base pairs. One payload type (random bytes).
+> S5 calibrated on 20 real fine-tune/base pairs, and a side-by-side with
+> picklescan, ModelScan and fickling (E5). One weight-payload type (random bytes).
 
 ## Results
 
@@ -45,7 +46,7 @@ bits, 1 KB to 1 MB, with top-1 accuracy on 500 Imagenette images:
 
 | | Hypothesis | Verdict |
 |---|---|---|
-| H1 | S1 matches picklescan on code payloads, and every weight-payload model passes picklescan and a safetensors conversion | **not yet tested** (E5) |
+| H1 | S1 matches picklescan on code payloads, and every weight-payload model passes picklescan and a safetensors conversion | **supported** (E5): same 8 / 8 code payloads as picklescan; 4 / 4 weight-payload files pass picklescan; the payload survives conversion bit for bit in 2 / 2 |
 | H2 | In a model stored at higher precision than it was trained in, a payload ≥ 1 KB is caught by S3 with no false positives | **supported**: 19 / 19 bf16 models, 0 false positives, 1 KB caught in all |
 | H3 | In a genuinely float32-trained model, an encrypted low-bit payload cannot be seen from one file | **model-dependent**: true for 23 of 39 surveyed models and ResNet-18, false for the 2 with a signature |
 | H4 | A diff against the claimed base model catches a payload in any tensor the fine-tune did not train | **supported, with limits**: 10 / 10 held-out pairs at k = 8, 16, 20 and 21; 0 / 10 inside a tensor the fine-tune did train |
@@ -61,7 +62,8 @@ What the numbers say:
   and exactly where S3 sees it.
 - **An attacker who knows the checks can evade them.** On MobileNetV3-Small,
   where the naive attack is caught, spreading the payload over one weight in 64
-  keeps every statistic under the threshold at every size up to 1 MB (E3). The
+  keeps every statistic under the threshold at every size that fits at that
+  density, up to 16 KB (E3). The
   base diff catches it from 4 KB.
 - **The strong check has a blind spot too.** A payload confined to tensors the
   distributor genuinely trained is camouflaged by the training, so S5 misses it.
@@ -153,8 +155,8 @@ with HTTP range requests instead of downloading whole files.
 
 ```
 python -m venv .venv
-.venv/Scripts/python -m pip install -e ".[dev,experiments]"   # Windows; .venv/bin/python elsewhere
-.venv/Scripts/python -m pytest                                 # 106 tests
+.venv/Scripts/python -m pip install -e ".[dev,experiments,compare]"   # Windows; .venv/bin/python elsewhere
+.venv/Scripts/python -m pytest
 
 export TORCH_HOME=$PWD/models/torch PYTHONPATH=.
 .venv/Scripts/python scripts/run_e0.py                      # false positives, 9 clean models
@@ -167,7 +169,9 @@ export TORCH_HOME=$PWD/models/torch PYTHONPATH=.
 .venv/Scripts/python scripts/run_s3_widened.py              # E1c, from the survey cache
 .venv/Scripts/python scripts/run_e4.py --split dev          # S5 calibration
 .venv/Scripts/python scripts/run_e4.py --split heldout      # S5 validation
+.venv/Scripts/python scripts/run_e5.py                      # vs picklescan, ModelScan, fickling
 .venv/Scripts/python scripts/report.py                      # docs/RESULTS.md
+.venv/Scripts/python scripts/site_facts.py                  # page numbers == ledger (--write to update)
 ```
 
 Every run appends a line to `results/ledger.jsonl` with the git commit that

@@ -216,7 +216,9 @@ def section_e3(rows):
     out = ["## E3 - robustness of the single-file checks", "",
            "Random payloads placed where S3/S4 are weakest. `single` = S3 or S4 flagged a "
            "written tensor; `base` = S5 (given the clean base) did. Each cell is the smallest "
-           "payload at which the placement is **caught**, or — if it is missed at every size up to 1 MB."]
+           "payload at which the placement is **caught**, or — (missed, up to the largest size tested) if "
+           "it is missed at every size tested. A placement is tested only at sizes that fit it: at one "
+           "weight in 64 a model holds much less."]
     for model, (run_id, recs) in runs.items():
         out += ["", f"### {model}", "", f"Run `{run_id}`, k = {recs[0]['k']}.", "",
                 "| Placement | single-file caught from | with base caught from |", "|---|---|---|"]
@@ -224,7 +226,8 @@ def section_e3(rows):
             rs = sorted((r for r in recs if r["placement"] == pl), key=lambda r: r["payload_bytes"])
             def first(key):
                 hit = [r for r in rs if r[key]]
-                return _fmt_size(min(r["payload_bytes"] for r in hit)) if hit else "— (missed)"
+                return (_fmt_size(min(r["payload_bytes"] for r in hit)) if hit
+                        else f"— (missed, up to {_fmt_size(max(r['payload_bytes'] for r in rs))})")
             out.append(f"| {pl} | {first('single_file_detected')} | {first('base_detected')} |")
     return "\n".join(out) + "\n"
 
@@ -263,13 +266,84 @@ def section_e4(rows):
     return "\n".join(out) + "\n"
 
 
+E5_TOOLS = ("picklescan", "modelscan", "fickling", "fickling-ml", "stowaway", "stowaway+base")
+
+
+def e5_summary(rows):
+    """Counts the E5 section and the site both read: per group and tool, how many
+    files were flagged out of how many the tool scanned."""
+    run_id, recs = _latest_run(rows, "E5")
+    if not recs:
+        return None
+    verdicts = [r for r in recs if r["tool"] != "conversion"]
+    out = {"run_id": run_id, "commit": recs[0]["commit"], "versions": recs[0]["meta"]["versions"],
+           "groups": {}}
+    for group in ("clean", "code", "weight", "structure"):
+        files = sorted({r["file"] for r in verdicts if r["group"] == group})
+        g = {"files": len(files)}
+        for tool in E5_TOOLS:
+            rs = [r for r in verdicts if r["group"] == group and r["tool"] == tool]
+            if rs:
+                g[tool] = {"flagged": sum(r["verdict"] == "flagged" for r in rs),
+                           "scanned": sum(r["verdict"] not in ("not scanned",) for r in rs),
+                           "errors": sum(r["verdict"] == "error" for r in rs)}
+        out["groups"][group] = g
+    conv = [r for r in recs if r["tool"] == "conversion"]
+    out["conversion"] = {
+        "code_refused": sum(r["outcome"] == "load refused" for r in conv if r["group"] == "code"),
+        "code_files": sum(1 for r in conv if r["group"] == "code"),
+        "weight_survived": sum(bool(r.get("weight_payload_survives")) for r in conv if r["group"] == "weight"),
+        "weight_files": sum(1 for r in conv if r["group"] == "weight"),
+    }
+    return out
+
+
+def section_e5(rows):
+    run_id, recs = _latest_run(rows, "E5")
+    if not recs:
+        return "## E5 — the same files through existing scanners\n\n_No run yet._\n"
+    v = recs[0]["meta"]["versions"]
+    verdicts = [r for r in recs if r["tool"] != "conversion"]
+    cell = {(r["file"], r["tool"]): r["verdict"] for r in verdicts}
+    short = {"flagged": "**flag**", "clean": "clean", "not scanned": "—", "error": "error"}
+    out = ["## E5 — the same files through existing scanners", "",
+           f"Run `{run_id}`. picklescan {v['picklescan']}, ModelScan {v['modelscan']}, fickling "
+           f"{v['fickling']} (`fickling` = its default check, as the CLI runs it; `fickling-ml` = its "
+           f"ML allowlist analysis), torch {v['torch']}, safetensors {v['safetensors']}. "
+           "`—` = the tool did not scan the file (unsupported format). `stowaway+base` = with the "
+           "clean model as claimed base (S5).", "",
+           "| File | Group | " + " | ".join(E5_TOOLS) + " |", "|---|---|" + "---|" * len(E5_TOOLS)]
+    order = {"clean": 0, "code": 1, "weight": 2, "structure": 3}
+    files = sorted({(r["group"], r["file"]) for r in verdicts}, key=lambda x: (order[x[0]], x[1]))
+    for group, f in files:
+        out.append(f"| `{f}` | {group} | " + " | ".join(short.get(cell.get((f, t)), "") for t in E5_TOOLS) + " |")
+    s = e5_summary(rows)
+    out += ["", "Flagged / scanned, per group:", "",
+            "| Group | Files | " + " | ".join(E5_TOOLS) + " |", "|---|--:|" + "--:|" * len(E5_TOOLS)]
+    for group, g in s["groups"].items():
+        cells = [f"{g[t]['flagged']} / {g[t]['scanned']}" if t in g else "" for t in E5_TOOLS]
+        out.append(f"| {group} | {g['files']} | " + " | ".join(cells) + " |")
+    c = s["conversion"]
+    out += ["", "Conversion to safetensors (`torch.load(weights_only=True)` + `safetensors.torch.save_file`) "
+            "of each `.pt` file:", "",
+            f"- code payloads: load refused for **{c['code_refused']} / {c['code_files']}** (nothing executed, "
+            "nothing converted)",
+            f"- weight payloads: carried across bit for bit and still extractable in "
+            f"**{c['weight_survived']} / {c['weight_files']}**"]
+    conv = {r["file"]: r for r in recs if r["tool"] == "conversion"}
+    for f, r in sorted(conv.items()):
+        if r["group"] in ("structure",):
+            out.append(f"- `{f}`: {r['outcome']}; Stowaway after conversion: {r.get('stowaway_after')}")
+    return "\n".join(out) + "\n"
+
+
 def main():
     rows = load()
     body = "\n".join([
         "# Results", "",
         "> Generated by `scripts/report.py` from `results/ledger.jsonl`. Do not edit by hand.", "",
         section_e0(rows), "", section_e1(rows), "", section_e2(rows), "",
-        section_hf(rows), "", section_e0c(rows), "", section_e1c(rows), "", section_e3(rows), "", section_e4(rows),
+        section_hf(rows), "", section_e0c(rows), "", section_e1c(rows), "", section_e3(rows), "", section_e4(rows), "", section_e5(rows),
     ])
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(body + "\n", encoding="utf-8")

@@ -39,7 +39,7 @@
             <div class="lg:col-span-7 flex flex-col gap-space-lg max-w-xl">
               <div class="inline-flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full bg-primary-container"></span>
-                <span class="font-label-mono text-label-mono uppercase tracking-wider text-primary">Preliminary findings · week 5 of 8 · 2026</span>
+                <span class="font-label-mono text-label-mono uppercase tracking-wider text-primary">Findings · October 2026</span>
               </div>
               <h1 class="font-headline-xl text-headline-xl font-semibold text-on-surface tracking-tight leading-[1.12]">What can hide in a model's weights that no scanner sees?</h1>
               <p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
@@ -59,7 +59,7 @@
                 <span class="font-label-mono text-label-mono text-primary-container">low byte = payload</span>
               </div>
               <div class="py-space-md font-code-sm text-[9px] sm:text-code-sm leading-relaxed overflow-x-auto text-[#8c93a8]" aria-hidden="true">
-                <div class="grid grid-cols-1 gap-0.5 select-none whitespace-pre" id="hex-grid">
+                <div class="grid grid-cols-1 gap-0.5 select-none whitespace-pre" id="hex-grid" data-nofacts>
                   <div>3f84 9b<b>53</b>   bf02 4e<b>54</b>   3e71 d0<b>4f</b>   3f19 a2<b>57</b></div>
                   <div>3e92 c1<b>41</b>   be80 18<b>57</b>   3f77 e4<b>41</b>   bf33 09<b>59</b></div>
                   <div>3d40 88<b>5f</b>   be11 fe<b>43</b>   3f5c 2d<b>41</b>   3e0b 91<b>52</b></div>
@@ -72,11 +72,11 @@
               <figcaption class="mt-space-xs pt-space-md border-t border-hair flex flex-col gap-1">
                 <div class="font-label-mono text-label-mono uppercase tracking-wider text-outline flex items-center justify-between">
                   <span>Hidden in ResNet-18</span>
-                  <span class="text-primary-container">Δ top-1 accuracy: 0.0</span>
+                  <span class="text-primary-container">Δ top-1 accuracy: <span data-fact="e2.resnet.delta">0.0</span></span>
                 </div>
-                <div class="font-code-md text-5xl font-bold text-white tracking-tight py-1">4 MB</div>
+                <div class="font-code-md text-5xl font-bold text-white tracking-tight py-1"><span data-fact="e2.resnet.max_zero">4 MB</span></div>
                 <p class="font-body-sm text-body-sm text-on-surface-variant leading-snug">
-                  of random data in the low bits of ResNet-18's weights leaves top-1 accuracy exactly unchanged (66.8% before and after). The single-file checks missed every payload size tested; only a diff against the base model caught them.
+                  of random data in the low bits of ResNet-18's weights leaves top-1 accuracy exactly unchanged (<span data-fact="e2.resnet.clean">66.8%</span> before and after). Tested for detection from <span data-fact="e1.min">1 KB</span> to <span data-fact="e1.max">1 MB</span>, the single-file checks missed every size; only a diff against the base model caught them.
                 </p>
               </figcaption>
             </figure>
@@ -88,15 +88,15 @@
           <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-hair">
             <div class="py-space-md px-space-lg flex items-center gap-space-sm">
               <span class="w-1.5 h-1.5 rounded-full bg-primary-container shrink-0"></span>
-              <span class="font-code-md text-code-md text-on-surface font-semibold">5 checks · 146 tests</span>
+              <span class="font-code-md text-code-md text-on-surface font-semibold">5 checks · <span data-fact="tests.total">150</span> tests</span>
             </div>
             <div class="py-space-md px-space-lg flex items-center gap-space-sm">
               <span class="w-1.5 h-1.5 rounded-full bg-outline shrink-0"></span>
-              <span class="font-code-md text-code-md text-on-surface font-semibold">39 popular float32 models surveyed</span>
+              <span class="font-code-md text-code-md text-on-surface font-semibold"><span data-fact="hf.sampled">39</span> popular float32 models surveyed</span>
             </div>
             <div class="py-space-md px-space-lg flex items-center gap-space-sm">
               <span class="w-1.5 h-1.5 rounded-full bg-tertiary shrink-0"></span>
-              <span class="font-code-md text-code-md text-on-surface font-semibold">16 of 39 expose a payload from the file alone; 23 reveal nothing</span>
+              <span class="font-code-md text-code-md text-on-surface font-semibold"><span data-fact="hf.exposed">16</span> of <span data-fact="hf.sampled">39</span> expose a payload from the file alone; <span data-fact="hf.fair">23</span> reveal nothing</span>
             </div>
           </div>
         </section>
@@ -176,23 +176,23 @@
                 <tbody class="divide-y divide-hair font-body-md text-body-md">
                   <tr>
                     <td class="py-space-md px-space-lg text-on-surface">float32 file carrying only fp16 or bf16 precision</td>
-                    <td class="py-space-md px-space-lg font-code-md text-code-md text-right text-on-surface-variant">14</td>
-                    <td class="py-space-md px-space-lg font-code-md text-code-md text-right text-on-surface">14 / 14 at every k</td>
+                    <td class="py-space-md px-space-lg font-code-md text-code-md text-right text-on-surface-variant"><span data-fact="hf.half">14</span></td>
+                    <td class="py-space-md px-space-lg font-code-md text-code-md text-right text-on-surface"><span data-fact="hf.half_cell">14 / 14</span> at every k</td>
                   </tr>
                   <tr>
                     <td class="py-space-md px-space-lg text-on-surface">float32 with a low-bit signature</td>
-                    <td class="py-space-md px-space-lg font-code-md text-code-md text-right text-on-surface-variant">2</td>
-                    <td class="py-space-md px-space-lg font-code-md text-code-md text-right text-on-surface">2 / 2 at every k</td>
+                    <td class="py-space-md px-space-lg font-code-md text-code-md text-right text-on-surface-variant"><span data-fact="hf.sig">2</span></td>
+                    <td class="py-space-md px-space-lg font-code-md text-code-md text-right text-on-surface"><span data-fact="hf.sig_cell">2 / 2</span> at every k</td>
                   </tr>
                   <tr>
                     <td class="py-space-md px-space-lg text-on-surface">float32 with fair-coin low bits</td>
-                    <td class="py-space-md px-space-lg font-code-md text-code-md text-right text-on-surface-variant">23</td>
-                    <td class="py-space-md px-space-lg text-right"><span class="inline-block bg-primary-container/15 text-primary-container font-code-md text-code-md px-2 py-0.5 rounded font-medium">0 / 23 at every k</span></td>
+                    <td class="py-space-md px-space-lg font-code-md text-code-md text-right text-on-surface-variant"><span data-fact="hf.fair">23</span></td>
+                    <td class="py-space-md px-space-lg text-right"><span class="inline-block bg-primary-container/15 text-primary-container font-code-md text-code-md px-2 py-0.5 rounded font-medium"><span data-fact="hf.fair_cell">0 / 23</span> at every k</span></td>
                   </tr>
                 </tbody>
               </table>
             </div>
-            <p class="font-body-sm text-body-sm text-outline">The 40 most-downloaded non-gated float32 safetensors models on Hugging Face (39 had testable samples); random bytes in the low k = 1, 4 or 8 bits of one sampled tensor. For 23 of 39, a clean single-file scan certifies nothing about the weights.</p>
+            <p class="font-body-sm text-body-sm text-outline">The <span data-fact="hf.listed">40</span> most-downloaded non-gated float32 safetensors models on Hugging Face (<span data-fact="hf.sampled">39</span> had testable samples); random bytes in the low k = 1, 4 or 8 bits of one sampled tensor. For <span data-fact="hf.fair">23</span> of <span data-fact="hf.sampled">39</span>, a clean single-file scan certifies nothing about the weights.</p>
           </div>
         </section>
 
@@ -204,7 +204,7 @@
               <h2 class="font-headline-lg text-headline-lg font-semibold text-on-surface">What one file can't see</h2>
             </div>
             <div class="bg-panel border-l-2 border-primary-container p-space-lg">
-              <p class="font-headline-md text-headline-md font-semibold text-on-surface leading-snug">Random bytes in ResNet-18's low 8 bits, up to 4 MB, leave top-1 accuracy exactly unchanged and pass both single-file checks at every size tested. Only a bit-for-bit diff against the base model catches them.</p>
+              <p class="font-headline-md text-headline-md font-semibold text-on-surface leading-snug">Random bytes in ResNet-18's low 8 bits, up to <span data-fact="e2.resnet.max_zero">4 MB</span>, leave top-1 accuracy exactly unchanged, and from <span data-fact="e1.min">1 KB</span> to <span data-fact="e1.max">1 MB</span> they pass both single-file checks at every size. Only a bit-for-bit diff against the base model catches them.</p>
             </div>
             <span class="font-label-mono text-label-mono uppercase tracking-wider text-outline">Random payload in the low 8 bits · caught (cyan) or missed (grey), by payload size</span>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
@@ -213,14 +213,14 @@
                   <span class="font-headline-sm text-headline-sm text-on-surface">ResNet-18</span>
                   <span class="font-label-mono text-label-mono text-outline uppercase">fair-coin low bits</span>
                 </div>
-                <div class="matrix font-label-mono text-label-mono">
+                <div class="matrix font-label-mono text-label-mono" data-e1="resnet18">
                   <span></span><span>1K</span><span>4K</span><span>16K</span><span>64K</span><span>256K</span><span>1M</span>
                   <span class="lane">Single file (S3/S4)</span><i class="miss"></i><i class="miss"></i><i class="miss"></i><i class="miss"></i><i class="miss"></i><i class="miss"></i>
                   <span class="lane">Base diff (S5)</span><i class="hit"></i><i class="hit"></i><i class="hit"></i><i class="hit"></i><i class="hit"></i><i class="hit"></i>
                 </div>
                 <div class="pt-space-sm border-t border-hair flex items-center justify-between gap-2 font-label-mono text-label-mono">
-                  <span class="text-outline">Top-1 accuracy, 500 Imagenette images</span>
-                  <span class="text-on-surface font-semibold">66.8% → 66.8% (up to 4 MB)</span>
+                  <span class="text-outline">Top-1 accuracy, <span data-fact="e2.n_images">500</span> Imagenette images</span>
+                  <span class="text-on-surface font-semibold"><span data-fact="e2.resnet.clean">66.8%</span> → <span data-fact="e2.resnet.clean">66.8%</span> (up to <span data-fact="e2.resnet.max_zero">4 MB</span>)</span>
                 </div>
               </div>
               <div class="bg-panel border border-panel-line rounded p-space-lg flex flex-col gap-space-md">
@@ -228,18 +228,18 @@
                   <span class="font-headline-sm text-headline-sm text-on-surface">MobileNetV3-Small</span>
                   <span class="font-label-mono text-label-mono text-primary-container uppercase">low-bit signature</span>
                 </div>
-                <div class="matrix font-label-mono text-label-mono">
+                <div class="matrix font-label-mono text-label-mono" data-e1="mobilenet_v3_small">
                   <span></span><span>1K</span><span>4K</span><span>16K</span><span>64K</span><span>256K</span><span>1M</span>
                   <span class="lane">Single file (S3/S4)</span><i class="hit"></i><i class="hit"></i><i class="hit"></i><i class="hit"></i><i class="hit"></i><i class="hit"></i>
                   <span class="lane">Base diff (S5)</span><i class="hit"></i><i class="hit"></i><i class="hit"></i><i class="hit"></i><i class="hit"></i><i class="hit"></i>
                 </div>
                 <div class="pt-space-sm border-t border-hair flex items-center justify-between gap-2 font-label-mono text-label-mono">
-                  <span class="text-outline">Top-1 accuracy, 500 Imagenette images</span>
-                  <span class="text-on-surface font-semibold">66.2% → 66.2% (up to 1 MB)</span>
+                  <span class="text-outline">Top-1 accuracy, <span data-fact="e2.n_images">500</span> Imagenette images</span>
+                  <span class="text-on-surface font-semibold"><span data-fact="e2.mobilenet.clean">66.2%</span> → <span data-fact="e2.mobilenet.clean">66.2%</span> (up to <span data-fact="e2.mobilenet.max_zero">1 MB</span>)</span>
                 </div>
               </div>
             </div>
-            <p class="font-body-sm text-body-sm text-outline max-w-3xl">MobileNetV3-Small's low bits carry a signature (bit 0 set in ~67% of values) that a random payload disturbs, so the naive attack is seen from the file. An attacker who knows the checks can still evade them: spreading the payload over one weight in 64 keeps every statistic inside the threshold at every size up to 1 MB. The base diff catches that from 4 KB.</p>
+            <p class="font-body-sm text-body-sm text-outline max-w-3xl">MobileNetV3-Small's low bits carry a signature (bit 0 set in <span data-fact="e0.mobilenet_bit0">~67%</span> of values) that a random payload disturbs, so the naive attack is seen from the file. An attacker who knows the checks can still evade them: spreading the payload over one weight in <span data-fact="e3.spread">64</span> keeps every statistic inside the threshold at every size that fits at that density, up to <span data-fact="e3.spread_max">16 KB</span>. The base diff catches that from <span data-fact="e3.spread_base_from">4 KB</span>.</p>
           </div>
         </section>
 
@@ -253,20 +253,20 @@
             <div class="flex flex-col gap-space-sm">
               <div class="hyp bg-panel border border-panel-line p-space-md rounded flex flex-col md:flex-row md:items-center justify-between gap-space-sm">
                 <div class="flex gap-space-sm max-w-3xl">
-                  <span class="shrink-0 self-start font-label-mono text-label-mono font-semibold text-outline px-1.5 py-0.5 bg-panel-hover rounded">H1</span>
+                  <span class="shrink-0 self-start font-label-mono text-label-mono font-semibold text-primary px-1.5 py-0.5 bg-primary/10 rounded">H1</span>
                   <div class="flex flex-col gap-1">
                     <span class="font-body-md text-body-md text-on-surface">S1 matches picklescan on code payloads, and every weight-payload model passes picklescan and a safetensors conversion untouched.</span>
-                    <span class="font-body-sm text-body-sm text-on-surface-variant">Evidence: not yet run. The side-by-side with picklescan and ModelScan is experiment E5, scheduled for the remaining weeks.</span>
+                    <span class="font-body-sm text-body-sm text-on-surface-variant">Evidence (E5): S1 flags the same <span data-fact="e5.picklescan_code">8 / 8</span> code payloads as picklescan; all <span data-fact="e5.weight_pass_picklescan">4 / 4</span> weight-payload files pass picklescan, and converting them to safetensors carries the payload across bit for bit (<span data-fact="e5.weight_survived">2 / 2</span>).</span>
                   </div>
                 </div>
-                <span class="verdict self-start md:self-center shrink-0 bg-surface-container-high text-secondary border border-outline-variant">Not yet tested</span>
+                <span class="verdict self-start md:self-center shrink-0 bg-primary-container/15 text-primary-container border border-primary-container/30">Supported</span>
               </div>
               <div class="hyp bg-panel border border-panel-line p-space-md rounded flex flex-col md:flex-row md:items-center justify-between gap-space-sm">
                 <div class="flex gap-space-sm max-w-3xl">
                   <span class="shrink-0 self-start font-label-mono text-label-mono font-semibold text-primary px-1.5 py-0.5 bg-primary/10 rounded">H2</span>
                   <div class="flex flex-col gap-1">
                     <span class="font-body-md text-body-md text-on-surface">In a model stored at higher precision than it was trained in, a payload of 1 KB or more is caught by S3 with no false positives.</span>
-                    <span class="font-body-sm text-body-sm text-on-surface-variant">Evidence: on 19 real bf16 models widened to float32, S3 identified bf16 precision in 19 / 19, raised 0 false positives, and caught a 1 KB payload in 19 / 19 at k = 1, 4 and 8.</span>
+                    <span class="font-body-sm text-body-sm text-on-surface-variant">Evidence: on <span data-fact="e1c.models">19</span> real bf16 models widened to float32, S3 identified bf16 precision in <span data-fact="e1c.origin">19 / 19</span>, raised <span data-fact="e1c.fp">0</span> false positives, and caught a <span data-fact="e1c.kb_size">1 KB</span> payload in <span data-fact="e1c.kb">19 / 19</span> at k = 1, 4 and 8.</span>
                   </div>
                 </div>
                 <span class="verdict self-start md:self-center shrink-0 bg-primary-container/15 text-primary-container border border-primary-container/30">Supported</span>
@@ -276,7 +276,7 @@
                   <span class="shrink-0 self-start font-label-mono text-label-mono font-semibold text-primary px-1.5 py-0.5 bg-primary/10 rounded">H3</span>
                   <div class="flex flex-col gap-1">
                     <span class="font-body-md text-body-md text-on-surface">In a genuinely float32-trained model, an encrypted low-bit payload cannot be seen from one file.</span>
-                    <span class="font-body-sm text-body-sm text-on-surface-variant">Evidence: true for the 23 of 39 surveyed models with fair-coin low bits and for ResNet-18; false for the 2 with a low-bit signature, such as MobileNetV3-Small.</span>
+                    <span class="font-body-sm text-body-sm text-on-surface-variant">Evidence: true for the <span data-fact="hf.fair">23</span> of <span data-fact="hf.sampled">39</span> surveyed models with fair-coin low bits and for ResNet-18; false for the <span data-fact="hf.sig">2</span> with a low-bit signature, such as MobileNetV3-Small.</span>
                   </div>
                 </div>
                 <span class="verdict self-start md:self-center shrink-0 bg-surface-container-high text-secondary border border-outline-variant">Model-dependent</span>
@@ -286,7 +286,7 @@
                   <span class="shrink-0 self-start font-label-mono text-label-mono font-semibold text-primary px-1.5 py-0.5 bg-primary/10 rounded">H4</span>
                   <div class="flex flex-col gap-1">
                     <span class="font-body-md text-body-md text-on-surface">A diff against the claimed base model catches a payload in any tensor the fine-tune did not train.</span>
-                    <span class="font-body-sm text-body-sm text-on-surface-variant">Evidence: caught in 10 / 10 held-out pairs for payloads in the low k = 8, 16, 20 and 21 bits. Limits: a payload inside a tensor the fine-tune did train is camouflaged (0 / 10), and a 1 KB payload spread at 1:64 stays under S5's per-tensor floor.</span>
+                    <span class="font-body-sm text-body-sm text-on-surface-variant">Evidence: caught in <span data-fact="e4.caught">10 / 10</span> held-out pairs for payloads in the low k = <span data-fact="e4.caught_ks">8, 16, 20 and 21</span> bits. Limits: a payload inside a tensor the fine-tune did train is camouflaged (<span data-fact="e4.trained">0 / 10</span>), and a <span data-fact="e3.spread_base_miss">1 KB</span> payload spread at 1:<span data-fact="e3.spread">64</span> stays under S5's per-tensor floor.</span>
                   </div>
                 </div>
                 <span class="verdict self-start md:self-center shrink-0 bg-primary-container/15 text-primary-container border border-primary-container/30">Supported, with limits</span>
@@ -314,7 +314,7 @@
               </div>
               <div class="bg-panel border border-panel-line p-space-lg rounded flex flex-col gap-space-xs">
                 <h3 class="font-headline-md text-headline-md text-on-surface">A third of "float32" uploads are really half precision.</h3>
-                <p class="font-body-md text-body-md text-on-surface-variant">14 of 39 top models are saved as float32 but hold only fp16 or bf16 precision, leaving a block of zero low bits — exactly where a payload would go, and exactly where S3 sees it.</p>
+                <p class="font-body-md text-body-md text-on-surface-variant"><span data-fact="hf.half">14</span> of <span data-fact="hf.sampled">39</span> top models are saved as float32 but hold only fp16 or bf16 precision, leaving a block of zero low bits — exactly where a payload would go, and exactly where S3 sees it.</p>
               </div>
               <div class="bg-panel border border-panel-line p-space-lg rounded flex flex-col gap-space-xs">
                 <h3 class="font-headline-md text-headline-md text-on-surface">The strong check has a blind spot too.</h3>
@@ -333,19 +333,19 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-hair border border-hair bg-panel rounded">
               <div class="p-space-lg flex flex-col gap-1">
-                <span class="font-code-md text-headline-xl font-bold text-white tracking-tight">0</span>
+                <span class="font-code-md text-headline-xl font-bold text-white tracking-tight"><span data-fact="e4.fp">0</span></span>
                 <span class="font-label-mono text-label-mono uppercase tracking-wider text-primary-container">S5 false positives</span>
-                <p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">on 15 held-out honest fine-tune / base pairs (RoBERTa, XLM-R and ViT fine-tunes).</p>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">on <span data-fact="e4.pairs">15</span> held-out honest fine-tune / base pairs (RoBERTa, XLM-R and ViT fine-tunes).</p>
               </div>
               <div class="p-space-lg flex flex-col gap-1">
-                <span class="font-code-md text-headline-xl font-bold text-white tracking-tight">10 / 10</span>
+                <span class="font-code-md text-headline-xl font-bold text-white tracking-tight"><span data-fact="e4.caught">10 / 10</span></span>
                 <span class="font-label-mono text-label-mono uppercase tracking-wider text-primary-container">S5 detections</span>
-                <p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">held-out pairs where S5 caught a payload in a tensor that should match the base, at k = 8, 16, 20 and 21.</p>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">held-out pairs where S5 caught a payload in a tensor that should match the base, at k = <span data-fact="e4.caught_ks">8, 16, 20 and 21</span>.</p>
               </div>
               <div class="p-space-lg flex flex-col gap-1">
-                <span class="font-code-md text-headline-xl font-bold text-white tracking-tight">5 → 1 of 20</span>
+                <span class="font-code-md text-headline-xl font-bold text-white tracking-tight"><span data-fact="e0c.bf16">5 → 1 of 20</span></span>
                 <span class="font-label-mono text-label-mono uppercase tracking-wider text-primary-container">S4 false-positive models</span>
-                <p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">on a fresh batch of bf16 models, first revision of S4 against the current rule (and 1 → 0 of 20 for fp16).</p>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">on a fresh batch of bf16 models, first revision of S4 against the current rule (and <span data-fact="e0c.f16">1 → 0 of 20</span> for fp16).</p>
               </div>
             </div>
             <p class="font-body-sm text-body-sm text-outline">Each detector was frozen, then run once on a batch of models committed before their weights were read, so these numbers were not tuned on the models they describe.</p>
@@ -371,7 +371,7 @@
                   <span class="material-symbols-outlined text-[15px]">content_copy</span><span data-copy-label>copy</span>
                 </button>
               </div>
-              <div class="p-space-lg font-code-md text-code-md text-on-surface overflow-x-auto leading-relaxed whitespace-pre" id="reproduce-cmds"><span class="text-[#8c93a8] select-none"># install and run the 106 Python tests</span>
+              <div class="p-space-lg font-code-md text-code-md text-on-surface overflow-x-auto leading-relaxed whitespace-pre" id="reproduce-cmds" data-nofacts><span class="text-[#8c93a8] select-none"># install and run the Python tests</span>
 <span class="text-primary-container select-none">$ </span>pip install -e ".[dev]" &amp;&amp; python -m pytest
 <span class="text-[#8c93a8] select-none"># scan one file (exit status: 0 clean, 1 suspicious, 2 dangerous)</span>
 <span class="text-primary-container select-none">$ </span>python -m stowaway scan model.safetensors
@@ -381,7 +381,7 @@
 <span class="text-primary-container select-none">$ </span>python scripts/run_hf_survey.py --list hf_models.json
 <span class="text-primary-container select-none">$ </span>python scripts/report.py</div>
             </div>
-            <p class="font-body-sm text-body-sm text-outline leading-relaxed">Nothing is trained: models are downloaded pretrained and only run forward. Every run appends to <span class="font-code-sm text-code-sm">results/ledger.jsonl</span> with the git commit that produced it, and <span class="font-code-sm text-code-sm">docs/RESULTS.md</span> is generated from that ledger, never edited by hand. 146 tests: 106 Python, and 40 for the browser build, including parity tests that require byte-identical JSON reports to the Python tool on every fixture.</p>
+            <p class="font-body-sm text-body-sm text-outline leading-relaxed">Nothing is trained: models are downloaded pretrained and only run forward. Every run appends to <span class="font-code-sm text-code-sm">results/ledger.jsonl</span> with the git commit that produced it, and <span class="font-code-sm text-code-sm">docs/RESULTS.md</span> is generated from that ledger, never edited by hand. <span data-fact="tests.total">150</span> tests: <span data-fact="tests.py">110</span> Python, and <span data-fact="tests.ts">40</span> for the browser build, including parity tests that require byte-identical JSON reports to the Python tool on every fixture.</p>
           </div>
         </section>
 
@@ -393,7 +393,7 @@
               <h2 class="font-headline-lg text-headline-lg font-semibold text-on-surface">Limitations</h2>
             </div>
             <ul class="flex flex-col gap-space-sm font-body-md text-body-md text-on-surface-variant max-w-3xl">
-              <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>These are preliminary results: two vision models end to end, one seed, and random payloads only.</span></li>
+              <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>Two vision models end to end, one seed, and random payloads only; the E5 scanner comparison uses a small corpus we built, so it shows what each tool can see, not rates in the wild.</span></li>
               <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>Single-file statistics cannot see a small or thinly spread encrypted payload in a fair-coin model.</span></li>
               <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>The base diff needs the real base model, and misses a payload inside a tensor the fine-tune genuinely trained.</span></li>
               <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>The survey tests 64 KB samples, not whole files, and is weighted to the most downloaded models, not a random sample.</span></li>

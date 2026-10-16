@@ -404,7 +404,7 @@ Run `E1c-2026-10-14T18:23:11Z-16e0f45`. The survey's BF16 samples widened to flo
 
 ## E3 - robustness of the single-file checks
 
-Random payloads placed where S3/S4 are weakest. `single` = S3 or S4 flagged a written tensor; `base` = S5 (given the clean base) did. Each cell is the smallest payload at which the placement is **caught**, or — if it is missed at every size up to 1 MB.
+Random payloads placed where S3/S4 are weakest. `single` = S3 or S4 flagged a written tensor; `base` = S5 (given the clean base) did. Each cell is the smallest payload at which the placement is **caught**, or — (missed, up to the largest size tested) if it is missed at every size tested. A placement is tested only at sizes that fit it: at one weight in 64 a model holds much less.
 
 ### mobilenet_v3_small
 
@@ -413,7 +413,7 @@ Run `E3-2026-10-15T05:52:11Z-cc25257`, k = 4.
 | Placement | single-file caught from | with base caught from |
 |---|---|---|
 | role_fill | 4 KB | 1 KB |
-| spread_all | — (missed) | 4 KB |
+| spread_all | — (missed, up to 16 KB) | 4 KB |
 
 ### resnet18
 
@@ -421,9 +421,9 @@ Run `E3-2026-10-15T05:51:53Z-cc25257`, k = 4.
 
 | Placement | single-file caught from | with base caught from |
 |---|---|---|
-| fair_only | — (missed) | 1 KB |
-| role_fill | — (missed) | 1 KB |
-| spread_all | — (missed) | 1 KB |
+| fair_only | — (missed, up to 1 MB) | 1 KB |
+| role_fill | — (missed, up to 1 MB) | 1 KB |
+| spread_all | — (missed, up to 64 KB) | 1 KB |
 
 
 ## E4 — S5 calibrated on real fine-tune/base pairs
@@ -440,4 +440,48 @@ Payload detection (caught / tested):
 | tensor the fine-tune trained | 0 / 10 | 0 / 10 | 0 / 10 | 0 / 10 | 0 / 10 |
 
 A payload in a tensor that should match the base is caught up to the cutoff; one hidden inside a genuinely trained tensor is camouflaged by the training changes.
+
+
+## E5 — the same files through existing scanners
+
+Run `E5-2026-10-16T09:55:11Z-b7eb803`. picklescan 1.0.5, ModelScan 0.8.8, fickling 0.1.12 (`fickling` = its default check, as the CLI runs it; `fickling-ml` = its ML allowlist analysis), torch 2.14.1+cpu, safetensors 0.8.0. `—` = the tool did not scan the file (unsupported format). `stowaway+base` = with the clean model as claimed base (S5).
+
+| File | Group | picklescan | modelscan | fickling | fickling-ml | stowaway | stowaway+base |
+|---|---|---|---|---|---|---|---|
+| `clean.gguf` | clean | clean | — | — | — | clean |  |
+| `clean.pt` | clean | clean | clean | **flag** | clean | clean |  |
+| `clean.safetensors` | clean | clean | — | — | — | clean |  |
+| `clean_bf16origin.safetensors` | clean | clean | — | — | — | clean |  |
+| `clean_legacy.pt` | clean | clean | clean | **flag** | clean | clean |  |
+| `clean_numpy.pkl` | clean | clean | clean | **flag** | clean | **flag** |  |
+| `code_builtins_getattr.pt` | code | **flag** | **flag** | **flag** | **flag** | **flag** |  |
+| `code_eval.pt` | code | **flag** | **flag** | **flag** | **flag** | **flag** |  |
+| `code_exec.pt` | code | **flag** | **flag** | **flag** | **flag** | **flag** |  |
+| `code_exec_legacy.pt` | code | **flag** | clean | **flag** | **flag** | **flag** |  |
+| `code_exec_p0.pkl` | code | **flag** | **flag** | error | error | **flag** |  |
+| `code_exec_p2.pkl` | code | **flag** | **flag** | **flag** | **flag** | **flag** |  |
+| `code_os_system.pt` | code | **flag** | **flag** | **flag** | **flag** | **flag** |  |
+| `code_os_system_legacy.pt` | code | **flag** | clean | **flag** | **flag** | **flag** |  |
+| `weight.pt` | weight | clean | clean | **flag** | clean | clean | **flag** |
+| `weight.safetensors` | weight | clean | — | — | — | clean | **flag** |
+| `weight_bf16origin.pt` | weight | clean | clean | **flag** | clean | **flag** | **flag** |
+| `weight_bf16origin.safetensors` | weight | clean | — | — | — | **flag** | **flag** |
+| `extra_entry.pt` | structure | clean | clean | **flag** | clean | **flag** |  |
+| `trailing.gguf` | structure | clean | — | — | — | **flag** |  |
+| `trailing.safetensors` | structure | clean | — | — | — | **flag** |  |
+
+Flagged / scanned, per group:
+
+| Group | Files | picklescan | modelscan | fickling | fickling-ml | stowaway | stowaway+base |
+|---|--:|--:|--:|--:|--:|--:|--:|
+| clean | 6 | 0 / 6 | 0 / 3 | 3 / 3 | 0 / 3 | 1 / 6 |  |
+| code | 8 | 8 / 8 | 6 / 8 | 7 / 8 | 7 / 8 | 8 / 8 |  |
+| weight | 4 | 0 / 4 | 0 / 2 | 2 / 2 | 0 / 2 | 2 / 4 | 4 / 4 |
+| structure | 3 | 0 / 3 | 0 / 1 | 1 / 1 | 0 / 1 | 3 / 3 |  |
+
+Conversion to safetensors (`torch.load(weights_only=True)` + `safetensors.torch.save_file`) of each `.pt` file:
+
+- code payloads: load refused for **6 / 6** (nothing executed, nothing converted)
+- weight payloads: carried across bit for bit and still extractable in **2 / 2**
+- `extra_entry.pt`: converted; Stowaway after conversion: clean
 

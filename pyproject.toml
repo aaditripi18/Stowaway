@@ -11,6 +11,8 @@ dependencies = ["numpy>=1.24"]
 dev = ["pytest>=8.0", "torch>=2.2", "safetensors>=0.4", "gguf>=0.10"]
 # Experiments (E0-E2): pretrained models and the Imagenette eval.
 experiments = ["torchvision>=0.17", "pillow>=10"]
+# E5 only: the scanners Stowaway is compared with, at the versions E5 ran.
+compare = ["picklescan==1.0.5", "modelscan==0.8.8", "fickling==0.1.12"]
 
 [project.scripts]
 stowaway = "stowaway.cli:main"

@@ -1,11 +1,63 @@
 # Findings (preliminary)
 
-> Status: week 5 of 8. S3, S4, S5 all revised and validated on held-out models.
+> Status: week 8 of 8. S3, S4, S5 all revised and validated on held-out models;
+> E5 compares Stowaway with picklescan, ModelScan and fickling.
 > Two vision models end to end, single-file checks on samples of 120 public
 > Hugging Face models (70 dev, 50 held out), and S5 calibrated on 20 real
 > fine-tune/base pairs (dev + held out). One payload type (random bytes).
 > Every number below is in [RESULTS.md](RESULTS.md), generated from the ledger
 > with the commit that produced it. These are early results, not conclusions.
+
+## The scanners people already use: every weight and structure payload passes them (E5)
+
+E5 put one corpus of 21 files through picklescan 1.0.5, ModelScan 0.8.8 and
+fickling 0.1.12 (all current releases on 2026-10-16, default settings), and
+through Stowaway. The corpus: 6 clean files, 8 code payloads (a pickle global
+that runs on load; inert arguments), 4 weight payloads (64 KB of random bytes in
+the low 8 bits of ResNet-18, as trained and as if trained in bf16) and 3
+structure payloads (an executable-looking blob after the end of a safetensors
+or GGUF file, or as an extra entry in a `.pt` zip).
+
+| Payloads flagged | picklescan | ModelScan | fickling (ML allowlist) | Stowaway | Stowaway + base |
+|---|--:|--:|--:|--:|--:|
+| code (8) | 8 | **6** | 7 | 8 | |
+| weight (4) | 0 | 0 | 0 | 2 | 4 |
+| structure (3) | 0 | 0 | 0 | 3 | |
+
+**H1 holds.** Stowaway's S1 flags the same 8 / 8 code payloads as picklescan,
+and every weight-payload model passes picklescan. Converting each `.pt` to
+safetensors the recommended way (`torch.load(weights_only=True)`, then
+`safetensors.torch.save_file`) refused all 6 code-payload files without running
+anything, but carried both weight payloads across bit for bit; the 64 KB is
+still extractable from the "safe" file. Conversion also silently drops the extra
+zip entry, so for structure payloads it is a fix, not a hiding place.
+
+**ModelScan misses 2 of 8 code payloads, both legacy-format `.pt` files**
+(`torch.save(..., _use_new_zipfile_serialization=False)`, the format before
+PyTorch 1.6, still loaded today). ModelScan reads the magic number and then
+only one more pickle (`scan_pytorch` calls
+`scan_pickle_bytes(multiple_pickles=False)`), but the model object is the
+fourth pickle in the file. `exec` and `os.system` there are both missed. This
+is already publicly reported (several proof-of-concept repositories on
+Hugging Face describe the same truncation); E5 reproduces it independently.
+
+**False positives.** fickling's default check flags all 3 clean pickle files
+(any import outside the standard library, `torch._utils` included, is "likely
+unsafe"), so on PyTorch files its default verdict carries no information; its
+ML allowlist analysis flags none and is the column used above. Stowaway flags 1
+of 6 clean files: a plain pickle holding a numpy array is "suspicious" because
+`numpy._core.multiarray._reconstruct` is not on its allowlist. That is the same
+call PyTorch makes: `torch.load(weights_only=True)` refuses this global by
+default. We left it as is. fickling errors on the protocol-0 pickle
+(`NotImplementedError: TODO: Add support for Opcode FLOAT`).
+
+**What none of the existing scanners look at.** Weight payloads in the bf16-origin
+model are caught by S3 from the file alone; in the as-trained ResNet-18 only the
+base diff (S5) catches them, as in E1. Structure payloads are caught by S2 in
+all three formats. The three existing scanners read pickles only, so for
+`.safetensors` and `.gguf` they report clean or skip the file. The corpus is
+small and built by us, so this shows which kinds of payload each tool can see,
+not detection rates in the wild.
 
 ## An adaptive placement evades the single-file checks; the base diff is the backstop (E3)
 
@@ -25,7 +77,9 @@ thinly spread):
 Result on the two vision models:
 
 - On **MobileNetV3-Small** (whose low bits carry a signature, so the naive attack
-  of E1 was caught), **spread_all evades S4 at every size up to 1 MB**. Thinning
+  of E1 was caught), **spread_all evades S4 at every size tested** (1, 4 and 16 KB:
+  at 1 weight in 64 with k = 4, the model holds 19.5 KB; an earlier draft
+  of this page wrongly said "up to 1 MB"). Thinning
   the payload across 1 weight in 64 keeps every bit-plane mean inside the z = 6
   threshold. This is a real evasion of the single-file checks on a model where
   the obvious attack failed.
@@ -273,8 +327,8 @@ real fine-tune/base pairs in E4 rather than adjusted to this result.
 ## Not yet tested
 
 - Only two models in E1/E2, one seed, random payloads only.
-- No adaptive attacker yet (E3): one who knows S4 could embed only in tensors or
-  bits without a signature, or preserve the signature.
+- E3 tested placements from ordinary embed parameters only; an attacker who
+  preserves each tensor's bit signature exactly was not tested.
 - E2 measures accuracy; agreement of individual predictions with the clean model
   would be a more sensitive measure of cost.
 - The survey tests detection on 64 KB samples, not whole files, and only the
