@@ -80,11 +80,28 @@ pip install -e .
 python -m stowaway scan model.safetensors
 python -m stowaway scan finetune.safetensors --base base.safetensors   # adds S5
 python -m stowaway scan model.pt --json                                # full report
+
+# straight from the Hugging Face Hub, against the base model its card declares
+python -m stowaway scan hf:org/finetune --base declared
+python -m stowaway scan hf:org/finetune@v1.2 --base hf:org/base@main
 ```
 
-`scan` exits 0 when clean, 1 when suspicious, 2 when dangerous. Formats are
-detected from content, never the extension: `.safetensors`, PyTorch zip
-(`.pt`/`.pth`/`.bin`), legacy PyTorch, plain pickle (protocols 0–5) and GGUF.
+`scan` exits 0 when clean, 1 when suspicious, 2 when dangerous, 3 when it could
+not run. Formats are detected from content, never the extension: `.safetensors`,
+PyTorch zip (`.pt`/`.pth`/`.bin`), legacy PyTorch, plain pickle (protocols 0–5)
+and GGUF.
+
+- **Any size.** Both the CLI and the browser hold one tensor (and its base
+  counterpart) in memory at a time: a 3.19 GiB model scans with 0.375 GiB peak
+  memory in Python and 0.17 GiB in the browser core, with the same report.
+- **Hub models are pinned.** An `hf:` target or base is resolved to a commit,
+  each file is checked against the SHA-256 the Hub publishes before it is used
+  (a short or altered download is refetched, then refused), and the report
+  records the commit. Sharded checkpoints are read as one model. `HF_TOKEN` is
+  sent for gated repositories. Downloads are never loaded or unpickled.
+- **Fine-tunes that rename the base still pair up.** S5 aligns tensor names
+  across wrapper prefixes (`bert.x` saved as `encoder.x`) and old LayerNorm
+  names (`gamma`/`beta`), and says so in the report when it did.
 
 | Check | What it reports |
 |---|---|
@@ -103,9 +120,13 @@ read through Stowaway's offsets, must equal the reference library's.
 
 ## Website and in-browser scanner
 
-`web/` is a static site: the project page (`index.html`) and a scanner
+`web/` is a static site: the project page (`index.html`), a scanner
 (`scan.html`) where anyone can drop a model file, optionally with its base model,
-and get the same report as the command-line tool, without installing anything.
+and get the same report as the command-line tool, and **a limits page
+(`limits.html`)** where a reader plants random bytes in a model (a bundled
+Apache-2.0 BERT or their own file), chooses size, depth, density and target
+tensors, sweeps the grid, and downloads the planted copy to check with the CLI.
+The planting code is a port of `stowaway.embed`, byte-identical in tests.
 
 - **The scanner cannot send your file anywhere.** Both pages carry a
   Content-Security-Policy with `connect-src 'none'` and `default-src 'none'`, and

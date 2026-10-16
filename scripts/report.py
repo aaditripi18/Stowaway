@@ -320,9 +320,7 @@ def section_e4b(rows):
             out.append(f"| {name} | {v['fp_tensors']} | {v['fp_models']} / {s['pairs']} | " + " | ".join(cells) + " |")
         out += ["", "(a) payload in the largest tensor the fine-tune left identical to the base; "
                 "(b) payload in the changed tensor with the smallest p99 bit (the low-gradient case).", ""]
-    return "
-".join(out) + "
-"
+    return "\n".join(out) + "\n"
 
 
 E5_TOOLS = ("picklescan", "modelscan", "fickling", "fickling-ml", "stowaway", "stowaway+base")
