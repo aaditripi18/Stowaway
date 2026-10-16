@@ -1,10 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
 [project]
-name = "stowaway"
-version = "0.1.0"
+# Distribution name on PyPI ("stowaway" is taken there); the import and the
+# command are both `stowaway`.
+name = "stowaway-scan"
+version = "0.2.0"
 description = "Find what model-file scanners miss: payloads in weights, unaccounted bytes, unchecked lineage."
+readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
+authors = [{ name = "Aaditya Tripathi" }]
+keywords = ["machine learning", "security", "safetensors", "pickle", "gguf", "model scanning", "steganography"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Topic :: Security",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
 dependencies = ["numpy>=1.24"]
+
+[project.urls]
+Homepage = "https://stowaway-jade.vercel.app"
+Source = "https://github.com/aaditripi18/Stowaway"
 
 [project.optional-dependencies]
 # Used only to write test fixtures with the reference implementations.

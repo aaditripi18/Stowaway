@@ -50,3 +50,15 @@ jobs:
         run: npx tsc --noEmit
       - name: Build
         run: npm run build
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the CLI image
+        run: docker build -t stowaway .
+      - name: The image scans a file (trailing executable bytes -> exit 2)
+        run: |
+          set +e
+          docker run --rm -v "$PWD/web/fixtures:/data" stowaway scan /data/trailing_mz.safetensors
+          test $? -eq 2
