@@ -380,8 +380,19 @@ E6_S5 = lambda r: r.get("changed", 0) >= 256 and r["low_share"] >= s5c_threshold
 
 
 def e6_records(rows):
-    """The latest E6 run of each model."""
-    return {m: recs for m, (_, recs) in _latest_runs_by_model(rows, "E6").items()}
+    """The latest E6 run of each model, with single-file detection taken from the
+    latest E6s re-score of that model when there is one (rescore_e6.py: the same
+    planted models, re-scanned after a detector change)."""
+    out = {}
+    rescored = _latest_runs_by_model(rows, "E6s")
+    for m, (_, recs) in _latest_runs_by_model(rows, "E6").items():
+        if m in rescored:
+            key = lambda r: (r["payload"], r["seed"], r["k"], r["payload_bytes"])  # noqa: E731
+            new = {key(r): r["single_file_detected"] for r in rescored[m][1]}
+            recs = [dict(r, single_file_detected=new.get(key(r), r["single_file_detected"]))
+                    if r.get("kind") == "cell" else r for r in recs]
+        out[m] = recs
+    return out
 
 
 def e6_hypotheses(rows):
