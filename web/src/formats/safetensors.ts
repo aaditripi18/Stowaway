@@ -44,8 +44,7 @@ function parseHeader(text: string): { header: Record<string, any>; duplicates: s
   return { header, duplicates };
 }
 
-export function parse(bytes: Uint8Array): ModelFile {
-  const r = new Reader(bytes);
+export function parse(r: Reader): ModelFile {
   const mf = newModelFile("safetensors", r.size);
   if (r.size < 8) {
     mf.findings.push(finding("parse", "high", "truncated", "file is shorter than the 8-byte header length"));

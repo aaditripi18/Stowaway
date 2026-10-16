@@ -1,11 +1,12 @@
-// Controller: read the dropped file, scan it in the page with the real scanner
-// core, and render the report into the dashboard. No network, no fabricated data
-// — every value shown comes from scan().
+// Controller: hand the dropped file to the scan worker, which reads it in slices
+// with the real scanner core, and render the report into the dashboard. No
+// network, no fabricated data — every value shown comes from scan().
+/// <reference types="vite/client" />
 import "./styles.css";
-import { scan, loadBaseFloats } from "./report.js";
+import ScanWorker from "./scan_worker.ts?worker&inline";
+import type { ScanResponse } from "./scan_worker.js";
 import { copyText } from "./clipboard.js";
 import type { Finding } from "./model.js";
-import type { RawFloats } from "./weights.js";
 
 type Report = {
   file: string; sha256: string; size: number; format: string;
@@ -40,9 +41,39 @@ const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&l
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
 let lastReport: Report | null = null;
-let lastBytes: Uint8Array | null = null;
-let baseFloats: RawFloats | null = null;
+let lastFile: File | null = null;
+let baseFile: File | null = null;
 let baseName: string | null = null;
+let previews = new Map<number, Uint8Array>();
+
+// One worker for the page's lifetime. Inlined (blob: URL) so it inherits the
+// page's CSP; see scan_worker.ts.
+const worker: Worker = new ScanWorker();
+let nextId = 0;
+const pending = new Map<number, { resolve: (r: Report) => void; reject: (e: Error) => void; onProgress?: (read: number, size: number) => void }>();
+worker.onmessage = (ev: MessageEvent<ScanResponse>) => {
+  const m = ev.data, p = pending.get(m.id);
+  if (!p) return;
+  if (m.kind === "progress") { p.onProgress?.(m.read, m.size); return; }
+  pending.delete(m.id);
+  if (m.kind === "error") { p.reject(new Error(m.message)); return; }
+  previews = new Map(m.previews);
+  p.resolve(m.report as unknown as Report);
+};
+
+// A worker that dies (for example, the tab runs out of memory on one huge
+// tensor) fails every pending scan with a message instead of a silent stall.
+worker.onerror = (ev: ErrorEvent) => {
+  for (const [id, p] of pending) { pending.delete(id); p.reject(new Error(ev.message || "the scanner stopped")); }
+};
+
+function scanFile(file: File, base: File | null, onProgress?: (read: number, size: number) => void): Promise<Report> {
+  const id = nextId++;
+  return new Promise((resolve, reject) => {
+    pending.set(id, { resolve, reject, onProgress });
+    worker.postMessage({ id, file, base });
+  });
+}
 
 function show(state: "empty" | "scanning" | "result"): void {
   for (const [id, want] of [["empty-state", "empty"], ["scanning-state", "scanning"], ["result-dashboard", "result"]] as const) {
@@ -62,22 +93,23 @@ function fmtSize(n: number): string {
 async function handle(file: File): Promise<void> {
   $("scan-file-label").textContent = file.name;
   $("scan-percent").textContent = fmtSize(file.size);
-  $<HTMLDivElement>("scan-progress-bar").style.width = "40%";
+  $<HTMLDivElement>("scan-progress-bar").style.width = "10%";
   show("scanning");
-  // Let the spinner paint before the (synchronous) scan.
-  await new Promise((r) => setTimeout(r, 30));
   try {
-    const bytes = new Uint8Array(await file.arrayBuffer());
-    $<HTMLDivElement>("scan-progress-bar").style.width = "80%";
-    const rep = (await scan(bytes, baseFloats ?? undefined)) as unknown as Report;
+    // The scan reads the file about twice (weights, then the hash), so progress
+    // is bytes read over twice the size.
+    const rep = await scanFile(file, baseFile, (read, size) => {
+      $<HTMLDivElement>("scan-progress-bar").style.width = `${Math.min(95, 10 + (85 * read) / (2 * size))}%`;
+      $("scan-percent").textContent = `${Math.min(99, Math.round((100 * read) / (2 * size)))}% of ${fmtSize(file.size)}`;
+    });
     rep.file = file.name;
     lastReport = rep;
-    lastBytes = bytes;
+    lastFile = file;
     render(rep);
     show("result");
     window.scrollTo({ top: 0 });
   } catch (err) {
-    // A file too large for memory, or a parser bug: say so rather than spin forever.
+    // A file the browser cannot read, or a parser bug: say so rather than spin forever.
     show("empty");
     toast(`Could not scan ${file.name}: ${err instanceof Error ? err.message : String(err)}`, false);
   } finally {
@@ -86,25 +118,25 @@ async function handle(file: File): Promise<void> {
 }
 
 async function attachBase(file: File): Promise<void> {
-  try {
-    baseFloats = loadBaseFloats(new Uint8Array(await file.arrayBuffer()));
-  } catch {
-    baseFloats = null; baseName = null;
-    updateBaseUi();
-    toast("Could not read that base model", false);
-    return;
-  } finally {
-    baseInput.value = "";
-  }
+  baseInput.value = "";
+  baseFile = file;
   baseName = file.name;
   updateBaseUi();
   toast(`Base model attached: ${file.name}`);
   // If a model was already scanned, re-run it with the base so S5 applies now.
-  if (lastBytes) {
-    const rep = (await scan(lastBytes, baseFloats)) as unknown as Report;
-    rep.file = lastReport?.file ?? "";
+  if (lastFile) await rescan();
+}
+
+async function rescan(): Promise<void> {
+  if (!lastFile) return;
+  try {
+    const rep = await scanFile(lastFile, baseFile);
+    rep.file = lastFile.name;
     lastReport = rep;
     render(rep);
+  } catch (err) {
+    if (baseFile) { baseFile = null; baseName = null; updateBaseUi(); }
+    toast(`Could not scan with that base model: ${err instanceof Error ? err.message : String(err)}`, false);
   }
 }
 
@@ -128,15 +160,10 @@ function updateBaseUi(): void {
 
 async function removeBase(e?: Event): Promise<void> {
   e?.stopPropagation();
-  baseFloats = null; baseName = null;
+  baseFile = null; baseName = null;
   updateBaseUi();
   toast("Base model removed");
-  if (lastBytes) { // re-run without the base so the result no longer includes S5
-    const rep = (await scan(lastBytes)) as unknown as Report;
-    rep.file = lastReport?.file ?? "";
-    lastReport = rep;
-    render(rep);
-  }
+  await rescan(); // re-run without the base so the result no longer includes S5
 }
 
 function render(rep: Report): void {
@@ -207,7 +234,7 @@ function renderChecks(rep: Report): void {
     let color: string, label: string;
     if (!parsed) {
       color = "outline"; label = "Not run: format not read";
-    } else if (id === "S5" && !baseFloats) {
+    } else if (id === "S5" && !baseFile) {
       color = "outline"; label = "Needs a base model";
     } else if (id === "S1" && !PICKLE_FORMATS.includes(rep.format)) {
       color = "ok"; label = "N/A: no pickle data"; ran++;
@@ -232,9 +259,9 @@ function renderChecks(rep: Report): void {
   }
 }
 
-function hexPreview(bytes: Uint8Array, start: number, length: number): string {
+function hexPreview(head: Uint8Array, start: number, length: number): string {
   const n = Math.min(length, 64);
-  const slice = bytes.subarray(start, start + n);
+  const slice = head.subarray(0, n);
   const lines: string[] = [];
   for (let i = 0; i < slice.length; i += 16) {
     const row = slice.subarray(i, i + 16);
@@ -284,8 +311,8 @@ function renderFindings(rep: Report): void {
     card.dataset.severity = f.severity;
     const bodyId = `finding-${i}-body`;
     const d = f.detail as Record<string, unknown>;
-    const hex = typeof d.start === "number" && typeof d.bytes === "number" && lastBytes
-      ? hexPreview(lastBytes, d.start as number, d.bytes as number) : "";
+    const head = typeof d.start === "number" ? previews.get(d.start) : undefined;
+    const hex = head && typeof d.bytes === "number" ? hexPreview(head, d.start as number, d.bytes as number) : "";
     const body = detailRows(d) + hex;
     card.innerHTML = `
       <div class="p-4 bg-[#161a26] ${body ? "cursor-pointer" : ""}" ${body ? `data-toggle="${bodyId}"` : ""}>

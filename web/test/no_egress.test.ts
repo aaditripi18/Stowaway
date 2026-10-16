@@ -33,6 +33,11 @@ describe("the page cannot exfiltrate the file", () => {
       expect(html).toMatch(/Content-Security-Policy/);
       expect(html).toMatch(/connect-src 'none'/);
       expect(html).toMatch(/default-src 'none'/);
+      // The only source a worker may come from is a blob: the page itself made,
+      // and a blob: worker inherits this policy, connect-src 'none' included.
+      const csp = html.match(/http-equiv="Content-Security-Policy"\s+content="([^"]+)"/)![1]!;
+      const worker = csp.split(";").map((d) => d.trim()).find((d) => d.startsWith("worker-src"));
+      expect(worker === undefined || worker === "worker-src blob:").toBe(true);
     });
 
     it(`${page} loads nothing from an external origin (fonts, styles, scripts are self-hosted)`, () => {

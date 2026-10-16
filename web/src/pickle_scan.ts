@@ -2,6 +2,7 @@
 // half of stowaway/pickle_scan.py — the restricted unpickler there is only used
 // to rebuild tensors for the PyTorch path (ported with that format); the findings
 // come from the same opcode walk and the same classify()/normalize() tables.
+import { NeedMore } from "./bytes.js";
 import { Finding, finding, Severity } from "./model.js";
 import tables from "./pickle_tables.json";
 
@@ -110,17 +111,21 @@ const NO_ARG_OPS = new Set([..."(.012N]ael)t}dsuRbQo"].map((ch) => ch.charCodeAt
 // Protocols 0 and 1 have no \x80 marker, so a file is a pickle if its opcodes
 // parse up to a STOP that is not the first opcode. Mirrors _is_old_pickle() in
 // stowaway/formats/__init__.py.
-export function isOldPickle(data: Uint8Array): boolean {
+// `whole` is false when `data` is only a prefix of the file: running off its end
+// then throws NeedMore so the caller can retry with more bytes.
+export function isOldPickle(data: Uint8Array, whole = true): boolean {
   const r = new PickleReader(data, new DataView(data.buffer, data.byteOffset, data.byteLength));
   try {
     for (let i = 0; i <= 1_000_000; i++) {
       const code = data[r.pos];
-      if (code === undefined) return false;
+      if (code === undefined) { if (whole) return false; throw new NeedMore(); }
       const { name } = readOp(r);
       if (name === "STOP") return i > 0;
       if (name === String(code) && !NO_ARG_OPS.has(code)) return false; // not a pickle opcode
     }
-  } catch {
+  } catch (e) {
+    if (e instanceof NeedMore) throw e;
+    if (!whole && (e instanceof RangeError || (e instanceof Error && e.message === "eof"))) throw new NeedMore();
     return false;
   }
   return false;

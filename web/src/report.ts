@@ -1,80 +1,74 @@
 // Run every ported check on one file and produce the same JSON-serialisable
-// report object as stowaway/report.py. scan() is async because the file hash
-// uses Web Crypto (available in the browser and in Node).
-import { Reader } from "./bytes.js";
+// report object as stowaway/report.py. The file is read through a Reader, so a
+// browser File is scanned in slices, never loaded whole.
+import { Reader, withPrefix } from "./bytes.js";
+import { Sha256 } from "./sha256.js";
 import * as coverage from "./coverage.js";
 import { Finding, ModelFile, newModelFile, SEVERITIES } from "./model.js";
 import { parse as parseSafetensors } from "./formats/safetensors.js";
 import { parse as parseGguf } from "./formats/gguf.js";
 import { parseZip, parsePickles } from "./formats/pytorch.js";
 import { analysePickles, isOldPickle } from "./pickle_scan.js";
-import { analyseWeights, loadFloats, RawFloats } from "./weights.js";
+import { analyseWeights, BaseModel } from "./weights.js";
 
 export const REPORT_VERSION = 1;
 
 function detect(r: Reader): string {
-  if (r.size >= 4 && r.bytes[0] === 0x47 && r.bytes[1] === 0x47 && r.bytes[2] === 0x55 && r.bytes[3] === 0x46)
-    return "gguf";
-  if (r.size >= 9 && r.bytes[8] === 0x7b /* { */) {
+  const h = r.head(9);
+  if (h.length >= 4 && h[0] === 0x47 && h[1] === 0x47 && h[2] === 0x55 && h[3] === 0x46) return "gguf";
+  if (h.length >= 9 && h[8] === 0x7b /* { */) {
     const n = r.u64(0);
     if (8 + n <= r.size) return "safetensors";
   }
-  if (r.size >= 1 && r.bytes[0] === 0x80) return "pickle";
-  if (r.size >= 4 && r.bytes[0] === 0x50 && r.bytes[1] === 0x4b && r.bytes[2] === 0x03 && r.bytes[3] === 0x04)
-    return "zip";
-  if (isOldPickle(r.bytes)) return "pickle"; // protocols 0 and 1 have no 0x80 marker
+  if (h.length >= 1 && h[0] === 0x80) return "pickle";
+  if (h.length >= 4 && h[0] === 0x50 && h[1] === 0x4b && h[2] === 0x03 && h[3] === 0x04) return "zip";
+  // protocols 0 and 1 have no 0x80 marker
+  if (withPrefix(r, (prefix, whole) => isOldPickle(prefix, whole))) return "pickle";
   return "unknown";
 }
 
 export function openModel(r: Reader): ModelFile {
   const kind = detect(r);
-  if (kind === "safetensors") return parseSafetensors(r.bytes);
-  if (kind === "gguf") return parseGguf(r.bytes);
-  if (kind === "zip") return parseZip(r.bytes);
-  if (kind === "pickle") return parsePickles(r.bytes);
-  if (kind === "unknown") {
-    // Exactly as stowaway/formats/__init__.py for an unrecognised file.
-    const mf = newModelFile("unknown", r.size);
-    mf.findings.push({
-      check: "parse", severity: "medium", code: "unknown-format",
-      message: "not a recognised model format", detail: {},
-    });
-    return mf;
-  }
-  // Recognised (gguf/pickle/zip) but not yet ported to TypeScript. The Python
-  // core parses these; the browser build says so rather than guessing. These
-  // formats are excluded from the parity fixtures until they are ported.
-  const mf = newModelFile("unsupported", r.size);
+  if (kind === "safetensors") return parseSafetensors(r);
+  if (kind === "gguf") return parseGguf(r);
+  if (kind === "zip") return parseZip(r);
+  if (kind === "pickle") return parsePickles(r);
+  // Exactly as stowaway/formats/__init__.py for an unrecognised file.
+  const mf = newModelFile("unknown", r.size);
   mf.findings.push({
-    check: "parse", severity: "medium", code: "unsupported-format",
-    message: "this build can only scan safetensors; use the Python tool for other formats",
-    detail: { recognised_as: kind },
+    check: "parse", severity: "medium", code: "unknown-format",
+    message: "not a recognised model format", detail: {},
   });
   return mf;
 }
 
-// Load a base model's float tensors so S5 can diff a scan against it.
-export function loadBaseFloats(bytes: Uint8Array): RawFloats {
-  const r = new Reader(bytes);
-  return loadFloats(openModel(r), r);
+const asReader = (x: Uint8Array | Reader) => (x instanceof Reader ? x : Reader.of(x));
+
+/** Parse a base model for S5. Its tensors are read only while each is compared. */
+export function openBase(x: Uint8Array | Reader): BaseModel {
+  const r = asReader(x);
+  return { mf: openModel(r), r };
 }
 
-async function sha256Hex(bytes: Uint8Array): Promise<string> {
-  const digest = await crypto.subtle.digest("SHA-256", bytes);
-  return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, "0")).join("");
+const HASH_CHUNK = 16 << 20;
+
+function sha256Hex(r: Reader): string {
+  const h = new Sha256();
+  for (let o = 0; o < r.size; o += HASH_CHUNK) h.update(r.slice(o, Math.min(r.size, o + HASH_CHUNK)));
+  return h.hex();
 }
 
-export async function scan(bytes: Uint8Array, base?: RawFloats): Promise<Record<string, unknown>> {
-  const r = new Reader(bytes);
+export async function scan(x: Uint8Array | Reader, base?: BaseModel): Promise<Record<string, unknown>> {
+  const r = asReader(x);
   const mf = openModel(r);
   const findings: Finding[] = [...mf.findings];
   for (const [label, start, end] of mf.pickles) findings.push(...analysePickles(label, r.slice(start, end)));
   for (const [label, data] of Object.entries(mf.inlinePickles)) findings.push(...analysePickles(label, data));
-  if (mf.format !== "unknown" && mf.format !== "unsupported") {
+  if (mf.format !== "unknown") {
     findings.push(...coverage.check(mf, r));
     findings.push(...analyseWeights(mf, r, base));
   }
-  const digest = await sha256Hex(bytes);
+  const digest = sha256Hex(r);
 
   const rank = Object.fromEntries(SEVERITIES.map((s, i) => [s, i]));
   findings.sort((a, b) =>

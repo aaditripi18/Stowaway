@@ -2,6 +2,7 @@
 // plain pickles. Mirrors stowaway/formats/pytorch.py. Storages are mapped to the
 // tensors that view them (via the restricted pickle VM), so bytes no tensor
 // references show up as S2 gaps; the embedded data.pkl is scanned by S1.
+import { Reader } from "../bytes.js";
 import { ITEMSIZE, Finding, finding, ModelFile, newModelFile, prod, region, TensorInfo } from "../model.js";
 import { pyRepr } from "../pyrepr.js";
 import { safeLoad, walkTensors, TensorRef, StorageRef, SafeUnpickler } from "../pickle_vm.js";
@@ -65,29 +66,32 @@ function addTensors(mf: ModelFile, obj: unknown, storageBase: Map<string, number
 
 // --- zip parsing ------------------------------------------------------------
 
-function u64le(dv: DataView, o: number): number {
-  const v = dv.getBigUint64(o, true);
+function u64le(r: Reader, o: number): number {
+  const b = r.slice(o, o + 8);
+  const v = new DataView(b.buffer, b.byteOffset, 8).getBigUint64(0, true);
   return v > BigInt(Number.MAX_SAFE_INTEGER) ? Number.MAX_SAFE_INTEGER : Number(v);
 }
 
-function eocdRegions(b: Uint8Array, dv: DataView, size: number): { regions: ReturnType<typeof region>[]; cdOff: number; cdSize: number; total: number; commentLen: number } {
+function eocdRegions(r: Reader, size: number): { regions: ReturnType<typeof region>[]; cdOff: number; cdSize: number; total: number; commentLen: number } {
+  // Only the tail can hold the end-of-central-directory record: read just that.
   const tail = Math.min(size, 22 + 65535 + 20 + 56);
   const start = size - tail;
+  const b = r.slice(start, size);
   let i = -1;
-  for (let p = tail - 22; p >= 0; p--) if (eq(b, start + p, [0x50, 0x4b, 0x05, 0x06])) { i = start + p; break; }
+  for (let p = tail - 22; p >= 0; p--) if (eq(b, p, [0x50, 0x4b, 0x05, 0x06])) { i = start + p; break; }
   if (i < 0) return { regions: [], cdOff: 0, cdSize: 0, total: 0, commentLen: 0 };
-  let cdSize = u32(dv, i + 12), cdOff = u32(dv, i + 16);
-  const clen = u16(dv, i + 20), total = u16(dv, i + 10);
+  let cdSize = r.u32(i + 12), cdOff = r.u32(i + 16);
+  const clen = r.u16(i + 20), total = r.u16(i + 10);
   const regions = [region(i, Math.min(i + 22 + clen, size), "structure", "end of central directory")];
   // zip64: a locator (PK0607) sits just before the EOCD and points at a zip64
   // end-of-central-directory record (PK0606). torch.save writes these.
-  if (i >= 20 && eq(b, i - 20, [0x50, 0x4b, 0x06, 0x07])) {
+  if (i >= 20 && r.eq(i - 20, [0x50, 0x4b, 0x06, 0x07])) {
     regions.push(region(i - 20, i, "structure", "zip64 locator"));
-    const zOff = u64le(dv, i - 12);
-    if (zOff + 56 <= size && eq(b, zOff, [0x50, 0x4b, 0x06, 0x06])) {
-      const recSize = u64le(dv, zOff + 4);
-      cdSize = u64le(dv, zOff + 40);
-      cdOff = u64le(dv, zOff + 48);
+    const zOff = u64le(r, i - 12);
+    if (zOff + 56 <= size && r.eq(zOff, [0x50, 0x4b, 0x06, 0x06])) {
+      const recSize = u64le(r, zOff + 4);
+      cdSize = u64le(r, zOff + 40);
+      cdOff = u64le(r, zOff + 48);
       regions.push(region(zOff, zOff + 12 + recSize, "structure", "zip64 end of central directory"));
     }
   }
@@ -95,11 +99,14 @@ function eocdRegions(b: Uint8Array, dv: DataView, size: number): { regions: Retu
   return { regions, cdOff, cdSize, total, commentLen: clen };
 }
 
-function readCentralDirectory(b: Uint8Array, dv: DataView, cdOff: number, total: number): ZipEntry[] {
+function readCentralDirectory(r: Reader, cdOff: number, cdSize: number, total: number): ZipEntry[] {
   const entries: ZipEntry[] = [];
-  let p = cdOff;
+  // The directory is read in one piece; offsets below are relative to it.
+  const b = r.slice(cdOff, Math.min(r.size, cdOff + Math.max(cdSize, 46 * total) + (1 << 20)));
+  const dv = new DataView(b.buffer, b.byteOffset, b.byteLength);
+  let p = 0;
   for (let n = 0; n < total; n++) {
-    if (!eq(b, p, [0x50, 0x4b, 0x01, 0x02])) break;
+    if (p + 46 > b.byteLength || !eq(b, p, [0x50, 0x4b, 0x01, 0x02])) break;
     const flags = u16(dv, p + 8), method = u16(dv, p + 10);
     const compressSize = u32(dv, p + 20), fileSize = u32(dv, p + 24);
     const nlen = u16(dv, p + 28), xlen = u16(dv, p + 30), clen = u16(dv, p + 32);
@@ -111,16 +118,15 @@ function readCentralDirectory(b: Uint8Array, dv: DataView, cdOff: number, total:
   return entries;
 }
 
-export function parseZip(bytes: Uint8Array): ModelFile {
-  const size = bytes.byteLength;
+export function parseZip(r: Reader): ModelFile {
+  const size = r.size;
   const mf = newModelFile("pytorch-zip", size);
-  const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-  const eocd = eocdRegions(bytes, dv, size);
+  const eocd = eocdRegions(r, size);
   if (eocd.total === 0 && eocd.cdSize === 0) {
     mf.findings.push(finding("parse", "high", "bad-zip", "not a readable zip archive"));
     return mf;
   }
-  const infos = readCentralDirectory(bytes, dv, eocd.cdOff, eocd.total);
+  const infos = readCentralDirectory(r, eocd.cdOff, eocd.cdSize, eocd.total);
   for (const r of eocd.regions) mf.regions.push(r);
 
   const pkl = infos.filter((i) => i.filename.endsWith("/data.pkl") || i.filename === "data.pkl");
@@ -131,16 +137,16 @@ export function parseZip(bytes: Uint8Array): ModelFile {
   const storageBase = new Map<string, number | null>();
   const storageLen = new Map<string, number>();
   for (const info of infos) {
-    if (!eq(bytes, info.headerOffset, [0x50, 0x4b, 0x03, 0x04])) {
+    if (!r.eq(info.headerOffset, [0x50, 0x4b, 0x03, 0x04])) {
       mf.findings.push(finding("parse", "high", "bad-local-header", `entry ${pyRepr(info.filename)} has no local header`));
       continue;
     }
-    const flags = u16(dv, info.headerOffset + 6), nlen = u16(dv, info.headerOffset + 26), xlen = u16(dv, info.headerOffset + 28);
+    const flags = r.u16(info.headerOffset + 6), nlen = r.u16(info.headerOffset + 26), xlen = r.u16(info.headerOffset + 28);
     const dataStart = info.headerOffset + 30 + nlen + xlen;
     const dataEnd = dataStart + info.compressSize;
     mf.regions.push(region(info.headerOffset, dataStart, "structure", `local header ${info.filename}`));
     if (flags & 0x08) {
-      const sig = eq(bytes, dataEnd, [0x50, 0x4b, 0x07, 0x08]);
+      const sig = r.eq(dataEnd, [0x50, 0x4b, 0x07, 0x08]);
       const big = info.compressSize >= 0xffffffff || info.fileSize >= 0xffffffff;
       const dlen = (sig ? 4 : 0) + 4 + (big ? 16 : 8);
       mf.regions.push(region(dataEnd, dataEnd + dlen, "structure", `data descriptor ${info.filename}`));
@@ -169,8 +175,8 @@ export function parseZip(bytes: Uint8Array): ModelFile {
   if (pkl.length) {
     const p = pkl[0]!;
     if (p.method === 0) {
-      const dataStart = (() => { const ho = p.headerOffset; return ho + 30 + u16(dv, ho + 26) + u16(dv, ho + 28); })();
-      const data = bytes.subarray(dataStart, dataStart + p.compressSize);
+      const dataStart = (() => { const ho = p.headerOffset; return ho + 30 + r.u16(ho + 26) + r.u16(ho + 28); })();
+      const data = r.slice(dataStart, dataStart + p.compressSize);
       const res = safeLoad(data);
       if (res.error === null) addTensors(mf, res.obj, storageBase, storageLen);
       else mf.findings.push(finding("parse", "medium", "structure-unreadable", "could not rebuild the checkpoint structure"));
@@ -192,8 +198,9 @@ function pickleEnd(bytes: Uint8Array): number | null {
   } catch { return null; }
 }
 
-export function parsePickles(bytes: Uint8Array): ModelFile {
-  const size = bytes.byteLength;
+export function parsePickles(r: Reader): ModelFile {
+  const size = r.size;
+  const bytes = r.slice(0, size);
   const mf = newModelFile("pickle", size);
   const end = pickleEnd(bytes);
   const label = "pickle@0";

@@ -1,0 +1,1 @@
+{"file":"big_header.gguf","findings":[],"format":"gguf","report_version":1,"sha256":"9c82c887cbc09a58db7917c97b644b66f675d82cef4d4632f2078559508c6974","size":5116576,"tensors":{"bytes":16384,"count":1,"dtypes":{"F32":1}},"verdict":"clean"}

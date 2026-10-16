@@ -10,7 +10,7 @@
          uploaded". -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'"
+      content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; worker-src blob:; base-uri 'none'; form-action 'none'"
     />
     <title>Scan a model file — Stowaway</title>
     <meta name="description" content="Scan a .safetensors, .pt or .gguf model file in your browser. Nothing is uploaded: the page's Content-Security-Policy blocks every network request." />

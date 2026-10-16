@@ -168,6 +168,15 @@ def gen_gguf():
     (d / "dirty_padding.gguf").write_bytes(bytes(buf))
     golden("dirty_padding", d / "dirty_padding.gguf")
 
+    # A header larger than the browser's first 1 MiB read, as in real GGUFs that
+    # carry a tokenizer vocabulary: exercises the growing-prefix parse.
+    rng = np.random.default_rng(2)
+    w = gguf_lib.GGUFWriter(str(d / "big_header.gguf"), "llama")
+    w.add_array("tokenizer.ggml.tokens", [f"tok{i:06d}" for i in range(300_000)])
+    w.add_tensor("blk.0.weight", rng.standard_normal((64, 64)).astype(np.float32))
+    w.write_header_to_file(); w.write_kv_data_to_file(); w.write_tensors_to_file(); w.close()
+    golden("big_header", d / "big_header.gguf")
+
 
 def _biased_f32(shape, frac_bit0, seed):
     rng = np.random.default_rng(seed)

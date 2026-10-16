@@ -3,6 +3,7 @@
 // read general.alignment; tensors, regions and findings match the Python core.
 import { finding, ModelFile, newModelFile, prod, region, TensorInfo } from "../model.js";
 import { pyRepr } from "../pyrepr.js";
+import { NeedMore, Reader, withPrefix } from "../bytes.js";
 
 // ggml_type -> [name, elements per block, bytes per block]
 const GGML_TYPES: Record<number, [string, number, number]> = {
@@ -24,13 +25,16 @@ const MAX_ARRAY = 1 << 28;
 
 class GgufReader {
   pos = 0;
-  constructor(readonly b: Uint8Array, readonly dv: DataView) {}
-  take(n: number): Uint8Array { if (this.pos + n > this.b.length) throw new Error("eof"); const s = this.b.subarray(this.pos, this.pos + n); this.pos += n; return s; }
-  u32(): number { const v = this.dv.getUint32(this.pos, true); this.pos += 4; return v; }
-  u64(): number { const v = this.dv.getBigUint64(this.pos, true); this.pos += 8; if (v > BigInt(Number.MAX_SAFE_INTEGER)) throw new Error("huge"); return Number(v); }
+  // `whole` is false when `b` is only a prefix of the file: running off its end
+  // then means "read more", not "truncated file".
+  constructor(readonly b: Uint8Array, readonly dv: DataView, readonly whole: boolean) {}
+  need(n: number): void { if (this.pos + n > this.b.length) throw this.whole ? new Error("eof") : new NeedMore(); }
+  take(n: number): Uint8Array { this.need(n); const s = this.b.subarray(this.pos, this.pos + n); this.pos += n; return s; }
+  u32(): number { this.need(4); const v = this.dv.getUint32(this.pos, true); this.pos += 4; return v; }
+  u64(): number { this.need(8); const v = this.dv.getBigUint64(this.pos, true); this.pos += 8; if (v > BigInt(Number.MAX_SAFE_INTEGER)) throw new Error("huge"); return Number(v); }
   string(): string { const n = this.u64(); if (n > MAX_STRING) throw new Error("string too long"); return new TextDecoder("utf-8").decode(this.take(n)); }
   scalar(vtype: number): number { // returns the numeric value (enough for general.alignment)
-    const sz = SCALAR_SIZE[vtype]!; const p = this.pos; this.pos += sz;
+    const sz = SCALAR_SIZE[vtype]!; this.need(sz); const p = this.pos; this.pos += sz;
     switch (vtype) {
       case 0: return this.dv.getUint8(p); case 1: return this.dv.getInt8(p);
       case 2: return this.dv.getUint16(p, true); case 3: return this.dv.getInt16(p, true);
@@ -55,17 +59,19 @@ class GgufReader {
 
 const align = (x: number, a: number) => Math.floor((x + a - 1) / a) * a;
 
-export function parse(bytes: Uint8Array): ModelFile {
-  const mf = newModelFile("gguf", bytes.byteLength);
-  const r = new GgufReader(bytes, new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength));
+interface Header { version: number; meta: Record<string, unknown>; infos: Array<[string, number[], number, number]>; end: number }
+
+function readHeader(bytes: Uint8Array, whole: boolean, mf: ModelFile): Header | null {
+  const r = new GgufReader(bytes, new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength), whole);
   let version = 0, nTensors = 0;
   const meta: Record<string, unknown> = {};
   const infos: Array<[string, number[], number, number]> = [];
+  const notes: typeof mf.findings = [];
   try {
     const magic = r.take(4);
     if (!(magic[0] === 0x47 && magic[1] === 0x47 && magic[2] === 0x55 && magic[3] === 0x46)) throw new Error("bad magic");
     version = r.u32();
-    if (version !== 2 && version !== 3) mf.findings.push(finding("parse", "low", "gguf-version", `GGUF version ${version} is not 2 or 3`));
+    if (version !== 2 && version !== 3) notes.push(finding("parse", "low", "gguf-version", `GGUF version ${version} is not 2 or 3`));
     nTensors = r.u64();
     const nKv = r.u64();
     meta["gguf.version"] = version;
@@ -78,13 +84,22 @@ export function parse(bytes: Uint8Array): ModelFile {
       for (let d = 0; d < nDims; d++) ne.push(r.u64());
       infos.push([name, ne, r.u32(), r.u64()]);
     }
-  } catch {
-    mf.findings.push(finding("parse", "high", "bad-gguf", "could not parse the GGUF header"));
-    return mf;
+  } catch (e) {
+    if (e instanceof NeedMore) throw e;
+    mf.findings.push(...notes, finding("parse", "high", "bad-gguf", "could not parse the GGUF header"));
+    return null;
   }
+  mf.findings.push(...notes);
+  return { version, meta, infos, end: r.pos };
+}
 
+export function parse(file: Reader): ModelFile {
+  const mf = newModelFile("gguf", file.size);
+  const h = withPrefix(file, (prefix, whole) => readHeader(prefix, whole, mf));
+  if (h === null) return mf;
+  const { meta, infos } = h;
   mf.metadata = meta;
-  const headerEnd = r.pos;
+  const headerEnd = h.end;
   let alignment = meta["general.alignment"];
   if (typeof alignment !== "number" || !Number.isInteger(alignment) || alignment <= 0 || (alignment & (alignment - 1)) !== 0) {
     if (alignment !== undefined) mf.findings.push(finding("parse", "medium", "bad-alignment", "general.alignment is not a positive power of two"));
@@ -92,7 +107,7 @@ export function parse(bytes: Uint8Array): ModelFile {
   }
   const a = alignment as number;
   const dataStart = align(headerEnd, a);
-  const size = bytes.byteLength;
+  const size = file.size;
   mf.regions.push(region(0, headerEnd, "header", "gguf header"));
   mf.regions.push(region(headerEnd, Math.min(dataStart, size), "padding", "header alignment"));
 
