@@ -254,6 +254,16 @@ def gen_s5():
     (d / "poisoned.json").write_text(canon(rep) + "\n", encoding="utf-8")
     print(f"s5/poisoned: {rep['verdict']} ({len(rep['findings'])} findings)")
 
+    # The same model saved under a wrapper prefix, with one LayerNorm-style
+    # tensor under its old name: S5 must pair the tensors by name alignment.
+    base_ln = dict(base, **{"layer.norm.gamma": rng.standard_normal(64).astype(np.float32)})
+    (d / "base_ln.safetensors").write_bytes(st_bytes({k.replace(".gamma", ".weight"): v for k, v in base_ln.items()}))
+    renamed = {f"encoder.{k}": v for k, v in dict(poisoned, **{"layer.norm.gamma": base_ln["layer.norm.gamma"]}).items()}
+    (d / "renamed.safetensors").write_bytes(st_bytes(renamed))
+    rep = scan(d / "renamed.safetensors", base=d / "base_ln.safetensors")
+    (d / "renamed.json").write_text(canon(rep) + "\n", encoding="utf-8")
+    print(f"s5/renamed: {rep['verdict']} ({len(rep['findings'])} findings)")
+
 
 def _findings_json(label, data) -> str:
     findings = ps.analyse(label, data)

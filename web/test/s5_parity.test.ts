@@ -19,4 +19,12 @@ describe("S5 differential parity", () => {
     rep.file = "poisoned.safetensors";
     expect(canon(rep)).toEqual(golden);
   });
+
+  it("renamed (wrapper prefix and gamma/beta names) vs base", async () => {
+    const base = openBase(new Uint8Array(readFileSync(join(DIR, "base_ln.safetensors"))));
+    const model = new Uint8Array(readFileSync(join(DIR, "renamed.safetensors")));
+    const rep = await scan(model, base);
+    rep.file = "renamed.safetensors";
+    expect(canon(rep)).toEqual(readFileSync(join(DIR, "renamed.json"), "utf-8").trimEnd());
+  });
 });

@@ -229,6 +229,40 @@ export function loadFloats(mf: ModelFile, r: Reader): RawFloats {
   return out;
 }
 
+// --- aligning tensor names with the base (weights.align) -------------------
+
+const LEGACY_NAMES: Record<string, string> = { gamma: "weight", beta: "bias" };
+const MAX_DROP = 2;
+
+function canonName(name: string, drop: number): string {
+  const parts = name.split(".").slice(drop);
+  const last = parts[parts.length - 1];
+  if (parts.length && last !== undefined && last in LEGACY_NAMES) parts[parts.length - 1] = LEGACY_NAMES[last]!;
+  return parts.join(".");
+}
+
+/** Pair each model tensor with the base tensor it fine-tunes; see weights.align. */
+export function align(model: Map<string, string>, base: Map<string, string>): { pairs: Map<string, string>; dm: number; db: number } {
+  let best = { pairs: new Map<string, string>(), dm: 0, db: 0 };
+  for (let dm = 0; dm <= MAX_DROP; dm++) {
+    for (let db = 0; db <= MAX_DROP; db++) {
+      const bkeys = new Map<string, string[]>();
+      for (const b of base.keys()) { const k = canonName(b, db); (bkeys.get(k) ?? bkeys.set(k, []).get(k)!).push(b); }
+      const mkeys = new Map<string, string[]>();
+      for (const m of model.keys()) { const k = canonName(m, dm); (mkeys.get(k) ?? mkeys.set(k, []).get(k)!).push(m); }
+      const pairs = new Map<string, string>();
+      for (const [key, ms] of mkeys) {
+        const bs = bkeys.get(key);
+        if (key && ms.length === 1 && bs && bs.length === 1 && model.get(ms[0]!) === base.get(bs[0]!)) pairs.set(ms[0]!, bs[0]!);
+      }
+      if (pairs.size > best.pairs.size) best = { pairs, dm, db };
+    }
+  }
+  return best;
+}
+
+const sig = (t: { dtype: string; shape: number[] }) => `${t.dtype}|${t.shape.join(",")}`;
+
 /** S3, S4 and (with a base) S5, reading one tensor at a time: peak memory is
  * the largest tensor (and its base counterpart), not the file. */
 export function analyseWeights(mf: ModelFile, r: Reader, base?: BaseModel): Finding[] {
@@ -236,11 +270,16 @@ export function analyseWeights(mf: ModelFile, r: Reader, base?: BaseModel): Find
   const baseTensors = base ? floatTensors(base.mf) : null;
   const s5: Array<[string, Finding]> = [];
   let shared = 0;
-  for (const [name, t] of floatTensors(mf)) {
+  const infos = floatTensors(mf);
+  let pairing = { pairs: new Map<string, string>(), dm: 0, db: 0 };
+  if (baseTensors) {
+    pairing = align(new Map([...infos].map(([n, t]) => [n, sig(t)])), new Map([...baseTensors].map(([n, t]) => [n, sig(t)])));
+  }
+  for (const [name, t] of infos) {
     const rf = load(t, r);
     if (!rf) continue;
     sums.set(name, { name, dtype: rf.dtype, ndim: rf.shape.length, ...summarize(rf, S4_BITS[rf.dtype]!) });
-    const bt = baseTensors?.get(name);
+    const bt = baseTensors?.get(pairing.pairs.get(name) ?? name);
     if (bt && base) {
       const brf = load(bt, base.r);
       if (brf) {
@@ -252,6 +291,13 @@ export function analyseWeights(mf: ModelFile, r: Reader, base?: BaseModel): Find
   }
   if (sums.size === 0) return [];
   const findings = [...s3PrecisionHistory(sums), ...s4BitPlanes(sums)];
+  const renamed = [...pairing.pairs].filter(([m, b]) => m !== b).length;
+  if (renamed) {
+    findings.push(finding("S5", "info", "aligned-names",
+      `paired ${pairing.pairs.size} tensors with the base by name after renaming ${renamed} ` +
+      `(dropped ${pairing.dm} leading name part(s) here and ${pairing.db} in the base, gamma/beta read as weight/bias)`,
+      { paired: pairing.pairs.size, renamed, dropped_model: pairing.dm, dropped_base: pairing.db }));
+  }
   if (base) {
     if (shared === 0) {
       findings.push(finding("S5", "info", "no-shared-tensors", "the base model shares no tensor names with this model"));

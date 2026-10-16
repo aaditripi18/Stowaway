@@ -315,6 +315,48 @@ def _s5_tensor(name: str, a: RawTensor, b: RawTensor) -> Finding | None:
 
 # --- entry point used by report.py ------------------------------------------
 
+# --- aligning tensor names with the base ------------------------------------
+
+_LEGACY_NAMES = {"gamma": "weight", "beta": "bias"}  # old LayerNorm parameter names
+MAX_DROP = 2
+
+
+def _canon(name: str, drop: int) -> str:
+    parts = name.split(".")[drop:]
+    if parts and parts[-1] in _LEGACY_NAMES:
+        parts[-1] = _LEGACY_NAMES[parts[-1]]
+    return ".".join(parts)
+
+
+def align(model: dict[str, tuple], base: dict[str, tuple]) -> tuple[dict[str, str], int, int]:
+    """Pair each tensor of `model` with the base tensor it fine-tunes.
+
+    Fine-tunes often wrap the base (`bert.x` saved as `encoder.x`) or use the
+    old LayerNorm names (`gamma`/`beta` for `weight`/`bias`). Each argument maps
+    a tensor name to (dtype, shape). Tries dropping 0..MAX_DROP leading name
+    components on each side, with the old names mapped, and keeps the choice
+    that pairs the most tensors of identical dtype and shape (the first, i.e.
+    fewest drops, on a tie). A name that is ambiguous after dropping is left out.
+    Returns (model name -> base name, dropped from model, dropped from base)."""
+    best = ({}, 0, 0)
+    for dm in range(MAX_DROP + 1):
+        for db in range(MAX_DROP + 1):
+            bkeys: dict[str, list] = {}
+            for b in base:
+                bkeys.setdefault(_canon(b, db), []).append(b)
+            mkeys: dict[str, list] = {}
+            for m in model:
+                mkeys.setdefault(_canon(m, dm), []).append(m)
+            pairs = {}
+            for key, ms in mkeys.items():
+                bs = bkeys.get(key)
+                if key and len(ms) == 1 and bs and len(bs) == 1 and model[ms[0]] == base[bs[0]]:
+                    pairs[ms[0]] = bs[0]
+            if len(pairs) > len(best[0]):
+                best = (pairs, dm, db)
+    return best
+
+
 class BaseFile:
     """A claimed base model for S5, read one tensor at a time while it is compared.
     It may span several files (a sharded checkpoint): pass each (ModelFile, file)."""
@@ -330,6 +372,9 @@ class BaseFile:
         hit = self.infos.get(name)
         return _read(*hit) if hit is not None else None
 
+    def shapes(self) -> dict[str, tuple]:
+        return {n: (t.dtype, tuple(t.shape)) for n, (_, _, t) in self.infos.items()}
+
 
 def analyse(mf: ModelFile, f, base: "dict[str, RawTensor] | BaseFile | None" = None) -> list[Finding]:
     """S3, S4 and (with a base) S5, holding one tensor - and its base counterpart -
@@ -337,13 +382,17 @@ def analyse(mf: ModelFile, f, base: "dict[str, RawTensor] | BaseFile | None" = N
     sums: dict[str, _Summary] = {}
     s5: list[tuple[str, Finding]] = []
     shared = 0
-    for name, t in _float_infos(mf).items():
+    infos = _float_infos(mf)
+    pairing, dm, db = {}, 0, 0
+    if isinstance(base, BaseFile):
+        pairing, dm, db = align({n: (t.dtype, tuple(t.shape)) for n, t in infos.items()}, base.shapes())
+    for name, t in infos.items():
         a = _read(mf, f, t)
         if a is None:
             continue
         sums[name] = _Summary(a, S4_BITS[a.dtype])
         if base is not None:
-            b = base.get(name)
+            b = base.get(pairing.get(name, name)) if isinstance(base, BaseFile) else base.get(name)
             if b is not None:
                 shared += 1
                 found = _s5_tensor(name, a, b)
@@ -353,6 +402,13 @@ def analyse(mf: ModelFile, f, base: "dict[str, RawTensor] | BaseFile | None" = N
     if not sums:
         return []
     findings = _s3(sums) + _s4(sums)
+    renamed = sum(1 for m, b in pairing.items() if m != b)
+    if renamed:
+        findings.append(Finding("S5", "info", "aligned-names",
+                                f"paired {len(pairing)} tensors with the base by name after renaming {renamed} "
+                                f"(dropped {dm} leading name part(s) here and {db} in the base, "
+                                f"gamma/beta read as weight/bias)",
+                                {"paired": len(pairing), "renamed": renamed, "dropped_model": dm, "dropped_base": db}))
     if base is not None:
         if not shared:
             findings.append(Finding("S5", "info", "no-shared-tensors",
