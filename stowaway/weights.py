@@ -154,8 +154,14 @@ def _signature(stats: list[tuple[str, int, np.ndarray]], nbits: int):
     return sig, tau, True
 
 
+# S4b (PLAN.md, E0d): a reference of fewer than SMALL_ROLE_PEERS role peers
+# cannot show less between-tensor spread than the whole model does.
+SMALL_ROLE_PEERS = 6
+S4_SMALL_FLOOR = False
+
+
 def s4_bit_planes(floats: dict[str, RawTensor], low_bits: dict[str, int] | None = None,
-                  shapes: dict[str, tuple] | None = None) -> list[Finding]:
+                  shapes: dict[str, tuple] | None = None, small_floor: bool | None = None) -> list[Finding]:
     """Per-tensor low-bit statistics, read against the model's own signature.
 
     A tensor is flagged when one of its low bit planes departs from what the rest
@@ -165,10 +171,11 @@ def s4_bit_planes(floats: dict[str, RawTensor], low_bits: dict[str, int] | None 
     invisible here; that limit is what experiment E1 measures.
 
     `shapes` gives the tensors' full shapes when `floats` holds samples."""
-    return _s4(_summaries(floats, low_bits, shapes))
+    return _s4(_summaries(floats, low_bits, shapes), small_floor)
 
 
-def _s4(sums: dict[str, _Summary]) -> list[Finding]:
+def _s4(sums: dict[str, _Summary], small_floor: bool | None = None) -> list[Finding]:
+    small_floor = S4_SMALL_FLOOR if small_floor is None else small_floor
     findings = []
     by_dtype: dict[str, list] = {}
     for name, t in sorted(sums.items()):
@@ -211,6 +218,8 @@ def _s4(sums: dict[str, _Summary]) -> list[Finding]:
             peers = [s for s in roles[key(name)] if s[0] != name]
             if len(peers) >= 3:
                 sig, tau, _ = _signature(peers, kb)
+                if small_floor and len(peers) < SMALL_ROLE_PEERS:
+                    tau = np.maximum(tau, model_ref[1])
                 against = f"its {len(peers)} role peers"
             else:
                 sig, tau, _ = model_ref
