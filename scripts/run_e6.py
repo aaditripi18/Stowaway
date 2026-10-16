@@ -102,7 +102,16 @@ def main(argv=None):
     torch.set_num_threads(max(1, torch.get_num_threads()))
     for name in a.models:
         model, weights = corpus.load_vision(name)
-        state = {k: v.clone() for k, v in model.state_dict().items()}
+        sd = model.state_dict()
+        meta = getattr(sd, "_metadata", None)  # per-module versions (MNASNet's loader requires them)
+        state = {k: v.clone() for k, v in sd.items()}
+
+        def with_meta(d):
+            from collections import OrderedDict
+            out = OrderedDict(d)
+            if meta is not None:
+                out._metadata = meta
+            return out
         clean = corpus.state_to_raw(state)
         ev = Eval(model, weights, N_IMAGES)
         run = Run("E6", model=name, n_images=N_IMAGES, split="dev" if name in corpus.DEV else "held_out")
@@ -128,10 +137,10 @@ def main(argv=None):
                         rec = dict(kind="cell", model=name, payload=kind, seed=seed, k=k, payload_bytes=size,
                                    capacity_bytes=cap, tensors_written=len(written), single_file_detected=single,
                                    s5_stats=s5)
-                        model.load_state_dict(corpus.raw_into_state(state, poisoned))
+                        model.load_state_dict(with_meta(corpus.raw_into_state(state, poisoned)))
                         pred = ev.predict(model)
                         rec.update(accuracy=float((pred == ev.y).mean()), agreement=float((pred == ev.clean).mean()))
-                        model.load_state_dict(state)
+                        model.load_state_dict(with_meta(state))
                         run.record(**rec)
                         print(f"  {kind:10s} seed {seed} k={k:2d} {size:>8} single={single!s:5} "
                               f"agree={rec['agreement']:.4f}", flush=True)
