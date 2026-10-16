@@ -316,15 +316,19 @@ def _s5_tensor(name: str, a: RawTensor, b: RawTensor) -> Finding | None:
 # --- entry point used by report.py ------------------------------------------
 
 class BaseFile:
-    """A claimed base model for S5, read one tensor at a time while it is compared."""
+    """A claimed base model for S5, read one tensor at a time while it is compared.
+    It may span several files (a sharded checkpoint): pass each (ModelFile, file)."""
 
-    def __init__(self, mf: ModelFile, f):
-        self.mf, self.f = mf, f
-        self.infos = _float_infos(mf)
+    def __init__(self, mf: ModelFile, f, *more):
+        parts = [(mf, f), *zip(more[::2], more[1::2])]
+        self.infos = {}
+        for pmf, pf in parts:
+            for name, t in _float_infos(pmf).items():
+                self.infos[name] = (pmf, pf, t)
 
     def get(self, name: str) -> RawTensor | None:
-        t = self.infos.get(name)
-        return _read(self.mf, self.f, t) if t is not None else None
+        hit = self.infos.get(name)
+        return _read(*hit) if hit is not None else None
 
 
 def analyse(mf: ModelFile, f, base: "dict[str, RawTensor] | BaseFile | None" = None) -> list[Finding]:

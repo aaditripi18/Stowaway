@@ -25,15 +25,18 @@ def _sha256(f) -> str:
     return h.hexdigest()
 
 
-def scan(path: str | Path, base: str | Path | None = None) -> dict:
-    """Scan one model file. If `base` is given, also run the S5 differential
-    against that model (its claimed base)."""
+def scan(path: str | Path, base: "str | Path | list | None" = None) -> dict:
+    """Scan one model file. If `base` is given (a file, or the files of a sharded
+    checkpoint), also run the S5 differential against that claimed base model."""
     path = Path(path)
     with contextlib.ExitStack() as stack:
         base_file = None
         if base is not None:  # read one tensor at a time while it is compared
-            bf = stack.enter_context(open(base, "rb"))
-            base_file = weights.BaseFile(open_model(Path(base), bf), bf)
+            parts = []
+            for b in (base if isinstance(base, (list, tuple)) else [base]):
+                bf = stack.enter_context(open(b, "rb"))
+                parts += [open_model(Path(b), bf), bf]
+            base_file = weights.BaseFile(*parts)
         return _scan(path, base_file)
 
 
