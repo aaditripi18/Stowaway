@@ -148,3 +148,21 @@ flag a tensor if some bit j <= the cutoff is the highest changed bit of at least
 a share T of the changed elements (a payload at k puts ~50% at j = k-1, whatever
 else changed). Dev chooses between S5b and S5c, and T; the fresh batch then
 judges the chosen rule once, by the decision rule above.
+
+### E6. Wider E1/E2: nine models, five payload types, three seeds
+
+E1/E2 covered two vision models, one seed and random payloads. E6 runs all nine
+torchvision models of E0 (2 dev, 7 held out), payloads of five types (random;
+zeros; English text; that text zlib-compressed; an executable-like blob: "MZ"
+then random bytes), k in {1, 4, 8, 16}, 1 KB to 4 MB, seeds 0-2 for random
+payloads (one seed for the rest). For each planted model it records single-file
+detection (S3/S4, as in E1) and the bit statistics S5 reads (as in E4b, so any
+S5 rule can be scored), and, on 1,000 Imagenette validation images, top-1
+accuracy and **agreement** (share of images whose top-1 prediction is unchanged
+from the clean model).
+
+- **H5** Hiding is free: on every model, a random payload of up to 1 MB at k <= 8
+  leaves >= 99% of top-1 predictions unchanged (all three seeds).
+- **H6** S4's one-sided rule costs what it says: zero and text payloads are caught
+  from the file alone in fewer cells than random payloads of the same size and k,
+  summed over models; the base diff catches all of them wherever it catches random.
