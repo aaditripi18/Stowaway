@@ -67,7 +67,21 @@ def change_stats(a: np.ndarray, b: np.ndarray, dtype: str) -> dict | None:
             "hist": hist.tolist()}
 
 
-def fetch(repo: str, file: str | None = None):
+def fetch(repo: str, file: str | None = None, tries: int = 4):
+    """Resolve and download, retrying transient network failures."""
+    import time
+    import urllib.error
+    for attempt in range(tries):
+        try:
+            return _fetch(repo, file)
+        except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
+            if attempt == tries - 1:
+                raise hub.HubError(f"network: {e}") from None
+            print(f"  network error ({e}); retrying", flush=True)
+            time.sleep(10 * (attempt + 1))
+
+
+def _fetch(repo: str, file: str | None = None):
     res = hub.resolve("hf:" + repo)
     if file and file in res.files:
         res = hub.Resolved(res.repo, res.revision, res.commit, [file], {file: res.sizes[file]},
