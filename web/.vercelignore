@@ -3,3 +3,4 @@ dist
 fixtures
 test
 .vercel
+.env*
