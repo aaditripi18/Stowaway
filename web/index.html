@@ -241,6 +241,7 @@
                 </div>
               </div>
             </div>
+            <p class="font-body-sm text-body-sm text-outline max-w-3xl">Across all <span data-fact="e6.models">9</span> torchvision models and five payload types (random, zeros, text, compressed, an executable-like blob), a payload of up to 1 MB in the low 8 bits left at least <span data-fact="e6.min_agree">99.8%</span> of top-1 predictions unchanged, and the base diff caught <span data-fact="e6.base_caught">648 / 648</span> planted copies of random, zero and text payloads.</p>
             <p class="font-body-sm text-body-sm text-outline max-w-3xl">MobileNetV3-Small's low bits carry a signature (bit 0 set in <span data-fact="e0.mobilenet_bit0">~67%</span> of values) that a random payload disturbs, so the naive attack is seen from the file. An attacker who knows the checks can still evade them: spreading the payload over one weight in <span data-fact="e3.spread">64</span> keeps every statistic inside the threshold at every size that fits at that density, up to <span data-fact="e3.spread_max">16 KB</span>. The base diff catches that from <span data-fact="e3.spread_base_from">4 KB</span>.</p>
           </div>
         </section>

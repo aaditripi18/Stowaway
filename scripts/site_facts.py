@@ -40,7 +40,7 @@ ALLOWED = [
     r"S[1-5]", r"H[1-4]", r"E[0-5][a-c]?", r"0[1-9]",          # check, hypothesis, experiment, section ids
     r"ResNet-18", r"MobileNetV3(-Small)?", r"V3", r"float(16|32)", r"fp(16|32)", r"bf16", r"F(16|32)",
     r"\.safetensors", r"S[1-5]/S[1-5]", r"S3/S4",
-    r"k = 1, 4(,)? (or|and) 8", r"k = 1, 4 or 8", r"k = (8|21)(?=[ ,])", r"[Bb]it 0", r"ShuffleNetV2", r"50%",
+    r"k = 1, 4(,)? (or|and) 8", r"k = 1, 4 or 8", r"k = (8|21)(?=[ ,])", r"up to 1 MB(?= in the low 8 bits)", r"[Bb]it 0", r"ShuffleNetV2", r"50%",
     r"1K", r"4K", r"16K", r"64K", r"256K", r"1M",              # E1 strip axis labels
     r"64 KB samples", r"2026", r"\(pre-1\.6\)", r"1\.6",
     r"0 clean, 1 suspicious, 2 dangerous", r"5 checks", r"1 KB or more", r"low 8 bits", r"[Tt]op-1", r"1:(?=\s|$)",
@@ -202,6 +202,17 @@ def facts(counts=True, weights=True):
         f["e4b.ks"] = ", ".join(map(str, ks[:-1])) + f" and {ks[-1]}"
         for k in (8, 21):
             f[f"e4b.{split}_b_k{k}"] = "{} / {}".format(*new["caught"][f"b_low_gradient|{k}"])
+    # E6: nine models, five payload types
+    e6 = R.e6_records(rows)
+    if len(e6) == 9:
+        f["e6.models"] = str(len(e6))
+        worst = min(r["agreement"] for recs in e6.values() for r in recs
+                    if r.get("kind") == "cell" and r["payload"] == "random" and r["payload_bytes"] <= 1 << 20 and r["k"] <= 8)
+        f["e6.min_agree"] = f"{100 * worst:.1f}%"
+        cells = [r for recs in e6.values() for r in recs if r.get("kind") == "cell" and r["seed"] == 0
+                 and r["payload"] in ("random", "zeros", "text")]
+        base = sum(any(R.E6_S5(x) for x in r["s5_stats"].values()) for r in cells)
+        f["e6.base_caught"] = f"{base} / {len(cells)}"
     f.update(_e0_history(rows))
     _, c2 = R._latest_run([r for r in rows if r.get("meta", {}).get("list") == "hf_models_batch2.json"], "E0c")
     for dt in ("BF16", "F16"):
