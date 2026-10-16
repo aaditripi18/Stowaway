@@ -5,6 +5,7 @@ browser implementations can be compared byte for byte.
 """
 from __future__ import annotations
 
+import contextlib
 import hashlib
 from collections import Counter
 from pathlib import Path
@@ -28,7 +29,15 @@ def scan(path: str | Path, base: str | Path | None = None) -> dict:
     """Scan one model file. If `base` is given, also run the S5 differential
     against that model (its claimed base)."""
     path = Path(path)
-    base_floats = weights.load_base(base, open_model) if base is not None else None
+    with contextlib.ExitStack() as stack:
+        base_file = None
+        if base is not None:  # read one tensor at a time while it is compared
+            bf = stack.enter_context(open(base, "rb"))
+            base_file = weights.BaseFile(open_model(Path(base), bf), bf)
+        return _scan(path, base_file)
+
+
+def _scan(path: Path, base_file) -> dict:
     with open(path, "rb") as f:
         mf = open_model(path, f)
         findings = list(mf.findings)
@@ -38,7 +47,7 @@ def scan(path: str | Path, base: str | Path | None = None) -> dict:
             findings += pickle_scan.analyse(label, data)
         if mf.format != "unknown":
             findings += coverage.check(mf, f)
-            findings += weights.analyse(mf, f, base_floats)
+            findings += weights.analyse(mf, f, base_file)
         digest = _sha256(f)
 
     rank = {s: i for i, s in enumerate(SEVERITIES)}

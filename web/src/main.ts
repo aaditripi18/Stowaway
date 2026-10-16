@@ -23,8 +23,8 @@ const CHECKS: Record<string, { title: string; what: string }> = {
   S4: { title: "Bit statistics", what: "Low bits pulled toward a coin flip, versus peer layers." },
   S5: { title: "Base-model diff", what: "Changes confined to the low bits, versus the claimed base." },
 };
-const PARSED_FORMATS = ["safetensors", "gguf", "pytorch-zip", "torchscript", "pickle"];
-const PICKLE_FORMATS = ["pytorch-zip", "torchscript", "pickle"];
+const PARSED_FORMATS = ["safetensors", "gguf", "pytorch-zip", "pytorch-legacy", "torchscript", "pickle"];
+const PICKLE_FORMATS = ["pytorch-zip", "pytorch-legacy", "torchscript", "pickle"];
 const FLAGGED = ["medium", "high", "critical"];
 
 const SEV_CHIP: Record<string, string> = {

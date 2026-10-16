@@ -3,12 +3,13 @@
 // tensors that view them (via the restricted pickle VM), so bytes no tensor
 // references show up as S2 gaps; the embedded data.pkl is scanned by S1.
 import { Reader } from "../bytes.js";
+import { inflateRaw } from "../inflate.js";
 import { ITEMSIZE, Finding, finding, ModelFile, newModelFile, prod, region, TensorInfo } from "../model.js";
 import { pyRepr } from "../pyrepr.js";
 import { safeLoad, walkTensors, TensorRef, StorageRef, SafeUnpickler } from "../pickle_vm.js";
 
 const KNOWN_ENTRIES = new Set(["version", ".format_version", "byteorder", ".storage_alignment", ".data/serialization_id", ".data/version"]);
-const LEGACY_MAGIC = 0x1950a86a20f9469cn;  // low 64 bits are enough to recognise the magic
+const LEGACY_MAGIC = 0x1950a86a20f9469cfc6cn;
 const SKIP = new Set(["_parameters", "_buffers", "_modules"]);
 
 interface ZipEntry { filename: string; headerOffset: number; compressSize: number; fileSize: number; method: number; flags: number }
@@ -174,9 +175,25 @@ export function parseZip(r: Reader): ModelFile {
 
   if (pkl.length) {
     const p = pkl[0]!;
-    if (p.method === 0) {
-      const dataStart = (() => { const ho = p.headerOffset; return ho + 30 + r.u16(ho + 26) + r.u16(ho + 28); })();
-      const data = r.slice(dataStart, dataStart + p.compressSize);
+    const dataStart = (() => { const ho = p.headerOffset; return ho + 30 + r.u16(ho + 26) + r.u16(ho + 28); })();
+    const raw = r.slice(dataStart, dataStart + p.compressSize);
+    let data: Uint8Array | null = raw;
+    if (p.method !== 0) {
+      // As zipfile.read: a compressed data.pkl is decompressed and scanned by
+      // S1 as an inline pickle (it cannot be scanned in place).
+      data = null;
+      if (p.method === 8) {
+        try { data = inflateRaw(raw, p.fileSize); } catch { data = null; }
+      }
+      if (data === null) {
+        mf.findings.push(finding("parse", "medium", "unreadable-entry",
+          `entry ${pyRepr(p.filename)} uses compression this build cannot read (method ${p.method}); use the Python tool`,
+          { entry: p.filename, method: p.method }));
+      } else {
+        mf.inlinePickles[p.filename] = data;
+      }
+    }
+    if (data !== null) {
       const res = safeLoad(data);
       if (res.error === null) addTensors(mf, res.obj, storageBase, storageLen);
       else mf.findings.push(finding("parse", "medium", "structure-unreadable", "could not rebuild the checkpoint structure"));
@@ -187,32 +204,77 @@ export function parseZip(r: Reader): ModelFile {
 
 // --- plain pickle and legacy ------------------------------------------------
 
-void LEGACY_MAGIC;
-
-function pickleEnd(bytes: Uint8Array): number | null {
-  // Walk opcodes to the STOP; return the offset just past it, or null if none.
-  try {
-    const u = new SafeUnpickler(bytes, new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength));
-    u.load();
-    return u.pos;
-  } catch { return null; }
+/** The pickle starting at `start`: where it ends and what it builds, or null if
+ * it does not parse. Its length is unknown, so a growing window is read. */
+function pickleAt(r: Reader, start: number): { end: number; obj: unknown } | null {
+  for (let n = 1 << 20; ; n *= 16) {
+    const whole = start + n >= r.size;
+    const data = r.slice(start, Math.min(r.size, start + n));
+    try {
+      const u = new SafeUnpickler(data, new DataView(data.buffer, data.byteOffset, data.byteLength));
+      const obj = u.load();
+      return { end: start + u.pos, obj };
+    } catch {
+      if (whole) return null;
+    }
+  }
 }
 
+/** Mirrors pytorch.parse_pickles: a plain pickle, or the legacy torch format
+ * (five pickles - magic, protocol, system info, the object, the storage keys -
+ * then each storage as an 8-byte element count and its raw bytes). */
 export function parsePickles(r: Reader): ModelFile {
   const size = r.size;
-  const bytes = r.slice(0, size);
   const mf = newModelFile("pickle", size);
-  const end = pickleEnd(bytes);
-  const label = "pickle@0";
-  if (end === null) {
-    mf.findings.push(finding("parse", "medium", "malformed-pickle", "pickle at 0 does not parse cleanly"));
-    mf.pickles.push([label, 0, size]);
-    mf.regions.push(region(0, size, "header", label));
+  const objs: unknown[] = [];
+  let pos = 0;
+  while (pos < size && objs.length < 5) {
+    const start = pos;
+    if (objs.length && !r.eq(start, [0x80])) break; // only the first pickle may use protocol 0/1
+    const res = pickleAt(r, start);
+    if (res === null) {
+      mf.findings.push(finding("parse", "medium", "malformed-pickle", `pickle at ${start} does not parse cleanly`));
+      mf.pickles.push([`pickle@${start}`, start, size]);
+      mf.regions.push(region(start, size, "header", `pickle@${start}`));
+      return mf;
+    }
+    mf.pickles.push([`pickle@${start}`, start, res.end]);
+    mf.regions.push(region(start, res.end, "header", `pickle@${start}`));
+    objs.push(res.obj);
+    pos = res.end;
+    if (objs.length === 1 && objs[0] !== LEGACY_MAGIC) return mf; // a plain pickle; anything after it is for S2
+  }
+
+  if (objs.length < 5 || objs[0] !== LEGACY_MAGIC || !Array.isArray(objs[4])) {
+    mf.findings.push(finding("parse", "medium", "bad-legacy", "legacy torch file is incomplete"));
     return mf;
   }
-  mf.pickles.push([label, 0, end]);
-  mf.regions.push(region(0, end, "header", label));
-  // A legacy torch file (first pickle is the magic long) is read by the Python
-  // tool; a plain standalone pickle is fully handled here (S1 + S2).
+  mf.format = "pytorch-legacy";
+  const main = objs[3];
+  const keys = (objs[4] as unknown[]).map((k) => String(k));
+  const dtypes = new Map<string, string>();
+  for (const [, t] of walkTensors(main)) if (t.storage) dtypes.set(t.storage.key, t.storage.dtype);
+  const storageBase = new Map<string, number | null>();
+  const storageLen = new Map<string, number>();
+  for (const key of keys) {
+    if (pos + 8 > size) {
+      mf.findings.push(finding("parse", "high", "truncated", `storage ${key} is missing`));
+      break;
+    }
+    const b = r.slice(pos, pos + 8);
+    const numelBig = new DataView(b.buffer, b.byteOffset, 8).getBigInt64(0, true);
+    const isz = ITEMSIZE[dtypes.get(key) ?? "?"];
+    const numel = Number(numelBig);
+    if (isz === undefined || numelBig < 0n || pos + 8 + numel * isz > size) {
+      mf.findings.push(finding("parse", "high", "bad-storage", `storage ${key} cannot be located`));
+      break;
+    }
+    mf.regions.push(region(pos, pos + 8, "structure", `storage ${key} size`));
+    mf.regions.push(region(pos + 8, pos + 8 + numel * isz, "container", `storage ${key}`));
+    storageBase.set(key, pos + 8);
+    storageLen.set(key, numel * isz);
+    pos += 8 + numel * isz;
+  }
+  addTensors(mf, main, storageBase, storageLen);
   return mf;
 }

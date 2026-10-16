@@ -26,14 +26,42 @@ BF16_EXACT_LOW = 16         # fp32 bits that are zero when a value came from bf1
 
 # --- helpers ----------------------------------------------------------------
 
+def _float_infos(mf: ModelFile) -> dict:
+    """Float tensors the checks read; a repeated name keeps the last, as a dict does."""
+    return {t.name: t for t in mf.tensors if t.dtype in FLOAT_LAYOUT and t.offset is not None and t.nbytes}
+
+
+def _read(mf: ModelFile, f, t) -> RawTensor | None:
+    raw = mf.tensor_bytes(f, t)
+    return RawTensor.from_bytes(t.dtype, t.shape, raw) if len(raw) == t.nbytes else None
+
+
 def _load_floats(mf: ModelFile, f) -> dict[str, RawTensor]:
     out = {}
-    for t in mf.tensors:
-        if t.dtype in FLOAT_LAYOUT and t.offset is not None and t.nbytes:
-            raw = mf.tensor_bytes(f, t)
-            if len(raw) == t.nbytes:
-                out[t.name] = RawTensor.from_bytes(t.dtype, t.shape, raw)
+    for name, t in _float_infos(mf).items():
+        rt = _read(mf, f, t)
+        if rt is not None:
+            out[name] = rt
     return out
+
+
+class _Summary:
+    """What S3 and S4 read from one tensor: its informative elements' count, the
+    OR of their bits, and the fraction set in each low bit plane. Computed once,
+    so the tensor itself can be dropped (the scan holds one tensor at a time)."""
+    __slots__ = ("dtype", "ndim", "n", "or_bits", "means")
+
+    def __init__(self, t: RawTensor, nbits: int, ndim: int | None = None):
+        v = t.data[informative(t.data, t.dtype)]
+        self.dtype, self.ndim, self.n = t.dtype, len(t.shape) if ndim is None else ndim, int(v.size)
+        self.or_bits = int(np.bitwise_or.reduce(v)) if v.size else 0
+        self.means = _bit_means(v, nbits) if v.size else np.zeros(nbits)
+
+
+def _summaries(floats: dict[str, RawTensor], low_bits=None, shapes=None) -> dict[str, _Summary]:
+    bits = S4_BITS if low_bits is None else low_bits
+    shapes = shapes or {}
+    return {n: _Summary(t, bits[t.dtype], len(shapes[n]) if n in shapes else None) for n, t in floats.items()}
 
 
 # --- S3: precision history --------------------------------------------------
@@ -43,20 +71,21 @@ def s3_precision_history(floats: dict[str, RawTensor]) -> list[Finding]:
     fp32 values then have a block of guaranteed-zero low bits. Any model that is
     fp32-on-disk but whose low bits are zero has room that a payload would fill;
     if the zero block is broken in only some tensors, that is where to look."""
+    return _s3(_summaries(floats))
+
+
+def _s3(sums: dict[str, _Summary]) -> list[Finding]:
     findings = []
-    f32 = {n: t for n, t in floats.items() if t.dtype == "F32"}
+    f32 = {n: t for n, t in sums.items() if t.dtype == "F32"}
     if not f32:
         return findings
 
     profiles = {}
     for name, t in f32.items():
-        u = t.data
-        info = informative(u, "F32")
-        if info.sum() < MIN_ELEMENTS:
+        if t.n < MIN_ELEMENTS:
             continue
-        v = u[info]
         # Largest L such that the low L bits are zero for every informative element.
-        any_bit = int(np.bitwise_or.reduce(v))
+        any_bit = t.or_bits
         trailing_zero = (any_bit & -any_bit).bit_length() - 1 if any_bit else 23
         profiles[name] = min(trailing_zero, 23)
 
@@ -136,22 +165,22 @@ def s4_bit_planes(floats: dict[str, RawTensor], low_bits: dict[str, int] | None 
     invisible here; that limit is what experiment E1 measures.
 
     `shapes` gives the tensors' full shapes when `floats` holds samples."""
-    bits = S4_BITS if low_bits is None else low_bits
-    shapes = shapes or {}
+    return _s4(_summaries(floats, low_bits, shapes))
+
+
+def _s4(sums: dict[str, _Summary]) -> list[Finding]:
     findings = []
     by_dtype: dict[str, list] = {}
-    for name, t in sorted(floats.items()):
+    for name, t in sorted(sums.items()):
         # Quantization metadata (AWQ `.scales`, FP8 `weight_scale_inv`) is not
         # weights and its low bits follow the quantization grid, not a model
         # signature; S4 would read it as anomalous. It is also a poor place to
         # hide a payload (few values, read at load time).
         if "scale" in name.lower():
             continue
-        v = t.data[informative(t.data, t.dtype)]
-        if v.size < MIN_ELEMENTS:
+        if t.n < MIN_ELEMENTS:
             continue
-        kb = bits[t.dtype]
-        by_dtype.setdefault(t.dtype, []).append((name, int(v.size), _bit_means(v, kb)))
+        by_dtype.setdefault(t.dtype, []).append((name, t.n, t.means))
 
     for dtype, stats in by_dtype.items():
         kb = len(stats[0][2])
@@ -166,7 +195,7 @@ def s4_bit_planes(floats: dict[str, RawTensor], low_bits: dict[str, int] | None 
         # merges module types (ResNet's downsample.0 is a conv, downsample.1 a
         # BatchNorm), and those carry different low-bit statistics.
         def key(name):
-            return role(name), len(shapes.get(name, floats[name].shape))
+            return role(name), sums[name].ndim
 
         roles: dict[tuple, list] = {}
         for s in stats:
@@ -255,43 +284,83 @@ def s5_differential(floats: dict[str, RawTensor], base: dict[str, RawTensor]) ->
         return findings
 
     for name in shared:
-        a, b = floats[name], base[name]
-        if a.dtype != b.dtype or a.data.shape != b.data.shape:
-            continue
-        diff = a.data != b.data
-        changed = int(diff.sum())
-        if changed < MIN_ELEMENTS:
-            continue
-        mant_bits = FLOAT_LAYOUT[a.dtype][1]
-        cutoff = mant_bits - S5_MARGIN
-        xor = a.data[diff].astype(np.uint64) ^ b.data[diff].astype(np.uint64)
-        hi = _highest_changed_bit(xor, mant_bits)
-        reach = float(np.percentile(hi, S5_PERCENTILE))
-        if reach <= cutoff:
-            findings.append(Finding("S5", "high", "low-bit-only-change",
-                                    f"tensor {name!r} differs from the base model in {changed} elements, "
-                                    f"but the changes reach only bit {int(reach)} of {mant_bits} "
-                                    f"(fine-tuning reaches the top bit) - a low-bit payload, not training",
-                                    {"tensor": name, "changed": changed,
-                                     "highest_changed_bit_p99": round(reach, 1),
-                                     "cutoff": cutoff, "mantissa_bits": mant_bits}))
+        f = _s5_tensor(name, floats[name], base[name])
+        if f is not None:
+            findings.append(f)
     return findings
+
+
+def _s5_tensor(name: str, a: RawTensor, b: RawTensor) -> Finding | None:
+    if a.dtype != b.dtype or a.data.shape != b.data.shape:
+        return None
+    diff = a.data != b.data
+    changed = int(diff.sum())
+    if changed < MIN_ELEMENTS:
+        return None
+    mant_bits = FLOAT_LAYOUT[a.dtype][1]
+    cutoff = mant_bits - S5_MARGIN
+    xor = a.data[diff].astype(np.uint64) ^ b.data[diff].astype(np.uint64)
+    hi = _highest_changed_bit(xor, mant_bits)
+    reach = float(np.percentile(hi, S5_PERCENTILE))
+    if reach > cutoff:
+        return None
+    return Finding("S5", "high", "low-bit-only-change",
+                   f"tensor {name!r} differs from the base model in {changed} elements, "
+                   f"but the changes reach only bit {int(reach)} of {mant_bits} "
+                   f"(fine-tuning reaches the top bit) - a low-bit payload, not training",
+                   {"tensor": name, "changed": changed,
+                    "highest_changed_bit_p99": round(reach, 1),
+                    "cutoff": cutoff, "mantissa_bits": mant_bits})
 
 
 # --- entry point used by report.py ------------------------------------------
 
-def analyse(mf: ModelFile, f, base: dict[str, RawTensor] | None = None) -> list[Finding]:
-    floats = _load_floats(mf, f)
-    if not floats:
+class BaseFile:
+    """A claimed base model for S5, read one tensor at a time while it is compared."""
+
+    def __init__(self, mf: ModelFile, f):
+        self.mf, self.f = mf, f
+        self.infos = _float_infos(mf)
+
+    def get(self, name: str) -> RawTensor | None:
+        t = self.infos.get(name)
+        return _read(self.mf, self.f, t) if t is not None else None
+
+
+def analyse(mf: ModelFile, f, base: "dict[str, RawTensor] | BaseFile | None" = None) -> list[Finding]:
+    """S3, S4 and (with a base) S5, holding one tensor - and its base counterpart -
+    in memory at a time. Results are identical to the dictionary-based checks."""
+    sums: dict[str, _Summary] = {}
+    s5: list[tuple[str, Finding]] = []
+    shared = 0
+    for name, t in _float_infos(mf).items():
+        a = _read(mf, f, t)
+        if a is None:
+            continue
+        sums[name] = _Summary(a, S4_BITS[a.dtype])
+        if base is not None:
+            b = base.get(name)
+            if b is not None:
+                shared += 1
+                found = _s5_tensor(name, a, b)
+                if found is not None:
+                    s5.append((name, found))
+        del a
+    if not sums:
         return []
-    findings = s3_precision_history(floats) + s4_bit_planes(floats)
+    findings = _s3(sums) + _s4(sums)
     if base is not None:
-        findings += s5_differential(floats, base)
+        if not shared:
+            findings.append(Finding("S5", "info", "no-shared-tensors",
+                                    "the base model shares no tensor names with this model"))
+        else:
+            findings += [x for _, x in sorted(s5, key=lambda p: p[0])]
     return findings
 
 
 def load_base(path, open_model) -> dict[str, RawTensor]:
-    """Load a base model's float tensors for S5."""
+    """Load a base model's float tensors for S5 (all in memory; for small models
+    and experiments - report.scan streams the base with BaseFile instead)."""
     from pathlib import Path
     path = Path(path)
     with open(path, "rb") as fh:

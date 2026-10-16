@@ -89,7 +89,7 @@
           <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-hair">
             <div class="py-space-md px-space-lg flex items-center gap-space-sm">
               <span class="w-1.5 h-1.5 rounded-full bg-primary-container shrink-0"></span>
-              <span class="font-code-md text-code-md text-on-surface font-semibold">5 checks · <span data-fact="tests.total">150</span> tests</span>
+              <span class="font-code-md text-code-md text-on-surface font-semibold">5 checks · <span data-fact="tests.total">216</span> tests</span>
             </div>
             <div class="py-space-md px-space-lg flex items-center gap-space-sm">
               <span class="w-1.5 h-1.5 rounded-full bg-outline shrink-0"></span>
@@ -382,7 +382,7 @@
 <span class="text-primary-container select-none">$ </span>python scripts/run_hf_survey.py --list hf_models.json
 <span class="text-primary-container select-none">$ </span>python scripts/report.py</div>
             </div>
-            <p class="font-body-sm text-body-sm text-outline leading-relaxed">Nothing is trained: models are downloaded pretrained and only run forward. Every run appends to <span class="font-code-sm text-code-sm">results/ledger.jsonl</span> with the git commit that produced it, and <span class="font-code-sm text-code-sm">docs/RESULTS.md</span> is generated from that ledger, never edited by hand. <span data-fact="tests.total">150</span> tests: <span data-fact="tests.py">110</span> Python, and <span data-fact="tests.ts">40</span> for the browser build, including parity tests that require byte-identical JSON reports to the Python tool on every fixture.</p>
+            <p class="font-body-sm text-body-sm text-outline leading-relaxed">Nothing is trained: models are downloaded pretrained and only run forward. Every run appends to <span class="font-code-sm text-code-sm">results/ledger.jsonl</span> with the git commit that produced it, and <span class="font-code-sm text-code-sm">docs/RESULTS.md</span> is generated from that ledger, never edited by hand. <span data-fact="tests.total">216</span> tests: <span data-fact="tests.py">117</span> Python, and <span data-fact="tests.ts">99</span> for the browser build, including parity tests that require byte-identical JSON reports to the Python tool on every fixture.</p>
           </div>
         </section>
 
@@ -398,7 +398,7 @@
               <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>Single-file statistics cannot see a small or thinly spread encrypted payload in a fair-coin model.</span></li>
               <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>The base diff needs the real base model, and misses a payload inside a tensor the fine-tune genuinely trained.</span></li>
               <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>The survey tests 64 KB samples, not whole files, and is weighted to the most downloaded models, not a random sample.</span></li>
-              <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>Legacy (pre-1.6) torch files and compressed zip entries are read by the command-line tool, not the browser.</span></li>
+              <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>Both scanners hold one tensor in memory at a time (and its base counterpart for S5), so files of any size scan, but a single tensor larger than the memory available cannot be checked.</span></li>
             </ul>
           </div>
         </section>

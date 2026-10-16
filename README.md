@@ -117,8 +117,16 @@ and get the same report as the command-line tool, without installing anything.
   parser. On every fixture the two must produce byte-identical canonical JSON
   reports, enforced in both directions (`web/test/*.test.ts` against committed
   golden reports, `tests/test_web_parity.py` against fresh Python output).
-- The browser reads everything except legacy (pre-1.6) torch files and
-  compressed zip entries, which the command-line tool handles.
+- **Any size.** The scan runs in a worker that reads the file a range at a
+  time (`FileReaderSync` over `File.slice`), so memory is about one tensor, not
+  the file: a 3.19 GiB model scans with 0.17 GiB peak memory and the same
+  report as Python (`web/test/large_file.test.ts`, opt-in, with
+  `scripts/make_large_fixture.py`). The worker starts from a `blob:` URL, so it
+  inherits the page policy; `fetch`, `WebSocket` and `importScripts` are
+  refused inside it.
+- Every format the Python tool reads, including legacy (pre-1.6) torch files
+  and deflate-compressed zip entries. A `data.pkl` compressed with bzip2 or
+  LZMA (which torch never writes) is reported as unreadable in the browser.
 
 ```
 cd web

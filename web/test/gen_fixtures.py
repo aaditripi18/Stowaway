@@ -129,6 +129,31 @@ def gen_pytorch():
     golden("evil", d / "evil.pt")
     copy.copy  # keep import tidy
 
+    # The legacy format (torch < 1.6, still loadable): five pickles, then raw storages.
+    torch.save(sd, d / "legacy_clean.pt", _use_new_zipfile_serialization=False)
+    golden("legacy_clean", d / "legacy_clean.pt")
+    torch.save({"w": sd["0.weight"], "x": Evil()}, d / "legacy_evil.pt", _use_new_zipfile_serialization=False)
+    golden("legacy_evil", d / "legacy_evil.pt")
+    w = torch.arange(24, dtype=torch.float32).reshape(4, 6) / 7
+    torch.save({"w": w, "row": w[1], "col": w[:, 2]}, d / "legacy_views.pt", _use_new_zipfile_serialization=False)
+    golden("legacy_views", d / "legacy_views.pt")
+    raw = (d / "legacy_clean.pt").read_bytes()
+    (d / "legacy_trailing.pt").write_bytes(raw + b"MZ" + bytes(range(256)) * 4)
+    golden("legacy_trailing", d / "legacy_trailing.pt")
+
+    # Zips whose entries are deflated (torch never does this; zipfile still reads
+    # them). Entry dates are copied from the source, so the files are reproducible.
+    def deflated(src, dst):
+        with zipfile.ZipFile(src) as zin, zipfile.ZipFile(dst, "w") as zout:
+            for info in zin.infolist():
+                ni = zipfile.ZipInfo(info.filename, date_time=info.date_time)
+                ni.compress_type = zipfile.ZIP_DEFLATED
+                zout.writestr(ni, zin.read(info))
+    deflated(d / "clean.pt", d / "compressed.pt")
+    golden("compressed", d / "compressed.pt")
+    deflated(d / "evil.pt", d / "compressed_evil.pt")
+    golden("compressed_evil", d / "compressed_evil.pt")
+
 
 def gen_gguf():
     """GGUF fixtures: clean, trailing data, and a dirty alignment-padding byte."""

@@ -52,6 +52,16 @@ function unquote(s: string): string {
     e[0] === "x" ? String.fromCharCode(parseInt(e.slice(1), 16)) : ({ n: "\n", t: "\t", r: "\r", "0": "\0" } as Record<string, string>)[e] ?? e);
 }
 
+/** A pickle LONG: signed little-endian two's complement. A plain number when it
+ * fits exactly, else a BigInt (Python ints are unbounded; the legacy torch magic
+ * number is 80 bits). */
+function longLE(bytes: Uint8Array): number | bigint {
+  let v = 0n;
+  for (let i = bytes.length - 1; i >= 0; i--) v = (v << 8n) | BigInt(bytes[i]!);
+  if (bytes.length && bytes[bytes.length - 1]! & 0x80) v -= 1n << BigInt(8 * bytes.length);
+  return v >= BigInt(Number.MIN_SAFE_INTEGER) && v <= BigInt(Number.MAX_SAFE_INTEGER) ? Number(v) : v;
+}
+
 const INT_OPS =new Set(["BININT", "BININT1", "BININT2", "LONG1", "INT"]);
 
 export class SafeUnpickler {
@@ -99,7 +109,8 @@ export class SafeUnpickler {
         case 0x4a: this.stack.push(this.i4()); break;              // BININT 'J'
         case 0x4b: this.stack.push(this.u1()); break;              // BININT1 'K'
         case 0x4d: this.stack.push(this.u2()); break;              // BININT2 'M'
-        case 0x8a: { const n = this.u1(); let v = 0n; const bytes = this.take(n); for (let i = n - 1; i >= 0; i--) v = (v << 8n) | BigInt(bytes[i]!); this.stack.push(Number(v)); break; } // LONG1
+        case 0x8a: this.stack.push(longLE(this.take(this.u1()))); break; // LONG1
+        case 0x8b: this.stack.push(longLE(this.take(this.u4()))); break; // LONG4
         case 0x47: this.stack.push(this.dv.getFloat64(this.pos, false)); this.pos += 8; break; // BINFLOAT 'G' (big-endian)
         case 0x8c: this.stack.push(this.dec.decode(this.take(this.u1()))); break; // SHORT_BINUNICODE
         case 0x58: this.stack.push(this.dec.decode(this.take(this.u4()))); break; // BINUNICODE 'X'

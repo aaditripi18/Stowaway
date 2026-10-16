@@ -1,0 +1,1 @@
+{"file":"legacy_clean.pt","findings":[],"format":"pytorch-legacy","report_version":1,"sha256":"e6a93fc510e25c1577321b1f9f3a12dac0851db8c6836bbcabda6a0ab3278f70","size":1432,"tensors":{"bytes":320,"count":7,"dtypes":{"F32":6,"I64":1}},"verdict":"clean"}
