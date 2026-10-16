@@ -1,0 +1,595 @@
+{
+ "selected": "2026-10-16",
+ "rule": [
+  "Rule (fixed before any model is sampled): walk the most-downloaded public models",
+  "that ship safetensors, skip gated ones and ones without a top-level weights file,",
+  "classify each by the float dtype holding most of its parameters, and keep the",
+  "first N of each dtype. The frozen list keeps the survey reproducible after the",
+  "rankings change."
+ ],
+ "scanned": 1000,
+ "skipped": {
+  "gated": 38,
+  "no_file": 11,
+  "no_float": 21,
+  "in_earlier_list": 160
+ },
+ "excluded_lists": [
+  "hf_models.json",
+  "hf_models_batch2.json",
+  "hf_models_batch3.json"
+ ],
+ "models": [
+  {
+   "repo": "Alibaba-NLP/gte-reranker-modernbert-base",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 149605633
+   },
+   "rank": 122
+  },
+  {
+   "repo": "timm/vit_small_patch14_dinov2.lvd142m",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 22056192
+   },
+   "rank": 123
+  },
+  {
+   "repo": "cross-encoder/ms-marco-MiniLM-L12-v2",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "I64": 512,
+    "F32": 33360385
+   },
+   "rank": 127
+  },
+  {
+   "repo": "joeddav/xlm-roberta-large-xnli",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "I64": 514,
+    "F32": 560943107
+   },
+   "rank": 128
+  },
+  {
+   "repo": "timm/resnet18.a1_in1k",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 11699112
+   },
+   "rank": 130
+  },
+  {
+   "repo": "IDEA-Research/grounding-dino-base",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "I64": 497664,
+    "F32": 232313216
+   },
+   "rank": 131
+  },
+  {
+   "repo": "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "I64": 514,
+    "F32": 117641089
+   },
+   "rank": 135
+  },
+  {
+   "repo": "google-t5/t5-base",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 222903936
+   },
+   "rank": 136
+  },
+  {
+   "repo": "google-bert/bert-base-multilingual-uncased",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 168055961
+   },
+   "rank": 138
+  },
+  {
+   "repo": "distilbert/distilgpt2",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 88204032
+   },
+   "rank": 140
+  },
+  {
+   "repo": "docling-project/docling-layout-heron",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 42889979
+   },
+   "rank": 144
+  },
+  {
+   "repo": "facebook/wav2vec2-base-960h",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 94395552
+   },
+   "rank": 146
+  },
+  {
+   "repo": "Falconsai/nsfw_image_detection",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 85800194
+   },
+   "rank": 148
+  },
+  {
+   "repo": "google/siglip2-giant-opt-patch16-384",
+   "file": "model-00001-of-00002.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 1871885426
+   },
+   "rank": 150
+  },
+  {
+   "repo": "timm/tf_efficientnetv2_s.in21k_ft_in1k",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 21612360
+   },
+   "rank": 151
+  },
+  {
+   "repo": "autogluon/chronos-bolt-base",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 205292928
+   },
+   "rank": 152
+  },
+  {
+   "repo": "google/owlv2-base-patch16-ensemble",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 154966791
+   },
+   "rank": 154
+  },
+  {
+   "repo": "patrickjohncyh/fashion-clip",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "I64": 127,
+    "F32": 151277312
+   },
+   "rank": 155
+  },
+  {
+   "repo": "laion/CLIP-ViT-L-14-laion2B-s32B-b82K",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "I64": 334,
+    "F32": 427616512
+   },
+   "rank": 161
+  },
+  {
+   "repo": "openai/whisper-base",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 72593920
+   },
+   "rank": 166
+  },
+  {
+   "repo": "Qwen/Qwen3-Embedding-4B",
+   "file": "model-00001-of-00002.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 4021774336
+   },
+   "rank": 147
+  },
+  {
+   "repo": "Qwen/Qwen2.5-Coder-14B-Instruct",
+   "file": "model-00001-of-00006.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 14770033664
+   },
+   "rank": 149
+  },
+  {
+   "repo": "zai-org/GLM-OCR",
+   "file": "model.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 1325258240
+   },
+   "rank": 153
+  },
+  {
+   "repo": "Qwen/Qwen2.5-VL-7B-Instruct-AWQ",
+   "file": "model-00001-of-00002.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "I32": 6525288448,
+    "BF16": 1766749184,
+    "F16": 129024
+   },
+   "rank": 156
+  },
+  {
+   "repo": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-NVFP4",
+   "file": "model-00001-of-00005.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "F32": 7916416,
+    "BF16": 1078212032,
+    "F8_E4M3": 1905738240,
+    "U8": 15245905920
+   },
+   "rank": 157
+  },
+  {
+   "repo": "nvidia/Qwen2.5-VL-7B-Instruct-NVFP4",
+   "file": "model-00001-of-00002.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 1766878208,
+    "F8_E4M3": 407830528,
+    "U8": 3262644224
+   },
+   "rank": 158
+  },
+  {
+   "repo": "google/gemma-4-12B-it",
+   "file": "model.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 11959730224
+   },
+   "rank": 159
+  },
+  {
+   "repo": "autotrust/JEV-27B-VL",
+   "file": "model-00001-of-00018.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 27781427952
+   },
+   "rank": 160
+  },
+  {
+   "repo": "mistralai/Mistral-7B-Instruct-v0.2",
+   "file": "model-00001-of-00003.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 7241732096
+   },
+   "rank": 162
+  },
+  {
+   "repo": "Qwen/Qwen3-Reranker-0.6B",
+   "file": "model.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 595776512
+   },
+   "rank": 163
+  },
+  {
+   "repo": "HuggingFaceTB/SmolLM2-135M",
+   "file": "model.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 134515008
+   },
+   "rank": 165
+  },
+  {
+   "repo": "Qwen/Qwen2.5-Coder-7B-Instruct",
+   "file": "model-00001-of-00004.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 7615616512
+   },
+   "rank": 171
+  },
+  {
+   "repo": "nvidia/NVIDIA-Nemotron-3-Nano-4B-BF16",
+   "file": "model.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 3973556832
+   },
+   "rank": 174
+  },
+  {
+   "repo": "Qwen/Qwen2.5-32B-Instruct",
+   "file": "model-00001-of-00017.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 32763876352
+   },
+   "rank": 177
+  },
+  {
+   "repo": "datalab-to/chandra-ocr-2",
+   "file": "model.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 5295564288
+   },
+   "rank": 179
+  },
+  {
+   "repo": "Qwen/Qwen3.5-35B-A3B",
+   "file": "model.safetensors-00001-of-00014.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 35951817904,
+    "F32": 4800
+   },
+   "rank": 181
+  },
+  {
+   "repo": "datalab-to/surya-ocr-2",
+   "file": "model.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 686154304
+   },
+   "rank": 182
+  },
+  {
+   "repo": "deepseek-ai/DeepSeek-V3",
+   "file": "model-00001-of-000163.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 3918786560,
+    "F8_E4M3": 680571043840,
+    "F32": 41555600
+   },
+   "rank": 185
+  },
+  {
+   "repo": "Qwen/Qwen3-VL-Embedding-8B",
+   "file": "model-00001-of-00004.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 8144793840
+   },
+   "rank": 188
+  },
+  {
+   "repo": "Qwen/Qwen3-VL-8B-Instruct-FP8",
+   "file": "model-00001-of-00002.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "F32": 423936,
+    "BF16": 1821356272,
+    "F8_E4M3": 6945767424
+   },
+   "rank": 190
+  },
+  {
+   "repo": "thenlper/gte-large",
+   "file": "model.safetensors",
+   "dtype": "F16",
+   "params": {
+    "I64": 512,
+    "F16": 335141888
+   },
+   "rank": 512
+  },
+  {
+   "repo": "QuantTrio/GLM-4.7-Flash-AWQ",
+   "file": "model-00001-of-00007.safetensors",
+   "dtype": "F16",
+   "params": {
+    "F32": 3008,
+    "I32": 28830597120,
+    "F16": 2390888448
+   },
+   "rank": 530
+  },
+  {
+   "repo": "MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli",
+   "file": "model.safetensors",
+   "dtype": "F16",
+   "params": {
+    "I64": 512,
+    "F16": 184424451
+   },
+   "rank": 538
+  },
+  {
+   "repo": "Qwen/Qwen2.5-Coder-7B-Instruct-GPTQ-Int4",
+   "file": "model-00001-of-00002.safetensors",
+   "dtype": "F16",
+   "params": {
+    "I32": 6525288448,
+    "F16": 1090328064
+   },
+   "rank": 544
+  },
+  {
+   "repo": "cagliostrolab/animagine-xl-4.0",
+   "file": "animagine-xl-4.0-opt.safetensors",
+   "dtype": "F16",
+   "params": {
+    "F16": 2567463684
+   },
+   "rank": 563
+  },
+  {
+   "repo": "bigscience/bloom-560m",
+   "file": "model.safetensors",
+   "dtype": "F16",
+   "params": {
+    "F16": 559214592
+   },
+   "rank": 607
+  },
+  {
+   "repo": "microsoft/Florence-2-large",
+   "file": "model.safetensors",
+   "dtype": "F16",
+   "params": {
+    "F16": 776721497
+   },
+   "rank": 634
+  },
+  {
+   "repo": "jinaai/jina-embeddings-v2-base-en",
+   "file": "model.safetensors",
+   "dtype": "F16",
+   "params": {
+    "F16": 137368320
+   },
+   "rank": 636
+  },
+  {
+   "repo": "llava-hf/llava-onevision-qwen2-0.5b-ov-hf",
+   "file": "model.safetensors",
+   "dtype": "F16",
+   "params": {
+    "F16": 893675552
+   },
+   "rank": 639
+  },
+  {
+   "repo": "Qwen/Qwen2.5-Coder-14B-Instruct-AWQ",
+   "file": "model-00001-of-00003.safetensors",
+   "dtype": "F16",
+   "params": {
+    "I32": 13212057600,
+    "F16": 1557976064
+   },
+   "rank": 644
+  },
+  {
+   "repo": "mixedbread-ai/deepset-mxbai-embed-de-large-v1",
+   "file": "model.safetensors",
+   "dtype": "F16",
+   "params": {
+    "F16": 487066624
+   },
+   "rank": 688
+  },
+  {
+   "repo": "llava-hf/llava-v1.6-mistral-7b-hf",
+   "file": "model-00001-of-00004.safetensors",
+   "dtype": "F16",
+   "params": {
+    "F16": 7566747648
+   },
+   "rank": 691
+  },
+  {
+   "repo": "TaylorAI/bge-micro-v2",
+   "file": "model.safetensors",
+   "dtype": "F16",
+   "params": {
+    "F16": 17389824
+   },
+   "rank": 710
+  },
+  {
+   "repo": "Qwen/Qwen2.5-7B-Instruct-GPTQ-Int4",
+   "file": "model-00001-of-00002.safetensors",
+   "dtype": "F16",
+   "params": {
+    "I32": 6525288448,
+    "F16": 1090328064
+   },
+   "rank": 712
+  },
+  {
+   "repo": "boboliu/bge-reranker-v2.5-gemma2-lightweight-gptq",
+   "file": "model-00001-of-00002.safetensors",
+   "dtype": "F16",
+   "params": {
+    "I32": 8323596288,
+    "F16": 918235136
+   },
+   "rank": 772
+  },
+  {
+   "repo": "EleutherAI/gpt-neox-20b",
+   "file": "model-00001-of-00046.safetensors",
+   "dtype": "F16",
+   "params": {
+    "F16": 20554568208,
+    "U8": 184549376
+   },
+   "rank": 791
+  },
+  {
+   "repo": "mlx-community/Qwen2.5-Coder-7B-Instruct-4bit",
+   "file": "model.safetensors",
+   "dtype": "F16",
+   "params": {
+    "U32": 7615283200,
+    "F16": 333312
+   },
+   "rank": 798
+  },
+  {
+   "repo": "sdadas/mmlw-retrieval-roberta-large",
+   "file": "model.safetensors",
+   "dtype": "F16",
+   "params": {
+    "F16": 434961408
+   },
+   "rank": 827
+  },
+  {
+   "repo": "huggyllama/llama-7b",
+   "file": "model-00001-of-00002.safetensors",
+   "dtype": "F16",
+   "params": {
+    "F16": 6738415616,
+    "F32": 2048
+   },
+   "rank": 853
+  },
+  {
+   "repo": "cyankiwi/Qwen3.6-35B-A3B-AWQ-4bit",
+   "file": "model-00001-of-00006.safetensors",
+   "dtype": "F16",
+   "params": {
+    "I32": 33017561088,
+    "BF16": 485905648,
+    "F16": 2448355968
+   },
+   "rank": 884
+  }
+ ]
+}
