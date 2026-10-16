@@ -72,6 +72,33 @@ What the numbers say:
   on 15 held-out honest fine-tunes; S4's false-positive models on a fresh batch
   fell from 5 to 1 of 20 bf16 and 1 to 0 of 20 fp16.
 
+## Install
+
+```
+pip install "git+https://github.com/aaditripi18/Stowaway"     # needs only numpy
+docker build -t stowaway https://github.com/aaditripi18/Stowaway.git
+docker run --rm -v "$PWD:/data" stowaway scan /data/model.safetensors
+```
+
+Python 3.10–3.13 on Linux, Windows and macOS (CI). The supported Python API,
+the report schema and every finding code are in [docs/API.md](docs/API.md);
+changes are in [CHANGELOG.md](CHANGELOG.md). Distributed from GitHub only.
+
+## How it relates to existing scanners
+
+| | picklescan, ModelScan, fickling | Stowaway |
+|---|---|---|
+| Code in pickle data (S1) | yes: their core job | yes; flags the same 8/8 code payloads as picklescan in E5 |
+| `.safetensors` and `.gguf` | not read (no pickle inside) | parsed, and every byte accounted for |
+| Bytes outside the format (S2) | no | trailing data, padding, unused storage, extra zip entries |
+| Data in the weights (S3, S4) | no | yes, with the limits measured: from one file it often cannot see a payload |
+| Diff against the claimed base (S5) | no | yes, including straight from the Hub against the card's `base_model` |
+| Runs in the browser, nothing uploaded | no | yes, with the same reports |
+
+Stowaway is not a replacement for a pickle scanner's maintained denylist, and
+nothing here proves a model safe: a clean report means these checks found
+nothing, and FINDINGS says what each check cannot see.
+
 ## Use it
 
 ```
