@@ -166,3 +166,23 @@ from the clean model).
 - **H6** S4's one-sided rule costs what it says: zero and text payloads are caught
   from the file alone in fewer cells than random payloads of the same size and k,
   summed over models; the base diff catches all of them wherever it catches random.
+
+### E0d. S4 on small role groups
+
+**Why.** S4 reads a tensor against its role peers when there are >= 3. With 3
+peers the between-tensor spread (tau) is estimated near zero, so a small real
+difference gives an extreme z: RegNet-Y-400MF's block-4 `proj` sits at 50.0% on
+bit 0 against 51.2% for its three peers, z = -7.4 (FINDINGS, section 0c).
+
+**Rule (S4b).** For a role reference with fewer than 6 peers, use
+tau = max(tau of the peers, tau of the whole model's tensors of that dtype):
+a handful of tensors cannot show less spread than the model has. Nothing else
+changes.
+
+**Validation.** Dev: the nine torchvision models (all have now been looked at).
+Fresh, used once: a fourth batch of Hugging Face models (`results/hf_models_batch4.json`:
+20 F32, 20 BF16, 20 F16 by the survey's rule, excluding every earlier batch),
+frozen before any weight is read; S4 and S4b on identical samples. **Decision:**
+S4b replaces S4 if, on the fresh batch, it flags no more models than S4 in any
+dtype, and the E1b random-payload detection count per dtype drops by at most one
+model.
