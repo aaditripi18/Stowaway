@@ -125,8 +125,9 @@ npm test            # 40 tests
 npm run build       # static site in web/dist
 ```
 
-Deployed on Vercel from `web/` (`cd web && vercel deploy --prod`); any static host
-works. Design from Stitch; the figures on the project page are copied from
+Deployed on Vercel with `web/` as the project root: every push to `main` builds
+and publishes it (`cd web && vercel deploy --prod` does the same by hand). Any
+static host works. Design from Stitch; the figures on the project page are copied from
 [docs/RESULTS.md](docs/RESULTS.md) and checked by hand, not yet generated.
 
 ## Limitations
