@@ -269,10 +269,16 @@ def section_e4(rows):
 E4B_T = (0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4)
 
 
+def s5c_threshold(n: int) -> float:
+    """The chosen S5c threshold (PLAN.md, E4b): 3 binomial SDs below 50%."""
+    return 0.5 - 1.5 / n ** 0.5
+
+
 def e4b_rules(T):
     """S5 as calibrated in E4, and the two refinements PLAN.md phase 2 compares."""
     return {
         "S5": lambda r: r["p99"] <= r["cutoff"],
+        "S5c (T(n), chosen)": lambda r: r["low_share"] >= s5c_threshold(r["changed"]),
         f"S5b (T={T})": lambda r: r["p99"] <= r["cutoff"] and r["top_share"] >= T,
         f"S5c (T={T})": lambda r: r["low_share"] >= T,
     }

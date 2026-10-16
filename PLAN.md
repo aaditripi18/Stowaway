@@ -199,3 +199,17 @@ above.
 **Choice (dev run E0d-2026-10-16T14:32:53Z-b13b0cb).** S4c: it removes the one
 dev false positive (RegNet `proj`) and changes nothing else on the nine models;
 S4b removes nothing. The fresh batch judges S4c (S4b is still recorded).
+
+**E4b dev result and choice (run E4b-2026-10-16T14:20:33Z-63687ab, 12 pairs,
+1,637 changed shared tensors; before any fresh pair is read).** The E4 rule (S5)
+flags 129 honest tensors in 8 of 12 fine-tunes when whole files are scanned
+(E4's 0 false positives were on sampled tensors of the six largest roles). S5b
+removes them but misses almost every payload in a low-gradient tensor (case b).
+S5c at a fixed T = 0.4 has 0 false positives, but honest shares reach 0.382 in
+768-element tensors, where binomial noise is about 0.018. **Chosen rule:** S5c
+with a size-aware threshold, three binomial standard deviations below the
+payload's expected 50%: flag if the modal highest-changed-bit share among bits
+<= the cutoff is >= T(n) = 0.5 - 1.5/sqrt(n), n = changed elements (0.406 at
+n = 256, 0.446 at 768, 0.495 at 100,000). Dev: 0 honest false positives (closest
+margin 0.064), case (a) 8/8, case (b) 0/11, 3/11, 9/11, 9/11 at k = 8, 16, 20, 21.
+The fresh batch judges this rule once.
