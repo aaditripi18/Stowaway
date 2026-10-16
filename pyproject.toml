@@ -3,6 +3,7 @@ name = "stowaway"
 version = "0.1.0"
 description = "Find what model-file scanners miss: payloads in weights, unaccounted bytes, unchecked lineage."
 requires-python = ">=3.10"
+license = { text = "MIT" }
 dependencies = ["numpy>=1.24"]
 
 [project.optional-dependencies]

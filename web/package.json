@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "description": "Stowaway scanner core in TypeScript: the same checks as the Python package, in the browser.",
+  "license": "MIT",
   "scripts": {
     "test": "vitest run",
     "build": "vite build"

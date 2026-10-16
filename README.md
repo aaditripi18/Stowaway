@@ -88,3 +88,8 @@ The Hugging Face survey samples tensors with HTTP range requests (no full downlo
 
 Nothing is trained: models are downloaded pretrained and only run forward. Every
 run appends to `results/ledger.jsonl` with the git commit that produced it.
+
+## License
+
+MIT — see [LICENSE](LICENSE). The fonts bundled with the browser build keep their
+own licenses (SIL OFL 1.1 and Apache 2.0); see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
