@@ -44,8 +44,8 @@ compressed and "MZ"+random payloads behave identically (0 catches in every
 fair-coin model), so encrypting or compressing a payload buys an attacker
 nothing that a fair-coin model does not already give.
 
-**The cost of S4c.** Re-scoring E6's planted models with S4c (E0d) turns 14 of
-994 caught cells in the six re-scored models into misses (ResNet-18 17 -> 14,
+**The cost of S4c.** Re-scoring E6's planted models with S4c (E0d) turns 14 of the
+302 caught cells (994 planted) in the six re-scored models into misses (ResNet-18 17 -> 14,
 ShuffleNet 20 -> 16): planted tensors whose reference was within 0.02 of a fair
 coin, exactly where S4c stops testing. E0d's fresh batch showed no such loss on
 its random payloads; E6's wider grid does, and it is reported here.
