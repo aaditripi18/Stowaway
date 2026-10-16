@@ -13,7 +13,12 @@ const SIGNATURE_MIN_ELEMENTS = 4096;
 const Z_FLAG = 6.0;
 const S5_MARGIN = 3;
 const S5_PERCENTILE = 99.0;
+// Which S5 rule runs; must equal weights.S5_RULE in Python (see there).
+export const S5_RULE: "p99" | "s5c" = "p99";
 const S4_BITS: Record<string, number> = { F32: 8, F16: 3, BF16: 2 }; // round(mant*8/23)
+// S4c (PLAN.md, E0d): test a bit plane only if its reference is at least this far
+// from a fair coin; 0 = off. Must equal weights.S4_MIN_SIGNATURE in Python.
+export const S4_MIN_SIGNATURE = 0;
 
 export type RawFloats = Record<string, RawFloat>;
 
@@ -139,6 +144,7 @@ export function s4BitPlanes(sums: Map<string, TensorSummary>): Finding[] {
       let bestB = 0, bestScore = -Infinity;
       for (let b = 0; b < kb; b++) {
         const se = Math.sqrt(Math.max(sig[b]! * (1 - sig[b]!), 1e-6) / n);
+        if (S4_MIN_SIGNATURE && Math.abs(sig[b]! - 0.5) < S4_MIN_SIGNATURE) continue;
         const closer = (Math.abs(sig[b]! - 0.5) - Math.abs(m[b]! - 0.5)) / Math.sqrt(se * se + tau[b]! * tau[b]!);
         if (closer > bestScore) { bestScore = closer; bestB = b; }
       }
@@ -193,6 +199,18 @@ export function s5Tensor(name: string, a: RawFloat, b: RawFloat): Finding | null
   const { changed, hist } = changedBitHistogram(a.u, b.u, mantBits);
   if (changed < MIN_ELEMENTS) return null;
   const cutoff = mantBits - S5_MARGIN;
+  if (S5_RULE === "s5c") {
+    let j = 0;
+    for (let i = 1; i <= cutoff + 1; i++) if (hist[i]! > hist[j]!) j = i;  // bits -1 .. cutoff, first max
+    const share = hist[j]! / changed;
+    const threshold = 0.5 - 1.5 / Math.sqrt(changed);
+    if (share < threshold) return null;
+    return finding("S5", "high", "low-bit-only-change",
+      `tensor ${pyRepr(name)} differs from the base model in ${changed} elements, and in ` +
+      `${pyStr(round(100 * share, 1))}% of them the highest changed bit is bit ${j - 1} of ${mantBits}: ` +
+      `a payload in the low bits stops at one bit in about half its elements; training does not`,
+      { tensor: name, changed, bit: j - 1, share: round(share, 4), threshold: round(threshold, 4), cutoff, mantissa_bits: mantBits });
+  }
   const reach = percentileFromHistogram(hist, S5_PERCENTILE);
   if (reach <= cutoff) {
     return finding("S5", "high", "low-bit-only-change",

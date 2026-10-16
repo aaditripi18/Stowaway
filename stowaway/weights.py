@@ -274,6 +274,11 @@ def role(name: str) -> str:
 # floor; the cutoff is 20 bits for float32, 7 for fp16, 4 for bf16.
 S5_MARGIN = 3
 S5_PERCENTILE = 99.0  # of changed elements; robust to a few coincidental high flips
+# Which S5 rule runs (PLAN.md, E4b). "p99": the E4 rule above. "s5c": a payload in
+# the low k bits makes bit k-1 the highest changed bit of about half the changed
+# elements; flag a tensor when some bit <= the cutoff holds a share of at least
+# 0.5 - 1.5/sqrt(n) (three binomial SDs below one half, n = changed elements).
+S5_RULE = "p99"
 
 
 def _highest_changed_bit(xor: np.ndarray, mant_bits: int) -> np.ndarray:
@@ -317,6 +322,19 @@ def _s5_tensor(name: str, a: RawTensor, b: RawTensor) -> Finding | None:
     cutoff = mant_bits - S5_MARGIN
     xor = a.data[diff].astype(np.uint64) ^ b.data[diff].astype(np.uint64)
     hi = _highest_changed_bit(xor, mant_bits)
+    if S5_RULE == "s5c":
+        low = np.bincount(hi + 1, minlength=mant_bits + 1)[: cutoff + 2]  # bits -1 .. cutoff
+        j = int(np.argmax(low))
+        share = float(low[j]) / changed
+        threshold = 0.5 - 1.5 / changed ** 0.5
+        if share < threshold:
+            return None
+        return Finding("S5", "high", "low-bit-only-change",
+                       f"tensor {name!r} differs from the base model in {changed} elements, and in "
+                       f"{round(100 * share, 1)}% of them the highest changed bit is bit {j - 1} of {mant_bits}: "
+                       f"a payload in the low bits stops at one bit in about half its elements; training does not",
+                       {"tensor": name, "changed": changed, "bit": j - 1, "share": round(share, 4),
+                        "threshold": round(threshold, 4), "cutoff": cutoff, "mantissa_bits": mant_bits})
     reach = float(np.percentile(hi, S5_PERCENTILE))
     if reach > cutoff:
         return None
