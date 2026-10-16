@@ -108,3 +108,35 @@ The scanner never unpickles with real classes: `find_class` returns stubs only.
 | 6 | E4 differential on real fine-tune pairs, E5 parity |
 | 7 | Browser app: TypeScript core, parity tests, CSP, browser tests |
 | 8 | Project page, FINDINGS, reproducibility page |
+
+## Phase 2 (written 2026-10-16, before the runs it governs)
+
+### E4b. S5 on whole files
+
+**Why.** E4 calibrated S5 on *sampled* tensors (the 6 largest roles, 32 KB each).
+The first whole-file scan of a dev pair (`cybersectony/phishing-email-detection-distilbert_v2.4.1`
+against `distilbert/distilbert-base-uncased`) flags 7 honest tensors: attention
+key biases (which get no gradient, since softmax ignores a constant added to every
+key score) and layer-norm weights. Their changes are small real updates whose
+99th-percentile highest changed bit is 19-20, under the cutoff of 20.
+
+**Candidate rule (S5b).** A payload written into the low k bits XORs roughly
+uniform bits, so about half of the changed elements have bit k-1 as their highest
+changed bit and none has a higher one. Honest small updates have a smooth tail
+instead (on the dev pair, 0.3-0.8% of changed elements reach the highest bit; a
+random payload at k = 8, 16, 20, 21 puts 47-53% there). S5b flags a tensor only
+if its p99 highest changed bit is <= the cutoff (as now) **and** the share of
+changed elements at the highest changed bit is >= a threshold T.
+
+**Procedure.**
+1. Dev: whole-file S5 and S5b on the 12 E4 dev pairs (already looked at). Choose T
+   there and commit it, with the number of honest tensors each rule flags.
+2. Fresh validation, used once: a new list of pairs from bases never used before
+   (`results/ft_pairs_fresh.json`, frozen and committed before any weight is
+   read), same selection rule as E4. For every pair, both rules, whole files:
+   honest models with a false positive; and a random payload at k = 8, 16, 20, 21
+   written (a) into the largest tensor that matches the base and (b) into the
+   changed tensor with the smallest p99 bit (the low-gradient case).
+3. **Decision:** S5b replaces S5 if, on the fresh batch, it has a false positive
+   in at most 1 honest model, and catches every payload that S5 catches in case
+   (a). Either way both rules' numbers are reported.
