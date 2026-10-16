@@ -34,8 +34,11 @@ def test_allowed_names_are_not_numbers():
 @pytest.mark.skipif(not (ROOT / "results" / "ledger.jsonl").exists(), reason="no ledger")
 def test_project_page_matches_the_ledger():
     f, asserts = SF.facts(counts=False, weights=HAVE_MODELS)
-    html = SF.PAGE.read_text(encoding="utf-8")
-    problems = SF.check(html, f, asserts) + SF.check_strips(html, SF.e1_strips(SF.load()))
-    skipped = ("tests.",) + (() if HAVE_MODELS else ("e0.",))
+    problems = []
+    for page in SF.PAGES:
+        html = page.read_text(encoding="utf-8")
+        problems += SF.check(html, f, asserts if page == SF.PAGE else {})
+    problems += SF.check_strips(SF.PAGE.read_text(encoding="utf-8"), SF.e1_strips(SF.load()))
+    skipped = ("tests.",) + (() if HAVE_MODELS else ("e0.mobilenet_bit",))
     problems = [p for p in problems if not any(p.startswith(f"unknown fact key '{s}") for s in skipped)]
     assert problems == []

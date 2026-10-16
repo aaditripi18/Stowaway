@@ -1,0 +1,68 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <title>Bit 0 is not a coin — Stowaway</title>
+    <meta name="description" content="Stowaway's bit-plane check assumed a model's lowest bits are fair coins. They are not, and the fix that held came from asking which way a payload can move a bit." />
+  </head>
+  <body class="bg-surface font-body-md text-body-md text-on-surface antialiased selection:bg-primary-container selection:text-surface">
+    <header class="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant">
+      <div class="h-14 max-w-[1100px] mx-auto px-margin md:px-margin-lg flex items-center justify-between">
+        <a class="flex items-center gap-2 group" href="./">
+          <span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+          <span class="font-code-sm text-code-sm tracking-wider uppercase font-semibold text-on-surface group-hover:text-primary transition-colors">STOWAWAY</span>
+        </a>
+        <nav class="hidden md:flex items-center gap-space-lg">
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="./#findings">Findings</a>
+          <a class="font-code-sm text-code-sm text-on-surface hover:text-on-surface py-1 transition-colors" href="not-a-coin.html">Writing</a>
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="scan.html">Scan</a>
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="https://github.com/aaditripi18/Stowaway" rel="noopener" target="_blank">GitHub</a>
+        </nav>
+        <a class="inline-flex items-center bg-primary-container text-surface font-code-sm text-code-sm font-semibold px-3 py-1.5 rounded hover:brightness-110 active:scale-[0.99] transition-all" href="scan.html">Scan a model</a>
+      </div>
+    </header>
+
+    <main class="w-full pt-14 bg-surface">
+      <article class="max-w-[720px] mx-auto px-margin md:px-margin-lg py-12 flex flex-col gap-space-lg">
+        <div class="flex flex-col gap-space-sm">
+          <span class="font-label-mono text-label-mono uppercase tracking-wider text-primary">Writing · October 2026</span>
+          <h1 class="font-headline-xl text-headline-xl font-semibold text-on-surface tracking-tight">Bit 0 is not a coin</h1>
+          <p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">The first version of Stowaway's bit-plane check assumed a model's lowest bits are fair coins. On an unmodified MobileNetV3-Small, <span data-fact="e0.first_fp">150</span> tensors said otherwise. The fix that finally held came from asking which way a payload can move a bit, not how far.</p>
+        </div>
+
+        <div class="essay flex flex-col gap-space-md font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+          <h2 class="font-headline-md text-headline-md text-on-surface pt-space-md">The assumption</h2>
+          <p>An encrypted payload is indistinguishable from random bits. Write it into the lowest bits of a model's weights and each of those bits becomes a coin flip: set half the time. The check called S4 rests on that. For each tensor it measures how often each low bit is set, and asks whether that rate has been pulled to 50%.</p>
+          <p>For that to mean anything, the clean bits must not already sit at 50%. In ResNet-18 they do, which is why no single-file check can see a payload there. The first S4 went one step further and assumed every model is like that: that 50% is what clean weights look like, and a large departure from it is the thing to report.</p>
+
+          <h2 class="font-headline-md text-headline-md text-on-surface pt-space-md">What the model said</h2>
+          <p>The first false-positive run used two unmodified torchvision models. ResNet-18 raised <span data-fact="e0.first_resnet_fp">0</span> alarms. MobileNetV3-Small raised <span data-fact="e0.first_fp">150</span>, out of <span data-fact="e0.first_tensors">210</span> float tensors.</p>
+          <p>Nothing was hidden in that file. Its lowest bit is set in <span data-fact="e0.mobilenet_bit0">~67%</span> of all weights, and the next bit up in <span data-fact="e0.mobilenet_bit1">~37%</span>. Every tensor carries the same lean. We do not know where it comes from, and the check does not need to: what matters is that it is consistent across the model, so a tensor that loses it stands out.</p>
+          <p>The mistake was not the threshold. It was the reference. A clean model is not a fair coin. It is whatever its other tensors are.</p>
+
+          <h2 class="font-headline-md text-headline-md text-on-surface pt-space-md">First fix: the model is its own reference</h2>
+          <p>S4 was rewritten to compare each tensor with the median of the model's own tensors, allowing for the spread between clean ones. That rule was chosen after seeing MobileNetV3, so it was then run on <span data-fact="e0.heldout_models">7</span> torchvision models nobody had looked at. <span data-fact="e0.heldout_fp_models">1</span> of them raised a false alarm (ShuffleNetV2's classifier bias). It was reported, not tuned away.</p>
+          <p>Then the survey reached half-precision files on Hugging Face, and the alarms came back. Different kinds of tensor carry different signatures (embeddings and routers sit apart from the rest), so S4 now reads each tensor against its role peers: the same weight in the other layers. That rule was frozen and run once on a fresh batch of models committed before their weights were read. For bf16 files, models with a false alarm went from <span data-fact="e0c2.bf16">14 → 4 of 20</span>. For fp16, <span data-fact="e0c2.f16">5 → 5 of 10</span>. The fix did nothing at all for fp16.</p>
+
+          <h2 class="font-headline-md text-headline-md text-on-surface pt-space-md">Which way, not how far</h2>
+          <p>The fp16 alarms that survived had one thing in common. In almost every case the flagged bit was further from 50% than its peers: a bit stuck at zero in a quantized embedding, a norm layer with fewer than half its low bits set.</p>
+          <p>A random payload cannot do that. It only adds entropy, so it can only pull a bit toward 50%, never away. Every one of those alarms was moving in a direction no payload can move. S4 had been a two-sided test for a one-sided effect.</p>
+          <p>So S4 now flags a bit only when it is nearer 50% than its reference. That rule was frozen and run once on a third fresh batch: bf16 models with a false alarm went <span data-fact="e0c.bf16">5 → 1 of 20</span>, and fp16 <span data-fact="e0c.f16">1 → 0 of 20</span>. Each batch is used once. Any further change to S4 needs a fourth.</p>
+
+          <h2 class="font-headline-md text-headline-md text-on-surface pt-space-md">What the fix cost</h2>
+          <p>A one-sided test gives something up. A payload of zeros, a constant or plain text pushes bits away from 50%, exactly like low precision does, and from one file the two cannot be told apart. S4 no longer sees those. The diff against the claimed base model (S5) still does, because it does not care which way a bit moved, only that it moved where training does not.</p>
+          <p>It also leaves the original problem standing. In <span data-fact="hf.fair">23</span> of the <span data-fact="hf.sampled">39</span> popular float32 models surveyed, the low bits really are fair coins, and there a payload moves nothing. S4 stopped crying wolf. That is not the same as seeing wolves, and on most models it cannot.</p>
+        </div>
+
+        <p class="font-body-sm text-body-sm text-outline border-t border-hair pt-space-md">Every number on this page is computed from <span class="font-code-sm text-code-sm">results/ledger.jsonl</span> by <span class="font-code-sm text-code-sm">scripts/site_facts.py</span>, which fails the build if the page and the ledger disagree. The runs are in <a class="text-primary hover:underline" href="https://github.com/aaditripi18/Stowaway/blob/main/docs/RESULTS.md" rel="noopener" target="_blank">RESULTS.md</a> (E0, E0c), the account with its limits in <a class="text-primary hover:underline" href="https://github.com/aaditripi18/Stowaway/blob/main/docs/FINDINGS.md" rel="noopener" target="_blank">FINDINGS.md</a>.</p>
+        <a class="font-code-sm text-code-sm text-primary hover:underline" href="./">← Back to the project</a>
+      </article>
+    </main>
+    <script type="module" src="/src/site.ts"></script>
+  </body>
+</html>

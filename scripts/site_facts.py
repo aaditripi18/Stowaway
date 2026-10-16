@@ -33,13 +33,14 @@ from experiments.ledger import load  # noqa: E402
 from scripts import report as R  # noqa: E402
 
 PAGE = ROOT / "web" / "index.html"
+PAGES = [PAGE, ROOT / "web" / "not-a-coin.html"]
 
 # Numbers that are names or fixed method parameters, not results.
 ALLOWED = [
     r"S[1-5]", r"H[1-4]", r"E[0-5][a-c]?", r"0[1-9]",          # check, hypothesis, experiment, section ids
     r"ResNet-18", r"MobileNetV3(-Small)?", r"V3", r"float(16|32)", r"fp(16|32)", r"bf16", r"F(16|32)",
     r"\.safetensors", r"S[1-5]/S[1-5]", r"S3/S4",
-    r"k = 1, 4(,)? (or|and) 8", r"k = 1, 4 or 8", r"bit 0",
+    r"k = 1, 4(,)? (or|and) 8", r"k = 1, 4 or 8", r"[Bb]it 0", r"ShuffleNetV2", r"50%",
     r"1K", r"4K", r"16K", r"64K", r"256K", r"1M",              # E1 strip axis labels
     r"64 KB samples", r"2026", r"\(pre-1\.6\)", r"1\.6",
     r"0 clean, 1 suspicious, 2 dangerous", r"5 checks", r"1 KB or more", r"low 8 bits", r"[Tt]op-1", r"1:(?=\s|$)",
@@ -101,6 +102,20 @@ def _counts():
     return {"tests.py": str(n_py), "tests.ts": str(n_ts), "tests.total": str(n_py + n_ts)}
 
 
+def _e0_history(rows):
+    """The first S4 run (fair-coin null) and the first run that included the
+    held-out torchvision models, both read from the ledger by order."""
+    runs = sorted({r["run_id"] for r in rows if r["experiment"] == "E0"})
+    first = [r for r in rows if r["run_id"] == runs[0]]
+    mob = [r for r in first if r["model"] == "mobilenet_v3_small"][0]
+    held_run = next(rid for rid in runs if any(r["run_id"] == rid and r.get("split") == "held_out" for r in rows))
+    held = [r for r in rows if r["run_id"] == held_run and r.get("split") == "held_out"]
+    return {"e0.first_fp": str(mob["false_positives"]), "e0.first_tensors": str(mob["n_float_tensors"]),
+            "e0.first_resnet_fp": str([r for r in first if r["model"] == "resnet18"][0]["false_positives"]),
+            "e0.heldout_models": str(len(held)),
+            "e0.heldout_fp_models": str(sum(1 for r in held if r["false_positives"]))}
+
+
 def _mobilenet_bit0():
     import numpy as np
 
@@ -109,7 +124,8 @@ def _mobilenet_bit0():
     model, _ = corpus.load_vision("mobilenet_v3_small")
     raw = corpus.state_to_raw(model.state_dict())
     v = np.concatenate([t.data[informative(t.data, t.dtype)] for t in raw.values()])
-    return f"~{round(100 * float((v & 1).mean()))}%"
+    return {f"e0.mobilenet_bit{b}": f"~{round(100 * float(((v >> np.uint64(b)) & np.uint64(1)).mean()))}%"
+            for b in (0, 1)}
 
 
 def facts(counts=True, weights=True):
@@ -169,6 +185,12 @@ def facts(counts=True, weights=True):
     asserts["E4: trained-tensor result equal at every caught k"] = len(
         {_cell([r for r in pay if r["k"] == k], "detected_in_trained") for k in caught}) == 1
 
+    f.update(_e0_history(rows))
+    _, c2 = R._latest_run([r for r in rows if r.get("meta", {}).get("list") == "hf_models_batch2.json"], "E0c")
+    for dt in ("BF16", "F16"):
+        rs = [r for r in c2 if r["dtype"] == dt]
+        f[f"e0c2.{dt.lower()}"] = (f"{sum(r['old_fp'] > 0 for r in rs)} → {sum(r['new_fp'] > 0 for r in rs)}"
+                                   f" of {len(rs)}")
     _, c3 = R._latest_run([r for r in rows if r.get("meta", {}).get("list") == "hf_models_batch3.json"], "E0c")
     for dt in ("BF16", "F16"):
         rs = [r for r in c3 if r["dtype"] == dt]
@@ -190,7 +212,7 @@ def facts(counts=True, weights=True):
                                        and c["weight_survived"] == c["weight_files"])
 
     if weights:
-        f["e0.mobilenet_bit0"] = _mobilenet_bit0()
+        f.update(_mobilenet_bit0())
     if counts:
         f.update(_counts())
     return f, asserts
@@ -300,13 +322,18 @@ def main(argv=None):
     ap.add_argument("--no-counts", action="store_true", help="skip collecting the test suites")
     args = ap.parse_args(argv)
     f, asserts = facts(counts=not args.no_counts)
-    html = PAGE.read_text(encoding="utf-8")
-    if args.write:
-        html = write(html, f)
-        PAGE.write_text(html, encoding="utf-8")
-    problems = check(html, f, asserts) + check_strips(html, e1_strips(load()))
+    problems = []
+    for page in PAGES:
+        html = page.read_text(encoding="utf-8")
+        if args.write:
+            html = write(html, f)
+            page.write_text(html, encoding="utf-8")
+        found = check(html, f, asserts if page == PAGE else {})
+        if page == PAGE:
+            found += check_strips(html, e1_strips(load()))
+        problems += [f"{page.name}: {x}" for x in found]
     if args.no_counts:
-        problems = [x for x in problems if not x.startswith("unknown fact key 'tests.")]
+        problems = [x for x in problems if "unknown fact key 'tests." not in x]
     for x in problems:
         print(x)
     print(f"{len(f)} facts, {len(asserts)} claims, {len(problems)} problems")
