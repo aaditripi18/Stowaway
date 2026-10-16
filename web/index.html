@@ -90,7 +90,7 @@
           <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-hair">
             <div class="py-space-md px-space-lg flex items-center gap-space-sm">
               <span class="w-1.5 h-1.5 rounded-full bg-primary-container shrink-0"></span>
-              <span class="font-code-md text-code-md text-on-surface font-semibold">5 checks · <span data-fact="tests.total">216</span> tests</span>
+              <span class="font-code-md text-code-md text-on-surface font-semibold">5 checks · <span data-fact="tests.total">237</span> tests</span>
             </div>
             <div class="py-space-md px-space-lg flex items-center gap-space-sm">
               <span class="w-1.5 h-1.5 rounded-full bg-outline shrink-0"></span>
@@ -288,7 +288,7 @@
                   <span class="shrink-0 self-start font-label-mono text-label-mono font-semibold text-primary px-1.5 py-0.5 bg-primary/10 rounded">H4</span>
                   <div class="flex flex-col gap-1">
                     <span class="font-body-md text-body-md text-on-surface">A diff against the claimed base model catches a payload in any tensor the fine-tune did not train.</span>
-                    <span class="font-body-sm text-body-sm text-on-surface-variant">Evidence: caught in <span data-fact="e4.caught">10 / 10</span> held-out pairs for payloads in the low k = <span data-fact="e4.caught_ks">8, 16, 20 and 21</span> bits. Limits: a payload inside a tensor the fine-tune did train is camouflaged (<span data-fact="e4.trained">0 / 10</span>), and a <span data-fact="e3.spread_base_miss">1 KB</span> payload spread at 1:<span data-fact="e3.spread">64</span> stays under S5's per-tensor floor.</span>
+                    <span class="font-body-sm text-body-sm text-on-surface-variant">Evidence: the current S5 catches a payload in a tensor the fine-tune left identical to the base in <span data-fact="e4b.fresh_a">9 / 9</span> fresh pairs at k = <span data-fact="e4b.ks">8, 16, 20 and 21</span>, and flags <span data-fact="e4b.fresh_new_fp_models">0</span> of <span data-fact="e4b.fresh_pairs">20</span> honest fine-tunes scanned as whole files. Limits: inside a tensor the fine-tune did train it catches <span data-fact="e4b.fresh_b_k21">18 / 20</span> at k = 21 but <span data-fact="e4b.fresh_b_k8">1 / 20</span> at k = 8, and a <span data-fact="e3.spread_base_miss">1 KB</span> payload spread at 1:<span data-fact="e3.spread">64</span> stays under S5's per-tensor floor.</span>
                   </div>
                 </div>
                 <span class="verdict self-start md:self-center shrink-0 bg-primary-container/15 text-primary-container border border-primary-container/30">Supported, with limits</span>
@@ -319,8 +319,8 @@
                 <p class="font-body-md text-body-md text-on-surface-variant"><span data-fact="hf.half">14</span> of <span data-fact="hf.sampled">39</span> top models are saved as float32 but hold only fp16 or bf16 precision, leaving a block of zero low bits — exactly where a payload would go, and exactly where S3 sees it.</p>
               </div>
               <div class="bg-panel border border-panel-line p-space-lg rounded flex flex-col gap-space-xs">
-                <h3 class="font-headline-md text-headline-md text-on-surface">The strong check has a blind spot too.</h3>
-                <p class="font-body-md text-body-md text-on-surface-variant">A payload confined to tensors the distributor genuinely trained is camouflaged by the training, so even the base diff misses it. We report the limit rather than hide it.</p>
+                <h3 class="font-headline-md text-headline-md text-on-surface">The base diff passed on samples and failed on whole files.</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant">Calibrated on sampled tensors, S5 had no false alarms. On whole files it flagged <span data-fact="e4b.dev_old_fp_models">8</span> of <span data-fact="e4b.dev_pairs">12</span> honest fine-tunes: tensors that barely train, such as attention key biases, change only in their low bits. The fix asks how a payload changes bits, not how far: about half its changes stop at one bit. Chosen on those <span data-fact="e4b.dev_pairs">12</span> pairs and run once on <span data-fact="e4b.fresh_pairs">20</span> fresh ones, it flags none and misses no payload the old rule caught in an untouched tensor; inside trained tensors it still misses most small-k payloads.</p>
               </div>
             </div>
           </div>
@@ -335,14 +335,14 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-hair border border-hair bg-panel rounded">
               <div class="p-space-lg flex flex-col gap-1">
-                <span class="font-code-md text-headline-xl font-bold text-white tracking-tight"><span data-fact="e4.fp">0</span></span>
-                <span class="font-label-mono text-label-mono uppercase tracking-wider text-primary-container">S5 false positives</span>
-                <p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">on <span data-fact="e4.pairs">15</span> held-out honest fine-tune / base pairs (RoBERTa, XLM-R and ViT fine-tunes).</p>
+                <span class="font-code-md text-headline-xl font-bold text-white tracking-tight"><span data-fact="e4b.fresh_new_fp_models">0</span> of <span data-fact="e4b.fresh_pairs">20</span></span>
+                <span class="font-label-mono text-label-mono uppercase tracking-wider text-primary-container">honest fine-tunes flagged by S5</span>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">scanned as whole files, from four bases never used before (MiniLM, ALBERT, DistilRoBERTa, BERT-cased). The earlier S5 rule flagged <span data-fact="e4b.fresh_old_fp_models">16</span> of them.</p>
               </div>
               <div class="p-space-lg flex flex-col gap-1">
-                <span class="font-code-md text-headline-xl font-bold text-white tracking-tight"><span data-fact="e4.caught">10 / 10</span></span>
+                <span class="font-code-md text-headline-xl font-bold text-white tracking-tight"><span data-fact="e4b.fresh_a">9 / 9</span></span>
                 <span class="font-label-mono text-label-mono uppercase tracking-wider text-primary-container">S5 detections</span>
-                <p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">held-out pairs where S5 caught a payload in a tensor that should match the base, at k = <span data-fact="e4.caught_ks">8, 16, 20 and 21</span>.</p>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">fresh pairs where S5 caught a payload in a tensor identical to the base, at every k tested (<span data-fact="e4b.ks">8, 16, 20 and 21</span>).</p>
               </div>
               <div class="p-space-lg flex flex-col gap-1">
                 <span class="font-code-md text-headline-xl font-bold text-white tracking-tight"><span data-fact="e0c.bf16">5 → 1 of 20</span></span>
@@ -383,7 +383,7 @@
 <span class="text-primary-container select-none">$ </span>python scripts/run_hf_survey.py --list hf_models.json
 <span class="text-primary-container select-none">$ </span>python scripts/report.py</div>
             </div>
-            <p class="font-body-sm text-body-sm text-outline leading-relaxed">Nothing is trained: models are downloaded pretrained and only run forward. Every run appends to <span class="font-code-sm text-code-sm">results/ledger.jsonl</span> with the git commit that produced it, and <span class="font-code-sm text-code-sm">docs/RESULTS.md</span> is generated from that ledger, never edited by hand. <span data-fact="tests.total">216</span> tests: <span data-fact="tests.py">117</span> Python, and <span data-fact="tests.ts">99</span> for the browser build, including parity tests that require byte-identical JSON reports to the Python tool on every fixture.</p>
+            <p class="font-body-sm text-body-sm text-outline leading-relaxed">Nothing is trained: models are downloaded pretrained and only run forward. Every run appends to <span class="font-code-sm text-code-sm">results/ledger.jsonl</span> with the git commit that produced it, and <span class="font-code-sm text-code-sm">docs/RESULTS.md</span> is generated from that ledger, never edited by hand. <span data-fact="tests.total">237</span> tests: <span data-fact="tests.py">126</span> Python, and <span data-fact="tests.ts">111</span> for the browser build, including parity tests that require byte-identical JSON reports to the Python tool on every fixture.</p>
           </div>
         </section>
 

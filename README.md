@@ -49,7 +49,7 @@ bits, 1 KB to 1 MB, with top-1 accuracy on 500 Imagenette images:
 | H1 | S1 matches picklescan on code payloads, and every weight-payload model passes picklescan and a safetensors conversion | **supported** (E5): same 8 / 8 code payloads as picklescan; 4 / 4 weight-payload files pass picklescan; the payload survives conversion bit for bit in 2 / 2 |
 | H2 | In a model stored at higher precision than it was trained in, a payload ≥ 1 KB is caught by S3 with no false positives | **supported**: 19 / 19 bf16 models, 0 false positives, 1 KB caught in all |
 | H3 | In a genuinely float32-trained model, an encrypted low-bit payload cannot be seen from one file | **model-dependent**: true for 23 of 39 surveyed models and ResNet-18, false for the 2 with a signature |
-| H4 | A diff against the claimed base model catches a payload in any tensor the fine-tune did not train | **supported, with limits**: 10 / 10 held-out pairs at k = 8, 16, 20 and 21; 0 / 10 inside a tensor the fine-tune did train |
+| H4 | A diff against the claimed base model catches a payload in any tensor the fine-tune did not train | **supported, with limits** (whole files, E4b): 9 / 9 fresh pairs at k = 8, 16, 20 and 21, with 0 of 20 honest fine-tunes flagged; inside a tensor the fine-tune did train, 18 / 20 at k = 21 but 1 / 20 at k = 8 |
 
 What the numbers say:
 
@@ -67,10 +67,19 @@ What the numbers say:
   base diff catches it from 4 KB.
 - **The strong check has a blind spot too.** A payload confined to tensors the
   distributor genuinely trained is camouflaged by the training, so S5 misses it.
+- **The base diff passed on samples and failed on whole files, then was fixed.**
+  E4 validated S5 on sampled tensors (0 false positives on 15 pairs). Scanning
+  whole files, the same rule flagged 8 of 12 dev and 16 of 20 fresh honest
+  fine-tunes: tensors that barely train (attention key biases, LayerNorm) change
+  only in their low bits. The adopted rule (S5c) asks whether about half the
+  changes stop at one bit, as a payload's do: chosen on the 12 dev pairs, run once
+  on 20 fresh ones, it flagged 0 and still caught every payload in a tensor
+  identical to the base (E4b).
 - **Validated on unseen models.** Each detector was frozen, then run once on
-  models committed before their weights were read: S5 raised 0 false positives
-  on 15 held-out honest fine-tunes; S4's false-positive models on a fresh batch
-  fell from 5 to 1 of 20 bf16 and 1 to 0 of 20 fp16.
+  models committed before their weights were read: S5c 0 of 20 fresh fine-tunes
+  flagged; S4's false-positive models on a fresh batch fell from 5 to 1 of 20
+  bf16 and 1 to 0 of 20 fp16 (E0c), and on a fourth batch S4 flags 2 of 20
+  float32, 1 of 20 bf16 and 0 of 20 fp16 models (E0d).
 
 ## Install
 

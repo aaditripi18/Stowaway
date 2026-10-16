@@ -16,6 +16,10 @@ their weights were read; the numbers are in [docs/RESULTS.md](docs/RESULTS.md).
   transfers resumed; the report records the commit.
 - S5 pairs tensors with the base across wrapper prefixes and old LayerNorm names,
   and accepts a base split over several files.
+- **S5c replaces the E4 S5 rule** (E4b): the old rule flagged 16 of 20 fresh
+  honest fine-tunes scanned as whole files; S5c flags 0 and still catches every
+  payload in a tensor identical to the base. Its finding message and `detail`
+  changed (`bit`, `share`, `threshold`).
 - S4c: a bit plane is tested only if its reference is at least 0.02 from a fair
   coin (E0d; removes a false positive on small role groups).
 - Exit status 3 when a scan cannot run.

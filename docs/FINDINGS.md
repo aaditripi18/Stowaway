@@ -1,12 +1,70 @@
 # Findings (preliminary)
 
-> Status: week 8 of 8. S3, S4, S5 all revised and validated on held-out models;
+> Status: phase 2 (PLAN.md). S3, S4, S5 all revised and validated on held-out models;
 > E5 compares Stowaway with picklescan, ModelScan and fickling.
 > Two vision models end to end, single-file checks on samples of 120 public
 > Hugging Face models (70 dev, 50 held out), and S5 calibrated on 20 real
 > fine-tune/base pairs (dev + held out). One payload type (random bytes).
 > Every number below is in [RESULTS.md](RESULTS.md), generated from the ledger
 > with the commit that produced it. These are early results, not conclusions.
+
+## The base diff passed on samples and failed on whole files (E4b)
+
+E4 calibrated S5 on sampled tensors (32 KB from the six largest roles) and
+validated it with 0 false positives on 15 held-out fine-tunes. The first scan of
+a whole file contradicted that: `cybersectony/phishing-email-detection-distilbert_v2.4.1`,
+an honest fine-tune of `distilbert-base-uncased`, had 7 tensors flagged as
+low-bit payloads. Run on all 12 dev pairs, whole files, the E4 rule flagged 129
+honest tensors in **8 of 12** fine-tunes.
+
+The flagged tensors are the ones that barely train. Attention key biases get no
+gradient (softmax ignores a constant added to every key score) and LayerNorm
+weights move little, so a fine-tune changes them only in the low bits, which is
+exactly what the E4 rule took to be a payload. Sampling the largest roles had
+never looked at them.
+
+Two candidate fixes, both written into PLAN.md before any fresh pair was read:
+
+- **Weight decay?** No. The changes shrink magnitudes only about half the time,
+  like a random payload; this explanation was tested and rejected.
+- **How a payload changes bits.** A payload written into the low k bits is XORed
+  with roughly random original bits, so bit k-1 is the highest changed bit of
+  about half the changed elements, whatever the payload (random 47-53% on the dev
+  tensors), while honest small updates spread smoothly (0.3-0.8% at the top bit).
+  S5b tested this at the top changed bit; S5c at the most common bit at or below
+  the cutoff, which also works when training changed some higher bits.
+
+On dev, S5b removed every false positive but missed nearly every payload hidden
+in a low-gradient tensor; S5c at a fixed threshold of 0.4 had no false positives
+but honest shares reached 0.382 in 768-element tensors, where sampling noise is
+about 0.018. The chosen threshold is three binomial standard deviations below
+one half, T(n) = 0.5 - 1.5/sqrt(n) for n changed elements (0.406 at 256, 0.446 at
+768).
+
+Run once on 20 fresh pairs from four new bases (MiniLM, ALBERT, DistilRoBERTa,
+BERT-cased; 2,114 changed shared tensors):
+
+| | Honest fine-tunes flagged | Honest tensors flagged | Payload in a base-matching tensor (k = 8/16/20/21) | Payload in a low-gradient tensor (k = 8/16/20/21) |
+|---|--:|--:|---|---|
+| S5 (E4 rule) | 16 / 20 | 185 | 9/9, 9/9, 9/9, 9/9 | 16/20 at every k (meaningless with these false positives) |
+| **S5c, T(n)** | **0 / 20** | **0** | **9/9, 9/9, 9/9, 9/9** | 1/20, 8/20, 16/20, 18/20 |
+| S5c, T = 0.4 (rejected on dev) | 2 / 20 | 4 | 9/9 at every k | 2/20, 13/20, 18/20, 18/20 |
+
+By its rule S5c replaced S5. What it still cannot do: see a small-k payload
+inside a tensor the fine-tune genuinely trained (1 of 20 at k = 8). The browser
+and the CLI run the same rule, byte-identical in the parity tests.
+
+## S4 on a fourth fresh batch (E0d)
+
+The one remaining dev false positive of S4 (RegNet-Y-400MF's block-4 `proj`,
+three peers) came from an under-estimated spread. Flooring the spread at the
+model's (S4b) did not remove it; testing a bit plane only when its reference is
+at least 0.02 from a fair coin (S4c, the same 0.02 S4 uses to call a model's low
+bits a signature) did. On 60 unseen models S4c changed nothing: models with a
+false positive were F32 2 / 20, BF16 1 / 20, F16 0 / 20 for S4 and S4c alike, with
+the same payload detections (8, 2 and 3 of 20). It was adopted by its rule, and
+these are S4's honest numbers on unseen files: single-file statistics are a hint,
+reported as `suspicious`, not proof.
 
 ## The scanners people already use: every weight and structure payload passes them (E5)
 
