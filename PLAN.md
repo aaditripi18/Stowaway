@@ -195,3 +195,7 @@ to decide that a model "carries a low-bit signature"): a reference that is
 itself nearly a fair coin has no signature for a payload to erase. Dev compares
 S4, S4b, S4c; the fresh batch then judges the chosen one by the decision rule
 above.
+
+**Choice (dev run E0d-2026-10-16T14:32:53Z-b13b0cb).** S4c: it removes the one
+dev false positive (RegNet `proj`) and changes nothing else on the nine models;
+S4b removes nothing. The fresh batch judges S4c (S4b is still recorded).
