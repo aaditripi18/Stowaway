@@ -38,7 +38,7 @@ from stowaway import hub  # noqa: E402
 from stowaway.bits import FLOAT_LAYOUT  # noqa: E402
 from stowaway.embed import capacity, embed  # noqa: E402
 from stowaway.formats import open_model  # noqa: E402
-from stowaway.weights import MIN_ELEMENTS, S5_MARGIN, S5_PERCENTILE, _load_floats  # noqa: E402
+from stowaway.weights import MIN_ELEMENTS, S5_MARGIN, S5_PERCENTILE, _load_floats, align  # noqa: E402
 
 KS = (8, 16, 20, 21)
 
@@ -106,15 +106,18 @@ def main(argv=None):
             run.record(kind="error", base=pair["base"], finetune=pair["finetune"], error=str(e))
             continue
         common = dict(base=pair["base"], finetune=pair["finetune"], base_commit=bres.commit, ft_commit=fres.commit)
-        shared = [n for n in sorted(set(ft) & set(base))
-                  if ft[n].dtype == base[n].dtype and ft[n].data.shape == base[n].data.shape]
+        # pair tensors exactly as the scanner's S5 does (weights.align)
+        pairing, dm, db = align({n: (t.dtype, tuple(t.shape)) for n, t in ft.items()},
+                                {n: (t.dtype, tuple(t.shape)) for n, t in base.items()})
+        common.update(dropped_model=dm, dropped_base=db)
+        shared = sorted(pairing)
         changed, unchanged = [], []
         for n in shared:
-            s = change_stats(ft[n].data, base[n].data, ft[n].dtype)
+            s = change_stats(ft[n].data, base[pairing[n]].data, ft[n].dtype)
             if s["changed"] >= MIN_ELEMENTS:
                 run.record(kind="honest", tensor=n, dtype=ft[n].dtype, numel=int(ft[n].data.size), **common, **s)
                 changed.append((s["p99"], n))
-            elif s["changed"] == 0 and ft[n].dtype in FLOAT_LAYOUT:
+            elif s["changed"] == 0:
                 unchanged.append((ft[n].data.size, n))
         run.record(kind="pair", shared=len(shared), changed=len(changed), unchanged=len(unchanged), **common)
         targets = []
@@ -129,7 +132,7 @@ def main(argv=None):
                 if cap <= 16:
                     continue
                 poisoned = embed(t, rng.bytes(cap - 8), k, names=[n])[n]
-                s = change_stats(poisoned.data, base[n].data, ft[n].dtype)
+                s = change_stats(poisoned.data, base[pairing[n]].data, ft[n].dtype)
                 run.record(kind="payload", case=case, tensor=n, k=k, dtype=ft[n].dtype,
                            numel=int(ft[n].data.size), **common, **s)
         print(f"  {len(shared)} shared tensors, {len(changed)} changed, {len(unchanged)} unchanged", flush=True)
