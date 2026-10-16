@@ -99,8 +99,16 @@ def main(argv=None):
     ap.add_argument("--pairs", required=True)
     ap.add_argument("--split", required=True)
     ap.add_argument("--only", type=int, default=None, help="first N pairs (smoke test; not recorded)")
+    ap.add_argument("--missing", action="store_true",
+                    help="only the pairs no earlier run of this split read (e.g. after a network failure)")
     a = ap.parse_args(argv)
     pairs = json.loads(Path(a.pairs).read_text(encoding="utf-8"))["pairs"]
+    if a.missing:
+        from experiments.ledger import load
+        done = {r["finetune"] for r in load() if r["experiment"] == "E4b" and r.get("kind") == "pair"
+                and r.get("meta", {}).get("split") == a.split}
+        pairs = [p for p in pairs if p["finetune"] not in done]
+        print(f"{len(pairs)} pair(s) not yet read", flush=True)
     if a.only:
         pairs = pairs[: a.only]
     run = Run("E4b", split=a.split, pairs=a.pairs, ks=list(KS))

@@ -311,8 +311,25 @@ def e4b_rules(T):
     }
 
 
+def _e4b_records(rows, split):
+    """E4b records for a split, merged across runs pair by pair: each fine-tune's
+    records come from the latest run that read it (a run interrupted by the
+    network can be completed by a later run over the missing pairs)."""
+    mine = [r for r in rows if r["experiment"] == "E4b" and r.get("meta", {}).get("split") == split]
+    if not mine:
+        return None, []
+    done = {}
+    for r in mine:
+        if r["kind"] == "pair":
+            done[r["finetune"]] = max(done.get(r["finetune"], ""), r["run_id"])
+    recs = [r for r in mine if r["kind"] != "error" and done.get(r["finetune"]) == r["run_id"]]
+    tried = {r["finetune"] for r in mine}
+    recs += [{"kind": "error", "finetune": f} for f in sorted(tried - set(done))]
+    return ", ".join(sorted({r["run_id"] for r in recs if "run_id" in r})), recs
+
+
 def e4b_summary(rows, split):
-    run_id, recs = _latest_run([r for r in rows if r.get("meta", {}).get("split") == split], "E4b")
+    run_id, recs = _e4b_records(rows, split)
     if not recs:
         return None
     honest = [r for r in recs if r["kind"] == "honest"]
