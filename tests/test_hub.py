@@ -157,3 +157,23 @@ def test_sharded_base(tmp_path):
     whole = scan(FIX / "poisoned.safetensors", base=FIX / "base.safetensors")
     split = scan(FIX / "poisoned.safetensors", base=[tmp_path / "b1.safetensors", tmp_path / "b2.safetensors"])
     assert whole["findings"] == split["findings"]
+
+
+def test_truncated_transfers_are_resumed(fake):
+    """The CDN can end a transfer early without an error: keep resuming."""
+    data = (FIX / "base.safetensors").read_bytes()
+    fake.add("org/base", {"model.safetensors": data})
+    real = fake.__call__
+    calls = {"n": 0}
+
+    def short(url, headers=None, timeout=60):
+        resp = real(url, headers, timeout)
+        if "/resolve/" in url:
+            calls["n"] += 1
+            if calls["n"] <= 2:  # first two transfers stop after 700 bytes
+                return _Resp(resp.read()[:700], status=resp.status)
+        return resp
+    hub._open = short
+    res = hub.resolve("hf:org/base")
+    (p,) = hub.download(res, log=lambda m: None)
+    assert p.read_bytes() == data and calls["n"] >= 3

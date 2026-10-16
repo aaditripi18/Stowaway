@@ -132,9 +132,34 @@ def _sha256(path: Path) -> str:
     return h.hexdigest()
 
 
+def _fetch_to(part: Path, url: str, size: int, log) -> None:
+    """Append to `part` until it holds `size` bytes. The Hub's CDN sometimes ends
+    a transfer early without an error, so a short read is resumed with a Range
+    request rather than trusted."""
+    for _ in range(20):
+        have = part.stat().st_size if part.exists() else 0
+        if size and have >= size:
+            return
+        try:
+            with _open(url, {"Range": f"bytes={have}-"} if have else None, timeout=120) as r:
+                if have and r.status != 206:  # server ignored the range: start over
+                    have = 0
+                with open(part, "ab" if have else "wb") as f:
+                    shutil.copyfileobj(r, f, 1 << 20)
+        except urllib.error.HTTPError as e:
+            if e.code != 416:  # 416: nothing left to fetch
+                raise HubError(f"{url}: HTTP {e.code}") from None
+        except (urllib.error.URLError, TimeoutError, ConnectionError, OSError) as e:
+            log(f"  transfer interrupted ({e}); resuming")
+        if not size:
+            return
+    raise HubError(f"{url}: could not complete the download")
+
+
 def download(res: Resolved, log=print) -> list[Path]:
     """Download (or reuse) each weight file, verified against the Hub's SHA-256.
-    Interrupted downloads resume."""
+    Interrupted or truncated downloads resume; a file whose bytes do not match is
+    fetched again once from the start, then refused."""
     out = []
     for name in res.files:
         dst = cache_root() / res.repo.replace("/", "--") / res.commit / name
@@ -144,23 +169,17 @@ def download(res: Resolved, log=print) -> list[Path]:
             continue
         dst.parent.mkdir(parents=True, exist_ok=True)
         part = dst.with_name(dst.name + ".part")
-        have = part.stat().st_size if part.exists() else 0
         url = f"{HOST}/{res.repo}/resolve/{res.commit}/{urllib.parse.quote(name)}"
-        log(f"downloading {res.repo}@{res.commit[:10]} {name} ({res.sizes.get(name, 0) / 2**20:,.1f} MiB)")
-        try:
-            with _open(url, {"Range": f"bytes={have}-"} if have else None, timeout=120) as r:
-                if have and r.status != 206:  # server ignored the range: start over
-                    have = 0
-                with open(part, "ab" if have else "wb") as f:
-                    shutil.copyfileobj(r, f, 1 << 20)
-        except urllib.error.HTTPError as e:
-            if e.code == 416:  # nothing left to fetch
-                pass
-            else:
-                raise HubError(f"{url}: HTTP {e.code}") from None
-        if want and _sha256(part) != want:
+        size = res.sizes.get(name, 0)
+        log(f"downloading {res.repo}@{res.commit[:10]} {name} ({size / 2**20:,.1f} MiB)")
+        for attempt in range(2):
+            _fetch_to(part, url, size, log)
+            if not want or _sha256(part) == want:
+                break
             part.unlink()
-            raise HubError(f"{name}: downloaded bytes do not match the Hub's SHA-256; not used")
+            if attempt == 1:
+                raise HubError(f"{name}: downloaded bytes do not match the Hub's SHA-256; not used")
+            log("  bytes do not match the Hub's SHA-256; downloading again from the start")
         part.replace(dst)
         out.append(dst)
     return out
