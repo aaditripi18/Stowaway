@@ -158,10 +158,14 @@ def _signature(stats: list[tuple[str, int, np.ndarray]], nbits: int):
 # cannot show less between-tensor spread than the whole model does.
 SMALL_ROLE_PEERS = 6
 S4_SMALL_FLOOR = False
+# S4c (PLAN.md, E0d amendment): test a bit plane only if its reference is at
+# least this far from a fair coin. 0 = off (the E4/E0c rule).
+S4_MIN_SIGNATURE = 0.0
 
 
 def s4_bit_planes(floats: dict[str, RawTensor], low_bits: dict[str, int] | None = None,
-                  shapes: dict[str, tuple] | None = None, small_floor: bool | None = None) -> list[Finding]:
+                  shapes: dict[str, tuple] | None = None, small_floor: bool | None = None,
+                  min_signature: float | None = None) -> list[Finding]:
     """Per-tensor low-bit statistics, read against the model's own signature.
 
     A tensor is flagged when one of its low bit planes departs from what the rest
@@ -171,11 +175,12 @@ def s4_bit_planes(floats: dict[str, RawTensor], low_bits: dict[str, int] | None 
     invisible here; that limit is what experiment E1 measures.
 
     `shapes` gives the tensors' full shapes when `floats` holds samples."""
-    return _s4(_summaries(floats, low_bits, shapes), small_floor)
+    return _s4(_summaries(floats, low_bits, shapes), small_floor, min_signature)
 
 
-def _s4(sums: dict[str, _Summary], small_floor: bool | None = None) -> list[Finding]:
+def _s4(sums: dict[str, _Summary], small_floor: bool | None = None, min_signature: float | None = None) -> list[Finding]:
     small_floor = S4_SMALL_FLOOR if small_floor is None else small_floor
+    min_signature = S4_MIN_SIGNATURE if min_signature is None else min_signature
     findings = []
     by_dtype: dict[str, list] = {}
     for name, t in sorted(sums.items()):
@@ -236,6 +241,8 @@ def _s4(sums: dict[str, _Summary], small_floor: bool | None = None) -> list[Find
             se = np.sqrt(np.maximum(sig * (1 - sig), 1e-6) / n)
             denom = np.sqrt(se ** 2 + tau ** 2)
             closer = (np.abs(sig - 0.5) - np.abs(m - 0.5)) / denom  # >0: m nearer 0.5 than ref
+            if min_signature:
+                closer = np.where(np.abs(sig - 0.5) >= min_signature, closer, -np.inf)
             b = int(np.argmax(closer))
             if closer[b] > Z_FLAG:
                 mean, expected, z = round(float(m[b]), 4), round(float(sig[b]), 4), round(float(closer[b]), 2)

@@ -29,8 +29,11 @@ from stowaway.weights import s4_bit_planes  # noqa: E402
 KS = {"F32": (1, 4, 8), "F16": (1, 3), "BF16": (1, 2)}
 
 
-def flags(samples, shapes, small_floor):
-    return {f.detail["tensor"] for f in s4_bit_planes(samples, shapes=shapes, small_floor=small_floor)
+RULES = {"S4": {}, "S4b": {"small_floor": True}, "S4c": {"min_signature": 0.02}}
+
+
+def flags(samples, shapes, rule):
+    return {f.detail["tensor"] for f in s4_bit_planes(samples, shapes=shapes, **RULES[rule])
             if f.code == "lowbit-anomaly"}
 
 
@@ -44,9 +47,9 @@ def main(argv=None):
         for name in corpus.VISION:
             model, _ = corpus.load_vision(name)
             raw = corpus.state_to_raw(model.state_dict())
-            old, new = flags(raw, None, False), flags(raw, None, True)
-            run.record(model=name, dtype="F32", old_fp=sorted(old), new_fp=sorted(new))
-            print(f"{name:22s} S4 {len(old)}  S4b {len(new)}", flush=True)
+            fp = {r: sorted(flags(raw, None, r)) for r in RULES}
+            run.record(model=name, dtype="F32", fp=fp)
+            print(f"{name:22s} " + "  ".join(f"{r} {len(v)}" for r, v in fp.items()), flush=True)
         print("run", run.run_id)
         return
     models = json.loads((ROOT / "results" / "hf_models_batch4.json").read_text(encoding="utf-8"))["models"]
@@ -61,9 +64,10 @@ def main(argv=None):
         if not samples:
             run.record(repo=m["repo"], dtype=m["dtype"], error="no float tensors large enough to sample")
             continue
-        old, new = flags(samples, shapes, False), flags(samples, shapes, True)
-        rec = {"repo": m["repo"], "dtype": m["dtype"], "old_fp": sorted(old), "new_fp": sorted(new), "payload": []}
-        candidates = sorted((t.data.size, n) for n, t in samples.items() if n not in old | new)
+        fp = {r: flags(samples, shapes, r) for r in RULES}
+        rec = {"repo": m["repo"], "dtype": m["dtype"], "fp": {r: sorted(v) for r, v in fp.items()}, "payload": []}
+        flagged_any = set().union(*fp.values())
+        candidates = sorted((t.data.size, n) for n, t in samples.items() if n not in flagged_any)
         if candidates:
             target = candidates[-1][1]
             dtype = samples[target].dtype
@@ -73,11 +77,11 @@ def main(argv=None):
                     continue
                 planted = dict(samples)
                 planted[target] = embed({target: samples[target]}, rng.bytes(cap), k, names=[target])[target]
-                rec["payload"].append({"tensor": target, "k": k, "old": target in flags(planted, shapes, False),
-                                       "new": target in flags(planted, shapes, True)})
+                rec["payload"].append({"tensor": target, "k": k,
+                                       **{r: target in flags(planted, shapes, r) for r in RULES}})
         run.record(**rec)
-        print(f"{m['dtype']:5s} {m['repo'][:50]:50s} S4 {len(old)}  S4b {len(new)}  "
-              + " ".join(f"k{p['k']}:{int(p['old'])}{int(p['new'])}" for p in rec["payload"]), flush=True)
+        print(f"{m['dtype']:5s} {m['repo'][:50]:50s} " + "  ".join(f"{r} {len(v)}" for r, v in fp.items()) + "  "
+              + " ".join(f"k{p['k']}:" + "".join(str(int(p[r])) for r in RULES) for p in rec["payload"]), flush=True)
     print("run", run.run_id)
 
 

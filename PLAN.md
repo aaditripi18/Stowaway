@@ -186,3 +186,12 @@ frozen before any weight is read; S4 and S4b on identical samples. **Decision:**
 S4b replaces S4 if, on the fresh batch, it flags no more models than S4 in any
 dtype, and the E1b random-payload detection count per dtype drops by at most one
 model.
+
+**Dev result and amendment (same day, before the fresh batch is read).** S4b
+leaves the RegNet flag in place (the model-wide spread is also small, so the
+floor barely moves). Second candidate, **S4c**: a bit plane is tested only if
+its reference is at least 0.02 from a fair coin (the same 0.02 S4 already uses
+to decide that a model "carries a low-bit signature"): a reference that is
+itself nearly a fair coin has no signature for a payload to erase. Dev compares
+S4, S4b, S4c; the fresh batch then judges the chosen one by the decision rule
+above.
