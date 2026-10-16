@@ -376,7 +376,7 @@ def section_e4b(rows):
 # The S5 rule E6's base detection is scored with. E4b (PLAN.md, phase 2) decides
 # whether this stays the E4 rule or becomes a refinement; change it here only by
 # that decision.
-E6_S5 = lambda r: r.get("changed", 0) >= 256 and r["p99"] <= r["cutoff"]  # noqa: E731
+E6_S5 = lambda r: r.get("changed", 0) >= 256 and r["low_share"] >= s5c_threshold(r["changed"])  # noqa: E731  (S5c, adopted by E4b)
 
 
 def e6_records(rows):

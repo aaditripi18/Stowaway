@@ -222,3 +222,13 @@ adopted (no more false-positive models, no detection lost). It changes nothing
 on this batch; its only effect so far is the dev RegNet flag. S4b's lower F32
 count on the fresh batch is reported, not adopted: it was not the rule chosen
 before the batch was read.
+
+**E4b fresh result (runs E4b-2026-10-16T14:46:13Z-6a7ab2e and, for the one pair
+whose base download failed, E4b-2026-10-16T16:41:34Z-6691923; 20 pairs,
+2,114 changed shared tensors, used once).** Honest fine-tunes with a false
+positive: S5 16 of 20 (185 tensors); chosen S5c with T(n) 0 of 20. Case (a),
+payload in a tensor identical to the base, k = 8/16/20/21: S5 9/9 at every k,
+S5c 9/9 at every k. Case (b), low-gradient tensor: S5c 1, 8, 16, 18 of 20. By the
+decision rule (<= 1 false-positive model; every case-(a) payload S5 catches)
+**S5c replaces S5.** For reference, a fixed T = 0.4 would have flagged 2 fresh
+models (4 tensors).

@@ -493,26 +493,26 @@ Run `E4b-2026-10-16T14:20:33Z-63687ab`: 12 pairs, 1637 changed shared tensors.
 
 ### fresh
 
-Run `E4b-2026-10-16T14:46:13Z-6a7ab2e`: 2 pairs, 202 changed shared tensors.
+Run `E4b-2026-10-16T14:46:13Z-6a7ab2e, E4b-2026-10-16T16:41:34Z-6691923`: 20 pairs, 2114 changed shared tensors.
 
 | Rule | Honest tensors flagged | Honest models flagged | (a) k=8 | (a) k=16 | (a) k=20 | (a) k=21 | (b) k=8 | (b) k=16 | (b) k=20 | (b) k=21 |
 |---|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|
-| S5 | 24 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 |
-| S5c (T(n), chosen) | 0 | 0 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 0 / 2 | 1 / 2 | 1 / 2 | 2 / 2 |
-| S5b (T=0.1) | 0 | 0 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 0 / 2 | 0 / 2 | 0 / 2 | 1 / 2 |
-| S5c (T=0.1) | 202 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 |
-| S5b (T=0.15) | 0 | 0 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 0 / 2 | 0 / 2 | 0 / 2 | 1 / 2 |
-| S5c (T=0.15) | 199 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 |
-| S5b (T=0.2) | 0 | 0 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 0 / 2 | 0 / 2 | 0 / 2 | 1 / 2 |
-| S5c (T=0.2) | 39 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 |
-| S5b (T=0.25) | 0 | 0 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 0 / 2 | 0 / 2 | 0 / 2 | 1 / 2 |
-| S5c (T=0.25) | 11 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 1 / 2 | 2 / 2 | 2 / 2 | 2 / 2 |
-| S5b (T=0.3) | 0 | 0 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 0 / 2 | 0 / 2 | 0 / 2 | 1 / 2 |
-| S5c (T=0.3) | 3 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 1 / 2 | 2 / 2 | 2 / 2 | 2 / 2 |
-| S5b (T=0.35) | 0 | 0 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 0 / 2 | 0 / 2 | 0 / 2 | 1 / 2 |
-| S5c (T=0.35) | 2 | 1 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 1 / 2 | 2 / 2 | 2 / 2 | 2 / 2 |
-| S5b (T=0.4) | 0 | 0 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 0 / 2 | 0 / 2 | 0 / 2 | 1 / 2 |
-| S5c (T=0.4) | 0 | 0 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 0 / 2 | 2 / 2 | 2 / 2 | 2 / 2 |
+| S5 | 185 | 16 / 20 | 9 / 9 | 9 / 9 | 9 / 9 | 9 / 9 | 16 / 20 | 16 / 20 | 16 / 20 | 16 / 20 |
+| S5c (T(n), chosen) | 0 | 0 / 20 | 9 / 9 | 9 / 9 | 9 / 9 | 9 / 9 | 1 / 20 | 8 / 20 | 16 / 20 | 18 / 20 |
+| S5b (T=0.1) | 0 | 0 / 20 | 9 / 9 | 9 / 9 | 9 / 9 | 9 / 9 | 0 / 20 | 1 / 20 | 4 / 20 | 6 / 20 |
+| S5c (T=0.1) | 2101 | 20 / 20 | 9 / 9 | 9 / 9 | 9 / 9 | 9 / 9 | 20 / 20 | 20 / 20 | 20 / 20 | 20 / 20 |
+| S5b (T=0.15) | 0 | 0 / 20 | 9 / 9 | 9 / 9 | 9 / 9 | 9 / 9 | 0 / 20 | 1 / 20 | 4 / 20 | 6 / 20 |
+| S5c (T=0.15) | 1836 | 20 / 20 | 9 / 9 | 9 / 9 | 9 / 9 | 9 / 9 | 18 / 20 | 18 / 20 | 18 / 20 | 18 / 20 |
+| S5b (T=0.2) | 0 | 0 / 20 | 9 / 9 | 9 / 9 | 9 / 9 | 9 / 9 | 0 / 20 | 1 / 20 | 4 / 20 | 6 / 20 |
+| S5c (T=0.2) | 393 | 20 / 20 | 9 / 9 | 9 / 9 | 9 / 9 | 9 / 9 | 14 / 20 | 18 / 20 | 18 / 20 | 18 / 20 |
+| S5b (T=0.25) | 0 | 0 / 20 | 9 / 9 | 9 / 9 | 9 / 9 | 9 / 9 | 0 / 20 | 1 / 20 | 4 / 20 | 6 / 20 |
+| S5c (T=0.25) | 84 | 19 / 20 | 9 / 9 | 9 / 9 | 9 / 9 | 9 / 9 | 6 / 20 | 15 / 20 | 18 / 20 | 18 / 20 |
+| S5b (T=0.3) | 0 | 0 / 20 | 9 / 9 | 9 / 9 | 9 / 9 | 9 / 9 | 0 / 20 | 1 / 20 | 4 / 20 | 6 / 20 |
+| S5c (T=0.3) | 21 | 13 / 20 | 9 / 9 | 9 / 9 | 9 / 9 | 9 / 9 | 3 / 20 | 14 / 20 | 18 / 20 | 18 / 20 |
+| S5b (T=0.35) | 0 | 0 / 20 | 9 / 9 | 9 / 9 | 9 / 9 | 9 / 9 | 0 / 20 | 1 / 20 | 4 / 20 | 6 / 20 |
+| S5c (T=0.35) | 12 | 7 / 20 | 9 / 9 | 9 / 9 | 9 / 9 | 9 / 9 | 3 / 20 | 13 / 20 | 18 / 20 | 18 / 20 |
+| S5b (T=0.4) | 0 | 0 / 20 | 9 / 9 | 9 / 9 | 9 / 9 | 9 / 9 | 0 / 20 | 1 / 20 | 4 / 20 | 6 / 20 |
+| S5c (T=0.4) | 4 | 2 / 20 | 9 / 9 | 9 / 9 | 9 / 9 | 9 / 9 | 2 / 20 | 13 / 20 | 18 / 20 | 18 / 20 |
 
 (a) payload in the largest tensor the fine-tune left identical to the base; (b) payload in the changed tensor with the smallest p99 bit (the low-gradient case).
 
@@ -566,6 +566,31 @@ Conversion to safetensors (`torch.load(weights_only=True)` + `safetensors.torch.
 
 Seed 0 for every payload type; random payloads also at seeds 1-2. `file` = S3/S4 from the planted file alone; `base` = S5 with the clean model as base; `agree` = share of 1,000 Imagenette images whose top-1 prediction is unchanged (minimum over the seeds).
 
+### mobilenet_v3_small (clean top-1 0.655)
+
+| Payload | k | 1 KB | 4 KB | 16 KB | 64 KB | 256 KB | 1 MB | 4 MB |
+|---|--:|---|---|---|---|---|---|---|
+| random | 1 | file 3/3, base 3/3, agree 100.0% | file 3/3, base 3/3, agree 100.0% | file 3/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | – | – |
+| random | 4 | file 3/3, base 3/3, agree 100.0% | file 3/3, base 3/3, agree 100.0% | file 3/3, base 3/3, agree 100.0% | file 3/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | – |
+| random | 8 | file 1/3, base 3/3, agree 100.0% | file 3/3, base 3/3, agree 100.0% | file 3/3, base 3/3, agree 100.0% | file 3/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | – |
+| random | 16 | file 3/3, base 3/3, agree 91.4% | file 3/3, base 3/3, agree 86.0% | file 3/3, base 3/3, agree 89.3% | file 3/3, base 3/3, agree 85.1% | file 3/3, base 3/3, agree 89.9% | file 0/3, base 3/3, agree 88.7% | file 0/3, base 3/3, agree 88.7% |
+| zeros | 1 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – | – |
+| zeros | 4 | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – |
+| zeros | 8 | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – |
+| zeros | 16 | file 0/1, base 1/1, agree 94.3% | file 0/1, base 1/1, agree 90.9% | file 1/1, base 1/1, agree 89.1% | file 0/1, base 1/1, agree 88.1% | file 0/1, base 1/1, agree 87.6% | file 1/1, base 1/1, agree 85.8% | file 1/1, base 1/1, agree 86.1% |
+| text | 1 | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | – | – |
+| text | 4 | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – |
+| text | 8 | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – |
+| text | 16 | file 0/1, base 1/1, agree 93.6% | file 1/1, base 1/1, agree 90.3% | file 1/1, base 1/1, agree 89.5% | file 1/1, base 1/1, agree 88.3% | file 1/1, base 1/1, agree 88.1% | file 1/1, base 1/1, agree 87.9% | file 1/1, base 1/1, agree 87.8% |
+| compressed | 1 | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | – | – |
+| compressed | 4 | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – |
+| compressed | 8 | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – |
+| compressed | 16 | file 0/1, base 1/1, agree 95.6% | file 1/1, base 1/1, agree 91.6% | file 1/1, base 1/1, agree 91.1% | file 1/1, base 1/1, agree 90.5% | file 1/1, base 1/1, agree 90.4% | file 0/1, base 1/1, agree 89.6% | file 1/1, base 1/1, agree 89.8% |
+| executable | 1 | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | – | – |
+| executable | 4 | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | – |
+| executable | 8 | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | – |
+| executable | 16 | file 1/1, base 1/1, agree 95.7% | file 1/1, base 1/1, agree 92.1% | file 1/1, base 1/1, agree 93.7% | file 1/1, base 1/1, agree 89.5% | file 1/1, base 1/1, agree 91.4% | file 0/1, base 1/1, agree 89.1% | file 0/1, base 1/1, agree 88.3% |
+
 ### resnet18 (clean top-1 0.650)
 
 | Payload | k | 1 KB | 4 KB | 16 KB | 64 KB | 256 KB | 1 MB | 4 MB |
@@ -585,16 +610,116 @@ Seed 0 for every payload type; random payloads also at seeds 1-2. `file` = S3/S4
 | compressed | 1 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – |
 | compressed | 4 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% |
 | compressed | 8 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% |
-| compressed | 16 | file 0/1, base 1/1, agree 100.0% | – | – | – | – | – | – |
-| executable | 1 | – | – | – | – | – | – | – |
-| executable | 4 | – | – | – | – | – | – | – |
-| executable | 8 | – | – | – | – | – | – | – |
-| executable | 16 | – | – | – | – | – | – | – |
+| compressed | 16 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 99.9% | file 0/1, base 1/1, agree 99.7% | file 0/1, base 1/1, agree 99.7% | file 0/1, base 1/1, agree 99.5% | file 0/1, base 1/1, agree 99.5% |
+| executable | 1 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | – |
+| executable | 4 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% |
+| executable | 8 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% |
+| executable | 16 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 99.9% | file 0/1, base 1/1, agree 99.7% | file 0/1, base 1/1, agree 99.3% | file 0/1, base 1/1, agree 99.4% | file 0/1, base 1/1, agree 99.2% |
+
+### mobilenet_v2 (clean top-1 0.680)
+
+| Payload | k | 1 KB | 4 KB | 16 KB | 64 KB | 256 KB | 1 MB | 4 MB |
+|---|--:|---|---|---|---|---|---|---|
+| random | 1 | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | – | – |
+| random | 4 | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | – |
+| random | 8 | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | – |
+| random | 16 | file 0/3, base 3/3, agree 99.3% | file 0/3, base 3/3, agree 95.3% | file 0/3, base 3/3, agree 94.9% | file 0/3, base 3/3, agree 97.6% | file 0/3, base 3/3, agree 96.7% | file 0/3, base 3/3, agree 97.2% | file 0/3, base 3/3, agree 95.3% |
+| zeros | 1 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – | – |
+| zeros | 4 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – |
+| zeros | 8 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – |
+| zeros | 16 | file 0/1, base 1/1, agree 99.7% | file 0/1, base 1/1, agree 96.9% | file 0/1, base 1/1, agree 96.0% | file 0/1, base 1/1, agree 95.6% | file 0/1, base 1/1, agree 94.9% | file 1/1, base 1/1, agree 94.6% | file 1/1, base 1/1, agree 94.2% |
+| text | 1 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – | – |
+| text | 4 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – |
+| text | 8 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – |
+| text | 16 | file 0/1, base 1/1, agree 99.4% | file 0/1, base 1/1, agree 98.5% | file 0/1, base 1/1, agree 98.3% | file 0/1, base 1/1, agree 98.0% | file 0/1, base 1/1, agree 97.7% | file 1/1, base 1/1, agree 98.0% | file 1/1, base 1/1, agree 97.6% |
+| compressed | 1 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | – | – |
+| compressed | 4 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – |
+| compressed | 8 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – |
+| compressed | 16 | file 0/1, base 1/1, agree 99.6% | file 0/1, base 1/1, agree 98.2% | file 0/1, base 1/1, agree 96.6% | file 0/1, base 1/1, agree 96.9% | file 0/1, base 1/1, agree 96.6% | file 0/1, base 1/1, agree 96.5% | file 0/1, base 1/1, agree 96.6% |
+| executable | 1 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | – | – |
+| executable | 4 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | – |
+| executable | 8 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | – |
+| executable | 16 | file 0/1, base 1/1, agree 99.2% | file 0/1, base 1/1, agree 97.9% | file 0/1, base 1/1, agree 96.6% | file 0/1, base 1/1, agree 97.6% | file 0/1, base 1/1, agree 95.1% | file 0/1, base 1/1, agree 96.1% | file 0/1, base 1/1, agree 96.5% |
+
+### mobilenet_v3_large (clean top-1 0.725)
+
+| Payload | k | 1 KB | 4 KB | 16 KB | 64 KB | 256 KB | 1 MB | 4 MB |
+|---|--:|---|---|---|---|---|---|---|
+| random | 1 | file 3/3, base 3/3, agree 100.0% | file 3/3, base 3/3, agree 100.0% | file 3/3, base 3/3, agree 100.0% | file 3/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | – | – |
+| random | 4 | file 3/3, base 3/3, agree 100.0% | file 3/3, base 3/3, agree 100.0% | file 3/3, base 3/3, agree 100.0% | file 3/3, base 3/3, agree 100.0% | file 3/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | – |
+| random | 8 | file 1/3, base 3/3, agree 100.0% | file 3/3, base 3/3, agree 99.9% | file 3/3, base 3/3, agree 99.9% | file 3/3, base 3/3, agree 99.9% | file 3/3, base 3/3, agree 99.8% | file 3/3, base 3/3, agree 99.8% | file 0/3, base 3/3, agree 99.8% |
+| random | 16 | file 2/3, base 3/3, agree 98.6% | file 3/3, base 3/3, agree 97.3% | file 3/3, base 3/3, agree 97.3% | file 3/3, base 3/3, agree 96.8% | file 3/3, base 3/3, agree 97.7% | file 3/3, base 3/3, agree 97.0% | file 0/3, base 3/3, agree 96.7% |
+| zeros | 1 | file 1/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – | – |
+| zeros | 4 | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – |
+| zeros | 8 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 99.8% | file 0/1, base 1/1, agree 99.8% | file 1/1, base 1/1, agree 99.8% | file 1/1, base 1/1, agree 99.8% | file 1/1, base 1/1, agree 99.8% | file 1/1, base 1/1, agree 99.8% |
+| zeros | 16 | file 0/1, base 1/1, agree 99.2% | file 0/1, base 1/1, agree 98.1% | file 1/1, base 1/1, agree 97.5% | file 0/1, base 1/1, agree 96.5% | file 0/1, base 1/1, agree 95.1% | file 1/1, base 1/1, agree 95.6% | file 1/1, base 1/1, agree 95.0% |
+| text | 1 | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | – | – |
+| text | 4 | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – |
+| text | 8 | file 0/1, base 1/1, agree 99.9% | file 1/1, base 1/1, agree 99.9% | file 1/1, base 1/1, agree 99.8% | file 1/1, base 1/1, agree 99.8% | file 1/1, base 1/1, agree 99.9% | file 1/1, base 1/1, agree 99.9% | file 1/1, base 1/1, agree 99.9% |
+| text | 16 | file 0/1, base 1/1, agree 99.5% | file 1/1, base 1/1, agree 98.8% | file 1/1, base 1/1, agree 98.2% | file 1/1, base 1/1, agree 98.1% | file 1/1, base 1/1, agree 98.1% | file 1/1, base 1/1, agree 98.0% | file 1/1, base 1/1, agree 97.8% |
+| compressed | 1 | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | – | – |
+| compressed | 4 | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | – |
+| compressed | 8 | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 99.9% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% |
+| compressed | 16 | file 0/1, base 1/1, agree 99.2% | file 1/1, base 1/1, agree 97.7% | file 1/1, base 1/1, agree 97.5% | file 1/1, base 1/1, agree 97.5% | file 1/1, base 1/1, agree 97.4% | file 1/1, base 1/1, agree 97.7% | file 1/1, base 1/1, agree 97.8% |
+| executable | 1 | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | – | – |
+| executable | 4 | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | – |
+| executable | 8 | file 0/1, base 1/1, agree 99.9% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 99.8% | file 1/1, base 1/1, agree 99.8% | file 1/1, base 1/1, agree 99.9% | file 0/1, base 1/1, agree 99.9% |
+| executable | 16 | file 0/1, base 1/1, agree 99.0% | file 1/1, base 1/1, agree 98.6% | file 1/1, base 1/1, agree 97.7% | file 1/1, base 1/1, agree 96.7% | file 1/1, base 1/1, agree 98.4% | file 1/1, base 1/1, agree 97.8% | file 0/1, base 1/1, agree 96.0% |
+
+### shufflenet_v2_x0_5 (clean top-1 0.569)
+
+| Payload | k | 1 KB | 4 KB | 16 KB | 64 KB | 256 KB | 1 MB |
+|---|--:|---|---|---|---|---|---|
+| random | 1 | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | – | – |
+| random | 4 | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | – |
+| random | 8 | file 0/3, base 3/3, agree 99.9% | file 0/3, base 3/3, agree 99.9% | file 0/3, base 3/3, agree 99.9% | file 0/3, base 3/3, agree 99.9% | file 0/3, base 3/3, agree 99.9% | file 0/3, base 3/3, agree 99.9% |
+| random | 16 | file 0/3, base 3/3, agree 98.2% | file 0/3, base 3/3, agree 96.1% | file 0/3, base 3/3, agree 90.1% | file 0/3, base 3/3, agree 92.0% | file 0/3, base 3/3, agree 91.5% | file 0/3, base 3/3, agree 91.2% |
+| zeros | 1 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – | – |
+| zeros | 4 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – |
+| zeros | 8 | file 0/1, base 1/1, agree 99.9% | file 0/1, base 1/1, agree 99.9% | file 0/1, base 1/1, agree 99.9% | file 0/1, base 1/1, agree 99.9% | file 1/1, base 1/1, agree 99.9% | file 1/1, base 1/1, agree 99.9% |
+| zeros | 16 | file 0/1, base 1/1, agree 98.6% | file 0/1, base 1/1, agree 94.7% | file 0/1, base 1/1, agree 93.4% | file 0/1, base 1/1, agree 90.0% | file 1/1, base 1/1, agree 88.0% | file 1/1, base 1/1, agree 88.1% |
+| text | 1 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – | – |
+| text | 4 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – |
+| text | 8 | file 0/1, base 1/1, agree 99.9% | file 0/1, base 1/1, agree 99.9% | file 0/1, base 1/1, agree 99.9% | file 0/1, base 1/1, agree 99.9% | file 1/1, base 1/1, agree 99.9% | file 1/1, base 1/1, agree 99.9% |
+| text | 16 | file 0/1, base 1/1, agree 98.3% | file 0/1, base 1/1, agree 96.1% | file 0/1, base 1/1, agree 97.0% | file 0/1, base 1/1, agree 95.7% | file 1/1, base 1/1, agree 95.0% | file 1/1, base 1/1, agree 94.8% |
+| compressed | 1 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – | – |
+| compressed | 4 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – |
+| compressed | 8 | file 0/1, base 1/1, agree 99.9% | file 0/1, base 1/1, agree 99.9% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 99.9% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% |
+| compressed | 16 | file 0/1, base 1/1, agree 97.6% | file 0/1, base 1/1, agree 96.0% | file 0/1, base 1/1, agree 94.9% | file 0/1, base 1/1, agree 95.3% | file 0/1, base 1/1, agree 94.0% | file 1/1, base 1/1, agree 93.4% |
+| executable | 1 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | – | – |
+| executable | 4 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | – |
+| executable | 8 | file 0/1, base 1/1, agree 99.9% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 99.9% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 99.9% | file 0/1, base 1/1, agree 100.0% |
+| executable | 16 | file 0/1, base 1/1, agree 97.5% | file 0/1, base 1/1, agree 98.0% | file 0/1, base 1/1, agree 90.4% | file 0/1, base 1/1, agree 88.5% | file 0/1, base 1/1, agree 93.4% | file 0/1, base 1/1, agree 91.0% |
+
+### squeezenet1_1 (clean top-1 0.493)
+
+| Payload | k | 1 KB | 4 KB | 16 KB | 64 KB | 256 KB | 1 MB |
+|---|--:|---|---|---|---|---|---|
+| random | 1 | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | – | – |
+| random | 4 | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | – |
+| random | 8 | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% |
+| random | 16 | file 0/3, base 3/3, agree 99.3% | file 0/3, base 3/3, agree 98.7% | file 0/3, base 3/3, agree 98.8% | file 0/3, base 3/3, agree 98.5% | file 0/3, base 3/3, agree 98.8% | file 0/3, base 3/3, agree 98.3% |
+| zeros | 1 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – | – |
+| zeros | 4 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – |
+| zeros | 8 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% |
+| zeros | 16 | file 0/1, base 1/1, agree 99.6% | file 0/1, base 1/1, agree 98.8% | file 0/1, base 1/1, agree 98.9% | file 0/1, base 1/1, agree 98.9% | file 0/1, base 1/1, agree 99.1% | file 1/1, base 1/1, agree 98.6% |
+| text | 1 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | – | – |
+| text | 4 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | – |
+| text | 8 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% |
+| text | 16 | file 0/1, base 1/1, agree 99.7% | file 0/1, base 1/1, agree 99.3% | file 0/1, base 1/1, agree 99.4% | file 0/1, base 1/1, agree 99.4% | file 0/1, base 1/1, agree 99.5% | file 1/1, base 1/1, agree 99.5% |
+| compressed | 1 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | – | – |
+| compressed | 4 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | – |
+| compressed | 8 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | – |
+| compressed | 16 | – | – | – | – | – | – |
+| executable | 1 | – | – | – | – | – | – |
+| executable | 4 | – | – | – | – | – | – |
+| executable | 8 | – | – | – | – | – | – |
+| executable | 16 | – | – | – | – | – | – |
 
 ### Verdicts
 
 | | Hypothesis | Verdict | Evidence |
 |---|---|---|---|
-| H5 | A random payload of up to 1 MB at k <= 8 leaves >= 99% of top-1 predictions unchanged, on every model and seed. | **supported** | resnet18 100.0% |
-| H6 | S4's one-sided rule costs what it says: zero and text payloads are caught from the file alone less often than random ones, and the base diff catches them at least as often. | **not supported** | file alone random 0/27, zeros 7/27, text 7/27; with base random 27/27, zeros 27/27, text 27/27 |
+| H5 | A random payload of up to 1 MB at k <= 8 leaves >= 99% of top-1 predictions unchanged, on every model and seed. | **supported** | mobilenet_v3_large 99.8%, shufflenet_v2_x0_5 99.9%, mobilenet_v2 100.0%, mobilenet_v3_small 100.0%, resnet18 100.0%, squeezenet1_1 100.0% |
+| H6 | S4's one-sided rule costs what it says: zero and text payloads are caught from the file alone less often than random ones, and the base diff catches them at least as often. | **not supported** | file alone random 34/142, zeros 51/142, text 64/142; with base random 142/142, zeros 142/142, text 142/142 |
 

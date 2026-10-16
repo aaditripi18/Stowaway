@@ -14,7 +14,7 @@ const Z_FLAG = 6.0;
 const S5_MARGIN = 3;
 const S5_PERCENTILE = 99.0;
 // Which S5 rule runs; must equal weights.S5_RULE in Python (see there).
-export const S5_RULE: "p99" | "s5c" = "p99";
+export const S5_RULE: "p99" | "s5c" = "s5c"; // adopted by E4b (PLAN.md)
 const S4_BITS: Record<string, number> = { F32: 8, F16: 3, BF16: 2 }; // round(mant*8/23)
 // S4c (PLAN.md, E0d): test a bit plane only if its reference is at least this far
 // from a fair coin; 0 = off. Must equal weights.S4_MIN_SIGNATURE in Python.
