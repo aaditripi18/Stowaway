@@ -89,6 +89,7 @@ def main():
     gen_pickles()
     gen_weights()
     gen_s5()
+    gen_plant()
     gen_gguf()
     gen_pytorch()
 
@@ -237,6 +238,26 @@ def gen_weights():
         u = ((u + np.uint32(0x8000)) & ~np.uint32(0xFFFF)).astype(np.uint32)  # round to bf16, widen
         bf[f"blk.{i}.w"] = u.view(np.float32)
     write("weights_bf16_origin", st_bytes(bf))
+
+
+def gen_plant():
+    """Python's embed() on a known payload, for the browser port (src/plant.ts):
+    planting the same bytes with the same parameters must give the same file."""
+    from safetensors.numpy import load_file
+
+    from stowaway.bits import RawTensor
+    from stowaway.embed import embed
+    d = FIX / "plant"
+    d.mkdir(parents=True, exist_ok=True)
+    src = load_file(str(FIX / "s5" / "base.safetensors"))
+    raw = {n: RawTensor.from_float(a) for n, a in src.items()}
+    payload = np.random.default_rng(11).bytes(3000)
+    (d / "payload.bin").write_bytes(payload)
+    names = ["layer.2.weight", "layer.0.weight"]
+    out = embed(raw, payload, 5, spread=3, names=names)
+    planted = {n: out[n].to_float32() for n in src}
+    (d / "planted_k5_s3.safetensors").write_bytes(st_bytes(planted))
+    print("plant/planted_k5_s3: written")
 
 
 def gen_s5():

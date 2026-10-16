@@ -9,6 +9,7 @@ export default defineConfig({
   build: {
     target: "es2022", outDir: "dist", emptyOutDir: true,
     rollupOptions: { input: { index: resolve(__dirname, "index.html"), scan: resolve(__dirname, "scan.html"),
-                                     notACoin: resolve(__dirname, "not-a-coin.html") } },
+                                     notACoin: resolve(__dirname, "not-a-coin.html"),
+                                     limits: resolve(__dirname, "limits.html") } },
   },
 });

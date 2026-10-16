@@ -5,7 +5,7 @@ const SANS = ["Hanken Grotesk", "ui-sans-serif", "system-ui", "sans-serif"];
 
 export default {
   darkMode: "class",
-  content: ["./index.html", "./scan.html", "./not-a-coin.html", "./src/**/*.{ts,js}"],
+  content: ["./index.html", "./scan.html", "./not-a-coin.html", "./limits.html", "./src/**/*.{ts,js}"],
   // main.ts builds verdict/check colour classes from a variable (bg-${color}/15),
   // which the content scan cannot see.
   safelist: [{ pattern: /^(bg|text|border)-(ok|warn|error|outline)(\/(10|15|20|30))?$/ }],

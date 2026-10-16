@@ -1,0 +1,6 @@
+bert-L2-H128.js holds model.safetensors from google/bert_uncased_L-2_H-128_A-2
+(https://huggingface.co/google/bert_uncased_L-2_H-128_A-2), commit 30b0a37ccaaa32f332884b96992754e246e48c5f,
+SHA-256 7fb69ad9f6866d8983183c930e33828f326470bf6ad8bbb2ad4ed957a92e9414, base64-encoded.
+Copyright Google. Licensed under the Apache License, Version 2.0
+(https://www.apache.org/licenses/LICENSE-2.0). Unmodified: the limits page
+plants random bytes only in a copy held in memory.

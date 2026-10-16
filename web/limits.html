@@ -1,0 +1,93 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Same policy as the scanner: nothing can be sent anywhere. The sample
+         model is a same-origin script, loaded only when asked for. -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; worker-src blob:; base-uri 'none'; form-action 'none'"
+    />
+    <title>Test the limits — Stowaway</title>
+    <meta name="description" content="Plant random bytes in a model's weights in your browser and see which of Stowaway's checks catch them: the detection limits, testable instead of stated." />
+  </head>
+  <body class="bg-surface font-body-md text-body-md text-on-surface antialiased selection:bg-primary-container selection:text-surface">
+    <header class="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant">
+      <div class="h-14 max-w-[1100px] mx-auto px-margin md:px-margin-lg flex items-center justify-between">
+        <a class="flex items-center gap-2 group" href="./">
+          <span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+          <span class="font-code-sm text-code-sm tracking-wider uppercase font-semibold text-on-surface group-hover:text-primary transition-colors">STOWAWAY</span>
+        </a>
+        <nav class="hidden md:flex items-center gap-space-lg">
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="./#findings">Findings</a>
+          <a aria-current="page" class="font-code-sm text-code-sm text-primary border-b border-primary py-1" href="limits.html">Test the limits</a>
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="not-a-coin.html">Writing</a>
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="scan.html">Scan</a>
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="https://github.com/aaditripi18/Stowaway" rel="noopener" target="_blank">GitHub</a>
+        </nav>
+        <a class="md:hidden font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface" href="./">← Findings</a>
+      </div>
+    </header>
+
+    <main class="w-full pt-14 bg-surface">
+      <div class="max-w-[1100px] mx-auto px-margin md:px-margin-lg py-space-xl flex flex-col gap-space-lg">
+        <div class="flex flex-col gap-3 max-w-3xl">
+          <h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight">Test the limits</h1>
+          <p class="font-body-lg text-body-lg text-on-surface-variant">The findings say where Stowaway's checks stop working. Here you check that yourself: plant random bytes in a model's weights, choose how many, how deep and how thinly spread, and see which checks catch them, from the file alone and with the unmodified model as the claimed base.</p>
+          <div class="flex items-start gap-2.5 px-3.5 py-2.5 rounded bg-surface-container-low border border-outline-variant/80">
+            <span class="material-symbols-outlined text-[18px] text-primary-container shrink-0">lock</span>
+            <p class="font-code-sm text-code-sm text-on-surface-variant">Everything runs in this tab (<code class="text-primary">connect-src 'none'</code>). The payload is random bytes written with the same code path as the experiments (<code>stowaway.embed</code>, byte-identical in tests); nothing reads it back or runs it. You can download the planted copy and check it with the Python tool.</p>
+          </div>
+        </div>
+
+        <!-- 1. model -->
+        <section class="bg-panel border border-panel-line rounded p-space-lg flex flex-col gap-space-md">
+          <div class="flex items-baseline gap-space-md"><span class="font-label-mono text-label-mono text-primary font-bold">01</span><h2 class="font-headline-md text-headline-md text-on-surface">Choose a model</h2></div>
+          <div class="flex flex-wrap items-center gap-space-sm">
+            <button id="load-sample" type="button" class="inline-flex items-center bg-primary-container text-surface font-code-sm text-code-sm font-semibold px-4 py-2 rounded-sm hover:brightness-110">Use the sample (BERT, 2 layers, 17 MB)</button>
+            <label class="inline-flex items-center border border-[#353c52] hover:bg-panel-hover text-on-surface font-code-sm text-code-sm px-4 py-2 rounded-sm cursor-pointer">Or your own .safetensors<input id="own-file" type="file" accept=".safetensors" class="hidden" /></label>
+            <label class="inline-flex items-center gap-2 font-code-sm text-code-sm text-on-surface-variant"><input id="bf16" type="checkbox" class="accent-[#38bdf8]" /> treat it as trained in bf16 (round first)</label>
+          </div>
+          <p id="model-status" class="font-code-sm text-code-sm text-outline">No model loaded. The sample is google/bert_uncased_L-2_H-128_A-2 (Apache-2.0; see samples/NOTICE.txt). Files up to about 1 GB; the copy is held in memory.</p>
+        </section>
+
+        <!-- 2. one attempt -->
+        <section id="controls" class="bg-panel border border-panel-line rounded p-space-lg flex flex-col gap-space-md opacity-50 pointer-events-none">
+          <div class="flex items-baseline gap-space-md"><span class="font-label-mono text-label-mono text-primary font-bold">02</span><h2 class="font-headline-md text-headline-md text-on-surface">Plant a payload</h2></div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-space-md font-code-sm text-code-sm">
+            <label class="flex flex-col gap-1">Payload size <span id="size-label" class="text-on-surface font-semibold">—</span><input id="size" type="range" min="0" max="100" value="40" class="accent-[#38bdf8]" /></label>
+            <label class="flex flex-col gap-1">Low bits per weight (k) <span id="k-label" class="text-on-surface font-semibold">8</span><input id="k" type="range" min="1" max="23" value="8" class="accent-[#38bdf8]" /></label>
+            <label class="flex flex-col gap-1">Spread: one weight in every
+              <select id="spread" class="bg-surface-container border border-outline-variant rounded px-2 py-1 text-on-surface"><option>1</option><option>2</option><option>4</option><option>16</option><option>64</option><option>256</option></select></label>
+            <label class="flex flex-col gap-1">Which tensors
+              <select id="target" class="bg-surface-container border border-outline-variant rounded px-2 py-1 text-on-surface"></select></label>
+          </div>
+          <div class="flex flex-wrap items-center gap-space-sm">
+            <button id="try" type="button" class="inline-flex items-center bg-primary-container text-surface font-code-sm text-code-sm font-semibold px-4 py-2 rounded-sm hover:brightness-110">Plant and scan</button>
+            <button id="download" type="button" class="hidden inline-flex items-center border border-[#353c52] hover:bg-panel-hover text-on-surface font-code-sm text-code-sm px-4 py-2 rounded-sm">Download the planted copy</button>
+            <span id="try-status" class="font-code-sm text-code-sm text-outline"></span>
+          </div>
+          <div id="result" class="hidden grid grid-cols-1 md:grid-cols-2 gap-space-md">
+            <div class="border border-panel-line rounded p-space-md flex flex-col gap-2"><span class="font-label-mono text-label-mono uppercase tracking-wider text-outline">From the file alone (S3, S4)</span><span id="single-verdict" class="font-headline-md text-headline-md"></span><ul id="single-list" class="font-code-sm text-code-sm text-on-surface-variant flex flex-col gap-1"></ul></div>
+            <div class="border border-panel-line rounded p-space-md flex flex-col gap-2"><span class="font-label-mono text-label-mono uppercase tracking-wider text-outline">With the base model (S5)</span><span id="base-verdict" class="font-headline-md text-headline-md"></span><ul id="base-list" class="font-code-sm text-code-sm text-on-surface-variant flex flex-col gap-1"></ul></div>
+            <p id="result-note" class="md:col-span-2 font-code-sm text-code-sm text-outline"></p>
+          </div>
+        </section>
+
+        <!-- 3. sweep -->
+        <section id="sweep-box" class="bg-panel border border-panel-line rounded p-space-lg flex flex-col gap-space-md opacity-50 pointer-events-none">
+          <div class="flex items-baseline gap-space-md"><span class="font-label-mono text-label-mono text-primary font-bold">03</span><h2 class="font-headline-md text-headline-md text-on-surface">Map the limit</h2></div>
+          <p class="font-body-md text-body-md text-on-surface-variant">Every payload size against every depth, with the spread and target chosen above: where does each check stop seeing it?</p>
+          <div class="flex flex-wrap items-center gap-space-sm">
+            <button id="sweep" type="button" class="inline-flex items-center bg-primary-container text-surface font-code-sm text-code-sm font-semibold px-4 py-2 rounded-sm hover:brightness-110">Run the sweep</button>
+            <span id="sweep-status" class="font-code-sm text-code-sm text-outline"></span>
+          </div>
+          <div id="sweep-grid" class="overflow-x-auto"></div>
+          <p class="font-code-sm text-code-sm text-outline">Each cell is one planted copy. A cell counts as caught only if a check flags a tensor the payload was written to and that the clean scan did not already flag. — = the payload does not fit.</p>
+        </section>
+      </div>
+    </main>
+    <script type="module" src="/src/limits.ts"></script>
+  </body>
+</html>

@@ -27,7 +27,7 @@ function tsFiles(dir: string): string[] {
 
 describe("the page cannot exfiltrate the file", () => {
   // Both pages ship the same policy; scan.html is the one that reads files.
-  for (const page of ["index.html", "scan.html"]) {
+  for (const page of ["index.html", "scan.html", "limits.html", "not-a-coin.html"]) {
     it(`${page} declares connect-src 'none' in the CSP`, () => {
       const html = readFileSync(join(WEB, page), "utf-8");
       expect(html).toMatch(/Content-Security-Policy/);
