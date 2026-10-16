@@ -8,6 +8,48 @@
 > Every number below is in [RESULTS.md](RESULTS.md), generated from the ledger
 > with the commit that produced it. These are early results, not conclusions.
 
+## Nine models, five payload types: hiding is free, and what gives a payload away is not its content (E6)
+
+E6 widened E1/E2 to all nine torchvision models, five payload types (random;
+zeros; English text; that text compressed; "MZ" plus random bytes), k = 1, 4, 8
+and 16, 1 KB to 4 MB, and three seeds for random payloads, scoring top-1
+agreement with the clean model on 1,000 Imagenette images.
+
+**H5 supported: hiding is free.** On every model and seed, a random payload of up
+to 1 MB in the low 8 bits leaves at least 99.8% of top-1 predictions unchanged
+(seven of the nine models: 100.0%). Only k = 16 starts to show (ResNet-18: 98.9%
+agreement at 4 MB).
+
+**The base diff catches everything.** S5 (the adopted S5c rule) flags every one
+of 216 seed-0 cells for random, zero and text payloads alike.
+
+**H6 not supported, and the reason is instructive.** The prediction was that
+S4's one-sided rule (a payload pulls bits toward a fair coin) would miss zero and
+text payloads more often than random ones. From the file alone they were caught
+*more* often: random 52, zeros 72, text 91 of 216 cells. Broken down by model:
+
+| Models | random, compressed, "MZ"+random | zeros | text |
+|---|---|---|---|
+| the six whose low bits are already fair coins (ResNet-18, MobileNetV2, MNASNet, RegNet, ShuffleNet, SqueezeNet) | **0 caught**, every model | 5-8 of 21-27 per model | 3-8 per model |
+| the three with a low-bit signature (MobileNetV3-Small/Large, EfficientNet-B0) | 14-19 of 24-25 per model | 5-13 | 13-20 |
+
+The structured catches in fair-coin models are all large payloads (256 KB to
+4 MB), all by S4, and they come from the payload contaminating S4's reference: a
+large payload of zeros or text gives most tensors of a role the same low bits,
+so the role's reference moves away from a fair coin, and the one tensor the
+payload only partly filled sits nearer 0.5 than its peers. That is a real catch
+of a tensor carrying the payload, but it comes from the payload's size and
+layout, not from recognising its content. What content does not change: random,
+compressed and "MZ"+random payloads behave identically (0 catches in every
+fair-coin model), so encrypting or compressing a payload buys an attacker
+nothing that a fair-coin model does not already give.
+
+**The cost of S4c.** Re-scoring E6's planted models with S4c (E0d) turns 14 of
+994 caught cells in the six re-scored models into misses (ResNet-18 17 -> 14,
+ShuffleNet 20 -> 16): planted tensors whose reference was within 0.02 of a fair
+coin, exactly where S4c stops testing. E0d's fresh batch showed no such loss on
+its random payloads; E6's wider grid does, and it is reported here.
+
 ## The base diff passed on samples and failed on whole files (E4b)
 
 E4 calibrated S5 on sampled tensors (32 KB from the six largest roles) and
