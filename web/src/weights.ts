@@ -18,7 +18,7 @@ export const S5_RULE: "p99" | "s5c" = "p99";
 const S4_BITS: Record<string, number> = { F32: 8, F16: 3, BF16: 2 }; // round(mant*8/23)
 // S4c (PLAN.md, E0d): test a bit plane only if its reference is at least this far
 // from a fair coin; 0 = off. Must equal weights.S4_MIN_SIGNATURE in Python.
-export const S4_MIN_SIGNATURE = 0;
+export const S4_MIN_SIGNATURE = 0.02; // adopted by E0d (PLAN.md)
 
 export type RawFloats = Record<string, RawFloat>;
 

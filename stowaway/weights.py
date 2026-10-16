@@ -160,7 +160,7 @@ SMALL_ROLE_PEERS = 6
 S4_SMALL_FLOOR = False
 # S4c (PLAN.md, E0d amendment): test a bit plane only if its reference is at
 # least this far from a fair coin. 0 = off (the E4/E0c rule).
-S4_MIN_SIGNATURE = 0.0
+S4_MIN_SIGNATURE = 0.02  # adopted by E0d (PLAN.md)
 
 
 def s4_bit_planes(floats: dict[str, RawTensor], low_bits: dict[str, int] | None = None,

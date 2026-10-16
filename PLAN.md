@@ -213,3 +213,12 @@ payload's expected 50%: flag if the modal highest-changed-bit share among bits
 n = 256, 0.446 at 768, 0.495 at 100,000). Dev: 0 honest false positives (closest
 margin 0.064), case (a) 8/8, case (b) 0/11, 3/11, 9/11, 9/11 at k = 8, 16, 20, 21.
 The fresh batch judges this rule once.
+
+**E0d fresh result (run E0d-2026-10-16T14:33:32Z-002a6c0, 60 models, used once).**
+Models with an S4 false positive, S4 / S4b / S4c: F32 2 / 1 / 2 of 20, BF16
+1 / 1 / 1, F16 0 / 0 / 0. Random-payload detection (models, any k), same order:
+F32 8 / 7 / 8, BF16 2 / 2 / 2, F16 3 / 3 / 3. By the decision rule S4c is
+adopted (no more false-positive models, no detection lost). It changes nothing
+on this batch; its only effect so far is the dev RegNet flag. S4b's lower F32
+count on the fresh batch is reported, not adopted: it was not the rule chosen
+before the batch was read.

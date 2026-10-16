@@ -442,6 +442,82 @@ Payload detection (caught / tested):
 A payload in a tensor that should match the base is caught up to the cutoff; one hidden inside a genuinely trained tensor is camouflaged by the training changes.
 
 
+## E0d — S4 on small role groups (PLAN.md, phase 2)
+
+### dev
+
+Run `E0d-2026-10-16T14:32:53Z-b13b0cb`, 9 models. Models with an S4 false positive (tensors in brackets).
+
+| Stored as | Models | S4 | S4b | S4c |
+|---|--:|--:|--:|--:|
+| F32 | 9 | 1 (1) | 1 (1) | 0 (0) |
+
+### fresh
+
+Run `E0d-2026-10-16T14:33:32Z-002a6c0`, 60 models. Models with an S4 false positive (tensors in brackets); payload: models where a random low-bit payload in the largest clean sampled tensor is caught at some k.
+
+| Stored as | Models | S4 | S4b | S4c | payload S4 | payload S4b | payload S4c |
+|---|--:|--:|--:|--:|--:|--:|--:|
+| F32 | 20 | 2 (12) | 1 (7) | 2 (12) | 8 / 20 | 7 / 20 | 8 / 20 |
+| BF16 | 20 | 1 (1) | 1 (1) | 1 (1) | 2 / 20 | 2 / 20 | 2 / 20 |
+| F16 | 20 | 0 (0) | 0 (0) | 0 (0) | 3 / 20 | 3 / 20 | 3 / 20 |
+
+
+
+## E4b — S5 on whole files (PLAN.md, phase 2)
+
+### dev
+
+Run `E4b-2026-10-16T14:20:33Z-63687ab`: 12 pairs, 1637 changed shared tensors.
+
+| Rule | Honest tensors flagged | Honest models flagged | (a) k=8 | (a) k=16 | (a) k=20 | (a) k=21 | (b) k=8 | (b) k=16 | (b) k=20 | (b) k=21 |
+|---|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|
+| S5 | 129 | 8 / 12 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 8 / 11 | 8 / 11 | 8 / 11 | 8 / 11 |
+| S5c (T(n), chosen) | 0 | 0 / 12 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 0 / 11 | 3 / 11 | 9 / 11 | 9 / 11 |
+| S5b (T=0.1) | 0 | 0 / 12 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 0 / 11 | 0 / 11 | 0 / 11 | 2 / 11 |
+| S5c (T=0.1) | 1617 | 11 / 12 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 10 / 11 | 10 / 11 | 10 / 11 | 11 / 11 |
+| S5b (T=0.15) | 0 | 0 / 12 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 0 / 11 | 0 / 11 | 0 / 11 | 2 / 11 |
+| S5c (T=0.15) | 1381 | 11 / 12 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 9 / 11 | 9 / 11 | 9 / 11 | 9 / 11 |
+| S5b (T=0.2) | 0 | 0 / 12 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 0 / 11 | 0 / 11 | 0 / 11 | 2 / 11 |
+| S5c (T=0.2) | 266 | 11 / 12 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 5 / 11 | 9 / 11 | 9 / 11 | 9 / 11 |
+| S5b (T=0.25) | 0 | 0 / 12 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 0 / 11 | 0 / 11 | 0 / 11 | 2 / 11 |
+| S5c (T=0.25) | 55 | 9 / 12 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 1 / 11 | 9 / 11 | 9 / 11 | 9 / 11 |
+| S5b (T=0.3) | 0 | 0 / 12 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 0 / 11 | 0 / 11 | 0 / 11 | 2 / 11 |
+| S5c (T=0.3) | 15 | 3 / 12 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 1 / 11 | 8 / 11 | 9 / 11 | 9 / 11 |
+| S5b (T=0.35) | 0 | 0 / 12 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 0 / 11 | 0 / 11 | 0 / 11 | 2 / 11 |
+| S5c (T=0.35) | 10 | 3 / 12 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 1 / 11 | 7 / 11 | 9 / 11 | 9 / 11 |
+| S5b (T=0.4) | 0 | 0 / 12 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 0 / 11 | 0 / 11 | 0 / 11 | 2 / 11 |
+| S5c (T=0.4) | 0 | 0 / 12 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 0 / 11 | 4 / 11 | 9 / 11 | 9 / 11 |
+
+(a) payload in the largest tensor the fine-tune left identical to the base; (b) payload in the changed tensor with the smallest p99 bit (the low-gradient case).
+
+### fresh
+
+Run `E4b-2026-10-16T14:46:13Z-6a7ab2e`: 2 pairs, 202 changed shared tensors.
+
+| Rule | Honest tensors flagged | Honest models flagged | (a) k=8 | (a) k=16 | (a) k=20 | (a) k=21 | (b) k=8 | (b) k=16 | (b) k=20 | (b) k=21 |
+|---|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|
+| S5 | 24 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 |
+| S5c (T(n), chosen) | 0 | 0 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 0 / 2 | 1 / 2 | 1 / 2 | 2 / 2 |
+| S5b (T=0.1) | 0 | 0 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 0 / 2 | 0 / 2 | 0 / 2 | 1 / 2 |
+| S5c (T=0.1) | 202 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 |
+| S5b (T=0.15) | 0 | 0 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 0 / 2 | 0 / 2 | 0 / 2 | 1 / 2 |
+| S5c (T=0.15) | 199 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 |
+| S5b (T=0.2) | 0 | 0 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 0 / 2 | 0 / 2 | 0 / 2 | 1 / 2 |
+| S5c (T=0.2) | 39 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 |
+| S5b (T=0.25) | 0 | 0 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 0 / 2 | 0 / 2 | 0 / 2 | 1 / 2 |
+| S5c (T=0.25) | 11 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 1 / 2 | 2 / 2 | 2 / 2 | 2 / 2 |
+| S5b (T=0.3) | 0 | 0 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 0 / 2 | 0 / 2 | 0 / 2 | 1 / 2 |
+| S5c (T=0.3) | 3 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 1 / 2 | 2 / 2 | 2 / 2 | 2 / 2 |
+| S5b (T=0.35) | 0 | 0 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 0 / 2 | 0 / 2 | 0 / 2 | 1 / 2 |
+| S5c (T=0.35) | 2 | 1 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 1 / 2 | 2 / 2 | 2 / 2 | 2 / 2 |
+| S5b (T=0.4) | 0 | 0 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 0 / 2 | 0 / 2 | 0 / 2 | 1 / 2 |
+| S5c (T=0.4) | 0 | 0 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 2 / 2 | 0 / 2 | 2 / 2 | 2 / 2 | 2 / 2 |
+
+(a) payload in the largest tensor the fine-tune left identical to the base; (b) payload in the changed tensor with the smallest p99 bit (the low-gradient case).
+
+
+
 ## E5 — the same files through existing scanners
 
 Run `E5-2026-10-16T09:55:11Z-b7eb803`. picklescan 1.0.5, ModelScan 0.8.8, fickling 0.1.12 (`fickling` = its default check, as the CLI runs it; `fickling-ml` = its ML allowlist analysis), torch 2.14.1+cpu, safetensors 0.8.0. `—` = the tool did not scan the file (unsupported format). `stowaway+base` = with the clean model as claimed base (S5).
@@ -484,4 +560,41 @@ Conversion to safetensors (`torch.load(weights_only=True)` + `safetensors.torch.
 - code payloads: load refused for **6 / 6** (nothing executed, nothing converted)
 - weight payloads: carried across bit for bit and still extractable in **2 / 2**
 - `extra_entry.pt`: converted; Stowaway after conversion: clean
+
+
+## E6 — nine models, five payload types (PLAN.md, phase 2)
+
+Seed 0 for every payload type; random payloads also at seeds 1-2. `file` = S3/S4 from the planted file alone; `base` = S5 with the clean model as base; `agree` = share of 1,000 Imagenette images whose top-1 prediction is unchanged (minimum over the seeds).
+
+### resnet18 (clean top-1 0.650)
+
+| Payload | k | 1 KB | 4 KB | 16 KB | 64 KB | 256 KB | 1 MB | 4 MB |
+|---|--:|---|---|---|---|---|---|---|
+| random | 1 | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | – |
+| random | 4 | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% |
+| random | 8 | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% |
+| random | 16 | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 100.0% | file 0/3, base 3/3, agree 99.7% | file 0/3, base 3/3, agree 99.3% | file 0/3, base 3/3, agree 99.3% | file 0/3, base 3/3, agree 99.4% | file 0/3, base 3/3, agree 98.9% |
+| zeros | 1 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – |
+| zeros | 4 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% |
+| zeros | 8 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% |
+| zeros | 16 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 99.9% | file 0/1, base 1/1, agree 99.6% | file 0/1, base 1/1, agree 99.5% | file 0/1, base 1/1, agree 99.5% | file 1/1, base 1/1, agree 99.4% |
+| text | 1 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – |
+| text | 4 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% |
+| text | 8 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% |
+| text | 16 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 99.8% | file 0/1, base 1/1, agree 99.7% | file 0/1, base 1/1, agree 99.5% | file 0/1, base 1/1, agree 99.5% | file 1/1, base 1/1, agree 99.6% |
+| compressed | 1 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% | – |
+| compressed | 4 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% |
+| compressed | 8 | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 0/1, base 1/1, agree 100.0% | file 1/1, base 1/1, agree 100.0% |
+| compressed | 16 | file 0/1, base 1/1, agree 100.0% | – | – | – | – | – | – |
+| executable | 1 | – | – | – | – | – | – | – |
+| executable | 4 | – | – | – | – | – | – | – |
+| executable | 8 | – | – | – | – | – | – | – |
+| executable | 16 | – | – | – | – | – | – | – |
+
+### Verdicts
+
+| | Hypothesis | Verdict | Evidence |
+|---|---|---|---|
+| H5 | A random payload of up to 1 MB at k <= 8 leaves >= 99% of top-1 predictions unchanged, on every model and seed. | **supported** | resnet18 100.0% |
+| H6 | S4's one-sided rule costs what it says: zero and text payloads are caught from the file alone less often than random ones, and the base diff catches them at least as often. | **not supported** | file alone random 0/27, zeros 7/27, text 7/27; with base random 27/27, zeros 27/27, text 27/27 |
 
