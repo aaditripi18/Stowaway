@@ -12,24 +12,44 @@ permissions:
 
 jobs:
   python:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        python: ["3.10", "3.12"]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.10", "3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
-      - name: Install (CPU-only torch)
+      - name: Install (CPU-only torch; torch only writes test fixtures)
+        shell: bash
         run: |
           python -m pip install --upgrade pip
-          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          if [ "$RUNNER_OS" = "macOS" ]; then python -m pip install torch; else python -m pip install torch --index-url https://download.pytorch.org/whl/cpu; fi
           python -m pip install -e ".[dev]"
       - name: Tests, including the page-number gate
         # The two page facts read from downloaded weights need models/, which
         # CI does not fetch; every ledger fact and claim is still checked.
         run: python -m pytest -q
+
+  minimal:
+    # The scanner itself needs only numpy: install it alone and scan fixtures.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install .
+      - name: Scan fixtures with the bare install
+        run: |
+          set +e
+          stowaway scan web/fixtures/clean.safetensors; test $? -eq 0 || exit 1
+          stowaway scan web/fixtures/trailing_mz.safetensors; test $? -eq 2 || exit 1
+          stowaway scan web/fixtures/pytorch/legacy_evil.pt; test $? -eq 2 || exit 1
+          stowaway scan web/fixtures/s5/poisoned.safetensors --base web/fixtures/s5/base.safetensors; test $? -eq 2 || exit 1
 
   web:
     runs-on: ubuntu-latest
