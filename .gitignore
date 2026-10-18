@@ -9,3 +9,4 @@ private/
 data/
 models/
 results/*.log
+.vercel
