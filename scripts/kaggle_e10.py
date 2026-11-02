@@ -120,9 +120,18 @@ def pull(job: str) -> None:
     with tempfile.TemporaryDirectory() as d:
         kaggle("kernels", "output", f"{USER}/{JOBS[job][0]}", "-p", d)
         f = next(Path(d).rglob("new_ledger_lines.jsonl"), None)
-        if f is None:
-            sys.exit(f"no new_ledger_lines.jsonl in the output ({[p.name for p in Path(d).rglob('*')]})")
-        new = [ln for ln in f.read_text(encoding="utf-8").splitlines() if ln.strip()]
+        if f is not None:
+            new = [ln for ln in f.read_text(encoding="utf-8").splitlines() if ln.strip()]
+        else:
+            # a session stopped by Kaggle's time limit never writes new_ledger_lines.jsonl,
+            # but its working copy of the ledger is saved: take the lines this job added
+            led = next(Path(d).rglob("Stowaway/results/ledger.jsonl"), None)
+            if led is None:
+                sys.exit(f"no ledger in the output ({[p.name for p in Path(d).rglob('*')][:20]})")
+            exp = {"e10a": "E10a", "e8": "E8"}[job]
+            new = [ln for ln in led.read_text(encoding="utf-8").splitlines()
+                   if ln.strip() and json.loads(ln).get("experiment") == exp]
+            print(f"session did not finish: recovered {len(new)} {exp} lines from its working ledger")
     have = set(LEDGER.read_text(encoding="utf-8").splitlines())
     add = [ln for ln in new if ln not in have]
     with open(LEDGER, "a", encoding="utf-8") as out:
