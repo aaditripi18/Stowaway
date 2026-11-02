@@ -137,10 +137,12 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--models", nargs="+", default=list(corpus.VISION))
     ap.add_argument("--no-text", action="store_true")
+    ap.add_argument("--text-only", action="store_true", help="only the text model (e.g. after a vision run)")
     a = ap.parse_args(argv)
     run = Run("E9", bits=list(BITS), n_images=N_IMAGES, payload=PAYLOAD, text_model=TEXT_MODEL)
     rng = np.random.default_rng(0)
-    vision(run, a.models, rng)
+    if not a.text_only:
+        vision(run, a.models, rng)
     if not a.no_text:
         text(run, rng)
     print("run", run.run_id)

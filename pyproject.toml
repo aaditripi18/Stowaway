@@ -30,7 +30,7 @@ Source = "https://github.com/aaditripi18/Stowaway"
 # Used only to write test fixtures with the reference implementations.
 dev = ["pytest>=8.0", "torch>=2.2", "safetensors>=0.4", "gguf>=0.10"]
 # Experiments: pretrained models, the Imagenette eval and (E9) an SST-2 text model.
-experiments = ["torchvision>=0.17", "pillow>=10", "transformers==4.57.1", "pyarrow>=15"]  # E9 adds a text model
+experiments = ["torchvision>=0.17", "pillow>=10", "transformers==4.57.1", "pyarrow>=15", "pandas>=2"]  # E9 adds a text model
 # E5 only: the scanners Stowaway is compared with, at the versions E5 ran.
 compare = ["picklescan==1.0.5", "modelscan==0.8.8", "fickling==0.1.12"]
 
