@@ -267,3 +267,18 @@ base model itself proves little.
 
 Both verdicts are reported whatever they are. No rule is changed on this batch;
 any rule change needs a fresh list.
+
+**Amendment (same day, after a 3-model smoke test, before the full run).** None
+of the first three blind models (BAAI/bge-reranker-base, ProsusAI/finbert,
+SamLowe/roberta-base-go_emotions) declares a `base_model`, although finbert and
+the go_emotions model are well-known fine-tunes. So a declared base alone may
+cover few models. E8 adds a second route, **E8b, base discovery**: for a model
+with no declared (or no verified) base, read its `config.json` and take as
+candidates the 20 most-downloaded hub models with the same `model_type` and the
+same `hidden_size`, `num_hidden_layers` and `vocab_size` (where present); run
+the lineage check against each and keep the one with the most tensors identical
+or changed only in the low half of the mantissa. It counts as **discovered** if
+it passes the same >= 90% match rule and at least half of its matched tensors
+are identical or low-only (a model trained from scratch shares shapes, not
+values, with an unrelated base). Discovered pairs then get step 3. **H7b:**
+together, declared and discovered bases verify at least half of the 23.
