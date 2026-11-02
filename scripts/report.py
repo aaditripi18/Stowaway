@@ -543,13 +543,199 @@ def section_e5(rows):
     return "\n".join(out) + "\n"
 
 
+# --- phase 3 -----------------------------------------------------------------
+
+E8_SUPERSEDED = {"E8-2026-11-02T16:18:54Z-f0ff189": "S5 dictionary path compared only identical names",
+                 "E8-2026-11-02T17:31:17Z-0104662": "models lost to HTTP 429 (Hub rate limit)"}
+
+
+def e8_summary(rows):
+    run, recs = _latest_run(rows, "E8")
+    if not recs:
+        return None
+    models = sorted({r["repo"] for r in recs if "repo" in r})
+    ver = {r["repo"]: r for r in recs if r.get("kind") == "model" and r.get("status") == "verified"}
+    split = {r["repo"]: r.get("split") for r in recs if r.get("split")}
+    held = [m for m in models if split.get(m) == "held_out"]
+    dev = [m for m in models if split.get(m) == "dev"]
+    pay = [r for r in recs if r.get("kind") == "payload" and "caught" in r]
+    honest = [r for r in recs if r.get("kind") == "honest"]
+
+    def case(c):
+        return [r for r in pay if r["case"] == c]
+
+    return {
+        "run": run, "models": len(models), "dev": dev, "held": held,
+        "held_verified": [m for m in held if m in ver], "dev_verified": [m for m in dev if m in ver],
+        "declared_usable": [m for m in models if ver.get(m, {}).get("route") == "declared"],
+        "held_declared": [m for m in held if ver.get(m, {}).get("route") == "declared"],
+        "held_discovered": [m for m in held if ver.get(m, {}).get("route") == "discovered"],
+        "honest_pairs": len(honest), "honest_flagged": [r for r in honest if r["n_flags"]],
+        "a": case("a_base_identical"), "b": case("b_trained"),
+        "too_small": [r for r in recs if r.get("kind") == "payload" and r.get("status") == "too_small"],
+        "ver": ver,
+    }
+
+
+def e8_hypotheses(s):
+    a_caught = sum(r["caught"] for r in s["a"])
+    return [
+        ("H7", "At least half of the 23 blind models declare a base that is downloadable and verified",
+         len(s["declared_usable"]) * 2 >= s["models"], f"{len(s['declared_usable'])} of {s['models']}"),
+        ("H7b", "Declared and discovered bases together verify at least half of the 20 held-out models",
+         len(s["held_verified"]) * 2 >= len(s["held"]),
+         f"{len(s['held_verified'])} of {len(s['held'])} ({len(s['held_declared'])} declared, "
+         f"{len(s['held_discovered'])} discovered)"),
+        ("H8", "On verified pairs S5 flags no honest tensor and catches every case-(a) payload",
+         not s["honest_flagged"] and a_caught == len(s["a"]),
+         f"honest flags in {len(s['honest_flagged'])} of {s['honest_pairs']} pairs; case (a) "
+         f"{a_caught} / {len(s['a'])}"),
+    ]
+
+
+def _verdict_rows(hyps):
+    out = ["| | Hypothesis | Verdict | Evidence |", "|---|---|---|---|"]
+    out += [f"| {h} | {t} | **{'supported' if ok else 'not supported'}** | {ev} |" for h, t, ok, ev in hyps]
+    return out
+
+
+def section_e8(rows):
+    s = e8_summary(rows)
+    if s is None:
+        return "## E8 — closing the blind spot with a base\n\n_No run yet._\n"
+    out = ["## E8 — can the base diff close the single-file blind spot on its own? (PLAN.md, phase 3)", "",
+           f"Run `{s['run']}`, whole files, on the {s['models']} float32 models the survey found fair-coin "
+           "(blind to S3/S4). Dev models (used to fix the discovery rule, amendment 2): "
+           + ", ".join(f"`{m}`" for m in s["dev"]) + ". Superseded runs: "
+           + "; ".join(f"`{k}` ({v})" for k, v in E8_SUPERSEDED.items()) + ".", "",
+           "| Model | Split | Route | Reference | Median cosine | Identical / changed tensors |",
+           "|---|---|---|---|--:|---|"]
+    for m in s["dev"] + s["held"]:
+        v = s["ver"].get(m)
+        where = "dev" if m in s["dev"] else "held out"
+        if v is None:
+            out.append(f"| `{m}` | {where} | – | none verified | – | – |")
+            continue
+        cos = "–" if v.get("median_cosine") is None else f"{v['median_cosine']:.3f}"
+        out.append(f"| `{m}` | {where} | {v['route']} | `{v['base']}` | {cos} | "
+                   f"{v['identical']} / {v['low_only'] + v['changed_above']} |")
+    a_c, b_c = sum(r["caught"] for r in s["a"]), sum(r["caught"] for r in s["b"])
+    missed = [r for r in s["a"] if not r["caught"]]
+    out += ["", f"Honest whole-file S5 flags: {len(s['honest_flagged'])} of {s['honest_pairs']} verified pairs ("
+            + "; ".join(f"`{r['repo']}`: {', '.join(r['flags'])}" for r in s["honest_flagged"]) + ").", "",
+            f"64 KB random payload at k = 8. Case (a), largest tensor identical to the reference: {a_c} / "
+            f"{len(s['a'])} caught"
+            + (" (missed: " + ", ".join(f"`{r['repo']}`, {r['payload_bytes']} B" for r in missed) + ")"
+               if missed else "")
+            + f"; {len(s['too_small'])} pair(s) had no identical tensor large enough. Case (b), largest tensor "
+            f"the model and its reference differ on: {b_c} / {len(s['b'])} caught.", ""]
+    out += _verdict_rows(e8_hypotheses(s))
+    return "\n".join(out) + "\n"
+
+
+def e9_records(rows):
+    latest = {}
+    for r in rows:
+        if r["experiment"] == "E9" and r.get("kind") == "model":
+            if r["model"] not in latest or r["run_id"] >= latest[r["model"]]["run_id"]:
+                latest[r["model"]] = r
+    return latest
+
+
+def e9_hypotheses(recs):
+    m = list(recs.values())
+    return [
+        ("H9", "Clearing the low 8 bits keeps >= 99.9% prediction agreement on every model",
+         all(r["agreement_8"] >= 0.999 for r in m),
+         f"minimum {100 * min(r['agreement_8'] for r in m):.2f}% over {len(m)} models"),
+        ("H10", "Clearing the low 16 bits keeps >= 99% on every model",
+         all(r["agreement_16"] >= 0.99 for r in m),
+         f"minimum {100 * min(r['agreement_16'] for r in m):.1f}%; below 99% on "
+         f"{sum(r['agreement_16'] < 0.99 for r in m)} of {len(m)}"),
+    ]
+
+
+def section_e9(rows):
+    recs = e9_records(rows)
+    if not recs:
+        return "## E9 — neutralise instead of detect\n\n_No run yet._\n"
+    out = ["## E9 — neutralise instead of detect: clearing the low bits (PLAN.md, phase 3)", "",
+           "Every float32 weight rounded to nearest at mantissa bit s (`stowaway sanitize`). Agreement = share of "
+           "predictions unchanged from the unmodified model (1,000 Imagenette images; 872 SST-2 sentences for the "
+           "text model). Payload left = bytes of a 64 KB payload planted at k = 8 that still equal the payload "
+           "after sanitising at s = 8.", "",
+           "| Model | Clean accuracy | Agreement s=8 | s=12 | s=16 | Accuracy s=8 | Payload left |",
+           "|---|--:|--:|--:|--:|--:|--:|"]
+    for name, r in sorted(recs.items(), key=lambda kv: (kv[1]["modality"], kv[0])):
+        out.append(f"| `{name}` | {r['accuracy_clean']:.3f} | {100 * r['agreement_8']:.2f}% | "
+                   f"{100 * r['agreement_12']:.2f}% | {100 * r['agreement_16']:.2f}% | {r['accuracy_8']:.3f} | "
+                   f"{r['recovered_bytes_equal']} / {r['payload_bytes']} |")
+    out += [""] + _verdict_rows(e9_hypotheses(recs))
+    return "\n".join(out) + "\n"
+
+
+def e10_summary(rows):
+    """H11 from E10a (whole file vs sample), H12 from the random-list survey (E0b)."""
+    out = {}
+    run, recs = _latest_run(rows, "E10a")
+    if recs:
+        models = [r for r in recs if r.get("kind") == "model" and "group_whole" in r]
+        cells = [r for r in recs if r.get("kind") == "cell"]
+        out["a"] = {"run": run, "models": models, "cells": cells,
+                    "skipped": [r for r in recs if r.get("kind") == "model" and r.get("status")],
+                    "group_agree": sum(r["group_sample"] == r["group_whole"] for r in models),
+                    "cell_agree": sum(r["detected_sample"] == r["detected_whole"] for r in cells)}
+
+    def survey_of(list_name, default):
+        mine = [r for r in rows if r.get("meta", {}).get("list", default) == list_name]
+        return _latest_run(mine, "E0b")[1]
+
+    rand, top = survey_of("hf_models_random.json", None), survey_of("hf_models.json", "hf_models.json")
+    if rand and top:
+        def share(sv):
+            f32 = [r for r in sv if "error" not in r and str(r.get("group", "")).startswith("F32")]
+            return sum(r["group"] == "F32, fair-coin low bits" for r in f32), len(f32)
+        out["b"] = {"random": share(rand), "top": share(top)}
+    return out
+
+
+def section_e10(rows):
+    s = e10_summary(rows)
+    out = ["## E10 — whole files, and a random sample of models (PLAN.md, phase 3)", ""]
+    verdicts = []
+    if "a" in s:
+        a = s["a"]
+        out += [f"**A. Whole files** (run `{a['run']}`, Kaggle CPU session): {len(a['models'])} models scanned whole "
+                f"({len(a['skipped'])} skipped or failed). The group (half-precision origin / signature / fair-coin) "
+                f"agrees between the 32 KB samples and the whole file for {a['group_agree']} of {len(a['models'])}; "
+                f"the planted-payload verdict for {a['cell_agree']} of {len(a['cells'])} (model, k) cells.", ""]
+        ok = bool(a["models"]) and a["group_agree"] >= 0.95 * len(a["models"]) \
+            and a["cell_agree"] >= 0.95 * len(a["cells"])
+        verdicts.append(("H11", "Sample and whole file agree on >= 95% of groups and of payload verdicts", ok,
+                         f"groups {a['group_agree']}/{len(a['models'])}, verdicts "
+                         f"{a['cell_agree']}/{len(a['cells'])}"))
+    if "b" in s:
+        (rb, rn), (tb, tn) = s["b"]["random"], s["b"]["top"]
+        diff = 100 * (rb / rn - tb / tn)
+        out += [f"**B. A random sample** of the 10,000 most-downloaded models (`hf_models_random.json`, seed 0): "
+                f"{rb} of {rn} float32 models have fair-coin low bits ({100 * rb / rn:.0f}%), against {tb} of {tn} "
+                f"({100 * tb / tn:.0f}%) in the top-1000 survey: {diff:+.1f} points. Survey tables above.", ""]
+        verdicts.append(("H12", "Random-sample fair-coin share within 15 points of the top-1000 share",
+                         abs(diff) <= 15, f"{100 * rb / rn:.1f}% vs {100 * tb / tn:.1f}% ({diff:+.1f} points)"))
+    if not verdicts:
+        return "## E10 — whole files and a random sample\n\n_No run yet._\n"
+    out += _verdict_rows(verdicts)
+    return "\n".join(out) + "\n"
+
+
 def main():
     rows = load()
     body = "\n".join([
         "# Results", "",
         "> Generated by `scripts/report.py` from `results/ledger.jsonl`. Do not edit by hand.", "",
         section_e0(rows), "", section_e1(rows), "", section_e2(rows), "",
-        section_hf(rows), "", section_e0c(rows), "", section_e1c(rows), "", section_e3(rows), "", section_e4(rows), "", section_e0d(rows), "", section_e4b(rows), "", section_e5(rows), "", section_e6(rows),
+        section_hf(rows), "", section_e0c(rows), "", section_e1c(rows), "", section_e3(rows), "", section_e4(rows), "", section_e0d(rows), "", section_e4b(rows), "", section_e5(rows), "", section_e6(rows), "", section_e8(rows), "", section_e9(rows), "",
+        section_e10(rows),
     ])
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(body + "\n", encoding="utf-8")

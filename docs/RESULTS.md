@@ -362,6 +362,79 @@ Random bytes fill the low k bits of the sample of the largest tensor the clean s
 | `microsoft/phi-2` | F16 | F16 file | – | 0 | no / no / – |
 | `mixedbread-ai/mxbai-rerank-xsmall-v1` | F16 | F16 file | – | 0 | no / no / – |
 
+## E0b / E1b — single-file checks on public Hugging Face models (`hf_models_random.json`)
+
+Runs `E0b-2026-11-02T15:26:14Z-9045c8c` and `E1b-2026-11-02T15:26:14Z-9045c8c`. Sampling: 6 roles x 4 layers (role peers for S4), up to 24 tensors, first 32 KB of each, fetched with HTTP range requests; the list is frozen in `results/hf_models_random.json`. Groups come from what S3/S4 measure on the clean samples.
+
+### E0b — what the weights look like, and false positives
+
+| Group | Models | Models with a false positive | Flagged tensors / sampled |
+|---|--:|--:|--:|
+| F32 file, bfloat16 precision | 2 | 0 | 0 / 48 |
+| F32 file, float16 precision | 2 | 0 | 0 / 48 |
+| F32, low-bit signature | 6 | 0 | 0 / 144 |
+| F32, fair-coin low bits | 29 | 0 | 0 / 664 |
+| F16 file | 1 | 0 | 0 / 24 |
+
+40 models sampled, 0 could not be.
+
+### E1b — would the file alone expose a random low-bit payload?
+
+Random bytes fill the low k bits of the sample of the largest tensor the clean scan did not flag. Cells: models where S3 or S4 flagged that tensor / models tested.
+
+| Group | k=1 | k=4 | k=8 |
+|---|--:|--:|--:|
+| F32 file, bfloat16 precision | 2 / 2 | 2 / 2 | 2 / 2 |
+| F32 file, float16 precision | 2 / 2 | 2 / 2 | 2 / 2 |
+| F32, low-bit signature | 4 / 6 | 5 / 6 | 5 / 6 |
+| F32, fair-coin low bits | 0 / 29 | 0 / 29 | 0 / 29 |
+| F16 file | 0 / 1 | 0 / 1 | – |
+
+### Per model
+
+| Model | Stored | Group | Signature (bits 0–3) | False positives | Payload seen at k=1 / 4 / 8 |
+|---|---|---|---|--:|---|
+| `HuggingFaceM4/idefics-9b` | F32 | F32 file, bfloat16 precision | 0.00, 0.00, 0.00, 0.00 | 0 | yes / yes / yes |
+| `ibm-research/PowerLM-3b` | F32 | F32 file, bfloat16 precision | 0.00, 0.00, 0.00, 0.00 | 0 | yes / yes / yes |
+| `microsoft/trocr-large-printed` | F32 | F32 file, float16 precision | 0.00, 0.00, 0.00, 0.00 | 0 | yes / yes / yes |
+| `timm/resnet50x16_clip.openai` | F32 | F32 file, float16 precision | 0.00, 0.00, 0.00, 0.00 | 0 | yes / yes / yes |
+| `allenai/OLMo-2-1124-13B` | F32 | F32, low-bit signature | 0.36, 0.49, 0.50, 0.50 | 0 | yes / yes / yes |
+| `facebook/wmt19-en-de` | F32 | F32, low-bit signature | 0.53, 0.53, 0.53, 0.47 | 0 | no / no / no |
+| `timm/efficientnet_b1.ra4_e3600_r240_in1k` | F32 | F32, low-bit signature | 0.44, 0.50, 0.50, 0.50 | 0 | yes / yes / yes |
+| `timm/mobilenetv3_large_100.ra4_e3600_r224_in1k` | F32 | F32, low-bit signature | 0.44, 0.50, 0.50, 0.50 | 0 | yes / yes / yes |
+| `timm/resnet26d.bt_in1k` | F32 | F32, low-bit signature | 0.40, 0.60, 0.45, 0.50 | 0 | yes / yes / yes |
+| `timm/vit_large_patch16_siglip_384.v2_webli` | F32 | F32, low-bit signature | 0.45, 0.50, 0.50, 0.50 | 0 | no / yes / yes |
+| `Aratako/MioCodec-25Hz-24kHz` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `OpenMed/OpenMed-PII-German-BioClinicalBERT-Base-110M-v1` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `OpenMed/OpenMed-PII-Italian-LiteClinical-Small-66M-v1` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `Snowflake/snowflake-arctic-embed-m` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `c-bone/MP-20-Density` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `classla/multilingual-IPTC-news-topic-classifier` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `crypt0trading/c66-h13` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `crypt0trading/c66-h14` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `facebook/mms-tts-bod` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `facebook/webssl-dino300m-full2b-224` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `google/siglip-base-patch16-224` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `kinggeezero/minor12` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `kmaheerminor/minor4` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `matei-dorian/segformer-b5-finetuned-human-parsing` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `mobilint/Qwen2.5-0.5B-Instruct` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `nm-testing/SmolLM-1.7B-Instruct-quantized.w4a16` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `numind/NuNER_Zero` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `rabah2026/wav2vec2-large-xlsr-53-arabic-quran-v_final` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `sdadas/mmlw-roberta-large` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `segment-any-text/sat-6l-sm` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `sentence-transformers-testing/stsb-bert-tiny-onnx` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `timm/convnextv2_tiny.fcmae` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `timm/deit_tiny_distilled_patch16_224.fb_in1k` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `timm/hrnet_w32.ms_in1k` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `timm/resnest50d.in1k` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `timm/spnasnet_100.rmsp_in1k` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `timm/tiny_vit_11m_224.dist_in22k` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `timm/vit_small_plus_patch16_dinov3.lvd1689m` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `tue-mps/coco_instance_eomt_large_1280` | F32 | F32, fair-coin low bits | – | 0 | no / no / no |
+| `fancyfeast/bigasp-v1` | F16 | F16 file | – | 0 | no / no / – |
+
 
 ## E0c — week-4 S4 rule against the current one, same samples
 
@@ -797,4 +870,77 @@ Seed 0 for every payload type; random payloads also at seeds 1-2. `file` = S3/S4
 |---|---|---|---|
 | H5 | A random payload of up to 1 MB at k <= 8 leaves >= 99% of top-1 predictions unchanged, on every model and seed. | **supported** | mobilenet_v3_large 99.8%, shufflenet_v2_x0_5 99.9%, efficientnet_b0 100.0%, mnasnet0_5 100.0%, mobilenet_v2 100.0%, mobilenet_v3_small 100.0%, regnet_y_400mf 100.0%, resnet18 100.0%, squeezenet1_1 100.0% |
 | H6 | S4's one-sided rule costs what it says: zero and text payloads are caught from the file alone less often than random ones, and the base diff catches them at least as often. | **not supported** | file alone random 52/216, zeros 72/216, text 91/216; with base random 216/216, zeros 216/216, text 216/216 |
+
+
+## E8 — can the base diff close the single-file blind spot on its own? (PLAN.md, phase 3)
+
+Run `E8-2026-11-02T18:25:18Z-1501bf4`, whole files, on the 23 float32 models the survey found fair-coin (blind to S3/S4). Dev models (used to fix the discovery rule, amendment 2): `BAAI/bge-reranker-base`, `ProsusAI/finbert`, `SamLowe/roberta-base-go_emotions`. Superseded runs: `E8-2026-11-02T16:18:54Z-f0ff189` (S5 dictionary path compared only identical names); `E8-2026-11-02T17:31:17Z-0104662` (models lost to HTTP 429 (Hub rate limit)).
+
+| Model | Split | Route | Reference | Median cosine | Identical / changed tensors |
+|---|---|---|---|--:|---|
+| `BAAI/bge-reranker-base` | dev | discovered | `FacebookAI/xlm-roberta-base` | 0.991 | 0 / 199 |
+| `ProsusAI/finbert` | dev | discovered | `google-bert/bert-base-uncased` | 1.000 | 0 / 199 |
+| `SamLowe/roberta-base-go_emotions` | dev | discovered | `FacebookAI/roberta-base` | 1.000 | 0 / 199 |
+| `amazon/chronos-2` | held out | discovered | `autogluon/chronos-2` | 1.000 | 170 / 0 |
+| `amazon/chronos-bolt-small` | held out | discovered | `autogluon/chronos-bolt-small` | 1.000 | 143 / 0 |
+| `autogluon/chronos-2` | held out | discovered | `amazon/chronos-2` | 1.000 | 170 / 0 |
+| `autogluon/chronos-bolt-small` | held out | discovered | `amazon/chronos-bolt-small` | 1.000 | 143 / 0 |
+| `cross-encoder/ms-marco-MiniLM-L4-v2` | held out | declared | `cross-encoder/ms-marco-MiniLM-L12-v2` | 0.074 | 1 / 72 |
+| `cross-encoder/ms-marco-MiniLM-L6-v2` | held out | declared | `cross-encoder/ms-marco-MiniLM-L12-v2` | 0.254 | 1 / 104 |
+| `datasocietyco/bge-base-en-v1.5-course-recommender-v5` | held out | declared | `BAAI/bge-base-en-v1.5` | 1.000 | 2 / 197 |
+| `distilbert/distilbert-base-uncased` | held out | discovered | `ptouch/phishing-distilbert-cyber207` | 1.000 | 0 / 100 |
+| `google-bert/bert-base-cased` | held out | discovered | `dslim/bert-base-NER` | 1.000 | 2 / 197 |
+| `google-bert/bert-base-uncased` | held out | discovered | `sentence-transformers/bert-base-nli-mean-tokens` | 1.000 | 2 / 197 |
+| `google/vit-base-patch16-224` | held out | discovered | `ISxOdin/vit-base-oxford-iiit-pets` | 1.000 | 198 / 0 |
+| `laion/CLIP-ViT-B-32-laion2B-s34B-b79K` | held out | discovered | `patrickjohncyh/fashion-clip` | 1.000 | 0 / 398 |
+| `laion/clap-htsat-fused` | held out | discovered | `sarulab-speech/human-clap-wsce-mae` | 1.000 | 12 / 446 |
+| `nomic-ai/nomic-embed-text-v1.5` | held out | discovered | `NostraEmpire/mirror-nomic-embed-text-v1.5` | 1.000 | 112 / 0 |
+| `openai-community/gpt2` | held out | discovered | `garak-llm/attackgeneration-toxicity_gpt2` | 1.000 | 0 / 148 |
+| `prithivMLmods/Gender-Classifier-Mini` | held out | declared | `google/siglip2-base-patch16-224` | 1.000 | 11 / 197 |
+| `sentence-transformers/all-MiniLM-L6-v2` | held out | declared | `nreimers/MiniLM-L6-H384-uncased` | 0.971 | 2 / 101 |
+| `sentence-transformers/all-mpnet-base-v2` | held out | discovered | `optimum-intel-internal-testing/all-mpnet-base-v2` | 1.000 | 199 / 0 |
+| `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | held out | – | none verified | – | – |
+| `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | held out | – | none verified | – | – |
+
+Honest whole-file S5 flags: 2 of 21 verified pairs (`cross-encoder/ms-marco-MiniLM-L4-v2`: bert.encoder.layer.2.output.LayerNorm.weight; `datasocietyco/bge-base-en-v1.5-course-recommender-v5`: encoder.layer.11.output.LayerNorm.weight).
+
+64 KB random payload at k = 8. Case (a), largest tensor identical to the reference: 12 / 13 caught (missed: `laion/clap-htsat-fused`, 84 B); 2 pair(s) had no identical tensor large enough. Case (b), largest tensor the model and its reference differ on: 0 / 14 caught.
+
+| | Hypothesis | Verdict | Evidence |
+|---|---|---|---|
+| H7 | At least half of the 23 blind models declare a base that is downloadable and verified | **not supported** | 5 of 23 |
+| H7b | Declared and discovered bases together verify at least half of the 20 held-out models | **supported** | 18 of 20 (5 declared, 13 discovered) |
+| H8 | On verified pairs S5 flags no honest tensor and catches every case-(a) payload | **not supported** | honest flags in 2 of 21 pairs; case (a) 12 / 13 |
+
+
+## E9 — neutralise instead of detect: clearing the low bits (PLAN.md, phase 3)
+
+Every float32 weight rounded to nearest at mantissa bit s (`stowaway sanitize`). Agreement = share of predictions unchanged from the unmodified model (1,000 Imagenette images; 872 SST-2 sentences for the text model). Payload left = bytes of a 64 KB payload planted at k = 8 that still equal the payload after sanitising at s = 8.
+
+| Model | Clean accuracy | Agreement s=8 | s=12 | s=16 | Accuracy s=8 | Payload left |
+|---|--:|--:|--:|--:|--:|--:|
+| `distilbert/distilbert-base-uncased-finetuned-sst-2-english` | 0.911 | 100.00% | 100.00% | 100.00% | 0.911 | 0 / 65536 |
+| `efficientnet_b0` | 0.772 | 100.00% | 99.70% | 98.20% | 0.772 | 0 / 65536 |
+| `mnasnet0_5` | 0.657 | 100.00% | 99.80% | 92.40% | 0.657 | 0 / 65536 |
+| `mobilenet_v2` | 0.680 | 100.00% | 99.80% | 97.30% | 0.680 | 0 / 65536 |
+| `mobilenet_v3_large` | 0.725 | 100.00% | 99.80% | 97.90% | 0.725 | 0 / 65536 |
+| `mobilenet_v3_small` | 0.655 | 100.00% | 99.70% | 93.70% | 0.655 | 0 / 65536 |
+| `regnet_y_400mf` | 0.691 | 100.00% | 100.00% | 98.40% | 0.691 | 0 / 65536 |
+| `resnet18` | 0.650 | 100.00% | 100.00% | 99.00% | 0.650 | 0 / 65536 |
+| `shufflenet_v2_x0_5` | 0.569 | 100.00% | 99.50% | 95.60% | 0.569 | 0 / 65536 |
+| `squeezenet1_1` | 0.493 | 100.00% | 100.00% | 98.40% | 0.493 | 0 / 65536 |
+
+| | Hypothesis | Verdict | Evidence |
+|---|---|---|---|
+| H9 | Clearing the low 8 bits keeps >= 99.9% prediction agreement on every model | **supported** | minimum 100.00% over 10 models |
+| H10 | Clearing the low 16 bits keeps >= 99% on every model | **not supported** | minimum 92.4%; below 99% on 8 of 10 |
+
+
+## E10 — whole files, and a random sample of models (PLAN.md, phase 3)
+
+**B. A random sample** of the 10,000 most-downloaded models (`hf_models_random.json`, seed 0): 29 of 39 float32 models have fair-coin low bits (74%), against 23 of 39 (59%) in the top-1000 survey: +15.4 points. Survey tables above.
+
+| | Hypothesis | Verdict | Evidence |
+|---|---|---|---|
+| H12 | Random-sample fair-coin share within 15 points of the top-1000 share | **not supported** | 74.4% vs 59.0% (+15.4 points) |
 
