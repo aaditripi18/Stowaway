@@ -232,3 +232,38 @@ S5c 9/9 at every k. Case (b), low-gradient tensor: S5c 1, 8, 16, 18 of 20. By th
 decision rule (<= 1 false-positive model; every case-(a) payload S5 catches)
 **S5c replaces S5.** For reference, a fixed T = 0.4 would have flagged 2 fresh
 models (4 tensors).
+
+## Phase 3 (written 2026-11-02, before the runs it governs)
+
+### E8. How much of the single-file blind spot can the base diff close on its own?
+
+**Why.** The survey's headline is that the file alone says nothing about 23 of
+39 popular float32 models (fair-coin low bits), and that the check which works
+there, S5, needs a trusted base model. `--base declared` already fetches the
+`base_model` a model card names, but nothing measures how often that is possible
+or whether the declared base is the real parent. If most blind models can be
+diffed against a verifiable base with no user input, the blind spot is mostly
+closed in practice; if few can, the honest message is that a clean scan of a
+base model itself proves little.
+
+**Procedure.** For each of the 23 fair-coin models of the frozen survey list
+(`results/hf_models.json`, as classified by E1b; nothing new is selected):
+1. Record whether its card declares a `base_model`, and whether that repository
+   is downloadable (non-gated, safetensors).
+2. Lineage check: align the two files with S5's name alignment and record the
+   share of the target's tensors matched by name and shape, and among matched
+   tensors the share that are bit-identical or differ only in the low half of
+   the mantissa. A declared base counts as **verified** if >= 90% of the
+   target's tensors are matched by name and shape.
+3. On every verified pair: whole-file S5c on the unmodified target (honest
+   flags), and on the target with a 64 KB random payload at k = 8 written into
+   (a) the largest tensor identical to the base and (b) the largest tensor the
+   fine-tune changed (S5's known blind spot, reported, not tuned).
+
+- **H7** At least half of the 23 blind models declare a base that is
+  downloadable and verified.
+- **H8** On verified pairs, S5c flags no tensor of any unmodified target, and
+  catches the case (a) payload in every pair.
+
+Both verdicts are reported whatever they are. No rule is changed on this batch;
+any rule change needs a fresh list.
