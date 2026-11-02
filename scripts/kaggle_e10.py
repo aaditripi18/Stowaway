@@ -98,7 +98,8 @@ def run(job: str) -> None:
     sha = push()
     with tempfile.TemporaryDirectory() as d:
         d = Path(d)
-        (d / "run.py").write_text(f"# Stowaway E10 A, code {sha}\n" + NOTEBOOK, encoding="utf-8")
+        (d / "run.py").write_text(f"# Stowaway {job}, code {sha}\nSCRIPT = {script!r}\n" + NOTEBOOK,
+                                  encoding="utf-8")
         (d / "kernel-metadata.json").write_text(json.dumps({
             "id": f"{USER}/{kernel}", "title": kernel, "code_file": "run.py", "language": "python",
             "kernel_type": "script", "is_private": True, "enable_gpu": False, "enable_tpu": False,
