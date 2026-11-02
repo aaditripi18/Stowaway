@@ -1,0 +1,389 @@
+{
+ "selected": "2026-11-02",
+ "rule": [
+  "Rule (fixed before any model is read): list the 10,000 most-downloaded public",
+  "models that ship safetensors, shuffle them with seed 0, and walk the shuffled",
+  "list keeping float32 models (by the dtype holding most parameters), skipping",
+  "gated ones, ones without a top-level safetensors file and every model of an",
+  "earlier list, until 40 are kept."
+ ],
+ "population": 10000,
+ "seed": 0,
+ "skipped": {
+  "gated": 1,
+  "no_file": 2,
+  "no_float": 6,
+  "not_f32": 43,
+  "in_earlier_list": 1
+ },
+ "excluded_lists": [
+  "hf_models.json",
+  "hf_models_batch2.json",
+  "hf_models_batch3.json",
+  "hf_models_batch4.json"
+ ],
+ "models": [
+  {
+   "repo": "timm/resnest50d.in1k",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 27547816
+   },
+   "rank": 3578
+  },
+  {
+   "repo": "ibm-research/PowerLM-3b",
+   "file": "model-00001-of-00003.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 3512017152
+   },
+   "rank": 8926
+  },
+  {
+   "repo": "crypt0trading/c66-h14",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 1010159360
+   },
+   "rank": 4754
+  },
+  {
+   "repo": "facebook/mms-tts-bod",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 36288816
+   },
+   "rank": 9506
+  },
+  {
+   "repo": "c-bone/MP-20-Density",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 34476032
+   },
+   "rank": 4704
+  },
+  {
+   "repo": "timm/deit_tiny_distilled_patch16_224.fb_in1k",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 5910800
+   },
+   "rank": 9484
+  },
+  {
+   "repo": "nm-testing/SmolLM-1.7B-Instruct-quantized.w4a16",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "I64": 336,
+    "F32": 226592768,
+    "I32": 1610612736
+   },
+   "rank": 5359
+  },
+  {
+   "repo": "facebook/wmt19-en-de",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 271847424
+   },
+   "rank": 3056
+  },
+  {
+   "repo": "timm/convnextv2_tiny.fcmae",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 27866496
+   },
+   "rank": 9616
+  },
+  {
+   "repo": "crypt0trading/c66-h13",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 1010159360
+   },
+   "rank": 4507
+  },
+  {
+   "repo": "timm/mobilenetv3_large_100.ra4_e3600_r224_in1k",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 5507432
+   },
+   "rank": 3437
+  },
+  {
+   "repo": "rabah2026/wav2vec2-large-xlsr-53-arabic-quran-v_final",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 315496120
+   },
+   "rank": 4241
+  },
+  {
+   "repo": "timm/resnet26d.bt_in1k",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 16045384
+   },
+   "rank": 7505
+  },
+  {
+   "repo": "timm/hrnet_w32.ms_in1k",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 41307304
+   },
+   "rank": 3560
+  },
+  {
+   "repo": "allenai/OLMo-2-1124-13B",
+   "file": "model-00001-of-00012.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 13716198400
+   },
+   "rank": 4714
+  },
+  {
+   "repo": "HuggingFaceM4/idefics-9b",
+   "file": "model-00001-of-00019.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 8929682192
+   },
+   "rank": 5978
+  },
+  {
+   "repo": "matei-dorian/segformer-b5-finetuned-human-parsing",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 84608722
+   },
+   "rank": 6353
+  },
+  {
+   "repo": "classla/multilingual-IPTC-news-topic-classifier",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 559907857
+   },
+   "rank": 3682
+  },
+  {
+   "repo": "tue-mps/coco_instance_eomt_large_1280",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 321556646
+   },
+   "rank": 6639
+  },
+  {
+   "repo": "google/siglip-base-patch16-224",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 203155970
+   },
+   "rank": 306
+  },
+  {
+   "repo": "OpenMed/OpenMed-PII-Italian-LiteClinical-Small-66M-v1",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 65249356
+   },
+   "rank": 3850
+  },
+  {
+   "repo": "facebook/webssl-dino300m-full2b-224",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 303655168
+   },
+   "rank": 5185
+  },
+  {
+   "repo": "fancyfeast/bigasp-v1",
+   "file": "wjmvvr7s-test-20240808d.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 2567463684
+   },
+   "rank": 8843
+  },
+  {
+   "repo": "kmaheerminor/minor4",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 1100048384
+   },
+   "rank": 3705
+  },
+  {
+   "repo": "timm/resnet50x16_clip.openai",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 167522832
+   },
+   "rank": 3910
+  },
+  {
+   "repo": "segment-any-text/sat-6l-sm",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 234926593
+   },
+   "rank": 8750
+  },
+  {
+   "repo": "timm/tiny_vit_11m_224.dist_in22k",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 20367445
+   },
+   "rank": 5685
+  },
+  {
+   "repo": "numind/NuNER_Zero",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 448872192
+   },
+   "rank": 3872
+  },
+  {
+   "repo": "OpenMed/OpenMed-PII-German-BioClinicalBERT-Base-110M-v1",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 107778124
+   },
+   "rank": 4134
+  },
+  {
+   "repo": "sdadas/mmlw-roberta-large",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 434961408
+   },
+   "rank": 7563
+  },
+  {
+   "repo": "timm/spnasnet_100.rmsp_in1k",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 4461120
+   },
+   "rank": 6729
+  },
+  {
+   "repo": "Snowflake/snowflake-arctic-embed-m",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 108891648
+   },
+   "rank": 562
+  },
+  {
+   "repo": "mobilint/Qwen2.5-0.5B-Instruct",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 136134656
+   },
+   "rank": 2893
+  },
+  {
+   "repo": "timm/efficientnet_b1.ra4_e3600_r240_in1k",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 7856232
+   },
+   "rank": 4238
+  },
+  {
+   "repo": "timm/vit_small_plus_patch16_dinov3.lvd1689m",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 28683264
+   },
+   "rank": 2526
+  },
+  {
+   "repo": "microsoft/trocr-large-printed",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 608119809
+   },
+   "rank": 995
+  },
+  {
+   "repo": "timm/vit_large_patch16_siglip_384.v2_webli",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 316283904
+   },
+   "rank": 5604
+  },
+  {
+   "repo": "kinggeezero/minor12",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 1010159360
+   },
+   "rank": 8508
+  },
+  {
+   "repo": "Aratako/MioCodec-25Hz-24kHz",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 130762887
+   },
+   "rank": 3512
+  },
+  {
+   "repo": "sentence-transformers-testing/stsb-bert-tiny-onnx",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 4385920
+   },
+   "rank": 7962
+  }
+ ]
+}
