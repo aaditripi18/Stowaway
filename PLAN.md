@@ -321,3 +321,33 @@ recoverable from the sanitised file (bits 0..7 are all zero).
   model.
 - **H10** Clearing the low 16 bits (bfloat16-like precision) keeps >= 99% on
   every model.
+
+### E10. Whole files, and a random sample of models
+
+**Why.** The survey (E0b/E1b) read 32 KB samples of up to 24 tensors per model,
+and only the most-downloaded models. Both are limitations a reader can fairly
+raise: a statistic on a sample may differ from the same statistic on the whole
+file, and the most-downloaded models may not be typical.
+
+**A. Whole files.** Every model of the frozen survey list (`results/hf_models.json`,
+70 models) is downloaded whole (commit-pinned, SHA-256 checked) and scanned with
+the scanner's own whole-file S3/S4. Clean: the group (half-precision origin /
+low-bit signature / fair-coin) and false positives. Planted: the same random
+payload E1b used (same tensor, same size, same k, written from the tensor's
+first element, so the bytes it touches are the ones E1b sampled), now judged
+with statistics from every tensor of the file. Run on Kaggle (CPU session; the
+files total tens of GB).
+
+**B. A random sample.** A new frozen list, `results/hf_models_random.json`,
+committed before any of its weights are read: models drawn uniformly at random
+(seed 0) from the 10,000 most-downloaded public models on the Hub, skipping
+gated ones, ones without a top-level safetensors file, ones without float
+tensors and every model of an earlier list, until 40 float32 models are
+drawn. The survey (E0b/E1b, unchanged) runs on them.
+
+- **H11** Sample and whole file agree: the group of >= 95% of the 70 models,
+  and the E1b detection verdict of >= 95% of (model, k) cells, are the same
+  from the whole file as from the samples.
+- **H12** The blind spot is not an artefact of popularity: in the random sample,
+  the share of float32 models with fair-coin low bits is within 15 points of
+  the top-1000 survey's (23 of 39, 59%).
