@@ -24,6 +24,12 @@ def _git(*args: str) -> str:
 
 def git_state() -> dict:
     commit = _git("rev-parse", "--short", "HEAD")
+    if not commit:
+        # a copy made with `git archive` (scripts/kaggle_e10.py) has no .git, only the
+        # COMMIT file it was stamped with; git archive copies committed files only
+        stamp = LEDGER.parent.parent / "COMMIT"
+        if stamp.exists():
+            return {"commit": stamp.read_text(encoding="utf-8").strip(), "dirty": False}
     dirty = bool(_git("status", "--porcelain"))
     return {"commit": commit or "unknown", "dirty": dirty}
 
