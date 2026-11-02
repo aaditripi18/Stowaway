@@ -1,4 +1,5 @@
 """stowaway scan FILE|hf:org/name[@rev] ... [--base FILE|hf:org/name[@rev]|declared] [--json]
+stowaway sanitize FILE.safetensors --out NEW.safetensors [--bits 8]
 
 A target or base written hf:org/name is fetched from the Hugging Face Hub
 (pinned to a commit, checked against the Hub's SHA-256; see hub.py). With
@@ -48,7 +49,22 @@ def main(argv=None) -> int:
                     help="run the S5 differential against this claimed base model: a file, "
                          "hf:org/name[@revision], or 'declared' (the base_model an hf: target's card names)")
     sc.add_argument("--json", action="store_true", help="print the full JSON report")
+    sz = sub.add_parser("sanitize", help="remove any low-bit payload by rounding float32 weights")
+    sz.add_argument("file", help="a .safetensors file")
+    sz.add_argument("--out", required=True, help="the new file to write")
+    sz.add_argument("--bits", type=int, default=8,
+                    help="clear this many low mantissa bits of every float32 weight (default 8)")
     args = ap.parse_args(argv)
+    if args.cmd == "sanitize":
+        from .sanitize import sanitize_safetensors
+        try:
+            res = sanitize_safetensors(args.file, args.out, args.bits)
+        except (OSError, ValueError, KeyError) as e:
+            _log(f"stowaway: {e}")
+            return 3
+        print(f"wrote {res['output']}: {res['f32_tensors']} float32 tensors rounded at bit {res['bits']}, "
+              f"{res['elements_changed']} elements changed")
+        return 0
 
     try:
         fixed_base, fixed_source = None, None
