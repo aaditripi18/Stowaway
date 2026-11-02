@@ -282,3 +282,42 @@ it passes the same >= 90% match rule and at least half of its matched tensors
 are identical or low-only (a model trained from scratch shares shapes, not
 values, with an unrelated base). Discovered pairs then get step 3. **H7b:**
 together, declared and discovered bases verify at least half of the 23.
+
+**Amendment 2 (2026-11-02, after a 3-model dev run, before the other 20 are
+read).** The dev run (BAAI/bge-reranker-base, ProsusAI/finbert,
+SamLowe/roberta-base-go_emotions) discovered no base for any of them, including
+finbert, whose parent is google-bert/bert-base-uncased. The closeness rule was
+wrong: a full fine-tune changes every element of every tensor, including its top
+mantissa bits, so "identical or low-only" is never true of a real parent. On the
+sampled tensors, finbert against bert-base-uncased has cosine similarity
+0.996-1.000; against bert-base-cased (same architecture, unrelated weights)
+-0.07-0.19. **Revised rule:** a candidate is discovered if >= 90% of the
+target's tensors match by name and shape and the median cosine similarity of
+the screened tensors is >= 0.9; the best candidate is the one with the highest
+median cosine. The declared route keeps its pre-registered verification
+(>= 90% name and shape) and also records the cosine. The 3 dev models are
+reported separately; H7b is judged on the 20 models not yet read.
+
+### E9. Neutralise instead of detect: clearing the low bits
+
+**Why.** E8's dev run shows popular float32 models are often full fine-tunes,
+in which every tensor was changed by training. A payload in the low bits of a
+trained tensor is then indistinguishable from training by any diff (E4b: S5
+catches 1 of 20 at k = 8 in trained tensors), and the file alone shows nothing
+in fair-coin models (E1b). Where a payload cannot be detected it can still be
+removed: rounding every float32 weight to fewer mantissa bits overwrites
+whatever the low bits held.
+
+**Procedure.** `stowaway sanitize` rounds every float32 tensor to nearest at
+mantissa bit s (clearing bits 0..s-1), s in {8, 12, 16}, and writes a new file.
+On the nine torchvision models of E6 (top-1 agreement with the unmodified model
+on the same 1,000 Imagenette images) and on one text classifier
+(distilbert/distilbert-base-uncased-finetuned-sst-2-english, label agreement on
+the 872 SST-2 validation sentences): agreement after sanitising. Payload
+removal is checked directly: a random payload planted at k = 8 is not
+recoverable from the sanitised file (bits 0..7 are all zero).
+
+- **H9** Clearing the low 8 bits keeps >= 99.9% prediction agreement on every
+  model.
+- **H10** Clearing the low 16 bits (bfloat16-like precision) keeps >= 99% on
+  every model.
