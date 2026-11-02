@@ -62,8 +62,11 @@ def main(argv=None):
     ap.add_argument("--list", default="hf_models.json")
     ap.add_argument("--only", type=int, default=None)
     ap.add_argument("--dry", action="store_true", help="smoke test: record nothing")
+    ap.add_argument("--repos", nargs="+", help="only these models of the list (e.g. ones a run lost)")
     a = ap.parse_args(argv)
     models = json.loads((ROOT / "results" / a.list).read_text(encoding="utf-8"))["models"][: a.only]
+    if a.repos:
+        models = [m for m in models if m["repo"] in a.repos]
     run = Run("E10a", list=a.list, n_models=len(models), **SAMPLING)
     if a.dry:
         run.record = lambda **_: None
