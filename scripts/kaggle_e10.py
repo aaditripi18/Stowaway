@@ -93,13 +93,17 @@ def push() -> str:
     sys.exit("Kaggle did not serve the new code within 15 minutes")
 
 
+def notebook_source(job: str, sha: str) -> str:
+    """The script Kaggle runs for one experiment (tests/test_kaggle_e10.py: it must define SCRIPT)."""
+    return f"# Stowaway {job}, code {sha}\nSCRIPT = {JOBS[job][1]!r}\n" + NOTEBOOK
+
+
 def run(job: str) -> None:
-    kernel, script = JOBS[job]
+    kernel, _ = JOBS[job]
     sha = push()
     with tempfile.TemporaryDirectory() as d:
         d = Path(d)
-        (d / "run.py").write_text(f"# Stowaway {job}, code {sha}\nSCRIPT = {script!r}\n" + NOTEBOOK,
-                                  encoding="utf-8")
+        (d / "run.py").write_text(notebook_source(job, sha), encoding="utf-8")
         (d / "kernel-metadata.json").write_text(json.dumps({
             "id": f"{USER}/{kernel}", "title": kernel, "code_file": "run.py", "language": "python",
             "kernel_type": "script", "is_private": True, "enable_gpu": False, "enable_tpu": False,
