@@ -298,14 +298,18 @@ def s5_differential(floats: dict[str, RawTensor], base: dict[str, RawTensor]) ->
     check when a base model is available. The cutoff is calibrated in E4 from real
     fine-tune/base pairs, not guessed."""
     findings = []
-    shared = sorted(set(floats) & set(base))
+    # pair names exactly as analyse() does for a base file (wrapper prefixes, gamma/beta),
+    # so the dictionary path and the file path give the same findings
+    pairing, _, _ = align({n: (t.dtype, tuple(t.shape)) for n, t in floats.items()},
+                          {n: (t.dtype, tuple(t.shape)) for n, t in base.items()})
+    shared = sorted(n for n in floats if pairing.get(n, n) in base)
     if not shared:
         findings.append(Finding("S5", "info", "no-shared-tensors",
                                 "the base model shares no tensor names with this model"))
         return findings
 
     for name in shared:
-        f = _s5_tensor(name, floats[name], base[name])
+        f = _s5_tensor(name, floats[name], base[pairing.get(name, name)])
         if f is not None:
             findings.append(f)
     return findings

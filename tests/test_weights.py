@@ -233,3 +233,15 @@ def test_s4_peers_group_by_role_and_ndim():
     flat = {n: RawTensor("F32", (t.data.size,), t.data) for n, t in model.items()}
     shapes = {n: t.shape for n, t in model.items()}
     assert not [f for f in s4_bit_planes(flat, shapes=shapes) if f.code == "lowbit-anomaly"]
+
+
+def test_s5_pairs_wrapped_names_like_the_file_path():
+    # A fine-tune saved as "bert.x" against a base saved as "x" (E8: bert-base-uncased vs
+    # sentence-transformers/bert-base-nli-mean-tokens) must still be compared tensor by tensor.
+    base = {"pooler.dense.weight": _fp32_model(size=4096)["layer"],
+            "encoder.layer.0.weight": _fp32_model(size=4096)["layer"]}
+    model = {"bert." + k: RawTensor(v.dtype, v.shape, v.data.copy()) for k, v in base.items()}
+    poisoned = embed(model, np.random.default_rng(0).bytes(500), k=8, spread=1,
+                     names=["bert.pooler.dense.weight"])
+    found = s5_differential(poisoned, base)
+    assert [f.detail["tensor"] for f in found if f.code == "low-bit-only-change"] == ["bert.pooler.dense.weight"]

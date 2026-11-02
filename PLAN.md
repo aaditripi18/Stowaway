@@ -351,3 +351,14 @@ drawn. The survey (E0b/E1b, unchanged) runs on them.
 - **H12** The blind spot is not an artefact of popularity: in the random sample,
   the share of float32 models with fair-coin low bits is within 15 points of
   the top-1000 survey's (23 of 39, 59%).
+
+**Note (2026-11-02, after the E8 run E8-2026-11-02T16:18:54Z-f0ff189).** Looking
+into why a case-(a) payload was missed (bert-base-uncased against
+sentence-transformers/bert-base-nli-mean-tokens) showed a bug in the experiment's
+path to S5, not in a rule: the dictionary entry point `s5_differential` compared
+only tensors with identical names, while the scanner's file path (`analyse` with
+a base file, used by `stowaway scan --base`) first aligns names with `align()`.
+For pairs whose names differ by a wrapper prefix, E8 therefore compared nothing.
+The dictionary path now aligns exactly as the file path does (regression test in
+tests/test_weights.py). No threshold, rule or model list changes; E8 is rerun in
+full and the earlier run is reported as superseded.
