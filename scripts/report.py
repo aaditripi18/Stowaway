@@ -677,8 +677,15 @@ def section_e9(rows):
 def e10_summary(rows):
     """H11 from E10a (whole file vs sample), H12 from the random-list survey (E0b)."""
     out = {}
-    run, recs = _latest_run(rows, "E10a")
-    if recs:
+    e10a = [r for r in rows if r["experiment"] == "E10a"]
+    if e10a:
+        # main run plus supplementary runs for models it lost: each model's latest run counts
+        last = {}
+        for r in e10a:
+            if r["repo"] not in last or r["run_id"] > last[r["repo"]]:
+                last[r["repo"]] = r["run_id"]
+        recs = [r for r in e10a if r["run_id"] == last[r["repo"]]]
+        run = ", ".join(f"`{x}`" for x in sorted(set(last.values())))
         models = [r for r in recs if r.get("kind") == "model" and "group_whole" in r]
         cells = [r for r in recs if r.get("kind") == "cell"]
         out["a"] = {"run": run, "models": models, "cells": cells,
@@ -705,10 +712,18 @@ def section_e10(rows):
     verdicts = []
     if "a" in s:
         a = s["a"]
-        out += [f"**A. Whole files** (run `{a['run']}`, Kaggle CPU session): {len(a['models'])} models scanned whole "
+        out += [f"**A. Whole files** (runs {a['run']}; the second rescans models the first lost to HTTP 429): "
+                f"{len(a['models'])} models scanned whole "
                 f"({len(a['skipped'])} skipped or failed). The group (half-precision origin / signature / fair-coin) "
                 f"agrees between the 32 KB samples and the whole file for {a['group_agree']} of {len(a['models'])}; "
-                f"the planted-payload verdict for {a['cell_agree']} of {len(a['cells'])} (model, k) cells.", ""]
+                f"the planted-payload verdict for {a['cell_agree']} of {len(a['cells'])} (model, k) cells "
+                f"(sample caught / whole file missed: "
+                f"{sum(r['detected_sample'] and not r['detected_whole'] for r in a['cells'])}; the reverse: "
+                f"{sum(r['detected_whole'] and not r['detected_sample'] for r in a['cells'])}). False positives on the "
+                f"clean files: {sum(r['fp_sample'] for r in a['models'])} tensors from samples, "
+                f"{sum(r['fp_whole'] for r in a['models'])} tensors in "
+                f"{sum(r['fp_whole'] > 0 for r in a['models'])} models from whole files: "
+                + ", ".join(f"`{r['repo']}` {r['fp_whole']}" for r in a["models"] if r["fp_whole"]) + ".", ""]
         ok = bool(a["models"]) and a["group_agree"] >= 0.95 * len(a["models"]) \
             and a["cell_agree"] >= 0.95 * len(a["cells"])
         verdicts.append(("H11", "Sample and whole file agree on >= 95% of groups and of payload verdicts", ok,
