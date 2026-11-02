@@ -362,3 +362,10 @@ For pairs whose names differ by a wrapper prefix, E8 therefore compared nothing.
 The dictionary path now aligns exactly as the file path does (regression test in
 tests/test_weights.py). No threshold, rule or model list changes; E8 is rerun in
 full and the earlier run is reported as superseded.
+
+**Note 2 (same evening).** The E8 rerun (E8-2026-11-02T17:31:17Z-0104662) lost
+three models and one base to HTTP 429 (Hub rate limit), and the first run lost
+a base the same way; candidate screening also skipped any candidate that hit
+one. The Hub client now retries 429/5xx with backoff (tests/test_hub_retry.py).
+E8 is run once more; the run without lost models is the one reported, and both
+earlier runs are listed as superseded with the reason.

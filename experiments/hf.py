@@ -30,7 +30,7 @@ API = "https://huggingface.co/api/models"
 Fetch = Callable[[str, int, int], bytes]  # (url, start, end inclusive) -> bytes
 
 
-def http_fetch(url: str, start: int, end: int, retries: int = 4) -> bytes:
+def http_fetch(url: str, start: int, end: int, retries: int = 6) -> bytes:
     """Bytes [start, end] of `url`, following redirects, with retries."""
     req = urllib.request.Request(url, headers={"Range": f"bytes={start}-{end}",
                                                "User-Agent": "stowaway-survey"})
@@ -46,7 +46,8 @@ def http_fetch(url: str, start: int, end: int, retries: int = 4) -> bytes:
                 raise
             if attempt == retries - 1:
                 raise
-            time.sleep(2 * (attempt + 1))
+            rate_limited = isinstance(e, urllib.error.HTTPError) and e.code == 429
+            time.sleep(min(30 * 2 ** attempt, 300) if rate_limited else 2 * (attempt + 1))
     raise AssertionError("unreachable")
 
 

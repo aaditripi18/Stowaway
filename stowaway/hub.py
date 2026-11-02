@@ -22,6 +22,7 @@ import json
 import os
 import re
 import shutil
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -59,12 +60,29 @@ def parse_spec(s: str) -> tuple[str, str]:
     return m["repo"], m["rev"] or "main"
 
 
+RETRY_STATUS = (429, 500, 502, 503, 504)  # rate limited, or a transient server error
+RETRIES = 6
+
+
 def _open(url: str, headers: dict | None = None, timeout: int = 60):
+    """urlopen with the Hub's headers. A 429 (rate limit) or 5xx is retried with
+    backoff, waiting at least as long as the server's Retry-After asks."""
     h = {"User-Agent": UA, **(headers or {})}
     tok = os.environ.get("HF_TOKEN")
     if tok:
         h["Authorization"] = f"Bearer {tok}"
-    return urllib.request.urlopen(urllib.request.Request(url, headers=h), timeout=timeout)
+    for attempt in range(RETRIES):
+        try:
+            return urllib.request.urlopen(urllib.request.Request(url, headers=h), timeout=timeout)
+        except urllib.error.HTTPError as e:
+            if e.code not in RETRY_STATUS or attempt == RETRIES - 1:
+                raise
+            try:
+                wait = float(e.headers.get("Retry-After", 0))
+            except (TypeError, ValueError):
+                wait = 0.0
+            time.sleep(min(max(wait, 5 * 2 ** attempt), 300))
+    raise AssertionError("unreachable")
 
 
 def _json(url: str) -> dict:
