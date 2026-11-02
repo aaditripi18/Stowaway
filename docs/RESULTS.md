@@ -938,9 +938,12 @@ Every float32 weight rounded to nearest at mantissa bit s (`stowaway sanitize`).
 
 ## E10 — whole files, and a random sample of models (PLAN.md, phase 3)
 
+**A. Whole files** (run `E10a-2026-11-02T15:30:58Z-b6def58`, Kaggle CPU session): 65 models scanned whole (5 skipped or failed). The group (half-precision origin / signature / fair-coin) agrees between the 32 KB samples and the whole file for 65 of 65; the planted-payload verdict for 160 of 167 (model, k) cells.
+
 **B. A random sample** of the 10,000 most-downloaded models (`hf_models_random.json`, seed 0): 29 of 39 float32 models have fair-coin low bits (74%), against 23 of 39 (59%) in the top-1000 survey: +15.4 points. Survey tables above.
 
 | | Hypothesis | Verdict | Evidence |
 |---|---|---|---|
+| H11 | Sample and whole file agree on >= 95% of groups and of payload verdicts | **supported** | groups 65/65, verdicts 160/167 |
 | H12 | Random-sample fair-coin share within 15 points of the top-1000 share | **not supported** | 74.4% vs 59.0% (+15.4 points) |
 
