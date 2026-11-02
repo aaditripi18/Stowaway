@@ -1,9 +1,9 @@
-"""Run E10 A (whole files) on Kaggle: a CPU session with fast downloads.
+"""Run a download-heavy experiment (E8, E10 A) on Kaggle: a CPU session with fast downloads.
 
-  python scripts/kaggle_e10.py push      # upload the committed code (git archive + COMMIT stamp)
-  python scripts/kaggle_e10.py run       # push, then start the notebook
-  python scripts/kaggle_e10.py status
-  python scripts/kaggle_e10.py pull      # append the session's new ledger lines to results/ledger.jsonl
+  python scripts/kaggle_e10.py push                 # upload the committed code (git archive + COMMIT stamp)
+  python scripts/kaggle_e10.py run [e10a|e8]        # push, then start that experiment's notebook
+  python scripts/kaggle_e10.py status [e10a|e8]
+  python scripts/kaggle_e10.py pull [e10a|e8]       # append the session's new ledger lines to results/ledger.jsonl
 
 Only committed code runs: the upload is `git archive HEAD`, stamped with the
 commit, so every ledger line the session writes names the exact code. The Kaggle
@@ -22,7 +22,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 USER = os.environ.get("STOWAWAY_KAGGLE_USER", "aadityae5545454")
-DATASET, KERNEL = "stowaway-code", "stowaway-e10-whole-files"
+DATASET = "stowaway-code"
+JOBS = {"e10a": ("stowaway-e10-whole-files", "scripts/run_e10a.py"),
+        "e8": ("stowaway-e8-base-discovery", "scripts/run_e8.py")}
 LEDGER = ROOT / "results" / "ledger.jsonl"
 
 NOTEBOOK = r'''
@@ -35,7 +37,7 @@ subprocess.run([sys.executable, "-m", "pip", "install", "-q", "-e", str(work)], 
 os.environ["STOWAWAY_CACHE"] = "/tmp/stowaway-hub"
 ledger = work / "results" / "ledger.jsonl"
 n0 = len(ledger.read_text(encoding="utf-8").splitlines())
-subprocess.run([sys.executable, "scripts/run_e10a.py"], cwd=work, check=False)
+subprocess.run([sys.executable, SCRIPT], cwd=work, check=False)
 new = ledger.read_text(encoding="utf-8").splitlines()[n0:]
 pathlib.Path("/kaggle/working/new_ledger_lines.jsonl").write_text("\n".join(new) + "\n", encoding="utf-8")
 print(len(new), "new ledger lines", flush=True)
@@ -91,26 +93,27 @@ def push() -> str:
     sys.exit("Kaggle did not serve the new code within 15 minutes")
 
 
-def run() -> None:
+def run(job: str) -> None:
+    kernel, script = JOBS[job]
     sha = push()
     with tempfile.TemporaryDirectory() as d:
         d = Path(d)
         (d / "run.py").write_text(f"# Stowaway E10 A, code {sha}\n" + NOTEBOOK, encoding="utf-8")
         (d / "kernel-metadata.json").write_text(json.dumps({
-            "id": f"{USER}/{KERNEL}", "title": KERNEL, "code_file": "run.py", "language": "python",
+            "id": f"{USER}/{kernel}", "title": kernel, "code_file": "run.py", "language": "python",
             "kernel_type": "script", "is_private": True, "enable_gpu": False, "enable_tpu": False,
             "enable_internet": True, "dataset_sources": [f"{USER}/{DATASET}"],
             "competition_sources": [], "kernel_sources": []}), encoding="utf-8")
         print(kaggle("kernels", "push", "-p", str(d)).stdout.strip())
 
 
-def status() -> None:
-    print(kaggle("kernels", "status", f"{USER}/{KERNEL}").stdout.strip())
+def status(job: str) -> None:
+    print(kaggle("kernels", "status", f"{USER}/{JOBS[job][0]}").stdout.strip())
 
 
-def pull() -> None:
+def pull(job: str) -> None:
     with tempfile.TemporaryDirectory() as d:
-        kaggle("kernels", "output", f"{USER}/{KERNEL}", "-p", d)
+        kaggle("kernels", "output", f"{USER}/{JOBS[job][0]}", "-p", d)
         f = next(Path(d).rglob("new_ledger_lines.jsonl"), None)
         if f is None:
             sys.exit(f"no new_ledger_lines.jsonl in the output ({[p.name for p in Path(d).rglob('*')]})")
@@ -123,4 +126,5 @@ def pull() -> None:
 
 
 if __name__ == "__main__":
-    {"push": push, "run": run, "status": status, "pull": pull}[sys.argv[1]]()
+    cmd, job = sys.argv[1], (sys.argv[2] if len(sys.argv) > 2 else "e10a")
+    push() if cmd == "push" else {"run": run, "status": status, "pull": pull}[cmd](job)
