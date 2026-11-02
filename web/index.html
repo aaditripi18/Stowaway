@@ -396,7 +396,7 @@
               <h2 class="font-headline-lg text-headline-lg font-semibold text-on-surface">Limitations</h2>
             </div>
             <ul class="flex flex-col gap-space-sm font-body-md text-body-md text-on-surface-variant max-w-3xl">
-              <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>Two vision models end to end, one seed, and random payloads only; the E5 scanner comparison uses a small corpus we built, so it shows what each tool can see, not rates in the wild.</span></li>
+              <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>Accuracy cost is measured on nine image models (five payload types, three seeds), not on language models; the E5 scanner comparison uses a small corpus we built, so it shows what each tool can see, not rates in the wild.</span></li>
               <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>Single-file statistics cannot see a small or thinly spread encrypted payload in a fair-coin model.</span></li>
               <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>The base diff needs the real base model, and misses a payload inside a tensor the fine-tune genuinely trained.</span></li>
               <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>The survey tests 64 KB samples, not whole files, and is weighted to the most downloaded models, not a random sample.</span></li>

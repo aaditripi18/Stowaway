@@ -199,8 +199,9 @@ static host works. Design from Stitch; the figures on the project page are copie
 
 ## Limitations
 
-- **Preliminary:** two vision models end to end, one seed, random payloads only.
-  Accuracy cost is measured only on those two models.
+- **Accuracy cost is measured on image models only:** nine torchvision models,
+  five payload types, three seeds for random payloads (E6). Language models were
+  surveyed for detection, not for accuracy cost.
 - **Single-file statistics cannot see** a small or thinly spread encrypted
   payload in a fair-coin model. That is a finding, not a bug to tune away.
 - **The base diff needs the real base model**, and misses a payload inside a

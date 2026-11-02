@@ -426,12 +426,12 @@ real fine-tune/base pairs in E4 rather than adjusted to this result.
 
 ## Not yet tested
 
-- Only two models in E1/E2, one seed, random payloads only.
+- ~~Only two models in E1/E2, one seed, random payloads only.~~ Done in E6: nine
+  models, five payload types, three seeds for random payloads.
 - E3 tested placements from ordinary embed parameters only; an attacker who
   preserves each tensor's bit signature exactly was not tested.
-- E2 measures accuracy; agreement of individual predictions with the clean model
-  would be a more sensitive measure of cost.
+- ~~E2 measures accuracy; agreement of individual predictions would be more
+  sensitive.~~ Done in E6 (top-1 agreement on 1,000 images).
 - The survey tests detection on 64 KB samples, not whole files, and only the
-  single-file checks; accuracy cost (E2) is measured only on the two vision
-  models.
+  single-file checks; accuracy cost (E6) is measured on image models only.
 - S4 role peers still need a better estimate of clean spread for very small groups (RegNet case); the two residual bf16 flags are extreme sub-4-bit quantized models.
