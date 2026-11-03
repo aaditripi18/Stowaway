@@ -44,6 +44,7 @@ ALLOWED = [
     r"1K", r"4K", r"16K", r"64K", r"256K", r"1M",              # E1 strip axis labels
     r"64 KB samples", r"2026", r"\(pre-1\.6\)", r"1\.6",
     r"0 clean, 1 suspicious, 2 dangerous", r"5 checks", r"1 KB or more", r"low 8 bits", r"[Tt]op-1", r"1:(?=\s|$)",
+    r"10(?= Limitations)", r"16 bits", r"99%(?= we predicted)", r"[Ee]ight bits",   # section id, E9 method constants
 ]
 _ALLOWED_RE = re.compile("|".join(f"(?:{a})" for a in ALLOWED))
 
@@ -238,6 +239,42 @@ def facts(counts=True, weights=True):
         asserts["E5: H1 supported"] = (g["code"]["picklescan"]["flagged"] == g["code"]["stowaway"]["flagged"]
                                        == g["code"]["files"] and g["weight"]["picklescan"]["flagged"] == 0
                                        and c["weight_survived"] == c["weight_files"])
+
+    # phase 3: E8 reference discovery, E9 removal, E10 whole files and a random sample
+    e9 = R.e9_records(rows)
+    if e9:
+        m = list(e9.values())
+        f["e9.models"] = str(len(m))
+        f["e9.min_agree8"] = f"{100 * min(r['agreement_8'] for r in m):.2f}%"
+        f["e9.min_agree16"] = f"{100 * min(r['agreement_16'] for r in m):.1f}%"
+        f["e9.below99_16"] = str(sum(r["agreement_16"] < 0.99 for r in m))
+        left = sum(r["recovered_bytes_equal"] for r in m)
+        f["e9.payload_left"] = f"{left} / {m[0]['payload_bytes']:,}"
+        f["e9.payload_kb"] = f"{m[0]['payload_bytes'] // 1024} KB"
+        asserts["E9: accuracy unchanged at 8 bits"] = all(r["accuracy_8"] == r["accuracy_clean"] for r in m)
+        asserts["E9: every payload byte removed"] = left == 0 and all(r["low_bits_all_zero"] for r in m)
+    e8 = R.e8_summary(rows)
+    if e8:
+        f["e8.blind"] = str(e8["models"])
+        f["e8.held"] = str(len(e8["held"]))
+        f["e8.held_verified"] = str(len(e8["held_verified"]))
+        f["e8.held_declared"] = str(len(e8["held_declared"]))
+        f["e8.held_discovered"] = str(len(e8["held_discovered"]))
+        f["e8.a"] = f"{sum(r['caught'] for r in e8['a'])} / {len(e8['a'])}"
+        f["e8.b"] = f"{sum(r['caught'] for r in e8['b'])} / {len(e8['b'])}"
+        f["e8.honest"] = f"{len(e8['honest_flagged'])} of {e8['honest_pairs']}"
+    e10 = R.e10_summary(rows)
+    if "b" in e10:
+        (rb, rn), (tb, tn) = e10["b"]["random"], e10["b"]["top"]
+        f["e10.random_fair"] = f"{rb} of {rn}"
+        f["e10.random_pct"] = f"{100 * rb / rn:.0f}%"
+        f["e10.top_pct"] = f"{100 * tb / tn:.0f}%"
+    if "a" in e10:
+        a = e10["a"]
+        f["e10.whole"] = str(len(a["models"]))
+        f["e10.group_agree"] = f"{a['group_agree']} / {len(a['models'])}"
+        f["e10.cell_agree"] = f"{a['cell_agree']} / {len(a['cells'])}"
+        f["e10.fp_models"] = f"{sum(r['fp_whole'] > 0 for r in a['models'])} of {len(a['models'])}"
 
     if weights:
         f.update(_mobilenet_bit0())

@@ -22,6 +22,7 @@
         <nav class="hidden md:flex items-center gap-space-lg">
           <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="#findings">Findings</a>
           <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="#checks">Checks</a>
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="#remove">Remove</a>
           <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="limits.html">Test the limits</a>
           <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="not-a-coin.html">Writing</a>
           <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="scan.html">Scan</a>
@@ -45,7 +46,7 @@
               </div>
               <h1 class="font-headline-xl text-headline-xl font-semibold text-on-surface tracking-tight leading-[1.12]">What can hide in a model's weights that no scanner sees?</h1>
               <p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
-                Stowaway inspects <span class="font-code-md text-code-md text-on-surface">.safetensors</span>, <span class="font-code-md text-code-md text-on-surface">.pt</span> and <span class="font-code-md text-code-md text-on-surface">.gguf</span> files for payloads in the weights, unaccounted bytes and unsafe pickle code — entirely in your browser, nothing uploaded — and shows that reading one file is not enough.
+                Stowaway inspects <span class="font-code-md text-code-md text-on-surface">.safetensors</span>, <span class="font-code-md text-code-md text-on-surface">.pt</span> and <span class="font-code-md text-code-md text-on-surface">.gguf</span> files for payloads in the weights, unaccounted bytes and unsafe pickle code — entirely in your browser, nothing uploaded — shows that reading one file is not enough, and removes what no scan can see.
               </p>
               <div class="flex flex-wrap items-center gap-space-sm pt-space-xs">
                 <a class="inline-flex items-center justify-center bg-primary-container text-surface font-code-sm text-code-sm font-semibold px-4 py-2 rounded-sm hover:brightness-110 active:scale-[0.99] transition-all" href="scan.html">Scan a model</a>
@@ -90,7 +91,7 @@
           <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-hair">
             <div class="py-space-md px-space-lg flex items-center gap-space-sm">
               <span class="w-1.5 h-1.5 rounded-full bg-primary-container shrink-0"></span>
-              <span class="font-code-md text-code-md text-on-surface font-semibold">5 checks · <span data-fact="tests.total">237</span> tests</span>
+              <span class="font-code-md text-code-md text-on-surface font-semibold">5 checks · <span data-fact="tests.total">250</span> tests</span>
             </div>
             <div class="py-space-md px-space-lg flex items-center gap-space-sm">
               <span class="w-1.5 h-1.5 rounded-full bg-outline shrink-0"></span>
@@ -300,10 +301,49 @@
         </section>
 
         <!-- 06 WHAT WE LEARNED -->
-        <section class="py-12 border-b border-hair scroll-mt-14" id="learned">
+        <!-- 06 REMOVE WHAT CANNOT BE DETECTED -->
+        <section class="py-12 border-b border-hair scroll-mt-14" id="remove">
           <div class="flex flex-col gap-space-lg">
             <div class="flex items-baseline gap-space-md">
               <span class="font-label-mono text-label-mono text-primary font-bold">06</span>
+              <h2 class="font-headline-lg text-headline-lg font-semibold text-on-surface">Remove what cannot be detected</h2>
+            </div>
+            <p class="font-body-lg text-body-lg text-on-surface-variant max-w-3xl">No check of one file can see a payload in the low bits of a fair-coin model, and no diff can see one in a tensor that training changed. Both live in bits the model does not use. <span class="font-code-md text-code-md text-on-surface">stowaway sanitize</span> rounds them away.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+              <div class="bg-panel border border-panel-line p-space-lg rounded flex flex-col gap-space-xs">
+                <span class="font-label-mono text-label-mono uppercase tracking-wider text-outline">Predictions unchanged</span>
+                <span class="font-code-md text-4xl font-bold text-white tracking-tight"><span data-fact="e9.min_agree8">100.00%</span></span>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">on every one of <span data-fact="e9.models">10</span> models (nine image models and a text classifier) after clearing the low 8 bits of every weight; accuracy identical.</p>
+              </div>
+              <div class="bg-panel border border-panel-line p-space-lg rounded flex flex-col gap-space-xs">
+                <span class="font-label-mono text-label-mono uppercase tracking-wider text-outline">Payload bytes left</span>
+                <span class="font-code-md text-4xl font-bold text-white tracking-tight"><span data-fact="e9.payload_left">0 / 65,536</span></span>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">of a <span data-fact="e9.payload_kb">64 KB</span> payload planted in the low 8 bits: every one of those bits is zero afterwards.</p>
+              </div>
+              <div class="bg-panel border border-panel-line p-space-lg rounded flex flex-col gap-space-xs">
+                <span class="font-label-mono text-label-mono uppercase tracking-wider text-outline">Where the limit is</span>
+                <span class="font-code-md text-4xl font-bold text-white tracking-tight"><span data-fact="e9.min_agree16">92.4%</span></span>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">lowest agreement after clearing 16 bits instead: under the 99% we predicted on <span data-fact="e9.below99_16">8</span> of <span data-fact="e9.models">10</span> models. Eight bits is the safe setting.</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+              <div class="bg-panel border border-panel-line p-space-lg rounded flex flex-col gap-space-xs">
+                <h3 class="font-headline-md text-headline-md text-on-surface">A reference model is usually there to find.</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant">For <span data-fact="e8.held_verified">18</span> of <span data-fact="e8.held">20</span> unseen models a single file cannot judge, Stowaway found a reference with no input: <span data-fact="e8.held_declared">5</span> declared on the model card, <span data-fact="e8.held_discovered">13</span> discovered by weight similarity among same-architecture models. Against it, a payload in a shared tensor was caught <span data-fact="e8.a">12 / 13</span>; one inside a tensor training changed, <span data-fact="e8.b">0 / 14</span>. What it finds is the closest relative (a parent, a fine-tune, a mirror), not a pedigree.</p>
+              </div>
+              <div class="bg-panel border border-panel-line p-space-lg rounded flex flex-col gap-space-xs">
+                <h3 class="font-headline-md text-headline-md text-on-surface">The blind spot is bigger than the top of the charts.</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant">In a random sample of the most-downloaded ten thousand, <span data-fact="e10.random_fair">29 of 39</span> float32 models (<span data-fact="e10.random_pct">74%</span>) give a single file nothing to read, against <span data-fact="e10.top_pct">59%</span> of the top thousand. Scanned whole, <span data-fact="e10.whole">67</span> models keep the classification their samples gave (<span data-fact="e10.group_agree">67 / 67</span>), but <span data-fact="e10.fp_models">5 of 67</span> clean ones flag a tensor whose precision history really differs, such as a never-trained table.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 07 WHAT WE LEARNED -->
+        <section class="py-12 border-b border-hair scroll-mt-14" id="learned">
+          <div class="flex flex-col gap-space-lg">
+            <div class="flex items-baseline gap-space-md">
+              <span class="font-label-mono text-label-mono text-primary font-bold">07</span>
               <h2 class="font-headline-lg text-headline-lg font-semibold text-on-surface">What we learned</h2>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
@@ -331,7 +371,7 @@
         <section class="py-12 border-b border-hair scroll-mt-14" id="validated">
           <div class="flex flex-col gap-space-lg">
             <div class="flex items-baseline gap-space-md">
-              <span class="font-label-mono text-label-mono text-primary font-bold">07</span>
+              <span class="font-label-mono text-label-mono text-primary font-bold">08</span>
               <h2 class="font-headline-lg text-headline-lg font-semibold text-on-surface">Validated on unseen models</h2>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-hair border border-hair bg-panel rounded">
@@ -359,7 +399,7 @@
         <section class="py-12 border-b border-hair scroll-mt-14" id="reproduce">
           <div class="flex flex-col gap-space-lg">
             <div class="flex items-baseline gap-space-md">
-              <span class="font-label-mono text-label-mono text-primary font-bold">08</span>
+              <span class="font-label-mono text-label-mono text-primary font-bold">09</span>
               <h2 class="font-headline-lg text-headline-lg font-semibold text-on-surface">Reproduce</h2>
             </div>
             <div class="bg-panel border border-panel-line rounded flex flex-col">
@@ -384,7 +424,7 @@
 <span class="text-primary-container select-none">$ </span>python scripts/run_hf_survey.py --list hf_models.json
 <span class="text-primary-container select-none">$ </span>python scripts/report.py</div>
             </div>
-            <p class="font-body-sm text-body-sm text-outline leading-relaxed">Nothing is trained: models are downloaded pretrained and only run forward. Every run appends to <span class="font-code-sm text-code-sm">results/ledger.jsonl</span> with the git commit that produced it, and <span class="font-code-sm text-code-sm">docs/RESULTS.md</span> is generated from that ledger, never edited by hand. <span data-fact="tests.total">237</span> tests: <span data-fact="tests.py">126</span> Python, and <span data-fact="tests.ts">111</span> for the browser build, including parity tests that require byte-identical JSON reports to the Python tool on every fixture.</p>
+            <p class="font-body-sm text-body-sm text-outline leading-relaxed">Nothing is trained: models are downloaded pretrained and only run forward. Every run appends to <span class="font-code-sm text-code-sm">results/ledger.jsonl</span> with the git commit that produced it, and <span class="font-code-sm text-code-sm">docs/RESULTS.md</span> is generated from that ledger, never edited by hand. <span data-fact="tests.total">250</span> tests: <span data-fact="tests.py">139</span> Python, and <span data-fact="tests.ts">111</span> for the browser build, including parity tests that require byte-identical JSON reports to the Python tool on every fixture.</p>
           </div>
         </section>
 
@@ -392,14 +432,15 @@
         <section class="py-12 scroll-mt-14" id="limitations">
           <div class="flex flex-col gap-space-lg">
             <div class="flex items-baseline gap-space-md">
-              <span class="font-label-mono text-label-mono text-primary font-bold">09</span>
+              <span class="font-label-mono text-label-mono text-primary font-bold">10</span>
               <h2 class="font-headline-lg text-headline-lg font-semibold text-on-surface">Limitations</h2>
             </div>
             <ul class="flex flex-col gap-space-sm font-body-md text-body-md text-on-surface-variant max-w-3xl">
-              <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>Accuracy cost is measured on nine image models (five payload types, three seeds), not on language models; the E5 scanner comparison uses a small corpus we built, so it shows what each tool can see, not rates in the wild.</span></li>
-              <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>Single-file statistics cannot see a small or thinly spread encrypted payload in a fair-coin model.</span></li>
-              <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>The base diff needs the real base model, and misses a payload inside a tensor the fine-tune genuinely trained.</span></li>
-              <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>The survey tests 64 KB samples, not whole files, and is weighted to the most downloaded models, not a random sample.</span></li>
+              <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>No check of one file can see a low-bit payload in a fair-coin model, and no diff can see one in a tensor training changed. Removal answers both; detection cannot.</span></li>
+              <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>Reference discovery finds the closest relative on the Hub, not where a model came from, and needs a same-architecture model to exist.</span></li>
+              <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>Whole files flag a few clean models: tensors whose precision history really differs. The report names the tensor; it cannot say whether the cause is benign.</span></li>
+              <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>Sanitising was measured on ten models; a model that relies on the lowest float32 bits would lose accuracy, so check agreement on your own model.</span></li>
+              <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>The E5 scanner comparison uses a small corpus we built, so it shows what each tool can see, not rates in the wild.</span></li>
               <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>Both scanners hold one tensor in memory at a time (and its base counterpart for S5), so files of any size scan, but a single tensor larger than the memory available cannot be checked.</span></li>
             </ul>
           </div>
