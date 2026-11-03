@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 # Distribution name on PyPI ("stowaway" is taken there); the import and the
 # command are both `stowaway`.
 name = "stowaway-scan"
-version = "0.2.0"
+version = "0.3.0"
 description = "Find what model-file scanners miss: payloads in weights, unaccounted bytes, unchecked lineage."
 readme = "README.md"
 requires-python = ">=3.10"

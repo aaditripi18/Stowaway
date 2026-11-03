@@ -10,14 +10,18 @@ appended after the last tensor, or in alignment padding, and it survives format
 conversion because it is just numbers.
 
 Stowaway looks where the code scanners do not, in `.safetensors`, PyTorch and
-GGUF files, and measures the limit: how much can hide before a single-file check
-notices, what hiding it costs the model, and what only a comparison with the base
-model can catch.
+GGUF files, measures the limit of what any scanner can see, and then closes the
+gap the other way: **where a payload cannot be detected, it removes it.**
+`stowaway sanitize` rounds away the low bits of every float32 weight; on 10 of 10
+models (nine image models and a text classifier) that left 100.00% of
+predictions unchanged and 0 bytes of a planted 64 KB payload.
 
-> Status: all eight planned weeks done. Two vision models end to end, single-file
-> checks on samples of 120 public Hugging Face models (70 dev, 50 held out), and
-> S5 calibrated on 20 real fine-tune/base pairs, and a side-by-side with
-> picklescan, ModelScan and fickling (E5). One weight-payload type (random bytes).
+> Status: phases 1-3 done. Single-file checks on 260 public Hugging Face models
+> (a top-1000 list, three held-out batches, a random sample of the top 10,000; 67
+> scanned as whole files), S5 calibrated and validated on real fine-tune/base
+> pairs, automatic reference discovery on the 23 models a file alone cannot
+> judge, and the cost of sanitising on ten models. Every hypothesis was written
+> before its run; four of the eight new ones failed and are reported as such.
 
 ## Results
 
@@ -51,6 +55,27 @@ bits, 1 KB to 1 MB, with top-1 accuracy on 500 Imagenette images:
 | H3 | In a genuinely float32-trained model, an encrypted low-bit payload cannot be seen from one file | **model-dependent**: true for 23 of 39 surveyed models and ResNet-18, false for the 2 with a signature |
 | H4 | A diff against the claimed base model catches a payload in any tensor the fine-tune did not train | **supported, with limits** (whole files, E4b): 9 / 9 fresh pairs at k = 8, 16, 20 and 21, with 0 of 20 honest fine-tunes flagged; inside a tensor the fine-tune did train, 18 / 20 at k = 21 but 1 / 20 at k = 8 |
 
+**Phase 3: closing the blind spot** (E8-E10, [docs/RESULTS.md](docs/RESULTS.md)):
+
+| Question | Result |
+|---|---|
+| Does clearing the low 8 bits of every weight cost anything? (E9) | **No: 100.00% of predictions unchanged on 10 / 10 models**, identical accuracy; a 64 KB payload planted there leaves **0 / 65,536 bytes** |
+| ...and the low 16 bits? | Yes: 92.4-100% agreement, under 99% on 8 of 10 models; 8 bits is the safe setting |
+| How often can a reference model be found with no user input? (E8) | **18 of 20** held-out blind models: 5 through the declared `base_model`, 13 discovered by weight similarity (median cosine >= 0.9 among same-architecture Hub models) |
+| Does the diff against that reference catch a payload? | In a tensor the two share: **12 / 13** (the miss is 84 bytes, under S5's floor). In a tensor training changed: **0 / 14**, which is why sanitising exists |
+| Is the blind spot an artefact of the most-downloaded models? (E10 B) | No, it is larger: **29 of 39 (74%)** float32 models of a random sample of the top 10,000 are fair-coin, against 59% in the top 1,000; 0 false positives on all 40 |
+| Do 32 KB samples tell the truth about whole files? (E10 A) | Mostly: the model's group agrees on **67 / 67**, payload verdicts on 163 / 173. Whole files also show what samples hid: **5 of 67 clean models flag**, every inspected case a tensor whose precision history really differs (a never-trained tensor, or a component saved at full float32) |
+
+| | Hypothesis (phase 3) | Verdict |
+|---|---|---|
+| H7 | At least half of the blind models declare a usable base | **not supported**: 5 of 23 |
+| H7b | Declared plus discovered references cover at least half | **supported**: 18 of 20 held out |
+| H8 | On those pairs S5 has no false positive and catches every payload in a shared tensor | **not supported**: 2 of 21 pairs flag a LayerNorm weight; 12 / 13 caught |
+| H9 | Clearing 8 low bits keeps >= 99.9% agreement on every model | **supported**: 100.00% on 10 / 10 |
+| H10 | Clearing 16 low bits keeps >= 99% on every model | **not supported**: under 99% on 8 of 10 |
+| H11 | Samples and whole files agree on >= 95% of groups and verdicts | **not supported**: groups 67 / 67, verdicts 163 / 173 (94.2%) |
+| H12 | The random sample's fair-coin share is within 15 points of the top 1,000's | **not supported**: 74% vs 59% (+15.4) |
+
 What the numbers say:
 
 - **A clean scan is not a clean model.** For most popular float32 models the
@@ -75,6 +100,20 @@ What the numbers say:
   changes stop at one bit, as a payload's do: chosen on the 12 dev pairs, run once
   on 20 fresh ones, it flagged 0 and still caught every payload in a tensor
   identical to the base (E4b).
+- **What cannot be detected can be removed.** A payload in the low bits of a
+  fair-coin model, or of a tensor a fine-tune trained, is indistinguishable from
+  the noise it replaces, by any check of one file or of a diff. Rounding those
+  bits away destroys it, and on every model measured the low 8 bits carry no
+  information the predictions use (E9).
+- **A model's parent can usually be found, but "found" means the closest
+  relative.** Discovery returned a parent, a fine-tune of the model, or a mirror
+  copy; all are fair references for tensors they share, none proves where the
+  model came from. A declared base can also mislead: MiniLM-L4's declared base
+  passes a name-and-shape check with a weight cosine of 0.07 (E8).
+- **Scanning whole files costs false alarms that samples hide.** Never-trained
+  tensors (T5's cross-attention bias, XLM-R's pooler, ESM2's unused position
+  table) and CLIP-ViT-L's full-precision text tower are flagged correctly as
+  different from the rest of their file. A payload would look the same.
 - **Validated on unseen models.** Each detector was frozen, then run once on
   models committed before their weights were read: S5c 0 of 20 fresh fine-tunes
   flagged; S4's false-positive models on a fresh batch fell from 5 to 1 of 20
@@ -113,6 +152,7 @@ nothing, and FINDINGS says what each check cannot see.
 ```
 pip install -e .
 
+python -m stowaway sanitize model.safetensors --out clean.safetensors  # remove any low-bit payload
 python -m stowaway scan model.safetensors
 python -m stowaway scan finetune.safetensors --base base.safetensors   # adds S5
 python -m stowaway scan model.pt --json                                # full report
@@ -122,8 +162,10 @@ python -m stowaway scan hf:org/finetune --base declared
 python -m stowaway scan hf:org/finetune@v1.2 --base hf:org/base@main
 ```
 
-`scan` exits 0 when clean, 1 when suspicious, 2 when dangerous, 3 when it could
-not run. Formats are detected from content, never the extension: `.safetensors`,
+`sanitize` rounds every float32 weight to nearest at mantissa bit 8 (`--bits`),
+keeps NaN and infinity, never rounds a finite weight to infinity, and copies every
+other tensor, the header and the metadata byte for byte. `scan` exits 0 when
+clean, 1 when suspicious, 2 when dangerous, 3 when it could not run. Formats are detected from content, never the extension: `.safetensors`,
 PyTorch zip (`.pt`/`.pth`/`.bin`), legacy PyTorch, plain pickle (protocols 0–5)
 and GGUF.
 
@@ -199,18 +241,26 @@ static host works. Design from Stitch; the figures on the project page are copie
 
 ## Limitations
 
-- **Accuracy cost is measured on image models only:** nine torchvision models,
-  five payload types, three seeds for random payloads (E6). Language models were
-  surveyed for detection, not for accuracy cost.
-- **Single-file statistics cannot see** a small or thinly spread encrypted
-  payload in a fair-coin model. That is a finding, not a bug to tune away.
-- **The base diff needs the real base model**, and misses a payload inside a
-  tensor the fine-tune genuinely trained. A 1 KB payload spread at 1:64 also
-  falls under its 256-changed-elements-per-tensor floor.
-- **S4 trades detections for fewer false alarms:** it flags only bit planes
-  pushed *toward* 0.5, so constant, zero or text payloads are left to S5.
-- **The survey tests 64 KB samples, not whole files**, and is weighted to the
-  most downloaded models, not a random sample.
+Each limit below was measured; where detection cannot work, the answer is
+removal.
+
+- **No check of one file can see a low-bit payload in a fair-coin model** (74%
+  of float32 models in a random sample). Not a bug to tune away: such bits carry
+  no structure to compare against. `sanitize` removes the payload instead, at no
+  measured cost with 8 bits; 16 bits changes up to 7.6% of predictions.
+- **A diff cannot see a payload inside a tensor training changed** (0 / 14 in
+  E8): training randomises the same low bits. Again, `sanitize`.
+- **Reference discovery finds a close relative, not provenance**, and found none
+  for 2 of 20 models; it needs a same-architecture model on the Hub.
+- **Whole files flag 5 of 67 clean popular models**: tensors whose precision
+  history genuinely differs from the rest of the file. A report says which tensor
+  and why; it cannot say whether the cause is benign.
+- **S4 is less sensitive on whole files than on 32 KB samples** (10 of 173
+  verdicts differ, all misses): a fixed-size payload is a smaller share of a whole
+  tensor. S5 has a 256-changed-element floor (an 84-byte payload slipped under it).
+- **Sanitising was measured on ten models with 1,000 images or 872 sentences
+  each**; a model whose predictions depend on the lowest float32 bits would lose
+  accuracy, so the agreement check in E9 is worth repeating on your own model.
 - Open items are listed in [docs/FINDINGS.md](docs/FINDINGS.md).
 
 ## Reproduce
@@ -236,6 +286,10 @@ export TORCH_HOME=$PWD/models/torch PYTHONPATH=.
 .venv/Scripts/python scripts/run_e4.py --split dev          # S5 calibration
 .venv/Scripts/python scripts/run_e4.py --split heldout      # S5 validation
 .venv/Scripts/python scripts/run_e5.py                      # vs picklescan, ModelScan, fickling
+.venv/Scripts/python scripts/run_e9.py                      # cost of sanitising, 9 vision + 1 text model
+.venv/Scripts/python -m scripts.run_hf_survey --list hf_models_random.json   # E10 B, random sample
+.venv/Scripts/python scripts/kaggle_e10.py run e8           # E8 on a Kaggle CPU session (pull e8 after)
+.venv/Scripts/python scripts/kaggle_e10.py run e10a         # E10 A, whole files (pull e10a after)
 .venv/Scripts/python scripts/report.py                      # docs/RESULTS.md
 .venv/Scripts/python scripts/site_facts.py                  # page numbers == ledger (--write to update)
 ```

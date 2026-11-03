@@ -35,6 +35,18 @@ checked against the Hub's SHA-256 before use; `HF_TOKEN` is sent for gated
 repositories; downloads are cached in `STOWAWAY_CACHE` (default
 `~/.cache/stowaway/hub`).
 
+```
+stowaway sanitize FILE.safetensors --out NEW.safetensors [--bits 8]
+```
+
+Writes a copy with every float32 weight rounded to nearest (ties to even) at
+mantissa bit `--bits` (default 8), which overwrites anything a payload put in
+those bits. NaN and infinity are kept, a finite weight is never rounded up to
+infinity, and every other tensor, the header and the metadata are copied byte
+for byte. Exit 0 on success, 3 if it could not run. Refuses to overwrite its
+input. 8 bits changed no prediction on ten models (E9); 16 bits changed up to
+7.6%.
+
 ## Python
 
 ```python
@@ -51,7 +63,8 @@ paths = hub.download(res)                # verified local paths
 
 `scan` returns a plain dict (the report below) and reads one tensor at a time,
 so memory stays near the size of the largest tensor whatever the file size.
-These two entry points are the supported API; everything else in the package is
+`stowaway.sanitize.sanitize_safetensors(src, dst, bits=8)` is the Python form of
+`sanitize`. These entry points are the supported API; everything else in the package is
 internal and may change between versions.
 
 ## The report

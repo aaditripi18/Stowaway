@@ -5,6 +5,26 @@ release may change detector rules and report fields. Every rule change is
 pre-registered in [PLAN.md](PLAN.md) and validated on models committed before
 their weights were read; the numbers are in [docs/RESULTS.md](docs/RESULTS.md).
 
+## 0.3.0 — 2026-11-03
+
+### Removal
+- **`stowaway sanitize`**: rounds every float32 weight at mantissa bit 8
+  (`--bits`) and writes a new file; a low-bit payload cannot survive it. On nine
+  image models and a text classifier, 8 bits left 100.00% of predictions
+  unchanged and 0 bytes of a planted 64 KB payload (E9).
+
+### Scanning
+- S5's dictionary entry point aligns tensor names exactly as `scan --base`
+  does; before, a base whose names differed by a wrapper prefix was compared on
+  identical names only (found in E8).
+- The Hub client waits out rate limits (HTTP 429) and transient server errors,
+  respecting `Retry-After`, instead of failing.
+
+### Evidence
+- E8 reference discovery, E9 sanitising, E10 whole files and a random sample:
+  see docs/FINDINGS.md, phase 3. H7, H8, H10, H11 and H12 not supported; H7b and
+  H9 supported.
+
 ## 0.2.0 — 2026-10-16
 
 ### Scanning

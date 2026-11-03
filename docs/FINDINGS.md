@@ -1,12 +1,105 @@
-# Findings (preliminary)
+# Findings
 
-> Status: phase 2 (PLAN.md). S3, S4, S5 all revised and validated on held-out models;
-> E5 compares Stowaway with picklescan, ModelScan and fickling.
-> Two vision models end to end, single-file checks on samples of 120 public
-> Hugging Face models (70 dev, 50 held out), and S5 calibrated on 20 real
-> fine-tune/base pairs (dev + held out). One payload type (random bytes).
-> Every number below is in [RESULTS.md](RESULTS.md), generated from the ledger
-> with the commit that produced it. These are early results, not conclusions.
+> Status: phases 1-3 (PLAN.md). S3, S4, S5 revised and validated on held-out
+> models; E5 compares Stowaway with picklescan, ModelScan and fickling; phase 3
+> adds reference discovery (E8), payload removal (E9), whole files and a random
+> sample (E10). 260 public Hugging Face models surveyed, 67 of them as whole
+> files. Every number below is in [RESULTS.md](RESULTS.md), generated from the
+> ledger with the commit that produced it. Hypotheses were written before their
+> runs; the ones that failed are reported as failed.
+
+## Phase 3: where a payload cannot be detected, remove it (E8-E10)
+
+### Removal costs nothing at 8 bits (E9)
+
+`stowaway sanitize` rounds every float32 weight to nearest at mantissa bit s.
+On the nine torchvision models (1,000 Imagenette images each) and DistilBERT
+fine-tuned on SST-2 (872 validation sentences), clearing the low 8 bits left
+**100.00% of predictions unchanged on all ten** and accuracy identical to the
+third decimal. A 64 KB random payload planted at k = 8 left **0 of 65,536
+bytes**: every low bit is zero afterwards. **H9 supported.**
+
+Clearing 12 bits kept 99.5-100%. Clearing 16 bits (about bfloat16 precision)
+did not stay free: 92.4% (MNASNet) to 100% (DistilBERT), under 99% on 8 of 10.
+**H10 not supported.** So the safe setting is 8 bits; it destroys any payload in
+those bits, which is where E1-E6 put every payload that cost the model nothing.
+
+Why this matters: the two places no check can see a payload, the low bits of a
+fair-coin model (E1b) and of a tensor a fine-tune trained (E4b, E8), are both
+inside those 8 bits at the payload depths that leave a model unchanged. Removal
+does not need to know whether a payload is there.
+
+### A reference model can usually be found, but it is a relative, not a pedigree (E8)
+
+The 23 float32 models the survey cannot judge from the file were each given a
+reference with no user input: the card's `base_model` if it is downloadable and
+matches the model's tensor names and shapes (>= 90%), otherwise **discovery**:
+the 20 most-downloaded Hub models with the same `model_type` and dimensions,
+screened on sampled tensors, and kept if the median cosine similarity is >= 0.9.
+
+- The cosine rule was fixed on three dev models after the first rule (identical
+  or low-bit-only changes) found nothing: a full fine-tune changes every element.
+  On the dev models the true parents score 0.991-1.000 and a same-architecture
+  unrelated model about 0 (PLAN.md, amendment 2).
+- **Held out (20): a verified reference for 18**, 5 declared and 13 discovered;
+  none for 2 (paraphrase-multilingual MiniLM and mpnet). **H7 not supported**
+  (5 of 23 declare a usable base); **H7b supported** (18 of 20).
+- **What discovery finds is the closest relative.** For bert-base-uncased it
+  returned a fine-tune *of* BERT; for nomic-embed and all-mpnet-base, mirror
+  copies; for amazon/chronos-2, autogluon's identical copy. Each is a fair
+  reference for the tensors the two share; none proves where a model came from.
+- **A declared base can mislead.** cross-encoder/ms-marco-MiniLM-L4-v2 declares
+  the L12 model; 90% of names and shapes match, but the weights' median cosine is
+  0.074: it is a different model. The pre-registered check (names and shapes)
+  accepted it; the cosine check would not have. A rule change is for a fresh list.
+
+S5 on whole files against those references:
+
+- **Payload in a tensor identical to the reference: 12 of 13 caught.** The miss
+  is CLAP, whose only identical tensor large enough was a BatchNorm statistic: the
+  payload was 84 bytes, under S5's 256-changed-element floor. Two pairs had no
+  identical tensor big enough.
+- **Payload in a tensor the two differ on: 0 of 14.** Training randomises those
+  low bits; that is the blind spot removal answers.
+- **Honest flags in 2 of 21 pairs**, both a single LayerNorm weight (one of them
+  the L4/L12 pair above). **H8 not supported.**
+
+Two E8 runs are superseded, both for reasons outside the rules: the first
+compared nothing in pairs whose names differ by a wrapper prefix (the dictionary
+entry point of S5 did not align names as `scan --base` does; fixed, with a
+regression test), and the second lost three models to HTTP 429 from the Hub (the
+client now waits and retries). PLAN.md records both.
+
+### The blind spot is larger away from the most-downloaded models (E10 B)
+
+A random sample of the 10,000 most-downloaded models (seed 0, 40 float32
+models, frozen before any weight was read): **29 of 39 classified float32 models
+have fair-coin low bits (74%)**, against 23 of 39 (59%) in the top-1000 survey.
+Every payload in them was missed from the file (0 / 29 at k = 1, 4, 8);
+half-precision-origin models were caught 4 / 4 at every k. 0 false positives on
+all 40. **H12 not supported**: the difference, +15.4 points, is just over the
+15-point bound, in the direction that makes removal more useful.
+
+### Samples tell the truth about the model, but not about every tensor (E10 A)
+
+Each model of the survey list was downloaded whole on a Kaggle CPU session and
+scanned with the same code as its 32 KB samples, the same payload written into
+the bytes the sample read.
+
+- **The model's group agrees on 67 of 67** (half-precision origin, signature or
+  fair-coin): the survey's classification holds.
+- **Payload verdicts agree on 163 of 173 (94.2%); H11 not supported.** All ten
+  differences are payloads the sample caught and the whole file missed: the same
+  32 KB fills the sample but is a small share of the full tensor, and S4 reads
+  the whole tensor.
+- **Whole files flag clean tensors in 5 of 67 models** (185 tensors; samples
+  flagged none). In the four inspected, every flagged tensor's precision history
+  really differs from its file: never-trained tensors in t5-small (cross-attention
+  relative bias), xlm-roberta-base (pooler) and ESM2 (absolute position table,
+  unused next to rotary embeddings), and CLIP-ViT-L's whole text tower (154
+  tensors) stored at full float32 while its image tower is float16-origin. A
+  payload would look exactly like a freshly initialised tensor, so these are
+  reported, not tuned away. Qwen2.5-VL-7B's 15 were not inspected.
 
 ## Nine models, five payload types: hiding is free, and what gives a payload away is not its content (E6)
 
@@ -428,10 +521,17 @@ real fine-tune/base pairs in E4 rather than adjusted to this result.
 
 - ~~Only two models in E1/E2, one seed, random payloads only.~~ Done in E6: nine
   models, five payload types, three seeds for random payloads.
+- ~~The survey reads samples, not whole files.~~ Done in E10 A (67 whole files).
+- ~~The survey covers only the most-downloaded models.~~ Done in E10 B (a random
+  sample of the top 10,000).
+- ~~Accuracy cost only on image models.~~ E9 adds a text model (sanitising).
 - E3 tested placements from ordinary embed parameters only; an attacker who
-  preserves each tensor's bit signature exactly was not tested.
+  preserves each tensor's bit signature exactly was not tested for detection.
+  Removal does not depend on it: whatever such a payload puts in the low 8 bits,
+  `sanitize` overwrites (E9).
 - ~~E2 measures accuracy; agreement of individual predictions would be more
   sensitive.~~ Done in E6 (top-1 agreement on 1,000 images).
-- The survey tests detection on 64 KB samples, not whole files, and only the
-  single-file checks; accuracy cost (E6) is measured on image models only.
-- S4 role peers still need a better estimate of clean spread for very small groups (RegNet case); the two residual bf16 flags are extreme sub-4-bit quantized models.
+- Whether a rule can tell a never-trained tensor from a payload with the same
+  precision signature (E10 A); and whether weight cosine should replace the
+  name-and-shape check for a declared base (E8). Both need a fresh model list.
+- ~~S4 role peers need a better estimate of clean spread for very small groups (RegNet case).~~ S4c (E0d) removes the RegNet flag. The two residual bf16 flags are extreme sub-4-bit quantized models.
