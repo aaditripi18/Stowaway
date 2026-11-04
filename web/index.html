@@ -433,16 +433,41 @@
           <div class="flex flex-col gap-space-lg">
             <div class="flex items-baseline gap-space-md">
               <span class="font-label-mono text-label-mono text-primary font-bold">10</span>
-              <h2 class="font-headline-lg text-headline-lg font-semibold text-on-surface">Limitations</h2>
+              <h2 class="font-headline-lg text-headline-lg font-semibold text-on-surface">What it can and cannot see, and what to do about it</h2>
             </div>
-            <ul class="flex flex-col gap-space-sm font-body-md text-body-md text-on-surface-variant max-w-3xl">
-              <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>No check of one file can see a low-bit payload in a fair-coin model, and no diff can see one in a tensor training changed. Removal answers both; detection cannot.</span></li>
-              <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>Reference discovery finds the closest relative on the Hub, not where a model came from, and needs a same-architecture model to exist.</span></li>
-              <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>Whole files flag a few clean models: tensors whose precision history really differs. The report names the tensor; it cannot say whether the cause is benign.</span></li>
-              <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>Sanitising was measured on ten models; a model that relies on the lowest float32 bits would lose accuracy, so check agreement on your own model.</span></li>
-              <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>The E5 scanner comparison uses a small corpus we built, so it shows what each tool can see, not rates in the wild.</span></li>
-              <li class="flex items-start gap-space-sm"><span class="text-primary font-mono select-none">/</span><span>Both scanners hold one tensor in memory at a time (and its base counterpart for S5), so files of any size scan, but a single tensor larger than the memory available cannot be checked.</span></li>
-            </ul>
+            <p class="font-body-md text-body-md text-on-surface-variant max-w-3xl">Every boundary below was measured, not assumed. Each comes with what to do about it.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+              <div class="bg-panel border border-panel-line p-space-lg rounded flex flex-col gap-space-xs">
+                <h3 class="font-headline-md text-headline-md text-on-surface">A low-bit payload in a fair-coin model, or in a tensor that training changed</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant">No check of a file or of a diff can see it: those bits carry no structure to compare against.</p>
+                <p class="font-body-sm text-body-sm text-primary">Remove it instead: <span class="font-code-md text-code-md text-on-surface">stowaway sanitize</span> clears those bits with <span data-fact="e9.min_agree8">100.00%</span> of predictions unchanged.</p>
+              </div>
+              <div class="bg-panel border border-panel-line p-space-lg rounded flex flex-col gap-space-xs">
+                <h3 class="font-headline-md text-headline-md text-on-surface">Where a model came from</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant">Reference discovery finds the closest relative on the Hub (a parent, a fine-tune or a mirror), not a model's provenance, and needs a same-architecture model to exist.</p>
+                <p class="font-body-sm text-body-sm text-primary">Pass the base you trust with <span class="font-code-md text-code-md text-on-surface">--base</span>; proving provenance takes a lineage check of its own.</p>
+              </div>
+              <div class="bg-panel border border-panel-line p-space-lg rounded flex flex-col gap-space-xs">
+                <h3 class="font-headline-md text-headline-md text-on-surface">Clean tensors with a different history</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant">Whole files flag <span data-fact="e10.fp_models">5 of 67</span> clean popular models: a never-trained tensor or a component saved at full precision looks exactly like a payload.</p>
+                <p class="font-body-sm text-body-sm text-primary">The report names the tensor and why; sanitising makes the question moot.</p>
+              </div>
+              <div class="bg-panel border border-panel-line p-space-lg rounded flex flex-col gap-space-xs">
+                <h3 class="font-headline-md text-headline-md text-on-surface">Models that need their lowest bits</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant">Sanitising left every prediction unchanged on <span data-fact="e9.models">10</span> models, but a model could in principle rely on its lowest float32 bits.</p>
+                <p class="font-body-sm text-body-sm text-primary">Check prediction agreement on your own data before shipping the sanitised file.</p>
+              </div>
+              <div class="bg-panel border border-panel-line p-space-lg rounded flex flex-col gap-space-xs">
+                <h3 class="font-headline-md text-headline-md text-on-surface">The scanner comparison</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant">E5 uses a corpus we built, so it shows what each tool can see, not how often payloads occur in the wild.</p>
+                <p class="font-body-sm text-body-sm text-primary">Read it as a capability table, not a prevalence estimate.</p>
+              </div>
+              <div class="bg-panel border border-panel-line p-space-lg rounded flex flex-col gap-space-xs">
+                <h3 class="font-headline-md text-headline-md text-on-surface">A single tensor larger than memory</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant">Both scanners hold one tensor (and its base counterpart) at a time, so files of any size scan; one tensor bigger than available memory cannot.</p>
+                <p class="font-body-sm text-body-sm text-primary">Scan on a machine with more memory than the largest tensor.</p>
+              </div>
+            </div>
           </div>
         </section>
       </div>

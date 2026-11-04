@@ -44,7 +44,7 @@ ALLOWED = [
     r"1K", r"4K", r"16K", r"64K", r"256K", r"1M",              # E1 strip axis labels
     r"64 KB samples", r"2026", r"\(pre-1\.6\)", r"1\.6",
     r"0 clean, 1 suspicious, 2 dangerous", r"5 checks", r"1 KB or more", r"low 8 bits", r"[Tt]op-1", r"1:(?=\s|$)",
-    r"10(?= Limitations)", r"16 bits", r"99%(?= we predicted)", r"[Ee]ight bits",   # section id, E9 method constants
+    r"10(?= What it can and cannot see)", r"16 bits", r"99%(?= we predicted)", r"[Ee]ight bits",   # section id, E9 method constants
 ]
 _ALLOWED_RE = re.compile("|".join(f"(?:{a})" for a in ALLOWED))
 
