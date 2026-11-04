@@ -239,7 +239,7 @@ and publishes it (`cd web && vercel deploy --prod` does the same by hand). Any
 static host works. Design from Stitch; the figures on the project page are copied from
 [docs/RESULTS.md](docs/RESULTS.md) and checked by hand, not yet generated.
 
-## Limitations
+## What it can and cannot see, and what to do about it
 
 Each limit below was measured; where detection cannot work, the answer is
 removal.
