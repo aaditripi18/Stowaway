@@ -24,7 +24,8 @@ ROOT = Path(__file__).resolve().parent.parent
 USER = os.environ.get("STOWAWAY_KAGGLE_USER", "aadityae5545454")
 DATASET = "stowaway-code"
 JOBS = {"e10a": ("stowaway-e10-whole-files", "scripts/run_e10a.py"),
-        "e8": ("stowaway-e8-base-discovery", "scripts/run_e8.py")}
+        "e8": ("stowaway-e8-base-discovery", "scripts/run_e8.py"),
+        "e11rec": ("stowaway-e11-window-counts", "scripts/run_e11_record.py")}
 LEDGER = ROOT / "results" / "ledger.jsonl"
 
 NOTEBOOK = r'''
@@ -46,9 +47,9 @@ shutil.rmtree(work)
 
 
 def kaggle(*args: str, check: bool = True) -> subprocess.CompletedProcess:
-    exe = Path(sys.executable).parent / ("kaggle.exe" if os.name == "nt" else "kaggle")
+    # run the CLI as a module of this interpreter: Windows Application Control can block kaggle.exe
     env = {**os.environ, "PYTHONUTF8": "1"}
-    r = subprocess.run([str(exe), *args], capture_output=True, text=True, encoding="utf-8",
+    r = subprocess.run([sys.executable, "-m", "kaggle", *args], capture_output=True, text=True, encoding="utf-8",
                        errors="replace", env=env)
     if check and r.returncode != 0:
         sys.exit(f"kaggle {' '.join(args[:2])} failed:\n{r.stdout}{r.stderr}")
@@ -128,7 +129,7 @@ def pull(job: str) -> None:
             led = next(Path(d).rglob("Stowaway/results/ledger.jsonl"), None)
             if led is None:
                 sys.exit(f"no ledger in the output ({[p.name for p in Path(d).rglob('*')][:20]})")
-            exp = {"e10a": "E10a", "e8": "E8"}[job]
+            exp = {"e10a": "E10a", "e8": "E8", "e11rec": "E11rec"}[job]
             new = [ln for ln in led.read_text(encoding="utf-8").splitlines()
                    if ln.strip() and json.loads(ln).get("experiment") == exp]
             print(f"session did not finish: recovered {len(new)} {exp} lines from its working ledger")
