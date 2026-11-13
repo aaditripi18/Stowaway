@@ -258,6 +258,57 @@ def _s4(sums: dict[str, _Summary], small_floor: bool | None = None, min_signatur
     return findings
 
 
+# S4w (PLAN.md, phase 4, E11): on whole files, S4's per-tensor mean dilutes a payload that fills
+# a small share of a large tensor. S4w also tests each window of S4W_WINDOW elements against the
+# tensor's own other windows (same statistic as S4, the tensor's windows as the reference).
+# Chosen on the E10 A whole files (dev); off until judged on a fresh list.
+S4W = False
+S4W_WINDOW = 32 * 1024
+S4W_Z = Z_FLAG
+
+
+def s4_windowed(floats: dict[str, RawTensor], min_signature: float | None = None) -> list[Finding]:
+    """Windows of one tensor nearer a fair coin than the tensor's other windows. Skips quantisation
+    metadata (as S4 does) and embedding tables, whose windows are rows with different training
+    histories (positions past the training length, tokens never seen)."""
+    min_signature = S4_MIN_SIGNATURE if min_signature is None else min_signature
+    findings = []
+    for name, t in sorted(floats.items()):
+        low = name.lower()
+        if t.dtype not in S4_BITS or "scale" in low or "embed" in low:
+            continue
+        nw = t.data.size // S4W_WINDOW
+        if nw < 3:
+            continue
+        v = t.data[: nw * S4W_WINDOW].reshape(nw, S4W_WINDOW)
+        inf = informative(v.reshape(-1), t.dtype).reshape(nw, S4W_WINDOW)
+        n = inf.sum(1).astype(np.float64)
+        ok = n > 0
+        if ok.sum() < 3:
+            continue
+        nbits = S4_BITS[t.dtype]
+        ones = np.stack([(((v >> np.uint64(b)) & np.uint64(1)).astype(bool) & inf).sum(1) for b in range(nbits)], 1)
+        n, p = n[ok], ones[ok] / n[ok][:, None]
+        sig = np.median(p, axis=0)
+        mad = 1.4826 * np.median(np.abs(p - sig), axis=0)
+        tau = np.sqrt(np.maximum(0.0, mad ** 2 - np.median(sig * (1 - sig) / n[:, None], axis=0)))
+        se = np.sqrt(np.maximum(sig * (1 - sig), 1e-6) / n[:, None])
+        z = (np.abs(sig - 0.5) - np.abs(p - 0.5)) / np.sqrt(se ** 2 + tau ** 2)
+        if min_signature:
+            z = np.where(np.abs(sig - 0.5) >= min_signature, z, -np.inf)
+        w, b = np.unravel_index(int(np.argmax(z)), z.shape)
+        if z[w, b] > S4W_Z:
+            window = int(np.flatnonzero(ok)[w])
+            zz, mean, expected = round(float(z[w, b]), 2), round(float(p[w, b]), 4), round(float(sig[b]), 4)
+            findings.append(Finding("S4", "medium", "lowbit-window-anomaly",
+                                    f"tensor {name!r}: in elements {window * S4W_WINDOW}-{(window + 1) * S4W_WINDOW - 1}, "
+                                    f"low bit {int(b)} is nearer a fair coin ({mean}) than in the tensor's other windows "
+                                    f"({expected}); z {zz}",
+                                    {"tensor": name, "window": window, "bit": int(b), "z": zz, "mean": mean,
+                                     "expected": expected, "window_elements": S4W_WINDOW}))
+    return findings
+
+
 def role(name: str) -> str:
     """A tensor's role: its name with layer and block numbers removed,
     e.g. model.layers.#.mlp.up_proj.weight."""
@@ -422,6 +473,7 @@ def analyse(mf: ModelFile, f, base: "dict[str, RawTensor] | BaseFile | None" = N
     in memory at a time. Results are identical to the dictionary-based checks."""
     sums: dict[str, _Summary] = {}
     s5: list[tuple[str, Finding]] = []
+    windowed: list[Finding] = []
     shared = 0
     infos = _float_infos(mf)
     pairing, dm, db = {}, 0, 0
@@ -432,6 +484,8 @@ def analyse(mf: ModelFile, f, base: "dict[str, RawTensor] | BaseFile | None" = N
         if a is None:
             continue
         sums[name] = _Summary(a, S4_BITS[a.dtype])
+        if S4W:
+            windowed += s4_windowed({name: a})
         if base is not None:
             b = base.get(pairing.get(name, name)) if isinstance(base, BaseFile) else base.get(name)
             if b is not None:
@@ -442,7 +496,7 @@ def analyse(mf: ModelFile, f, base: "dict[str, RawTensor] | BaseFile | None" = N
         del a
     if not sums:
         return []
-    findings = _s3(sums) + _s4(sums)
+    findings = _s3(sums) + _s4(sums) + windowed
     renamed = sum(1 for m, b in pairing.items() if m != b)
     if renamed:
         findings.append(Finding("S5", "info", "aligned-names",

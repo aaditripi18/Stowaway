@@ -422,3 +422,30 @@ selection rule, no fine-tune of an earlier list. Whole files, both floors:
 
 If H13 holds, the floor is removed in both cores (Python and the browser build, with parity
 tests). If it fails, the floor stays, and both numbers are reported.
+
+### Amendment 2026-11-13: E11's rule and hypotheses, before any fresh file is read
+
+**Dev** (`scripts/e11_dev.py`, `results/e11_dev.json`; the 67 E10 A whole files, 171 planted
+cells). Windows of m x 32,768 elements for m = 1, 2, 4, 8 and thresholds 6-20. Two kinds of
+tensor flagged clean files at every setting and are not windowed: quantisation scales (S4 already
+skips them; one AWQ model) and embedding tables (five models: position and word embeddings, whose
+windows are rows with different training histories, the same never-trained class as the
+whole-file boundary above). Without them, m = 1 and Z = 6 (S4's own Z_FLAG) flags no clean file,
+catches the payload in 9 of H11's 10 differences, and makes sample and whole file agree on 170
+of 171 cells. Larger windows or thresholds recover fewer (m = 2: 7; m = 8: none).
+
+**S4w** (`weights.s4_windowed`, switch `S4W`): W = 32,768, Z = 6.0, tensors of at least three
+windows, S4c's 0.02 minimum signature, quantisation scales and embedding tables skipped. A whole-file
+scan reports S4 and S4w.
+
+**Fresh, used once:** `results/hf_models_batch5.json` (frozen 2026-11-13, before any of its
+weights is read): the survey's rule (most-downloaded public safetensors models, top 2,000,
+gated ones and ones without a top-level file skipped, every earlier list excluded), 40 float32,
+20 bfloat16, 10 float16, as E10 A. `scripts/run_e11.py` runs E10 A's procedure on it, with S4w.
+
+- **H15** With S4w, the whole file's verdict (S3, S4 or S4w) equals the sample's on >= 95% of
+  the planted cells (H11's test, on fresh models).
+- **H16** S4w flags a clean tensor in at most 1 of the fresh models.
+
+If both hold, S4w is switched on in both cores (Python and the browser build, with parity
+tests). Otherwise it stays off, and both numbers are reported.
