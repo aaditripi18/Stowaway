@@ -51,6 +51,18 @@ FRESH2_BASES = [
     "microsoft/deberta-v3-base",   # added before any weight was read: ELECTRA's fine-tunes gave no eligible pair
 ]
 
+# E13 (PLAN.md, phase 4): a third set of never-used bases (none in E4, E4b, E8 or E12), for the
+# one-time fresh validation of S5d. Large and multilingual encoders, whose LayerNorm gains are
+# where S5c's honest false alarms appeared.
+FRESH3_BASES = [
+    "google-bert/bert-large-uncased",
+    "FacebookAI/xlm-roberta-large",
+    "distilbert/distilbert-base-multilingual-cased",
+    "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "microsoft/mpnet-base",
+    "BAAI/bge-small-en-v1.5",
+]
+
 
 def finetunes_of(base: str, limit: int) -> list[dict]:
     url = (f"{API}?filter=base_model:finetune:{base}&filter=safetensors"
@@ -101,12 +113,12 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--per-base", type=int, default=5)
     ap.add_argument("--scan", type=int, default=40)
-    ap.add_argument("--split", choices=["dev+heldout", "fresh", "fresh2"], default="dev+heldout")
+    ap.add_argument("--split", choices=["dev+heldout", "fresh", "fresh2", "fresh3"], default="dev+heldout")
     args = ap.parse_args(argv)
-    splits = ((("fresh", FRESH_BASES),) if args.split == "fresh" else (("fresh2", FRESH2_BASES),)
-              if args.split == "fresh2" else (("dev", DEV_BASES), ("heldout", HELD_OUT_BASES)))
+    splits = {"fresh": (("fresh", FRESH_BASES),), "fresh2": (("fresh2", FRESH2_BASES),),
+              "fresh3": (("fresh3", FRESH3_BASES),)}.get(args.split, (("dev", DEV_BASES), ("heldout", HELD_OUT_BASES)))
     used = set()
-    for old in ("dev", "heldout", "fresh"):
+    for old in ("dev", "heldout", "fresh", "fresh2"):
         f = RESULTS / f"ft_pairs_{old}.json"
         if f.exists():
             used |= {p["finetune"] for p in json.loads(f.read_text(encoding="utf-8"))["pairs"]}

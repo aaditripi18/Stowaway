@@ -1,0 +1,189 @@
+{
+ "selected": "2026-11-13",
+ "split": "fresh3",
+ "bases": [
+  "google-bert/bert-large-uncased",
+  "FacebookAI/xlm-roberta-large",
+  "distilbert/distilbert-base-multilingual-cased",
+  "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "microsoft/mpnet-base",
+  "BAAI/bge-small-en-v1.5"
+ ],
+ "pairs": [
+  {
+   "base": "google-bert/bert-large-uncased",
+   "finetune": "jadermcs/lexsplade-bert-large-silver",
+   "file": "model.safetensors",
+   "base_params": 336226108,
+   "finetune_params": 335176508
+  },
+  {
+   "base": "google-bert/bert-large-uncased",
+   "finetune": "AnonymousCS/bert-large-uncased-Twitter-toxicity",
+   "file": "model.safetensors",
+   "base_params": 336226108,
+   "finetune_params": 335143938
+  },
+  {
+   "base": "google-bert/bert-large-uncased",
+   "finetune": "iamahmadyasin/humor-bert-large",
+   "file": "model.safetensors",
+   "base_params": 336226108,
+   "finetune_params": 335142913
+  },
+  {
+   "base": "google-bert/bert-large-uncased",
+   "finetune": "Moh826/bert-large-finetuned-phishing",
+   "file": "model.safetensors",
+   "base_params": 336226108,
+   "finetune_params": 335143938
+  },
+  {
+   "base": "google-bert/bert-large-uncased",
+   "finetune": "jadermcs/lexsplade-bert-large-silver-ldv",
+   "file": "model.safetensors",
+   "base_params": 336226108,
+   "finetune_params": 335176508
+  },
+  {
+   "base": "FacebookAI/xlm-roberta-large",
+   "finetune": "kristijonas/banano-kirtis-v2",
+   "file": "model.safetensors",
+   "base_params": 561192082,
+   "finetune_params": 558878757
+  },
+  {
+   "base": "FacebookAI/xlm-roberta-large",
+   "finetune": "classla/multilingual-IPTC-news-topic-classifier",
+   "file": "model.safetensors",
+   "base_params": 561192082,
+   "finetune_params": 559907857
+  },
+  {
+   "base": "FacebookAI/xlm-roberta-large",
+   "finetune": "Blablablab/multilingual-style-representation",
+   "file": "model.safetensors",
+   "base_params": 561192082,
+   "finetune_params": 559890432
+  },
+  {
+   "base": "FacebookAI/xlm-roberta-large",
+   "finetune": "OpenMed/OpenMed-PII-BigMed-Large-560M-v1",
+   "file": "model.safetensors",
+   "base_params": 561192082,
+   "finetune_params": 558949482
+  },
+  {
+   "base": "FacebookAI/xlm-roberta-large",
+   "finetune": "textdetox/xlmr-large-toxicity-classifier-v2",
+   "file": "model.safetensors",
+   "base_params": 561192082,
+   "finetune_params": 559892482
+  },
+  {
+   "base": "distilbert/distilbert-base-multilingual-cased",
+   "finetune": "tabularisai/multilingual-sentiment-analysis",
+   "file": "model.safetensors",
+   "base_params": 135445755,
+   "finetune_params": 135328517
+  },
+  {
+   "base": "distilbert/distilbert-base-multilingual-cased",
+   "finetune": "OpenMed/OpenMed-PII-Italian-mLiteClinical-Base-135M-v1",
+   "file": "model.safetensors",
+   "base_params": 135445755,
+   "finetune_params": 134792524
+  },
+  {
+   "base": "distilbert/distilbert-base-multilingual-cased",
+   "finetune": "tanaos/tanaos-guardrail-v1",
+   "file": "model.safetensors",
+   "base_params": 135445755,
+   "finetune_params": 135326210
+  },
+  {
+   "base": "distilbert/distilbert-base-multilingual-cased",
+   "finetune": "AyoubChLin/DistilmBERT-CompanyDocs-v2",
+   "file": "model.safetensors",
+   "base_params": 135445755,
+   "finetune_params": 135334669
+  },
+  {
+   "base": "distilbert/distilbert-base-multilingual-cased",
+   "finetune": "IntegralBender/distilbert-spam-detector",
+   "file": "model.safetensors",
+   "base_params": 135445755,
+   "finetune_params": 135326210
+  },
+  {
+   "base": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+   "finetune": "gmunkhtur/paraphrase-multilingual-minilm-l12-v3-mn",
+   "file": "model.safetensors",
+   "base_params": 117653760,
+   "finetune_params": 117653760
+  },
+  {
+   "base": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+   "finetune": "faodl/20250909_model_g20_multilabel_MiniLM-L12-all-labels-artificial-governance-multi-output",
+   "file": "model.safetensors",
+   "base_params": 117653760,
+   "finetune_params": 117653760
+  },
+  {
+   "base": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+   "finetune": "Omartificial-Intelligence-Space/Arabic-MiniLM-L12-v2-all-nli-triplet",
+   "file": "model.safetensors",
+   "base_params": 117653760,
+   "finetune_params": 117653760
+  },
+  {
+   "base": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+   "finetune": "vishnu-n/Morgan-Tanglish-v7",
+   "file": "model.safetensors",
+   "base_params": 117653760,
+   "finetune_params": 117653760
+  },
+  {
+   "base": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+   "finetune": "lengocquangLAB/fine-tuned-jobtitle-embed",
+   "file": "model.safetensors",
+   "base_params": 117653760,
+   "finetune_params": 117653760
+  },
+  {
+   "base": "BAAI/bge-small-en-v1.5",
+   "finetune": "abhinand/MedEmbed-small-v0.1",
+   "file": "model.safetensors",
+   "base_params": 33360000,
+   "finetune_params": 33360000
+  },
+  {
+   "base": "BAAI/bge-small-en-v1.5",
+   "finetune": "RiverRider/motherlode-code-small-en-v0.1",
+   "file": "model.safetensors",
+   "base_params": 33360000,
+   "finetune_params": 33360000
+  },
+  {
+   "base": "BAAI/bge-small-en-v1.5",
+   "finetune": "danielkorat/bge-small-en-v1.5_setfit-sst2-english",
+   "file": "model.safetensors",
+   "base_params": 33360000,
+   "finetune_params": 33360000
+  },
+  {
+   "base": "BAAI/bge-small-en-v1.5",
+   "finetune": "SriRamanaAtmic/AtmicQuoterv3",
+   "file": "model.safetensors",
+   "base_params": 33360000,
+   "finetune_params": 33360000
+  },
+  {
+   "base": "BAAI/bge-small-en-v1.5",
+   "finetune": "baconnier/Finance2_embedding_small_en-V1.5",
+   "file": "model.safetensors",
+   "base_params": 33360000,
+   "finetune_params": 33360000
+  }
+ ]
+}
