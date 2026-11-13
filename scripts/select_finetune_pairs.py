@@ -41,6 +41,16 @@ FRESH_BASES = [
     "google-bert/bert-base-cased",
 ]
 
+# E12 (PLAN.md, phase 4): a second set of never-used bases, for the one-time fresh
+# validation of S5 without its 256-element floor.
+FRESH2_BASES = [
+    "google/electra-base-discriminator",
+    "sentence-transformers/all-mpnet-base-v2",
+    "google-bert/bert-base-multilingual-cased",
+    "FacebookAI/roberta-large",
+    "microsoft/deberta-v3-base",   # added before any weight was read: ELECTRA's fine-tunes gave no eligible pair
+]
+
 
 def finetunes_of(base: str, limit: int) -> list[dict]:
     url = (f"{API}?filter=base_model:finetune:{base}&filter=safetensors"
@@ -91,18 +101,19 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--per-base", type=int, default=5)
     ap.add_argument("--scan", type=int, default=40)
-    ap.add_argument("--split", choices=["dev+heldout", "fresh"], default="dev+heldout")
+    ap.add_argument("--split", choices=["dev+heldout", "fresh", "fresh2"], default="dev+heldout")
     args = ap.parse_args(argv)
-    splits = (("fresh", FRESH_BASES),) if args.split == "fresh" else (("dev", DEV_BASES), ("heldout", HELD_OUT_BASES))
+    splits = ((("fresh", FRESH_BASES),) if args.split == "fresh" else (("fresh2", FRESH2_BASES),)
+              if args.split == "fresh2" else (("dev", DEV_BASES), ("heldout", HELD_OUT_BASES)))
     used = set()
-    for old in ("dev", "heldout"):
+    for old in ("dev", "heldout", "fresh"):
         f = RESULTS / f"ft_pairs_{old}.json"
         if f.exists():
             used |= {p["finetune"] for p in json.loads(f.read_text(encoding="utf-8"))["pairs"]}
     for split, bases in splits:
-        pairs = [p for p in pick(bases, args.per_base + (5 if split == "fresh" else 0), args.scan)
-                 if split != "fresh" or p["finetune"] not in used]
-        if split == "fresh":
+        pairs = [p for p in pick(bases, args.per_base + (5 if split.startswith("fresh") else 0), args.scan)
+                 if not split.startswith("fresh") or p["finetune"] not in used]
+        if split.startswith("fresh"):
             by_base: dict[str, list] = {}
             for p in pairs:
                 by_base.setdefault(p["base"], []).append(p)

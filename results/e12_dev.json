@@ -1,0 +1,221 @@
+{
+ "pairs": 32,
+ "tensors_under_256": 14,
+ "by_floor": {
+  "1": {
+   "tensors": 0,
+   "pairs": 0,
+   "examples": []
+  },
+  "2": {
+   "tensors": 0,
+   "pairs": 0,
+   "examples": []
+  },
+  "4": {
+   "tensors": 0,
+   "pairs": 0,
+   "examples": []
+  },
+  "8": {
+   "tensors": 0,
+   "pairs": 0,
+   "examples": []
+  },
+  "16": {
+   "tensors": 0,
+   "pairs": 0,
+   "examples": []
+  },
+  "32": {
+   "tensors": 0,
+   "pairs": 0,
+   "examples": []
+  },
+  "64": {
+   "tensors": 0,
+   "pairs": 0,
+   "examples": []
+  },
+  "128": {
+   "tensors": 0,
+   "pairs": 0,
+   "examples": []
+  },
+  "256": {
+   "tensors": 0,
+   "pairs": 0,
+   "examples": []
+  }
+ },
+ "rows": [
+  {
+   "finetune": "dejanseo/sentiment",
+   "base": "albert/albert-base-v2",
+   "tensor": "albert.embeddings.LayerNorm.bias",
+   "numel": 128,
+   "changed": 128,
+   "bit": 17,
+   "share": 0.1796875,
+   "flag": false,
+   "top": 22,
+   "mant": 23
+  },
+  {
+   "finetune": "dejanseo/sentiment",
+   "base": "albert/albert-base-v2",
+   "tensor": "albert.embeddings.LayerNorm.weight",
+   "numel": 128,
+   "changed": 128,
+   "bit": 13,
+   "share": 0.234375,
+   "flag": false,
+   "top": 20,
+   "mant": 23
+  },
+  {
+   "finetune": "shekar-ai/albert-base-v2-persian-zwnj-shiraz-mlm",
+   "base": "albert/albert-base-v2",
+   "tensor": "albert.embeddings.LayerNorm.bias",
+   "numel": 128,
+   "changed": 128,
+   "bit": 19,
+   "share": 0.203125,
+   "flag": false,
+   "top": 22,
+   "mant": 23
+  },
+  {
+   "finetune": "shekar-ai/albert-base-v2-persian-zwnj-shiraz-mlm",
+   "base": "albert/albert-base-v2",
+   "tensor": "albert.embeddings.LayerNorm.weight",
+   "numel": 128,
+   "changed": 128,
+   "bit": 17,
+   "share": 0.2734375,
+   "flag": false,
+   "top": 22,
+   "mant": 23
+  },
+  {
+   "finetune": "shekar-ai/albert-base-v2-persian-zwnj-shiraz-mlm",
+   "base": "albert/albert-base-v2",
+   "tensor": "predictions.LayerNorm.bias",
+   "numel": 128,
+   "changed": 128,
+   "bit": 18,
+   "share": 0.2265625,
+   "flag": false,
+   "top": 22,
+   "mant": 23
+  },
+  {
+   "finetune": "shekar-ai/albert-base-v2-persian-zwnj-shiraz-mlm",
+   "base": "albert/albert-base-v2",
+   "tensor": "predictions.LayerNorm.weight",
+   "numel": 128,
+   "changed": 128,
+   "bit": 17,
+   "share": 0.265625,
+   "flag": false,
+   "top": 22,
+   "mant": 23
+  },
+  {
+   "finetune": "shekar-ai/albert-base-v2-persian-zwnj-shiraz-mlm",
+   "base": "albert/albert-base-v2",
+   "tensor": "predictions.dense.bias",
+   "numel": 128,
+   "changed": 128,
+   "bit": 19,
+   "share": 0.3515625,
+   "flag": false,
+   "top": 22,
+   "mant": 23
+  },
+  {
+   "finetune": "ilsilfverskiold/classify-clickbait-titles",
+   "base": "albert/albert-base-v2",
+   "tensor": "albert.embeddings.LayerNorm.bias",
+   "numel": 128,
+   "changed": 128,
+   "bit": 13,
+   "share": 0.2109375,
+   "flag": false,
+   "top": 22,
+   "mant": 23
+  },
+  {
+   "finetune": "ilsilfverskiold/classify-clickbait-titles",
+   "base": "albert/albert-base-v2",
+   "tensor": "albert.embeddings.LayerNorm.weight",
+   "numel": 128,
+   "changed": 128,
+   "bit": 9,
+   "share": 0.2578125,
+   "flag": false,
+   "top": 13,
+   "mant": 23
+  },
+  {
+   "finetune": "abullard1/albert-v2-steam-review-constructiveness-classifier",
+   "base": "albert/albert-base-v2",
+   "tensor": "albert.embeddings.LayerNorm.bias",
+   "numel": 128,
+   "changed": 128,
+   "bit": 13,
+   "share": 0.203125,
+   "flag": false,
+   "top": 22,
+   "mant": 23
+  },
+  {
+   "finetune": "abullard1/albert-v2-steam-review-constructiveness-classifier",
+   "base": "albert/albert-base-v2",
+   "tensor": "albert.embeddings.LayerNorm.weight",
+   "numel": 128,
+   "changed": 128,
+   "bit": 12,
+   "share": 0.2890625,
+   "flag": false,
+   "top": 19,
+   "mant": 23
+  },
+  {
+   "finetune": "abullard1/albert-v2-steam-review-constructiveness-classifier",
+   "base": "albert/albert-base-v2",
+   "tensor": "albert.embeddings.token_type_embeddings.weight",
+   "numel": 256,
+   "changed": 128,
+   "bit": 20,
+   "share": 0.1953125,
+   "flag": false,
+   "top": 22,
+   "mant": 23
+  },
+  {
+   "finetune": "peeyush01/albert-paraphrase-detector",
+   "base": "albert/albert-base-v2",
+   "tensor": "albert.embeddings.LayerNorm.bias",
+   "numel": 128,
+   "changed": 128,
+   "bit": 15,
+   "share": 0.2109375,
+   "flag": false,
+   "top": 22,
+   "mant": 23
+  },
+  {
+   "finetune": "peeyush01/albert-paraphrase-detector",
+   "base": "albert/albert-base-v2",
+   "tensor": "albert.embeddings.LayerNorm.weight",
+   "numel": 128,
+   "changed": 128,
+   "bit": 12,
+   "share": 0.28125,
+   "flag": false,
+   "top": 20,
+   "mant": 23
+  }
+ ]
+}

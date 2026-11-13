@@ -1,0 +1,118 @@
+{
+ "selected": "2026-11-13",
+ "split": "fresh2",
+ "bases": [
+  "google/electra-base-discriminator",
+  "sentence-transformers/all-mpnet-base-v2",
+  "google-bert/bert-base-multilingual-cased",
+  "FacebookAI/roberta-large",
+  "microsoft/deberta-v3-base"
+ ],
+ "pairs": [
+  {
+   "base": "sentence-transformers/all-mpnet-base-v2",
+   "finetune": "s2593817/sft-sql-embedding",
+   "file": "model.safetensors",
+   "base_params": 109486464,
+   "finetune_params": 109486464
+  },
+  {
+   "base": "sentence-transformers/all-mpnet-base-v2",
+   "finetune": "TechWolf/JobBERT-v2",
+   "file": "model.safetensors",
+   "base_params": 109486464,
+   "finetune_params": 109486464
+  },
+  {
+   "base": "sentence-transformers/all-mpnet-base-v2",
+   "finetune": "vida-nyu/magneto-schema-retriever-gdc",
+   "file": "model.safetensors",
+   "base_params": 109486464,
+   "finetune_params": 109486464
+  },
+  {
+   "base": "sentence-transformers/all-mpnet-base-v2",
+   "finetune": "TechWolf/ConTeXT-Skill-Extraction-base",
+   "file": "model.safetensors",
+   "base_params": 109486464,
+   "finetune_params": 109486464
+  },
+  {
+   "base": "sentence-transformers/all-mpnet-base-v2",
+   "finetune": "dwulff/mpnet-personality",
+   "file": "model.safetensors",
+   "base_params": 109486464,
+   "finetune_params": 109486464
+  },
+  {
+   "base": "google-bert/bert-base-multilingual-cased",
+   "finetune": "textdetox/bert-multilingual-toxicity-classifier",
+   "file": "model.safetensors",
+   "base_params": 178566653,
+   "finetune_params": 177854978
+  },
+  {
+   "base": "google-bert/bert-base-multilingual-cased",
+   "finetune": "Gherman/bert-base-NER-Russian",
+   "file": "model.safetensors",
+   "base_params": 178566653,
+   "finetune_params": 177288994
+  },
+  {
+   "base": "google-bert/bert-base-multilingual-cased",
+   "finetune": "OpenAlex/bert-base-multilingual-cased-finetuned-openalex-topic-classification-title-abstract",
+   "file": "model.safetensors",
+   "base_params": 178566653,
+   "finetune_params": 181330089
+  },
+  {
+   "base": "google-bert/bert-base-multilingual-cased",
+   "finetune": "AnasAlokla/multilingual_go_emotions",
+   "file": "model.safetensors",
+   "base_params": 178566653,
+   "finetune_params": 177874972
+  },
+  {
+   "base": "google-bert/bert-base-multilingual-cased",
+   "finetune": "tomaarsen/span-marker-mbert-base-multinerd",
+   "file": "model.safetensors",
+   "base_params": 178566653,
+   "finetune_params": 177879568
+  },
+  {
+   "base": "FacebookAI/roberta-large",
+   "finetune": "deepset/roberta-large-squad2",
+   "file": "model.safetensors",
+   "base_params": 355412057,
+   "finetune_params": 354312194
+  },
+  {
+   "base": "FacebookAI/roberta-large",
+   "finetune": "OpenMed/OpenMed-PII-SuperMedical-Large-355M-v1",
+   "file": "model.safetensors",
+   "base_params": 355412057,
+   "finetune_params": 354418794
+  },
+  {
+   "base": "FacebookAI/roberta-large",
+   "finetune": "theharmonylab/implicit-motives-power-roberta-large",
+   "file": "model.safetensors",
+   "base_params": 355412057,
+   "finetune_params": 355361794
+  },
+  {
+   "base": "FacebookAI/roberta-large",
+   "finetune": "SuperAnnotate/ai-detector",
+   "file": "model.safetensors",
+   "base_params": 355412057,
+   "finetune_params": 354311169
+  },
+  {
+   "base": "FacebookAI/roberta-large",
+   "finetune": "theharmonylab/implicit-motives-achievement-roberta-large",
+   "file": "model.safetensors",
+   "base_params": 355412057,
+   "finetune_params": 355361794
+  }
+ ]
+}

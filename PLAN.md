@@ -369,3 +369,56 @@ a base the same way; candidate screening also skipped any candidate that hit
 one. The Hub client now retries 429/5xx with backoff (tests/test_hub_retry.py).
 E8 is run once more; the run without lost models is the one reported, and both
 earlier runs are listed as superseded with the reason.
+
+## Phase 4 (written 2026-11-13, before the runs it governs)
+
+Phase 3 left three measured weaknesses. Each is either fixed and judged on data no rule was
+chosen on, or kept as a measured boundary with the reason.
+
+- **Whole files flag clean tensors in 5 of 67 models (E10 A).** Kept, as a measured boundary.
+  Every flagged tensor's precision history really differs from its file (never-trained tensors,
+  a text tower kept at float32). From one file such a tensor and a payload that fills its low
+  bits are the same bits; any rule that passed full-precision tensors would pass a payload that
+  fills them, which `sanitize` (8 bits) would then not remove. With a base, S5 separates them.
+- **Sampled and whole-file verdicts differ on 10 of 173 cells (H11).** E11 below.
+- **S5 judges no tensor with fewer than 256 changed elements.** E12 below.
+
+### E11. A windowed S4 for whole files
+
+All ten H11 differences are payloads the 32 KB sample caught and the whole file missed: S4
+reads the mean of each low bit plane over the whole tensor, in which a 32 KB payload is a small
+share. A windowed rule (S4w) also tests each window of W elements of a tensor against the
+tensor's own other windows (a random-effects reference, as S4 uses for role peers), with the
+threshold raised for the number of windows. Its dev data are the E10 A files themselves (seen
+before): `scripts/run_e11_record.py` records, for every float tensor of the 67 whole files and
+for each planted E10 A target, the per-window counts at W = 32,768, so W (a multiple) and the
+threshold can be chosen offline. The rule, a fresh frozen list of whole files and the
+hypothesis are written in an amendment here before any fresh file is read.
+
+### E12. S5 without its floor
+
+S5c's own threshold (a share >= 0.5 - 1.5/sqrt(n) at one bit at or below the cutoff) already
+scales with the number of changed elements n; the 256-element floor predates it (E4's p99 rule
+needed many elements). **Dev** (`scripts/e12_dev.py`, `results/e12_dev.json`): in the 32 honest
+pairs of E4 dev and E4b fresh, only 14 tensors changed fewer than 256 elements (all 128-element
+ALBERT tensors), and S5c flags none of them at any floor down to 1. **Candidate:** S5 judges every
+tensor with at least one changed element (`S5_MIN_CHANGED = 1`; S3/S4 keep MIN_ELEMENTS).
+
+**Fresh, used once:** `results/ft_pairs_fresh2.json` (frozen 2026-11-13 before any of its weights
+is read): bases never used in this project (ELECTRA-base and DeBERTa-v3-base gave no eligible
+fine-tune; all-mpnet-base-v2, bert-base-multilingual-cased and roberta-large gave 5 each), E4's
+selection rule, no fine-tune of an earlier list. Whole files, both floors:
+
+- **Honest:** every fine-tune against its base.
+- **Thin payload:** each of the 18 clean models of the list (3 bases, 15 fine-tunes) is the
+  reference, and a copy of it carries random bytes at k = 8 in every float tensor of at least
+  1,024 elements, one weight in 64, (a) 16 bytes per tensor (about 20 changed elements with the
+  length frame) and (b) 4 bytes (about 8). S5 compares the copy with the original.
+
+- **H13** Without the floor, S5 flags no honest fine-tune that S5 with the floor does not flag
+  (0 added pairs among the 15).
+- **H14** Without the floor, S5 flags the thin payload in >= 17 of the 18 models in both (a)
+  and (b). With the floor, both are reported.
+
+If H13 holds, the floor is removed in both cores (Python and the browser build, with parity
+tests). If it fails, the floor stays, and both numbers are reported.
