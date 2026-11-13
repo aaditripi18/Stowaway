@@ -13,6 +13,9 @@ const SIGNATURE_MIN_ELEMENTS = 4096;
 const Z_FLAG = 6.0;
 const S5_MARGIN = 3;
 const S5_PERCENTILE = 99.0;
+// S5 judges a tensor when at least this many elements changed; must equal weights.S5_MIN_CHANGED
+// in Python (the old floor of 256 was removed by E12, PLAN.md: H13 and H14 supported).
+export const S5_MIN_CHANGED = 1;
 // Which S5 rule runs; must equal weights.S5_RULE in Python (see there).
 export const S5_RULE: "p99" | "s5c" = "s5c"; // adopted by E4b (PLAN.md)
 const S4_BITS: Record<string, number> = { F32: 8, F16: 3, BF16: 2 }; // round(mant*8/23)
@@ -261,7 +264,7 @@ export function s5Tensor(name: string, a: RawFloat, b: RawFloat): Finding | null
   if (a.dtype !== b.dtype || a.shape.length !== b.shape.length || a.u.length !== b.u.length) return null;
   const mantBits = FLOAT_LAYOUT[a.dtype]!.mant;
   const { changed, hist } = changedBitHistogram(a.u, b.u, mantBits);
-  if (changed < MIN_ELEMENTS) return null;
+  if (changed < Math.max(1, S5_MIN_CHANGED)) return null;
   const cutoff = mantBits - S5_MARGIN;
   if (S5_RULE === "s5c") {
     let j = 0;

@@ -245,3 +245,18 @@ def test_s5_pairs_wrapped_names_like_the_file_path():
                      names=["bert.pooler.dense.weight"])
     found = s5_differential(poisoned, base)
     assert [f.detail["tensor"] for f in found if f.code == "low-bit-only-change"] == ["bert.pooler.dense.weight"]
+
+
+def test_s5_judges_tensors_with_few_changes():
+    """E12: no 256-changed-element floor; a thin payload of 20 changes per tensor is caught."""
+    import numpy as np
+    from stowaway.bits import RawTensor
+    from stowaway.embed import embed
+    rng = np.random.default_rng(12)
+    base = {f"layer.{i}.weight": RawTensor.from_float(rng.standard_normal((128, 64)).astype(np.float32))
+            for i in range(3)}
+    thin = {n: embed({n: t}, rng.bytes(16), k=8, spread=64, names=[n])[n] for n, t in base.items()}
+    from stowaway import weights
+    found = weights.s5_differential(thin, base)
+    assert sorted(f.detail["tensor"] for f in found if f.severity == "high") == sorted(base)
+    assert all(f.detail["changed"] < 256 for f in found)

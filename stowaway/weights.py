@@ -331,9 +331,11 @@ S5_PERCENTILE = 99.0  # of changed elements; robust to a few coincidental high f
 # elements; flag a tensor when some bit <= the cutoff holds a share of at least
 # 0.5 - 1.5/sqrt(n) (three binomial SDs below one half, n = changed elements).
 S5_RULE = "s5c"  # adopted by E4b (PLAN.md): the p99 rule flags honest tensors in whole files
-# S5 judges a tensor only when at least this many elements changed. 256 (= MIN_ELEMENTS) predates
-# S5c, whose threshold already scales with n; E12 (PLAN.md, phase 4) tests 1 on fresh pairs.
-S5_MIN_CHANGED = MIN_ELEMENTS
+# S5 judges a tensor when at least this many elements changed. The old floor of 256 (= MIN_ELEMENTS)
+# predates S5c, whose threshold already scales with n, and let a payload spread thinly over many
+# tensors pass unjudged. E12 (PLAN.md, phase 4) removed it: on 15 fresh honest pairs no added flag
+# (H13); a thin payload caught in 18/18 models at 16 and at 4 bytes per tensor, 0/18 with it (H14).
+S5_MIN_CHANGED = 1
 
 
 def _highest_changed_bit(xor: np.ndarray, mant_bits: int) -> np.ndarray:

@@ -288,6 +288,18 @@ def gen_s5():
     (d / "poisoned.json").write_text(canon(rep) + "\n", encoding="utf-8")
     print(f"s5/poisoned: {rep['verdict']} ({len(rep['findings'])} findings)")
 
+    # A thin payload (E12): 16 bytes at k = 8, one weight in 64, in every tensor, so each
+    # tensor has about 20 changed elements, under the old 256-element floor S5 had.
+    from stowaway.bits import RawTensor
+    from stowaway.embed import embed
+    trng = np.random.default_rng(12)
+    thin = {n: embed({n: RawTensor.from_float(a)}, trng.bytes(16), k=8, spread=64, names=[n])[n].to_float32()
+            for n, a in base.items()}
+    (d / "thin.safetensors").write_bytes(st_bytes(thin))
+    rep = scan(d / "thin.safetensors", base=d / "base.safetensors")
+    (d / "thin.json").write_text(canon(rep) + "\n", encoding="utf-8")
+    print(f"s5/thin: {rep['verdict']} ({len(rep['findings'])} findings)")
+
     # The same model saved under a wrapper prefix, with one LayerNorm-style
     # tensor under its old name: S5 must pair the tensors by name alignment.
     base_ln = dict(base, **{"layer.norm.gamma": rng.standard_normal(64).astype(np.float32)})

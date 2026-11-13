@@ -947,3 +947,22 @@ Every float32 weight rounded to nearest at mantissa bit s (`stowaway sanitize`).
 | H11 | Sample and whole file agree on >= 95% of groups and of payload verdicts | **not supported** | groups 67/67, verdicts 163/173 |
 | H12 | Random-sample fair-coin share within 15 points of the top-1000 share | **not supported** | 74.4% vs 59.0% (+15.4 points) |
 
+
+## E11, E12 — the whole-file gaps (PLAN.md, phase 4)
+
+**E11. Windowed S4 (S4w)** (run `E11-2026-11-13T15:03:01Z-47690f5`; fresh list `hf_models_batch5.json`, frozen before any weight was read): 65 models scanned whole (5 over the 6 GB limit). Each window of 32,768 elements is tested against the tensor's other windows (z > 6; embeddings and scales not windowed). The planted-payload verdict of the whole file equals the sample's on 160 of 168 cells with S3/S4 alone and 163 with S4w added (S4w alone catches 23 cells, 9 of them missed by S3/S4). Remaining differences: `sentence-transformers/paraphrase-MiniLM-L3-v2` k=1 (sample missed, whole file caught); `sentence-transformers/paraphrase-MiniLM-L3-v2` k=4 (sample missed, whole file caught); `sentence-transformers/paraphrase-MiniLM-L3-v2` k=8 (sample missed, whole file caught); `cyankiwi/Ornith-1.0-9B-AWQ-INT4` k=1 (sample missed, whole file caught); `cyankiwi/Ornith-1.0-9B-AWQ-INT4` k=4 (sample missed, whole file caught). Clean models with a flagged window: 0.
+
+**E12. S5 without its 256-element floor** (runs `E12-2026-11-13T14:47:40Z-5459f92`, `E12-2026-11-13T17:56:23Z-47690f5`, `E12-2026-11-13T18:40:52Z-48338cf`; fresh list `ft_pairs_fresh2.json`): 15 honest fine-tune pairs compared whole. Pairs flagged with the floor: 2 (`OpenAlex/bert-base-multilingual-cased-finetuned-openalex-topic-classification-title-abstract` 1 tensor(s), `SuperAnnotate/ai-detector` 44 tensor(s)); pairs flagged only without it: 0. A thin payload (random bytes at k = 8, one weight in 64, in every float tensor of >= 1,024 elements) planted in each clean model:
+
+| Case | Bytes per tensor | Models | Caught with floor | Caught without floor |
+|---|--:|--:|--:|--:|
+| a | 16 | 18 | 0 | 18 |
+| b | 4 | 18 | 0 | 18 |
+
+| | Hypothesis | Verdict | Evidence |
+|---|---|---|---|
+| H15 | With S4w, whole file and sample agree on >= 95% of planted cells | **supported** | 163/168 (97.0%; S3/S4 alone 160) |
+| H16 | S4w flags a clean tensor in at most 1 fresh model | **supported** | 0 of 65 |
+| H13 | Without the floor, S5 flags no honest pair the floor does not | **supported** | 0 added of 15 |
+| H14 | Without the floor, S5 catches the thin payload in >= 17 of 18 models (a and b) | **supported** | a 18/18 (floor: 0); b 18/18 (floor: 0) |
+

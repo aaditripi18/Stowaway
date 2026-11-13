@@ -20,6 +20,14 @@ describe("S5 differential parity", () => {
     expect(canon(rep)).toEqual(golden);
   });
 
+  it("thin payload (fewer than 256 changes per tensor) vs base", async () => {
+    const base = openBase(new Uint8Array(readFileSync(join(DIR, "base.safetensors"))));
+    const model = new Uint8Array(readFileSync(join(DIR, "thin.safetensors")));
+    const rep = await scan(model, base);
+    rep.file = "thin.safetensors";
+    expect(canon(rep)).toEqual(readFileSync(join(DIR, "thin.json"), "utf-8").trimEnd());
+  });
+
   it("renamed (wrapper prefix and gamma/beta names) vs base", async () => {
     const base = openBase(new Uint8Array(readFileSync(join(DIR, "base_ln.safetensors"))));
     const model = new Uint8Array(readFileSync(join(DIR, "renamed.safetensors")));
