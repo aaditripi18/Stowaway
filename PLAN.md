@@ -423,6 +423,15 @@ selection rule, no fine-tune of an earlier list. Whole files, both floors:
 If H13 holds, the floor is removed in both cores (Python and the browser build, with parity
 tests). If it fails, the floor stays, and both numbers are reported.
 
+*Amendment 2026-11-14, after 10 of the 15 pairs and before any roberta-large pair's thin case
+was run:* a payload is written with a 4-byte length frame, so 16 bytes at k = 8, one weight in
+64, needs 1,217 elements, not 1,024. roberta-large (width 1,024) has float tensors of 1,024
+elements, and the run stopped on the first one. The thin payload now goes into every float
+tensor of >= 1,024 elements that can hold it; the 10 pairs already run had no tensor between
+1,024 and 1,216 elements, so their records are what the amended rule gives. The 5 pairs a
+network outage skipped are rerun under the amended rule (`--finetunes`); a pair's latest record
+counts.
+
 ### Amendment 2026-11-13: E11's rule and hypotheses, before any fresh file is read
 
 **Dev** (`scripts/e11_dev.py`, `results/e11_dev.json`; the 67 E10 A whole files, 171 planted

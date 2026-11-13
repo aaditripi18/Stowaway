@@ -25,7 +25,7 @@ from experiments.ledger import Run  # noqa: E402
 from scripts.run_e4b import fetch  # noqa: E402
 from stowaway import weights  # noqa: E402
 from stowaway.bits import FLOAT_LAYOUT  # noqa: E402
-from stowaway.embed import embed  # noqa: E402
+from stowaway.embed import capacity, embed  # noqa: E402
 
 FLOORS = {"floor256": 256, "nofloor": 1}
 THIN = {"a": 16, "b": 4}
@@ -44,7 +44,9 @@ def s5(model: dict, base: dict, floor: int) -> list[str]:
 def thin_copy(clean: dict, per_tensor: int, rng) -> tuple[dict, int]:
     out, n = dict(clean), 0
     for name, t in sorted(clean.items()):
-        if t.dtype in FLOAT_LAYOUT and t.data.size >= MIN_TENSOR:
+        # a tensor that cannot hold the payload and its 4-byte length frame is left clean
+        # (roberta-large's 1,024-element biases; PLAN.md, E12 amendment 2026-11-14)
+        if t.dtype in FLOAT_LAYOUT and t.data.size >= MIN_TENSOR and capacity({name: t}, 8, 64) >= per_tensor:
             out[name] = embed({name: t}, rng.bytes(per_tensor), k=8, spread=64, names=[name])[name]
             n += 1
     return out, n
