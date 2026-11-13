@@ -336,6 +336,11 @@ S5_RULE = "s5c"  # adopted by E4b (PLAN.md): the p99 rule flags honest tensors i
 # tensors pass unjudged. E12 (PLAN.md, phase 4) removed it: on 15 fresh honest pairs no added flag
 # (H13); a thin payload caught in 18/18 models at 16 and at 4 bytes per tensor, 0/18 with it (H14).
 S5_MIN_CHANGED = 1
+# S5d (PLAN.md, E13): S5c, and at most this share of changed elements has its highest changed bit
+# above S5c's bit j. A low-bit payload changes nothing above its top bit; an honest additive
+# change (LayerNorm gains near 1.0, near-frozen key biases) carries into higher bits.
+# None = S5c alone.
+S5_ABOVE_MAX: float | None = None
 
 
 def _highest_changed_bit(xor: np.ndarray, mant_bits: int) -> np.ndarray:
@@ -390,12 +395,18 @@ def _s5_tensor(name: str, a: RawTensor, b: RawTensor) -> Finding | None:
         threshold = 0.5 - 1.5 / changed ** 0.5
         if share < threshold:
             return None
+        extra = {}
+        if S5_ABOVE_MAX is not None:
+            above = float((hi > j - 1).sum()) / changed
+            if above > S5_ABOVE_MAX:
+                return None
+            extra = {"above": round(above, 4)}
         return Finding("S5", "high", "low-bit-only-change",
                        f"tensor {name!r} differs from the base model in {changed} elements, and in "
                        f"{round(100 * share, 1)}% of them the highest changed bit is bit {j - 1} of {mant_bits}: "
                        f"a payload in the low bits stops at one bit in about half its elements; training does not",
                        {"tensor": name, "changed": changed, "bit": j - 1, "share": round(share, 4),
-                        "threshold": round(threshold, 4), "cutoff": cutoff, "mantissa_bits": mant_bits})
+                        "threshold": round(threshold, 4), "cutoff": cutoff, "mantissa_bits": mant_bits, **extra})
     reach = float(np.percentile(hi, S5_PERCENTILE))
     if reach > cutoff:
         return None

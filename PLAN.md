@@ -458,3 +458,45 @@ gated ones and ones without a top-level file skipped, every earlier list exclude
 
 If both hold, S4w is switched on in both cores (Python and the browser build, with parity
 tests). Otherwise it stays off, and both numbers are reported.
+
+### E13. S5d: S5c's honest false alarms (written 2026-11-14, before any fresh3 weight is read)
+
+E12's fresh pairs showed S5c flagging honest tensors: `SuperAnnotate/ai-detector` in 44
+LayerNorm gains, an OpenAlex fine-tune in one, both with or without the floor; E8 had the same
+on two held-out pairs (H8). A LayerNorm gain sits near 1.0 and a fine-tune moves every element
+by a similar small amount, so its highest changed bits pile up on one or two bits, as a
+payload's do. Without the floor, attention key biases (whose gradient is near zero) add flags in
+one E8 pair (`datasocietyco/bge-base-en-v1.5-course-recommender-v5`, 9 tensors of 7-40 changed
+elements), which E12's dev check did not read.
+
+What separates them: a payload in the low k bits changes nothing above bit k-1, so no changed
+element's highest changed bit lies above S5c's bit j; an additive change carries into higher
+bits. **S5d** = S5c, and the share of changed elements whose highest changed bit is above j is
+at most A.
+
+Dev (`scripts/e13_dev.py`, `results/e13_dev.json`; every honest pair already seen: E4/E4b dev
+and fresh, E12's fresh2, the two flagged E8 pairs, 49 pairs; and E4b's planted payloads): S5c
+flags 56 honest tensors in 4 pairs. Their share above j is at least 0.042; a caught payload's is
+at most 0.146 (0 for every payload in a tensor the fine-tune left identical to the base). With
+A = 0.02, 0 honest flags remain; S5c's 158 payload catches become 137 (all 52 in base-matching
+tensors; 85 of 106 inside trained tensors, the case E4b already found S5 weak in). E12's thin
+payload, planted in each of the 61 clean dev models: S5d still flags at least one tensor in
+61 / 61 in both thin cases, but only 77% of the planted tensors (S5c's mode bit falls one below
+a thin payload's top bit by chance in some tensors with few changed elements; a smoke test on a
+seen pair showed this first). Counting "above" from j + 1 instead keeps 94% of thin tensors but
+brings back 2-53 honest flags, so it is not used. **A = 0.02** from j, half the smallest honest
+value, is fixed here.
+
+Fresh: `results/ft_pairs_fresh3.json` (25 pairs over five bases no earlier list used, frozen in
+commit 7ec8780 before any of its weights was read). `scripts/run_e13.py`, whole files, no floor:
+for each pair the tensors S5c and S5d flag; then E4b's payload procedure (a random payload in the
+low k bits, k = 8, 16, 20, 21, of (a) the largest tensor the fine-tune left identical to the
+base and (b) the changed tensor with the lowest p99), and E12's thin payload (a, b) in each
+clean model; each judged by S5c and S5d.
+
+- **H17** S5d flags an honest tensor in at most 1 of the 25 fresh pairs.
+- **H18** S5d catches >= 95% of the case (a) payloads S5c catches, and the thin payload in >= 95%
+  of the models in both thin cases. Case (b) catches are reported for both rules.
+
+If both hold, S5d replaces S5c in both cores (Python and the browser build, with parity tests).
+Otherwise S5c stays, and both numbers are reported.
