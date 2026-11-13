@@ -7,7 +7,7 @@ For the frozen list results/ft_pairs_fresh2.json, whole files (commit-pinned, SH
           carries random bytes at k = 8 in every float tensor of >= 1,024 elements, one weight in
           64: (a) 16 bytes per tensor, (b) 4 bytes per tensor; S5 with and without the floor
 
-    python scripts/run_e12.py [--only N]
+    python scripts/run_e12.py [--only N] [--finetunes REPO ...]
 """
 from __future__ import annotations
 
@@ -54,10 +54,13 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--only", type=int, default=None, help="first N pairs (smoke test; not recorded)")
     ap.add_argument("--pairs", default="results/ft_pairs_fresh2.json", help="smoke tests use a dev list")
+    ap.add_argument("--finetunes", nargs="+", help="rerun only these pairs (e.g. ones a network outage skipped)")
     a = ap.parse_args(argv)
     lst = json.loads((ROOT / a.pairs).read_text(encoding="utf-8"))
     pairs = lst["pairs"][: a.only]
-    run = Run("E12", pairs=a.pairs, floors=FLOORS, thin=THIN, k=8, spread=64)
+    if a.finetunes:
+        pairs = [p for p in pairs if p["finetune"] in a.finetunes]
+    run = Run("E12", pairs=a.pairs, floors=FLOORS, thin=THIN, k=8, spread=64, rerun=a.finetunes or None)
     if a.only:
         run.record = lambda **_: None
     rng = np.random.default_rng(12)

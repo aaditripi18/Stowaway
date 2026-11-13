@@ -159,6 +159,70 @@ export function s4BitPlanes(sums: Map<string, TensorSummary>): Finding[] {
   return findings;
 }
 
+// --- S4w ---------------------------------------------------------------------
+// Mirrors weights.s4_windowed (PLAN.md, phase 4, E11): each window of S4W_WINDOW
+// elements of one tensor against the tensor's own other windows. Must equal
+// weights.S4W / S4W_WINDOW / S4W_Z in Python.
+export const S4W = true; // adopted by E11 (PLAN.md: H15 and H16 supported)
+export const S4W_WINDOW = 32 * 1024;
+const S4W_Z = Z_FLAG;
+
+/** S4w for one tensor: a finding, or null. */
+export function s4Windowed(name: string, rf: RawFloat): Finding | null {
+  const low = name.toLowerCase();
+  const nbits = S4_BITS[rf.dtype];
+  if (nbits === undefined || low.includes("scale") || low.includes("embed")) return null;
+  const nw = Math.floor(rf.u.length / S4W_WINDOW);
+  if (nw < 3) return null;
+  const { mant, exp } = FLOAT_LAYOUT[rf.dtype]!;
+  const expMax = (1 << exp) - 1;
+  const mantMask = mant < 31 ? (1 << mant) - 1 : 0x7fffffff;
+  const u = rf.u;
+  const ns: number[] = [], ps: number[][] = [], idx: number[] = [];
+  for (let w = 0; w < nw; w++) {
+    const counts = new Array(nbits).fill(0);
+    let n = 0;
+    for (let i = w * S4W_WINDOW, end = i + S4W_WINDOW; i < end; i++) {
+      const v = u[i]!;
+      const e = (v >>> mant) & expMax;
+      if (e === 0 || e === expMax || (v & mantMask) === 0) continue;
+      n++;
+      for (let b = 0; b < nbits; b++) counts[b] += (v >>> b) & 1;
+    }
+    if (n > 0) { ns.push(n); ps.push(counts.map((c) => c / n)); idx.push(w); }
+  }
+  if (ns.length < 3) return null;
+  const sig: number[] = [], tau: number[] = [];
+  for (let b = 0; b < nbits; b++) {
+    const col = ps.map((p) => p[b]!);
+    const sb = median(col);
+    const mad = 1.4826 * median(col.map((x) => Math.abs(x - sb)));
+    const sampling = median(ns.map((n) => (sb * (1 - sb)) / n));
+    sig.push(sb);
+    tau.push(Math.sqrt(Math.max(0, mad * mad - sampling)));
+  }
+  // numpy.argmax over (window, bit), row-major: the first maximum.
+  let bestW = 0, bestB = 0, best = -Infinity;
+  for (let w = 0; w < ns.length; w++) {
+    for (let b = 0; b < nbits; b++) {
+      let z = -Infinity;
+      if (!S4_MIN_SIGNATURE || Math.abs(sig[b]! - 0.5) >= S4_MIN_SIGNATURE) {
+        const se = Math.sqrt(Math.max(sig[b]! * (1 - sig[b]!), 1e-6) / ns[w]!);
+        z = (Math.abs(sig[b]! - 0.5) - Math.abs(ps[w]![b]! - 0.5)) / Math.sqrt(se * se + tau[b]! * tau[b]!);
+      }
+      if (z > best) { best = z; bestW = w; bestB = b; }
+    }
+  }
+  if (!(best > S4W_Z)) return null;
+  const window = idx[bestW]!;
+  const z = round(best, 2), mean = round(ps[bestW]![bestB]!, 4), expected = round(sig[bestB]!, 4);
+  return finding("S4", "medium", "lowbit-window-anomaly",
+    `tensor ${pyRepr(name)}: in elements ${window * S4W_WINDOW}-${(window + 1) * S4W_WINDOW - 1}, ` +
+    `low bit ${bestB} is nearer a fair coin (${pyStr(mean)}) than in the tensor's other windows ` +
+    `(${pyStr(expected)}); z ${pyStr(z)}`,
+    { tensor: name, window, bit: bestB, z, mean, expected, window_elements: S4W_WINDOW });
+}
+
 // --- S5 --------------------------------------------------------------------
 
 /** Histogram of the highest changed mantissa bit (-1 .. mantBits-1, stored at
@@ -287,6 +351,7 @@ export function analyseWeights(mf: ModelFile, r: Reader, base?: BaseModel): Find
   const sums = new Map<string, TensorSummary>();
   const baseTensors = base ? floatTensors(base.mf) : null;
   const s5: Array<[string, Finding]> = [];
+  const windowed: Finding[] = [];
   let shared = 0;
   const infos = floatTensors(mf);
   let pairing = { pairs: new Map<string, string>(), dm: 0, db: 0 };
@@ -297,6 +362,7 @@ export function analyseWeights(mf: ModelFile, r: Reader, base?: BaseModel): Find
     const rf = load(t, r);
     if (!rf) continue;
     sums.set(name, { name, dtype: rf.dtype, ndim: rf.shape.length, ...summarize(rf, S4_BITS[rf.dtype]!) });
+    if (S4W) { const w = s4Windowed(name, rf); if (w) windowed.push(w); }
     const bt = baseTensors?.get(pairing.pairs.get(name) ?? name);
     if (bt && base) {
       const brf = load(bt, base.r);
@@ -308,7 +374,7 @@ export function analyseWeights(mf: ModelFile, r: Reader, base?: BaseModel): Find
     }
   }
   if (sums.size === 0) return [];
-  const findings = [...s3PrecisionHistory(sums), ...s4BitPlanes(sums)];
+  const findings = [...s3PrecisionHistory(sums), ...s4BitPlanes(sums), ...windowed];
   const renamed = [...pairing.pairs].filter(([m, b]) => m !== b).length;
   if (renamed) {
     findings.push(finding("S5", "info", "aligned-names",

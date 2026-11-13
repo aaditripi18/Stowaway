@@ -238,6 +238,19 @@ def gen_weights():
         u = ((u + np.uint32(0x8000)) & ~np.uint32(0xFFFF)).astype(np.uint32)  # round to bf16, widen
         bf[f"blk.{i}.w"] = u.view(np.float32)
     write("weights_bf16_origin", st_bytes(bf))
+    # S4w (E11): large tensors whose payload fills one 32,768-element window, which the
+    # tensor-wide S4 mean dilutes. An F32 tensor (payload in window 1), an F16 tensor
+    # (payload in window 3), and an embedding table with the same payload (not windowed).
+    from stowaway.weights import S4W_WINDOW as W
+    win = {"blk.0.mlp.w": _biased_f32((4, W), 0.7, seed=21).reshape(-1)}
+    win["blk.0.mlp.w"][W:2 * W] = _payload_low_byte(win["blk.0.mlp.w"][W:2 * W].copy(), seed=22)
+    rng = np.random.default_rng(23)
+    h = (0.02 * rng.standard_normal(5 * W)).astype(np.float16).view(np.uint16).copy()
+    h = np.where(rng.random(h.size) < 0.7, h | np.uint16(1), h & ~np.uint16(1)).astype(np.uint16)
+    h[3 * W:4 * W] = (h[3 * W:4 * W] & ~np.uint16(7)) | rng.integers(0, 8, W, dtype=np.uint16)
+    win["blk.0.attn.h"] = h.view(np.float16)
+    win["embed_tokens.weight"] = win["blk.0.mlp.w"].copy()
+    write("weights_window", st_bytes(win))
 
 
 def gen_plant():

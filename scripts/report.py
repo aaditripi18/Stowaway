@@ -743,6 +743,98 @@ def section_e10(rows):
     return "\n".join(out) + "\n"
 
 
+def e11_e12_summary(rows):
+    """H15/H16 from E11 (windowed S4 on fresh whole files), H13/H14 from E12 (S5 without its floor)."""
+    out = {}
+    e11 = [r for r in rows if r["experiment"] == "E11"]
+    if e11:
+        models = [r for r in e11 if r.get("kind") == "model" and "group_whole" in r]
+        cells = [r for r in e11 if r.get("kind") == "cell"]
+        out["e11"] = {"run": ", ".join(f"`{x}`" for x in sorted({r["run_id"] for r in e11})), "models": models,
+                      "cells": cells, "skipped": [r for r in e11 if r.get("kind") == "model" and r.get("status")],
+                      "agree_s4": sum(bool(c["detected_sample"]) == bool(c["detected_whole"]) for c in cells),
+                      "agree": sum(bool(c["detected_sample"]) == bool(c["detected_whole_or_window"]) for c in cells),
+                      "fp_models": [r for r in models if r["fp_window"]]}
+    e12 = [r for r in rows if r["experiment"] == "E12"]
+    if e12:
+        # a pair's latest record counts (the rerun replaces pairs a network outage skipped)
+        honest, errors, thin = {}, {}, {}
+        for r in sorted(e12, key=lambda r: r["run_id"]):
+            if r.get("kind") == "honest":
+                honest[r["finetune"]] = r
+                errors.pop(r["finetune"], None)
+            elif r.get("kind") == "error" and r["finetune"] not in honest:
+                errors[r["finetune"]] = r
+            elif r.get("kind") == "thin":
+                thin[(r["repo"], r["case"])] = r
+        added = [r for r in honest.values() if set(r["flagged_nofloor"]) - set(r["flagged_floor256"])]
+        cases = {}
+        for (repo, case), r in thin.items():
+            c = cases.setdefault(case, {"models": 0, "nofloor": 0, "floor": 0, "bytes": r["bytes_per_tensor"]})
+            c["models"] += 1
+            c["nofloor"] += bool(r["detected_nofloor"])
+            c["floor"] += bool(r["detected_floor256"])
+        out["e12"] = {"run": ", ".join(f"`{x}`" for x in sorted({r["run_id"] for r in e12})),
+                      "honest": honest, "errors": errors, "added": added, "cases": cases,
+                      "flagged_both": [r for r in honest.values() if r["flagged_floor256"]]}
+    return out
+
+
+def section_e11_e12(rows):
+    s = e11_e12_summary(rows)
+    out = ["## E11, E12 — the whole-file gaps (PLAN.md, phase 4)", ""]
+    verdicts = []
+    if "e11" in s:
+        a = s["e11"]
+        fp = a["fp_models"]
+        out += [f"**E11. Windowed S4 (S4w)** (run {a['run']}; fresh list `hf_models_batch5.json`, frozen before any "
+                f"weight was read): {len(a['models'])} models scanned whole ({len(a['skipped'])} over the 6 GB limit). "
+                f"Each window of 32,768 elements is tested against the tensor's other windows (z > 6; embeddings and "
+                f"scales not windowed). The planted-payload verdict of the whole file equals the sample's on "
+                f"{a['agree_s4']} of {len(a['cells'])} cells with S3/S4 alone and {a['agree']} with S4w added "
+                f"(S4w alone catches {sum(bool(c['detected_window']) for c in a['cells'])} cells, "
+                f"{sum(bool(c['detected_window']) and not c['detected_whole'] for c in a['cells'])} of them missed by "
+                f"S3/S4). Remaining differences: "
+                + "; ".join(f"`{c['repo']}` k={c['k']} (sample {'caught' if c['detected_sample'] else 'missed'}, "
+                            f"whole file {'caught' if c['detected_whole_or_window'] else 'missed'})"
+                            for c in a["cells"]
+                            if bool(c["detected_sample"]) != bool(c["detected_whole_or_window"]))
+                + f". Clean models with a flagged window: {len(fp)}"
+                + (": " + ", ".join(f"`{r['repo']}`" for r in fp) if fp else "") + ".", ""]
+        verdicts.append(("H15", "With S4w, whole file and sample agree on >= 95% of planted cells",
+                         a["agree"] >= 0.95 * len(a["cells"]), f"{a['agree']}/{len(a['cells'])} "
+                         f"({100 * a['agree'] / len(a['cells']):.1f}%; S3/S4 alone {a['agree_s4']})"))
+        verdicts.append(("H16", "S4w flags a clean tensor in at most 1 fresh model", len(fp) <= 1,
+                         f"{len(fp)} of {len(a['models'])}"))
+    if "e12" in s:
+        e = s["e12"]
+        n = len(e["honest"])
+        out += [f"**E12. S5 without its 256-element floor** (runs {e['run']}; fresh list `ft_pairs_fresh2.json`): "
+                f"{n} honest fine-tune pairs compared whole"
+                + (f" ({len(e['errors'])} not read: " + ", ".join(f"`{k}`" for k in sorted(e["errors"])) + ")"
+                   if e["errors"] else "")
+                + f". Pairs flagged with the floor: {len(e['flagged_both'])}"
+                + (" (" + ", ".join(f"`{r['finetune']}` {len(r['flagged_floor256'])} tensor(s)"
+                                   for r in e["flagged_both"]) + ")" if e["flagged_both"] else "")
+                + f"; pairs flagged only without it: {len(e['added'])}. A thin payload (random bytes at k = 8, one "
+                  f"weight in 64, in every float tensor of >= 1,024 elements) planted in each clean model:", "",
+                "| Case | Bytes per tensor | Models | Caught with floor | Caught without floor |",
+                "|---|--:|--:|--:|--:|"]
+        for case, c in sorted(e["cases"].items()):
+            out.append(f"| {case} | {c['bytes']} | {c['models']} | {c['floor']} | {c['nofloor']} |")
+        out.append("")
+        verdicts.append(("H13", "Without the floor, S5 flags no honest pair the floor does not",
+                         not e["added"], f"{len(e['added'])} added of {n}"))
+        ok = all(c["nofloor"] >= 17 and c["models"] >= 18 for c in e["cases"].values()) and len(e["cases"]) == 2
+        verdicts.append(("H14", "Without the floor, S5 catches the thin payload in >= 17 of 18 models (a and b)",
+                         ok, "; ".join(f"{k} {c['nofloor']}/{c['models']} (floor: {c['floor']})"
+                                       for k, c in sorted(e["cases"].items()))))
+    if not verdicts:
+        return "## E11, E12 — the whole-file gaps\n\n_No run yet._\n"
+    out += _verdict_rows(verdicts)
+    return "\n".join(out) + "\n"
+
+
 def main():
     rows = load()
     body = "\n".join([
@@ -750,7 +842,7 @@ def main():
         "> Generated by `scripts/report.py` from `results/ledger.jsonl`. Do not edit by hand.", "",
         section_e0(rows), "", section_e1(rows), "", section_e2(rows), "",
         section_hf(rows), "", section_e0c(rows), "", section_e1c(rows), "", section_e3(rows), "", section_e4(rows), "", section_e0d(rows), "", section_e4b(rows), "", section_e5(rows), "", section_e6(rows), "", section_e8(rows), "", section_e9(rows), "",
-        section_e10(rows),
+        section_e10(rows), "", section_e11_e12(rows),
     ])
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(body + "\n", encoding="utf-8")

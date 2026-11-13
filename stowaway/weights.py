@@ -261,8 +261,9 @@ def _s4(sums: dict[str, _Summary], small_floor: bool | None = None, min_signatur
 # S4w (PLAN.md, phase 4, E11): on whole files, S4's per-tensor mean dilutes a payload that fills
 # a small share of a large tensor. S4w also tests each window of S4W_WINDOW elements against the
 # tensor's own other windows (same statistic as S4, the tensor's windows as the reference).
-# Chosen on the E10 A whole files (dev); off until judged on a fresh list.
-S4W = False
+# Chosen on the E10 A whole files (dev); adopted by E11 on 65 fresh models (H15: the whole file
+# agrees with the sample on 163/168 planted cells; H16: no clean model flagged).
+S4W = True
 S4W_WINDOW = 32 * 1024
 S4W_Z = Z_FLAG
 
