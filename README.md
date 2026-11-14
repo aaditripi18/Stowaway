@@ -16,12 +16,16 @@ gap the other way: **where a payload cannot be detected, it removes it.**
 models (nine image models and a text classifier) that left 100.00% of
 predictions unchanged and 0 bytes of a planted 64 KB payload.
 
-> Status: phases 1-3 done. Single-file checks on 260 public Hugging Face models
+> Status: phases 1-4 done. Single-file checks on 260 public Hugging Face models
 > (a top-1000 list, three held-out batches, a random sample of the top 10,000; 67
 > scanned as whole files), S5 calibrated and validated on real fine-tune/base
 > pairs, automatic reference discovery on the 23 models a file alone cannot
-> judge, and the cost of sanitising on ten models. Every hypothesis was written
-> before its run; four of the eight new ones failed and are reported as such.
+> judge, and the cost of sanitising on ten models. Phase 4 closed the three gaps
+> whole files exposed, each with a rule chosen on seen models and run once on a
+> fresh list: a windowed S4 (65 fresh whole files), S5 without its size floor
+> (15 fresh pairs) and S5d (25 fresh pairs). Every hypothesis was written before
+> its run; four of phase 3's eight failed and are reported as such, all six of
+> phase 4's held.
 
 ## Results
 
@@ -62,7 +66,7 @@ bits, 1 KB to 1 MB, with top-1 accuracy on 500 Imagenette images:
 | Does clearing the low 8 bits of every weight cost anything? (E9) | **No: 100.00% of predictions unchanged on 10 / 10 models**, identical accuracy; a 64 KB payload planted there leaves **0 / 65,536 bytes** |
 | ...and the low 16 bits? | Yes: 92.4-100% agreement, under 99% on 8 of 10 models; 8 bits is the safe setting |
 | How often can a reference model be found with no user input? (E8) | **18 of 20** held-out blind models: 5 through the declared `base_model`, 13 discovered by weight similarity (median cosine >= 0.9 among same-architecture Hub models) |
-| Does the diff against that reference catch a payload? | In a tensor the two share: **12 / 13** (the miss is 84 bytes, under S5's floor). In a tensor training changed: **0 / 14**, which is why sanitising exists |
+| Does the diff against that reference catch a payload? | In a tensor the two share: **12 / 13** (the miss is 84 bytes, under S5's old floor, removed in E12). In a tensor training changed: **0 / 14**, which is why sanitising exists |
 | Is the blind spot an artefact of the most-downloaded models? (E10 B) | No, it is larger: **29 of 39 (74%)** float32 models of a random sample of the top 10,000 are fair-coin, against 59% in the top 1,000; 0 false positives on all 40 |
 | Do 32 KB samples tell the truth about whole files? (E10 A) | Mostly: the model's group agrees on **67 / 67**, payload verdicts on 163 / 173. Whole files also show what samples hid: **5 of 67 clean models flag**, every inspected case a tensor whose precision history really differs (a never-trained tensor, or a component saved at full float32) |
 
@@ -75,6 +79,23 @@ bits, 1 KB to 1 MB, with top-1 accuracy on 500 Imagenette images:
 | H10 | Clearing 16 low bits keeps >= 99% on every model | **not supported**: under 99% on 8 of 10 |
 | H11 | Samples and whole files agree on >= 95% of groups and verdicts | **not supported**: groups 67 / 67, verdicts 163 / 173 (94.2%) |
 | H12 | The random sample's fair-coin share is within 15 points of the top 1,000's | **not supported**: 74% vs 59% (+15.4) |
+
+Phase 4 fixed what H11 and E8 exposed, each on a fresh list:
+
+| Question | Result |
+|---|---|
+| Does a windowed S4 restore whole-file sensitivity? (E11) | **Yes: whole file and sample agree on 163 / 168 planted cells** (160 with S3/S4 alone); in all 5 differences the whole file catches what the sample missed. 0 of 65 clean models gain a flag |
+| Can S5 judge tensors with few changes? (E12) | **Yes: a thin payload (4 or 16 bytes per tensor) caught in 18 / 18 models**, 0 / 18 with the old 256-element floor; no honest pair gains a flag |
+| Can S5 tell a LayerNorm shift from a payload? (E13) | **Yes: S5d** asks whether any changes carry above the payload's top bit. On seen pairs it removes all 56 honest flags in 4 pairs; on 25 fresh pairs it keeps **48 / 48** catches in base-matching tensors and the thin payload in **30 / 30** models |
+
+| | Hypothesis (phase 4) | Verdict |
+|---|---|---|
+| H13 | Without the floor, S5 flags no honest pair the floor does not | **supported**: 0 added of 15 |
+| H14 | Without the floor, S5 catches the thin payload in >= 17 of 18 models | **supported**: 18 / 18 at 16 and at 4 bytes per tensor |
+| H15 | With S4w, whole file and sample agree on >= 95% of planted cells | **supported**: 163 / 168 (97.0%) |
+| H16 | S4w flags a clean tensor in at most 1 fresh model | **supported**: 0 of 65 |
+| H17 | S5d flags an honest tensor in at most 1 of 25 fresh pairs | **supported**: 1 (a 1-ULP re-save, flagged by S5c too) |
+| H18 | S5d keeps >= 95% of S5c's base-matching catches and catches the thin payload in >= 95% of models | **supported**: 48 / 48; 30 / 30 and 30 / 30 |
 
 What the numbers say:
 
@@ -99,7 +120,9 @@ What the numbers say:
   only in their low bits. The adopted rule (S5c) asks whether about half the
   changes stop at one bit, as a payload's do: chosen on the 12 dev pairs, run once
   on 20 fresh ones, it flagged 0 and still caught every payload in a tensor
-  identical to the base (E4b).
+  identical to the base (E4b). Later lists found LayerNorm gains that S5c still
+  flagged; S5d adds that a low-bit payload changes nothing above its top bit,
+  while a training update carries into higher bits (E13).
 - **What cannot be detected can be removed.** A payload in the low bits of a
   fair-coin model, or of a tensor a fine-tune trained, is indistinguishable from
   the noise it replaces, by any check of one file or of a diff. Rounding those
@@ -255,9 +278,14 @@ removal.
 - **Whole files flag 5 of 67 clean popular models**: tensors whose precision
   history genuinely differs from the rest of the file. A report says which tensor
   and why; it cannot say whether the cause is benign.
-- **S4 is less sensitive on whole files than on 32 KB samples** (10 of 173
-  verdicts differ, all misses): a fixed-size payload is a smaller share of a whole
-  tensor. S5 has a 256-changed-element floor (an 84-byte payload slipped under it).
+- **A change of one unit in the last place looks like a 1-bit payload.** One of
+  25 fresh honest pairs re-saved a tensor so that 8,265 elements differ in bit 0
+  only; at the bit level that is what a 1-bit payload is, and S5 flags it (E13).
+  The report names the tensor and the bit, so a reviewer can see it is a 1-ULP
+  change; `sanitize` clears it either way.
+- **Inside tensors training changed, S5d catches fewer payloads than S5c** (46
+  against 58 of 96 cells, E13): those are the payloads E8 showed a diff cannot
+  reliably see, and `sanitize` is the answer there.
 - **Sanitising was measured on ten models with 1,000 images or 872 sentences
   each**; a model whose predictions depend on the lowest float32 bits would lose
   accuracy, so the agreement check in E9 is worth repeating on your own model.

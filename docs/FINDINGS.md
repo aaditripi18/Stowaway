@@ -1,12 +1,45 @@
 # Findings
 
-> Status: phases 1-3 (PLAN.md). S3, S4, S5 revised and validated on held-out
+> Status: phases 1-4 (PLAN.md). S3, S4, S5 revised and validated on held-out
 > models; E5 compares Stowaway with picklescan, ModelScan and fickling; phase 3
 > adds reference discovery (E8), payload removal (E9), whole files and a random
-> sample (E10). 260 public Hugging Face models surveyed, 67 of them as whole
+> sample (E10); phase 4 closes the gaps whole files exposed (E11-E13). 260 public Hugging Face models surveyed, 67 of them as whole
 > files. Every number below is in [RESULTS.md](RESULTS.md), generated from the
 > ledger with the commit that produced it. Hypotheses were written before their
 > runs; the ones that failed are reported as failed.
+
+## Phase 4: closing the whole-file gaps (E11-E13)
+
+Phase 3 left three measured gaps: S4 was less sensitive on whole files than on
+samples (H11), S5 skipped tensors with fewer than 256 changed elements (the
+84-byte CLAP miss in E8, the 1 KB miss in E3), and S5c flagged LayerNorm gains in
+two E8 pairs (H8). Each fix was chosen on models already seen and run once on a
+list frozen before its weights were read.
+
+- **E11, windowed S4 (S4w).** Each 32,768-element window of a tensor is tested
+  against the tensor's other windows (z > 6), so a payload that fills one window
+  stands out even when it is a small share of the tensor. On 65 fresh whole
+  files the planted-payload verdict of the whole file equals the sample's on
+  163 of 168 cells (160 with S3/S4 alone); in all five remaining differences the
+  whole file catches what the sample missed. No clean model gains a flag.
+  **H15 and H16 supported**; S4w is on in both cores.
+- **E12, no floor.** S5c's threshold already scales with the number of changed
+  elements, so the floor was a leftover. A thin payload (k = 8, one weight in 64,
+  4 or 16 bytes in every tensor) was caught in 18 of 18 fresh models without the
+  floor, 0 of 18 with it, and no honest pair gained a flag. **H13 and H14
+  supported.** Reading the E8 pairs afterwards (E13 dev) found the floor had also
+  hidden 9 `key.bias` tensors with 7-40 changes in one of them; E13 handles those.
+- **E13, S5d.** A low-bit payload changes nothing above its top bit; a training
+  update carries into higher bits. S5d = S5c, and at most 2% of changed elements
+  have their highest changed bit above S5c's bit. On the 49 pairs already seen it
+  removes all 56 honest flags (4 pairs) and keeps every payload caught in a
+  tensor identical to the base. On 25 fresh pairs: one honest flag, under S5c
+  too (MedEmbed's `pooler.dense.weight`, 8,265 elements changed in bit 0 only, a
+  1-ULP re-save that is bit-for-bit what a 1-bit payload looks like); 48 of 48
+  base-matching catches kept; the thin payload caught in 30 of 30 models at both
+  sizes. **H17 and H18 supported**; S5d is on in both cores. Inside tensors the
+  fine-tune trained, S5d catches 46 of 96 cells against S5c's 58: the case E8
+  showed a diff cannot see reliably, where `sanitize` is the answer.
 
 ## Phase 3: where a payload cannot be detected, remove it (E8-E10)
 
@@ -57,7 +90,7 @@ S5 on whole files against those references:
 
 - **Payload in a tensor identical to the reference: 12 of 13 caught.** The miss
   is CLAP, whose only identical tensor large enough was a BatchNorm statistic: the
-  payload was 84 bytes, under S5's 256-changed-element floor. Two pairs had no
+  payload was 84 bytes, under S5's 256-changed-element floor (removed in E12). Two pairs had no
   identical tensor big enough.
 - **Payload in a tensor the two differ on: 0 of 14.** Training randomises those
   low bits; that is the blind spot removal answers.
@@ -91,7 +124,7 @@ the bytes the sample read.
 - **Payload verdicts agree on 163 of 173 (94.2%); H11 not supported.** All ten
   differences are payloads the sample caught and the whole file missed: the same
   32 KB fills the sample but is a small share of the full tensor, and S4 reads
-  the whole tensor.
+  the whole tensor. The windowed S4 of E11 fixes this: 163 of 168 on a fresh list.
 - **Whole files flag clean tensors in 5 of 67 models** (185 tensors; samples
   flagged none). In the four inspected, every flagged tensor's precision history
   really differs from its file: never-trained tensors in t5-small (cross-attention
@@ -286,7 +319,8 @@ In every case the **base diff (S5) catches the payload**, with one corner: a 1 K
 payload spread at 1:64 over MobileNetV3 touches ~98 tensors with fewer than the
 256 changed elements per tensor S5 requires, so S5 skips them and misses it
 (caught from 4 KB up). That per-tensor floor is a deliberate guard against noise;
-lowering it needs its own held-out validation, so it is recorded, not changed.
+lowering it needs its own held-out validation, so it was recorded, not changed.
+E12 then validated removing it: a thin payload is caught in 18 of 18 fresh models.
 
 The headline holds and sharpens: single-file statistics have a fundamental blind
 spot — a payload thin enough moves no statistic far enough — and the comparison
@@ -522,6 +556,9 @@ real fine-tune/base pairs in E4 rather than adjusted to this result.
 - ~~Only two models in E1/E2, one seed, random payloads only.~~ Done in E6: nine
   models, five payload types, three seeds for random payloads.
 - ~~The survey reads samples, not whole files.~~ Done in E10 A (67 whole files).
+- ~~S4 is less sensitive on whole files.~~ Fixed by S4w (E11).
+- ~~S5 skips tensors with fewer than 256 changes.~~ Floor removed (E12).
+- ~~S5 flags LayerNorm gains that training barely moved.~~ Fixed by S5d (E13).
 - ~~The survey covers only the most-downloaded models.~~ Done in E10 B (a random
   sample of the top 10,000).
 - ~~Accuracy cost only on image models.~~ E9 adds a text model (sanitising).

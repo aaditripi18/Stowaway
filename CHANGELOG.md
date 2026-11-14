@@ -5,6 +5,25 @@ release may change detector rules and report fields. Every rule change is
 pre-registered in [PLAN.md](PLAN.md) and validated on models committed before
 their weights were read; the numbers are in [docs/RESULTS.md](docs/RESULTS.md).
 
+## Unreleased
+
+### Detection (both the Python tool and the browser build, with parity fixtures)
+- **S4w, windowed S4**: each 32,768-element window of a tensor is tested
+  against the tensor's other windows, so a payload that fills part of a large
+  tensor is no longer diluted by the rest. Findings use the new code
+  `lowbit-window-anomaly` (E11: whole file and sample agree on 163 / 168 planted
+  cells; no clean model of 65 gains a flag).
+- **S5 judges every changed tensor**: the 256-changed-element floor is removed;
+  S5c's threshold already scales with the number of changes (E12: a thin payload
+  caught in 18 / 18 fresh models, 0 / 18 with the floor).
+- **S5d**: S5 also requires that at most 2% of changed elements change above
+  the payload's top bit, so LayerNorm gains and key biases a fine-tune shifted
+  are no longer flagged. S5 findings gain an `above` detail (E13: 48 / 48
+  base-matching catches kept, the thin payload in 30 / 30 models).
+
+### Evidence
+- E11, E12, E13: see docs/FINDINGS.md, phase 4. H13-H18 supported.
+
 ## 0.3.0 — 2026-11-03
 
 ### Removal

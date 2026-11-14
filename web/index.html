@@ -91,7 +91,7 @@
           <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-hair">
             <div class="py-space-md px-space-lg flex items-center gap-space-sm">
               <span class="w-1.5 h-1.5 rounded-full bg-primary-container shrink-0"></span>
-              <span class="font-code-md text-code-md text-on-surface font-semibold">5 checks · <span data-fact="tests.total">250</span> tests</span>
+              <span class="font-code-md text-code-md text-on-surface font-semibold">5 checks · <span data-fact="tests.total">263</span> tests</span>
             </div>
             <div class="py-space-md px-space-lg flex items-center gap-space-sm">
               <span class="w-1.5 h-1.5 rounded-full bg-outline shrink-0"></span>
@@ -290,7 +290,7 @@
                   <span class="shrink-0 self-start font-label-mono text-label-mono font-semibold text-primary px-1.5 py-0.5 bg-primary/10 rounded">H4</span>
                   <div class="flex flex-col gap-1">
                     <span class="font-body-md text-body-md text-on-surface">A diff against the claimed base model catches a payload in any tensor the fine-tune did not train.</span>
-                    <span class="font-body-sm text-body-sm text-on-surface-variant">Evidence: the current S5 catches a payload in a tensor the fine-tune left identical to the base in <span data-fact="e4b.fresh_a">9 / 9</span> fresh pairs at k = <span data-fact="e4b.ks">8, 16, 20 and 21</span>, and flags <span data-fact="e4b.fresh_new_fp_models">0</span> of <span data-fact="e4b.fresh_pairs">20</span> honest fine-tunes scanned as whole files. Limits: inside a tensor the fine-tune did train it catches <span data-fact="e4b.fresh_b_k21">18 / 20</span> at k = 21 but <span data-fact="e4b.fresh_b_k8">1 / 20</span> at k = 8, and a <span data-fact="e3.spread_base_miss">1 KB</span> payload spread at 1:<span data-fact="e3.spread">64</span> stays under S5's per-tensor floor.</span>
+                    <span class="font-body-sm text-body-sm text-on-surface-variant">Evidence: the current S5 catches a payload in a tensor the fine-tune left identical to the base in <span data-fact="e4b.fresh_a">9 / 9</span> fresh pairs at k = <span data-fact="e4b.ks">8, 16, 20 and 21</span>, and flags <span data-fact="e4b.fresh_new_fp_models">0</span> of <span data-fact="e4b.fresh_pairs">20</span> honest fine-tunes scanned as whole files. Limits: inside a tensor the fine-tune did train it catches <span data-fact="e4b.fresh_b_k21">18 / 20</span> at k = 21 but <span data-fact="e4b.fresh_b_k8">1 / 20</span> at k = 8, and a <span data-fact="e3.spread_base_miss">1 KB</span> payload spread at 1:<span data-fact="e3.spread">64</span> once stayed under S5's per-tensor floor; with the floor removed, a payload that thin is caught in <span data-fact="e12.thin">18 / 18 and 18 / 18</span> fresh models.</span>
                   </div>
                 </div>
                 <span class="verdict self-start md:self-center shrink-0 bg-primary-container/15 text-primary-container border border-primary-container/30">Supported, with limits</span>
@@ -391,6 +391,23 @@
                 <p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">on a fresh batch of bf16 models, first revision of S4 against the current rule (and <span data-fact="e0c.f16">1 → 0 of 20</span> for fp16).</p>
               </div>
             </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-hair border border-hair bg-panel rounded">
+              <div class="p-space-lg flex flex-col gap-1">
+                <span class="font-code-md text-headline-xl font-bold text-white tracking-tight"><span data-fact="e11.agree">163 / 168</span></span>
+                <span class="font-label-mono text-label-mono uppercase tracking-wider text-primary-container">whole file agrees with sample</span>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">planted payloads in <span data-fact="e11.models">65</span> fresh whole files, with the windowed S4 (S3/S4 alone: <span data-fact="e11.agree_s4">160</span>). In every remaining difference the whole file catches what the sample missed; <span data-fact="e11.fp">0</span> clean models gain a flag.</p>
+              </div>
+              <div class="p-space-lg flex flex-col gap-1">
+                <span class="font-code-md text-headline-xl font-bold text-white tracking-tight"><span data-fact="e12.thin_total">36 / 36</span></span>
+                <span class="font-label-mono text-label-mono uppercase tracking-wider text-primary-container">thin payloads caught</span>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs"><span data-fact="e12.thin">18 / 18 and 18 / 18</span> models at two sizes, a few bytes in every tensor, too few changes per tensor for S5's old size floor (<span data-fact="e12.thin_floor">0 / 18 and 0 / 18</span> with it). No honest pair of <span data-fact="e12.pairs">15</span> gained a flag.</p>
+              </div>
+              <div class="p-space-lg flex flex-col gap-1">
+                <span class="font-code-md text-headline-xl font-bold text-white tracking-tight"><span data-fact="e13.a">48 / 48</span></span>
+                <span class="font-label-mono text-label-mono uppercase tracking-wider text-primary-container">S5d keeps every catch</span>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">in tensors identical to the base, on <span data-fact="e13.pairs">25</span> fresh pairs, and the thin payload in <span data-fact="e13.thin">30 / 30 and 30 / 30</span> models, while ignoring LayerNorm shifts S5c flagged: a payload changes nothing above its top bit, training does.</p>
+              </div>
+            </div>
             <p class="font-body-sm text-body-sm text-outline">Each detector was frozen, then run once on a batch of models committed before their weights were read, so these numbers were not tuned on the models they describe.</p>
           </div>
         </section>
@@ -424,7 +441,7 @@
 <span class="text-primary-container select-none">$ </span>python scripts/run_hf_survey.py --list hf_models.json
 <span class="text-primary-container select-none">$ </span>python scripts/report.py</div>
             </div>
-            <p class="font-body-sm text-body-sm text-outline leading-relaxed">Nothing is trained: models are downloaded pretrained and only run forward. Every run appends to <span class="font-code-sm text-code-sm">results/ledger.jsonl</span> with the git commit that produced it, and <span class="font-code-sm text-code-sm">docs/RESULTS.md</span> is generated from that ledger, never edited by hand. <span data-fact="tests.total">250</span> tests: <span data-fact="tests.py">139</span> Python, and <span data-fact="tests.ts">111</span> for the browser build, including parity tests that require byte-identical JSON reports to the Python tool on every fixture.</p>
+            <p class="font-body-sm text-body-sm text-outline leading-relaxed">Nothing is trained: models are downloaded pretrained and only run forward. Every run appends to <span class="font-code-sm text-code-sm">results/ledger.jsonl</span> with the git commit that produced it, and <span class="font-code-sm text-code-sm">docs/RESULTS.md</span> is generated from that ledger, never edited by hand. <span data-fact="tests.total">263</span> tests: <span data-fact="tests.py">145</span> Python, and <span data-fact="tests.ts">118</span> for the browser build, including parity tests that require byte-identical JSON reports to the Python tool on every fixture.</p>
           </div>
         </section>
 
@@ -451,6 +468,11 @@
                 <h3 class="font-headline-md text-headline-md text-on-surface">Clean tensors with a different history</h3>
                 <p class="font-body-md text-body-md text-on-surface-variant">Whole files flag <span data-fact="e10.fp_models">5 of 67</span> clean popular models: a never-trained tensor or a component saved at full precision looks exactly like a payload.</p>
                 <p class="font-body-sm text-body-sm text-primary">The report names the tensor and why; sanitising makes the question moot.</p>
+              </div>
+              <div class="bg-panel border border-panel-line p-space-lg rounded flex flex-col gap-space-xs">
+                <h3 class="font-headline-md text-headline-md text-on-surface">A change in the last bit only</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant">A re-save that moves weights by one unit in the last place is, bit for bit, a payload in the lowest bit: <span data-fact="e13.honest">1</span> of <span data-fact="e13.pairs">25</span> fresh honest pairs is flagged for it. Inside tensors the fine-tune trained, S5d catches <span data-fact="e13.b_s5d">46</span> of <span data-fact="e13.b_cells">96</span> planted cells (S5c: <span data-fact="e13.b_s5c">58</span>).</p>
+                <p class="font-body-sm text-body-sm text-primary">The report names the tensor and the bit; <span class="font-code-md text-code-md text-on-surface">stowaway sanitize</span> clears both cases.</p>
               </div>
               <div class="bg-panel border border-panel-line p-space-lg rounded flex flex-col gap-space-xs">
                 <h3 class="font-headline-md text-headline-md text-on-surface">Models that need their lowest bits</h3>

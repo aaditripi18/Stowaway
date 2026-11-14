@@ -276,6 +276,43 @@ def facts(counts=True, weights=True):
         f["e10.cell_agree"] = f"{a['cell_agree']} / {len(a['cells'])}"
         f["e10.fp_models"] = f"{sum(r['fp_whole'] > 0 for r in a['models'])} of {len(a['models'])}"
 
+    # phase 4: E11 windowed S4, E12 no S5 floor, E13 S5d
+    p4 = R.e11_e12_summary(rows)
+    if "e11" in p4:
+        a = p4["e11"]
+        f["e11.agree"] = f"{a['agree']} / {len(a['cells'])}"
+        f["e11.agree_s4"] = str(a["agree_s4"])
+        f["e11.models"] = str(len(a["models"]))
+        f["e11.fp"] = str(len(a["fp_models"]))
+        asserts["E11: H15 and H16 supported"] = a["agree"] >= 0.95 * len(a["cells"]) and len(a["fp_models"]) <= 1
+    if "e12" in p4:
+        e = p4["e12"]
+        f["e12.thin"] = " and ".join(f"{c['nofloor']} / {c['models']}" for _, c in sorted(e["cases"].items()))
+        f["e12.thin_floor"] = " and ".join(f"{c['floor']} / {c['models']}" for _, c in sorted(e["cases"].items()))
+        f["e12.pairs"] = str(len(e["honest"]))
+        f["e12.thin_total"] = (f"{sum(c['nofloor'] for c in e['cases'].values())} / "
+                               f"{sum(c['models'] for c in e['cases'].values())}")
+        asserts["E12: H13 and H14 supported"] = not e["added"] and all(
+            c["nofloor"] >= 17 for c in e["cases"].values())
+    e13 = [r for r in rows if r["experiment"] == "E13"]
+    if e13:
+        honest = [r for r in e13 if r.get("kind") == "honest"]
+        pay = [r for r in e13 if r.get("kind") == "payload"]
+        thin = [r for r in e13 if r.get("kind") == "thin"]
+        a = [r for r in pay if r["case"] == "a_base_matching" and r["detected_s5c"]]
+        b = [r for r in pay if r["case"] == "b_low_gradient"]
+        f["e13.pairs"] = str(len(honest))
+        f["e13.honest"] = str(sum(bool(r["flagged_s5d"]) for r in honest))
+        f["e13.a"] = f"{sum(r['detected_s5d'] for r in a)} / {len(a)}"
+        f["e13.thin"] = " and ".join(f"{sum(r['detected_s5d'] for r in thin if r['case'] == c)} / "
+                                     f"{sum(r['case'] == c for r in thin)}" for c in sorted({r['case'] for r in thin}))
+        f["e13.b_s5c"] = str(sum(r["detected_s5c"] for r in b))
+        f["e13.b_s5d"] = str(sum(r["detected_s5d"] for r in b))
+        f["e13.b_cells"] = str(len(b))
+        asserts["E13: H17 and H18 supported"] = (sum(bool(r["flagged_s5d"]) for r in honest) <= 1
+                                                 and sum(r["detected_s5d"] for r in a) >= 0.95 * len(a)
+                                                 and all(r["detected_s5d"] for r in thin))
+
     if weights:
         f.update(_mobilenet_bit0())
     if counts:
