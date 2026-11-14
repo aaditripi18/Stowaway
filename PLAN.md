@@ -500,3 +500,13 @@ clean model; each judged by S5c and S5d.
 
 If both hold, S5d replaces S5c in both cores (Python and the browser build, with parity tests).
 Otherwise S5c stays, and both numbers are reported.
+
+**Result (2026-11-14, run `E13-2026-11-13T22:55:15Z-445d4ff`, 25 of 25 pairs read).** H17
+supported: one fresh pair has a flagged honest tensor under either rule (`abhinand/MedEmbed-small-v0.1`,
+`pooler.dense.weight`: 8,265 of 147,456 elements differ in bit 0 only, a 1-ULP re-save change, the
+same at the bit level as a 1-bit payload; no rule on the bits alone separates them). H18 supported:
+case (a) 48 / 48 of S5c's catches kept; thin payload caught in 30 / 30 models in both cases (89% and
+69% of planted tensors). Case (b), inside trained tensors: S5c 58 / 96, S5d 46 / 96. S5d is
+adopted in both cores (`S5_ABOVE_MAX = 0.02`), with a parity fixture (`web/fixtures/s5/gain`).
+The fresh pairs had no LayerNorm-type flag for S5d to remove; its effect on those is shown on the
+dev pairs (56 honest tensors in 4 pairs to 0).

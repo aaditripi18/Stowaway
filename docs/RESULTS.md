@@ -966,3 +966,20 @@ Every float32 weight rounded to nearest at mantissa bit s (`stowaway sanitize`).
 | H13 | Without the floor, S5 flags no honest pair the floor does not | **supported** | 0 added of 15 |
 | H14 | Without the floor, S5 catches the thin payload in >= 17 of 18 models (a and b) | **supported** | a 18/18 (floor: 0); b 18/18 (floor: 0) |
 
+
+## E13 — S5d (PLAN.md, phase 4)
+
+Run `E13-2026-11-13T22:55:15Z-445d4ff`; fresh list `ft_pairs_fresh3.json`, whole files, no floor. 25 honest pairs read. Pairs with a flagged honest tensor: S5c 1, S5d 1 (`abhinand/MedEmbed-small-v0.1`: `pooler.dense.weight`).
+
+| Planted | Cells / models | S5c | S5d |
+|---|--:|--:|--:|
+| payload a_base_matching | 48 | 48 | 48 |
+| payload b_low_gradient | 96 | 58 | 46 |
+| thin a (16 B/tensor) | 30 | 30 | 30 (89% of tensors) |
+| thin b (4 B/tensor) | 30 | 30 | 30 (69% of tensors) |
+
+| | Hypothesis | Verdict | Evidence |
+|---|---|---|---|
+| H17 | S5d flags an honest tensor in at most 1 of the fresh pairs | **supported** | 1 of 25 (S5c: 1) |
+| H18 | S5d keeps >= 95% of S5c's case (a) catches and catches the thin payload in >= 95% of models (a and b) | **supported** | case a 48/48; thin a 30/30; b 30/30 |
+

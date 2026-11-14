@@ -16,6 +16,10 @@ const S5_PERCENTILE = 99.0;
 // S5 judges a tensor when at least this many elements changed; must equal weights.S5_MIN_CHANGED
 // in Python (the old floor of 256 was removed by E12, PLAN.md: H13 and H14 supported).
 export const S5_MIN_CHANGED = 1;
+// S5d (PLAN.md, E13): S5c, and at most this share of changed elements has its highest changed
+// bit above S5c's bit; null = S5c alone. Must equal weights.S5_ABOVE_MAX in Python (adopted by
+// E13: H17 and H18 supported).
+export const S5_ABOVE_MAX: number | null = 0.02;
 // Which S5 rule runs; must equal weights.S5_RULE in Python (see there).
 export const S5_RULE: "p99" | "s5c" = "s5c"; // adopted by E4b (PLAN.md)
 const S4_BITS: Record<string, number> = { F32: 8, F16: 3, BF16: 2 }; // round(mant*8/23)
@@ -272,11 +276,19 @@ export function s5Tensor(name: string, a: RawFloat, b: RawFloat): Finding | null
     const share = hist[j]! / changed;
     const threshold = 0.5 - 1.5 / Math.sqrt(changed);
     if (share < threshold) return null;
+    const extra: Record<string, number> = {};
+    if (S5_ABOVE_MAX !== null) {
+      let up = 0;
+      for (let i = j + 1; i < hist.length; i++) up += hist[i]!;
+      const above = up / changed;
+      if (above > S5_ABOVE_MAX) return null;
+      extra.above = round(above, 4);
+    }
     return finding("S5", "high", "low-bit-only-change",
       `tensor ${pyRepr(name)} differs from the base model in ${changed} elements, and in ` +
       `${pyStr(round(100 * share, 1))}% of them the highest changed bit is bit ${j - 1} of ${mantBits}: ` +
       `a payload in the low bits stops at one bit in about half its elements; training does not`,
-      { tensor: name, changed, bit: j - 1, share: round(share, 4), threshold: round(threshold, 4), cutoff, mantissa_bits: mantBits });
+      { tensor: name, changed, bit: j - 1, share: round(share, 4), threshold: round(threshold, 4), cutoff, mantissa_bits: mantBits, ...extra });
   }
   const reach = percentileFromHistogram(hist, S5_PERCENTILE);
   if (reach <= cutoff) {

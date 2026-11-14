@@ -260,3 +260,29 @@ def test_s5_judges_tensors_with_few_changes():
     found = weights.s5_differential(thin, base)
     assert sorted(f.detail["tensor"] for f in found if f.severity == "high") == sorted(base)
     assert all(f.detail["changed"] < 256 for f in found)
+
+
+def test_s5d_clears_an_additive_shift_but_not_a_payload():
+    """E13: a near-constant shift of a LayerNorm gain trips S5c, carries above its bit, and S5d clears it."""
+    import numpy as np
+    from stowaway import weights
+    from stowaway.bits import RawTensor
+    from stowaway.embed import capacity, embed
+    rng = np.random.default_rng(5)
+    gain = (1.2 + rng.standard_normal(1024) * 1e-2).astype(np.float32)
+    shifted = (gain + np.float32(1e-3) * (1 + 0.05 * rng.standard_normal(1024))).astype(np.float32)
+    w = RawTensor.from_float(rng.standard_normal((128, 64)).astype(np.float32))
+    base = {"ln.weight": RawTensor.from_float(gain), "w": w}
+    model = {"ln.weight": RawTensor.from_float(shifted),
+             "w": embed({"w": w}, rng.bytes(capacity({"w": w}, 8, names=["w"]) - 8), 8, names=["w"])["w"]}
+    old = weights.S5_ABOVE_MAX
+    try:
+        weights.S5_ABOVE_MAX = None
+        assert sorted(f.detail["tensor"] for f in weights.s5_differential(model, base)) == ["ln.weight", "w"]
+        weights.S5_ABOVE_MAX = 0.02
+        found = weights.s5_differential(model, base)
+        assert [f.detail["tensor"] for f in found] == ["w"]
+        assert found[0].detail["above"] == 0
+    finally:
+        weights.S5_ABOVE_MAX = old
+    assert weights.S5_ABOVE_MAX == 0.02

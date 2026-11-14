@@ -339,8 +339,9 @@ S5_MIN_CHANGED = 1
 # S5d (PLAN.md, E13): S5c, and at most this share of changed elements has its highest changed bit
 # above S5c's bit j. A low-bit payload changes nothing above its top bit; an honest additive
 # change (LayerNorm gains near 1.0, near-frozen key biases) carries into higher bits.
-# None = S5c alone.
-S5_ABOVE_MAX: float | None = None
+# None = S5c alone. Adopted by E13 on 25 fresh pairs (H17: an honest flag in 1 pair; H18: all
+# 48 base-matching payload catches kept, the thin payload caught in 30/30 models in both cases).
+S5_ABOVE_MAX: float | None = 0.02
 
 
 def _highest_changed_bit(xor: np.ndarray, mant_bits: int) -> np.ndarray:

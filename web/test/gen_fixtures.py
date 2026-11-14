@@ -300,6 +300,18 @@ def gen_s5():
     (d / "thin.json").write_text(canon(rep) + "\n", encoding="utf-8")
     print(f"s5/thin: {rep['verdict']} ({len(rep['findings'])} findings)")
 
+    # S5d (E13): an honest fine-tune shifts a LayerNorm gain by a near-constant amount, so S5c's
+    # mode bit holds about half its changes; carries reach bits above it, so S5d clears it. The
+    # payload in layer.1 is still flagged.
+    lrng = np.random.default_rng(5)
+    gain = (1.2 + lrng.standard_normal(1024) * 1e-2).astype(np.float32)
+    shifted = (gain + np.float32(1e-3) * (1 + 0.05 * lrng.standard_normal(1024))).astype(np.float32)
+    (d / "base_gain.safetensors").write_bytes(st_bytes(dict(base, **{"layer.norm.weight": gain})))
+    (d / "gain.safetensors").write_bytes(st_bytes(dict(poisoned, **{"layer.norm.weight": shifted})))
+    rep = scan(d / "gain.safetensors", base=d / "base_gain.safetensors")
+    (d / "gain.json").write_text(canon(rep) + "\n", encoding="utf-8")
+    print(f"s5/gain: {rep['verdict']} ({len(rep['findings'])} findings)")
+
     # The same model saved under a wrapper prefix, with one LayerNorm-style
     # tensor under its old name: S5 must pair the tensors by name alignment.
     base_ln = dict(base, **{"layer.norm.gamma": rng.standard_normal(64).astype(np.float32)})
