@@ -513,11 +513,11 @@ dev pairs (56 honest tensors in 4 pairs to 0).
 
 ## Phase 5 (written 2026-11-16, before the runs it governs)
 
-Three items FINDINGS lists as not yet tested: whether a declared base is a close enough relative
-for S5 to mean anything (E15), whether a rule can tell a never-trained tensor from a payload
-(E14), and whether S3/S4 see a payload written to keep each tensor's bit statistics (E16). Each
-rule is chosen on models already read and judged once on a list frozen before its weights are
-read.
+Two items FINDINGS lists as not yet tested: whether a declared base is a close enough relative
+for S5 to mean anything (E15), and whether a rule can tell a never-trained tensor from a payload
+(E14). Each rule is chosen on models already read and judged once on a list frozen before its
+weights are read. (A third, detection of a payload built to keep a tensor's bit statistics, is not
+run; removal does not depend on it, since `sanitize` overwrites those bits whatever they hold, E9.)
 
 ### E15. Is the base close enough for S5?
 
