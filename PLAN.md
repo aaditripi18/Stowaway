@@ -573,3 +573,28 @@ check ships in both cores (`S5_BASE_CHECK = True`), sums taken left to right so 
 gives the same cosine bit for bit (fixtures `web/fixtures/s5/vs_far`, `vs_near`). Seen along the way:
 S5 flagged 8 RMSNorm weights of `Qwen/Qwen2-0.5B-Instruct` against its true parent
 `Qwen/Qwen2-0.5B`, an honest false positive, examined in FINDINGS.
+
+### E14. Can a rule tell a never-trained tensor from a payload? (dev, 2026-11-17)
+
+`scripts/e14_dev.py` (`results/e14_dev.json`, run on Kaggle): every float tensor of the 8 whole
+files that flag clean tensors (E10 A: 5 of 67, E11: 3 of 65), with its flags and its values at the
+file's own precision (the low bits a payload would use are cut first): kurtosis, distance from a
+fitted normal (Kolmogorov-Smirnov), and how uneven its rows are (row-std spread over what i.i.d.
+rows give).
+
+The flagged clean tensors are of three kinds. (1) Never trained, still at their random
+initialisation: T5's cross-attention bias, XLM-R's pooler, ESM2's absolute position table (kurtosis
+0.004-0.1, KS <= 0.03, row spread 1.03-1.86 of i.i.d.). (2) A component kept at another precision:
+CLIP-ViT-L, 154 tensors. (3) Trained tensors S4 flags in Qwen2.5-VL, AST, gte-large and Ornith
+(kurtosis up to 300, row spread 6-50 of i.i.d.): not kind (1) at all.
+
+A rule for kind (1), "looks like an i.i.d. normal draw" (|kurtosis| <= t_k, KS <= t_s, row
+spread <= t_r), cannot be made safe: at (0.5, 0.02, 2.0) it excuses the three never-trained
+tensors and also 44 of the 1,129 trained tensors of >= 4,096 elements in the same files (3.9%,
+mostly attention projections whose values are close to normal); at (0.3, 0.01, 2.0), 2 and 43; at
+(0.2, 0.01, 1.5), 1 and 5. Excusing a tensor means a payload there goes unreported, so the rule
+would open a hole in about one trained tensor in 26 to remove two false alarms. **Not adopted, and
+not run on a fresh list:** no candidate passed dev. The answer to the question is the measurement:
+at the level of values, a never-trained tensor and a trained one are not reliably separable. The
+scanner keeps reporting such a tensor by name, and `sanitize` clears whatever its low bits hold.
+Kinds (2) and (3) are not never-trained tensors and are left to their own measurements.
