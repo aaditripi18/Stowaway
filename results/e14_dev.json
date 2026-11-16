@@ -1,0 +1,6597 @@
+{
+ "models": [
+  {
+   "repo": "google-t5/t5-small",
+   "file": "model.safetensors",
+   "commit": "df1b051c49625cf57a3d0d8d3863ed4d13564fe4",
+   "origin": "bfloat16",
+   "flagged": 1,
+   "tensors": [
+    {
+     "tensor": "decoder.block.0.layer.0.SelfAttention.k.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.0033594061730287585,
+     "std": 0.5601449802497895,
+     "kurtosis": 0.6868633947519731,
+     "ks_normal": 0.013456809388544932,
+     "ks_uniform": 0.3525555102040816,
+     "distinct_share": 0.01536,
+     "row_cv_ratio": 5.135666048312546,
+     "row_mean_ratio": 1.0272118452180712
+    },
+    {
+     "tensor": "decoder.block.0.layer.0.SelfAttention.o.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.0001600719939652708,
+     "std": 0.8563292187230501,
+     "kurtosis": 8.655830154518858,
+     "ks_normal": 0.061185538984814825,
+     "ks_uniform": 0.40120303370786514,
+     "distinct_share": 0.01673,
+     "row_cv_ratio": 16.16692884065773,
+     "row_mean_ratio": 1.1019068201846831
+    },
+    {
+     "tensor": "decoder.block.0.layer.0.SelfAttention.q.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": -0.001171345045396311,
+     "std": 0.06986394224906158,
+     "kurtosis": 0.6955772046081297,
+     "ks_normal": 0.01518759679430648,
+     "ks_uniform": 0.3424517816091954,
+     "distinct_share": 0.01536,
+     "row_cv_ratio": 5.074761913095775,
+     "row_mean_ratio": 0.9868521128916454
+    },
+    {
+     "tensor": "decoder.block.0.layer.0.SelfAttention.relative_attention_bias.weight",
+     "dtype": "F32",
+     "shape": [
+      32,
+      8
+     ],
+     "n": 256,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": -0.18712181021131777,
+     "std": 7.056748985649155,
+     "kurtosis": 24.205622866245438,
+     "ks_normal": 0.2475407462726007,
+     "ks_uniform": 0.5033143939393939,
+     "distinct_share": 0.85546875,
+     "row_cv_ratio": 7.11448149403097,
+     "row_mean_ratio": 0.7581266784593544
+    },
+    {
+     "tensor": "decoder.block.0.layer.0.SelfAttention.v.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.0011683352969087762,
+     "std": 0.48962552588804215,
+     "kurtosis": 0.24858894322506364,
+     "ks_normal": 0.007034967486060695,
+     "ks_uniform": 0.2904975806451613,
+     "distinct_share": 0.015165,
+     "row_cv_ratio": 2.5633299602718824,
+     "row_mean_ratio": 1.0144241969830883
+    },
+    {
+     "tensor": "decoder.block.0.layer.0.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 2.79859066717449,
+     "std": 0.031922433967573986,
+     "kurtosis": 42.83732829715219,
+     "ks_normal": 0.13455393595379928,
+     "ks_uniform": 0.7223731884057971,
+     "distinct_share": 0.35546875
+    },
+    {
+     "tensor": "decoder.block.0.layer.1.EncDecAttention.k.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": -4.469119615334582e-05,
+     "std": 0.3923010390372414,
+     "kurtosis": 1.0077367623695448,
+     "ks_normal": 0.01790754696399796,
+     "ks_uniform": 0.4019337167070218,
+     "distinct_share": 0.01559,
+     "row_cv_ratio": 3.80124360415707,
+     "row_mean_ratio": 0.959918381856982
+    },
+    {
+     "tensor": "decoder.block.0.layer.1.EncDecAttention.o.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": -0.0012085121275675504,
+     "std": 0.7158342734503995,
+     "kurtosis": 15.595931619750491,
+     "ks_normal": 0.060393086861363465,
+     "ks_uniform": 0.46284527446300716,
+     "distinct_share": 0.01724,
+     "row_cv_ratio": 16.932358623787238,
+     "row_mean_ratio": 1.2892539434786068
+    },
+    {
+     "tensor": "decoder.block.0.layer.1.EncDecAttention.q.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": -0.0005269689873361081,
+     "std": 0.05986676579281669,
+     "kurtosis": 0.466695066830904,
+     "ks_normal": 0.011704682633866592,
+     "ks_uniform": 0.3037337086092715,
+     "distinct_share": 0.015195,
+     "row_cv_ratio": 4.1042985253891064,
+     "row_mean_ratio": 1.017057411525417
+    },
+    {
+     "tensor": "decoder.block.0.layer.1.EncDecAttention.relative_attention_bias.weight",
+     "dtype": "F32",
+     "shape": [
+      32,
+      8
+     ],
+     "n": 256,
+     "flags": [
+      "S3:precision-anomaly",
+      "S4:lowbit-anomaly"
+     ],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": -0.012680100456939285,
+     "std": 0.04350064579500211,
+     "kurtosis": 0.09612301822680269,
+     "ks_normal": 0.0303931505552133,
+     "ks_uniform": 0.22349646226415093,
+     "distinct_share": 0.89453125,
+     "row_cv_ratio": 1.1017478216912322,
+     "row_mean_ratio": 0.9455291125297492
+    },
+    {
+     "tensor": "decoder.block.0.layer.1.EncDecAttention.v.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.0006753284500935374,
+     "std": 0.4692962944963683,
+     "kurtosis": 0.48016453622243205,
+     "ks_normal": 0.01606260260303316,
+     "ks_uniform": 0.3204554692556634,
+     "distinct_share": 0.015165,
+     "row_cv_ratio": 3.668846430424343,
+     "row_mean_ratio": 1.026939273631157
+    },
+    {
+     "tensor": "decoder.block.0.layer.1.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 1.8068691044049905,
+     "std": 0.0493022530953304,
+     "kurtosis": 102.36611709819653,
+     "ks_normal": 0.27675148451804377,
+     "ks_uniform": 0.8089660184332808,
+     "distinct_share": 0.294921875
+    },
+    {
+     "tensor": "decoder.block.0.layer.2.DenseReluDense.wi.weight",
+     "dtype": "F32",
+     "shape": [
+      2048,
+      512
+     ],
+     "n": 1048576,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.021185959311917985,
+     "std": 0.6232343993810402,
+     "kurtosis": 12.109164365118726,
+     "ks_normal": 0.0160051170205725,
+     "ks_uniform": 0.4784752985074627,
+     "distinct_share": 0.015795,
+     "row_cv_ratio": 8.23754700814786,
+     "row_mean_ratio": 0.9435945070485805
+    },
+    {
+     "tensor": "decoder.block.0.layer.2.DenseReluDense.wo.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      2048
+     ],
+     "n": 1048576,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": -0.00549054955550305,
+     "std": 0.3337595506865178,
+     "kurtosis": 6.742802570192087,
+     "ks_normal": 0.03485464468955929,
+     "ks_uniform": 0.5686560344827586,
+     "distinct_share": 0.0163,
+     "row_cv_ratio": 20.15684207482255,
+     "row_mean_ratio": 2.2950670834048914
+    },
+    {
+     "tensor": "decoder.block.0.layer.2.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 2.0648073669806015,
+     "std": 0.3266793988067034,
+     "kurtosis": 93.44293456871921,
+     "ks_normal": 0.195020118563823,
+     "ks_uniform": 0.8007931321292776,
+     "distinct_share": 0.341796875
+    },
+    {
+     "tensor": "decoder.block.1.layer.0.SelfAttention.k.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.004215666020820796,
+     "std": 0.4290951849381625,
+     "kurtosis": 0.6537435411577119,
+     "ks_normal": 0.015993208976068485,
+     "ks_uniform": 0.3273182110091743,
+     "distinct_share": 0.01534,
+     "row_cv_ratio": 6.488032357385024,
+     "row_mean_ratio": 0.9551863385000151
+    },
+    {
+     "tensor": "decoder.block.1.layer.0.SelfAttention.o.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.0022909534823981215,
+     "std": 0.9122797505863031,
+     "kurtosis": 10.030659915951137,
+     "ks_normal": 0.043184316675255574,
+     "ks_uniform": 0.45784826429980274,
+     "distinct_share": 0.01678,
+     "row_cv_ratio": 11.300762078522567,
+     "row_mean_ratio": 0.9776565552300794
+    },
+    {
+     "tensor": "decoder.block.1.layer.0.SelfAttention.q.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.002492923090570963,
+     "std": 0.05571078192903067,
+     "kurtosis": 0.6071372730073858,
+     "ks_normal": 0.013777656894275014,
+     "ks_uniform": 0.32100019061583573,
+     "distinct_share": 0.01524,
+     "row_cv_ratio": 5.5488946025716634,
+     "row_mean_ratio": 1.0323869082065145
+    },
+    {
+     "tensor": "decoder.block.1.layer.0.SelfAttention.v.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.001550358563528448,
+     "std": 0.7243224768107562,
+     "kurtosis": 0.42661352824381327,
+     "ks_normal": 0.011893387603370442,
+     "ks_uniform": 0.3090524348697395,
+     "distinct_share": 0.015135,
+     "row_cv_ratio": 4.535945247797223,
+     "row_mean_ratio": 0.9757800534854959
+    },
+    {
+     "tensor": "decoder.block.1.layer.0.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 3.7068105057391563,
+     "std": 0.03541278980365971,
+     "kurtosis": 2.7325932745218253,
+     "ks_normal": 0.07248115318917425,
+     "ks_uniform": 0.4010911434198332,
+     "distinct_share": 0.359375
+    },
+    {
+     "tensor": "decoder.block.1.layer.1.EncDecAttention.k.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.0054916883828425534,
+     "std": 0.35136675245773596,
+     "kurtosis": 3.679436935131389,
+     "ks_normal": 0.020243808788102752,
+     "ks_uniform": 0.42158202194357364,
+     "distinct_share": 0.015955,
+     "row_cv_ratio": 5.318877950787463,
+     "row_mean_ratio": 1.0218200170861407
+    },
+    {
+     "tensor": "decoder.block.1.layer.1.EncDecAttention.o.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": -0.0008232539547747128,
+     "std": 0.6518694229171845,
+     "kurtosis": 2.8095146137743745,
+     "ks_normal": 0.022228671297310543,
+     "ks_uniform": 0.4053007019438445,
+     "distinct_share": 0.01612,
+     "row_cv_ratio": 7.865343379606572,
+     "row_mean_ratio": 0.9236973328874538
+    },
+    {
+     "tensor": "decoder.block.1.layer.1.EncDecAttention.q.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.0005807959283854116,
+     "std": 0.07353165498394709,
+     "kurtosis": 0.5293098100950715,
+     "ks_normal": 0.01434495645640832,
+     "ks_uniform": 0.32039469248291574,
+     "distinct_share": 0.01523,
+     "row_cv_ratio": 5.349603977944732,
+     "row_mean_ratio": 1.0202190948158374
+    },
+    {
+     "tensor": "decoder.block.1.layer.1.EncDecAttention.v.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": -0.002449965608880342,
+     "std": 0.6377325117228883,
+     "kurtosis": 0.6165164773943381,
+     "ks_normal": 0.01809442584542509,
+     "ks_uniform": 0.3199813953488372,
+     "distinct_share": 0.015145,
+     "row_cv_ratio": 3.6841850611371636,
+     "row_mean_ratio": 1.00842957346105
+    },
+    {
+     "tensor": "decoder.block.1.layer.1.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 3.8510250442792247,
+     "std": 0.02513067781074891,
+     "kurtosis": 9.172374544884853,
+     "ks_normal": 0.0953763987738745,
+     "ks_uniform": 0.44512993276014107,
+     "distinct_share": 0.33984375
+    },
+    {
+     "tensor": "decoder.block.1.layer.2.DenseReluDense.wi.weight",
+     "dtype": "F32",
+     "shape": [
+      2048,
+      512
+     ],
+     "n": 1048576,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.032011644828181175,
+     "std": 0.7141852021867674,
+     "kurtosis": 10.479870936484371,
+     "ks_normal": 0.016940878461589648,
+     "ks_uniform": 0.4693468772563177,
+     "distinct_share": 0.015695,
+     "row_cv_ratio": 8.73086831730013,
+     "row_mean_ratio": 1.0398980871120107
+    },
+    {
+     "tensor": "decoder.block.1.layer.2.DenseReluDense.wo.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      2048
+     ],
+     "n": 1048576,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": -0.0067175082426990974,
+     "std": 0.3611950768395416,
+     "kurtosis": 28.102804204579723,
+     "ks_normal": 0.033659889800874504,
+     "ks_uniform": 0.6373422727272727,
+     "distinct_share": 0.0161,
+     "row_cv_ratio": 14.934546646665805,
+     "row_mean_ratio": 2.9866629089746723
+    },
+    {
+     "tensor": "decoder.block.1.layer.2.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 5.071355716059917,
+     "std": 0.22870405766528762,
+     "kurtosis": 2.025480014665334,
+     "ks_normal": 0.06727929817638234,
+     "ks_uniform": 0.34238825946215135,
+     "distinct_share": 0.2890625
+    },
+    {
+     "tensor": "decoder.block.2.layer.0.SelfAttention.k.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.0006022850654463893,
+     "std": 0.4064862814979491,
+     "kurtosis": 0.713127259773279,
+     "ks_normal": 0.013113364301480912,
+     "ks_uniform": 0.3811977131782946,
+     "distinct_share": 0.01546,
+     "row_cv_ratio": 4.914105600835793,
+     "row_mean_ratio": 0.9533864141518553
+    },
+    {
+     "tensor": "decoder.block.2.layer.0.SelfAttention.o.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.0019209215157579827,
+     "std": 1.0739663673578708,
+     "kurtosis": 8.383358893991424,
+     "ks_normal": 0.037083324044658084,
+     "ks_uniform": 0.4783808823529412,
+     "distinct_share": 0.016525,
+     "row_cv_ratio": 8.945878100111688,
+     "row_mean_ratio": 1.020429143893306
+    },
+    {
+     "tensor": "decoder.block.2.layer.0.SelfAttention.q.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.0036479621710354703,
+     "std": 0.04920003019012416,
+     "kurtosis": 0.6250819204169522,
+     "ks_normal": 0.010536860413059124,
+     "ks_uniform": 0.40444833333333335,
+     "distinct_share": 0.01549,
+     "row_cv_ratio": 4.44141198376785,
+     "row_mean_ratio": 1.0428786269474908
+    },
+    {
+     "tensor": "decoder.block.2.layer.0.SelfAttention.v.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": -0.0004122199797682056,
+     "std": 0.9088814910702103,
+     "kurtosis": 0.3462525165911696,
+     "ks_normal": 0.009057575629134784,
+     "ks_uniform": 0.33721425925925924,
+     "distinct_share": 0.015185,
+     "row_cv_ratio": 3.940886391490836,
+     "row_mean_ratio": 1.0172181874930315
+    },
+    {
+     "tensor": "decoder.block.2.layer.0.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 4.021356499065944,
+     "std": 0.035599835017780926,
+     "kurtosis": 4.020505575958634,
+     "ks_normal": 0.08744235233505948,
+     "ks_uniform": 0.3786432356608479,
+     "distinct_share": 0.326171875
+    },
+    {
+     "tensor": "decoder.block.2.layer.1.EncDecAttention.k.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.0024686095835514017,
+     "std": 0.39274751255805435,
+     "kurtosis": 4.402820040097942,
+     "ks_normal": 0.030226869017033753,
+     "ks_uniform": 0.42239203601108033,
+     "distinct_share": 0.015985,
+     "row_cv_ratio": 5.124238299025786,
+     "row_mean_ratio": 1.051067312673561
+    },
+    {
+     "tensor": "decoder.block.2.layer.1.EncDecAttention.o.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.0006539495319732105,
+     "std": 0.7337350779278893,
+     "kurtosis": 3.7360176813320907,
+     "ks_normal": 0.022265838274200367,
+     "ks_uniform": 0.40129774247491634,
+     "distinct_share": 0.016145,
+     "row_cv_ratio": 8.291966781623264,
+     "row_mean_ratio": 1.0117285708515786
+    },
+    {
+     "tensor": "decoder.block.2.layer.1.EncDecAttention.q.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": -0.0002818643319435852,
+     "std": 0.06776607500032669,
+     "kurtosis": 0.5137685154890814,
+     "ks_normal": 0.014156615977029219,
+     "ks_uniform": 0.37483161137440757,
+     "distinct_share": 0.01521,
+     "row_cv_ratio": 5.844654994368294,
+     "row_mean_ratio": 0.9051281368477433
+    },
+    {
+     "tensor": "decoder.block.2.layer.1.EncDecAttention.v.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": -0.00043359163445522305,
+     "std": 0.7394563301000914,
+     "kurtosis": 0.5095897992328164,
+     "ks_normal": 0.015949670717802178,
+     "ks_uniform": 0.28930379958246344,
+     "distinct_share": 0.015185,
+     "row_cv_ratio": 3.592107799579703,
+     "row_mean_ratio": 0.9834638697553898
+    },
+    {
+     "tensor": "decoder.block.2.layer.1.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 4.239576995037125,
+     "std": 0.020732001479702847,
+     "kurtosis": 18.695129564755447,
+     "ks_normal": 0.09438495310114581,
+     "ks_uniform": 0.3958032554023845,
+     "distinct_share": 0.294921875
+    },
+    {
+     "tensor": "decoder.block.2.layer.2.DenseReluDense.wi.weight",
+     "dtype": "F32",
+     "shape": [
+      2048,
+      512
+     ],
+     "n": 1048576,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.022765365851675427,
+     "std": 0.7391904056610462,
+     "kurtosis": 9.604059453173228,
+     "ks_normal": 0.017262462780558874,
+     "ks_uniform": 0.5391804545454546,
+     "distinct_share": 0.01554,
+     "row_cv_ratio": 7.664009475489193,
+     "row_mean_ratio": 0.9457432135423237
+    },
+    {
+     "tensor": "decoder.block.2.layer.2.DenseReluDense.wo.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      2048
+     ],
+     "n": 1048576,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.0007669144222542616,
+     "std": 0.3884366171440793,
+     "kurtosis": 13.846604712104046,
+     "ks_normal": 0.03512077293726801,
+     "ks_uniform": 0.585571551976574,
+     "distinct_share": 0.016265,
+     "row_cv_ratio": 13.9513118862971,
+     "row_mean_ratio": 3.0294189491436
+    },
+    {
+     "tensor": "decoder.block.2.layer.2.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 6.011501095993569,
+     "std": 0.24139861860291123,
+     "kurtosis": 8.093849420307045,
+     "ks_normal": 0.08492691272353065,
+     "ks_uniform": 0.4183538925438597,
+     "distinct_share": 0.23828125
+    },
+    {
+     "tensor": "decoder.block.3.layer.0.SelfAttention.k.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": -0.0004422573554515304,
+     "std": 0.41878578286303403,
+     "kurtosis": 0.9540004203147641,
+     "ks_normal": 0.016201683475817574,
+     "ks_uniform": 0.35178,
+     "distinct_share": 0.01537,
+     "row_cv_ratio": 6.94625923329628,
+     "row_mean_ratio": 1.034228876692335
+    },
+    {
+     "tensor": "decoder.block.3.layer.0.SelfAttention.o.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.0033880909067875047,
+     "std": 1.4369200565632363,
+     "kurtosis": 8.575773473843057,
+     "ks_normal": 0.052195683211859634,
+     "ks_uniform": 0.42445787114845934,
+     "distinct_share": 0.01685,
+     "row_cv_ratio": 10.295772267256964,
+     "row_mean_ratio": 0.9912373982966316
+    },
+    {
+     "tensor": "decoder.block.3.layer.0.SelfAttention.q.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.001553914835524443,
+     "std": 0.046252071644059985,
+     "kurtosis": 0.8896496475313946,
+     "ks_normal": 0.013635944655668863,
+     "ks_uniform": 0.4227009523809523,
+     "distinct_share": 0.01539,
+     "row_cv_ratio": 6.1132475365243515,
+     "row_mean_ratio": 1.0231577338154272
+    },
+    {
+     "tensor": "decoder.block.3.layer.0.SelfAttention.v.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": -0.003493317680947279,
+     "std": 0.9584582080216018,
+     "kurtosis": 0.33308327910885804,
+     "ks_normal": 0.011942925241801017,
+     "ks_uniform": 0.29382872990353703,
+     "distinct_share": 0.01506,
+     "row_cv_ratio": 4.140340024326074,
+     "row_mean_ratio": 1.0334294084125009
+    },
+    {
+     "tensor": "decoder.block.3.layer.0.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 4.375986874686968,
+     "std": 0.03541932190405359,
+     "kurtosis": 8.833815967184456,
+     "ks_normal": 0.08907941102551287,
+     "ks_uniform": 0.37288081983805665,
+     "distinct_share": 0.291015625
+    },
+    {
+     "tensor": "decoder.block.3.layer.1.EncDecAttention.k.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": -0.0019970295367775274,
+     "std": 0.40969975331120156,
+     "kurtosis": 2.9612674196191104,
+     "ks_normal": 0.03598406999550968,
+     "ks_uniform": 0.40459464157706093,
+     "distinct_share": 0.01611,
+     "row_cv_ratio": 2.1670943530609565,
+     "row_mean_ratio": 1.060018356511264
+    },
+    {
+     "tensor": "decoder.block.3.layer.1.EncDecAttention.o.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 6.650704225549543e-06,
+     "std": 0.8935829920705878,
+     "kurtosis": 3.1744729423762594,
+     "ks_normal": 0.020634324014579986,
+     "ks_uniform": 0.44366605633802825,
+     "distinct_share": 0.01614,
+     "row_cv_ratio": 8.725024691641677,
+     "row_mean_ratio": 0.9507677701162792
+    },
+    {
+     "tensor": "decoder.block.3.layer.1.EncDecAttention.q.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": -0.00045330511840203935,
+     "std": 0.04397091605693306,
+     "kurtosis": 0.17426213311551964,
+     "ks_normal": 0.004255275421246624,
+     "ks_uniform": 0.3386598175182482,
+     "distinct_share": 0.015065,
+     "row_cv_ratio": 1.7129116881371649,
+     "row_mean_ratio": 1.031394536333066
+    },
+    {
+     "tensor": "decoder.block.3.layer.1.EncDecAttention.v.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": -0.00414901221905694,
+     "std": 0.9229549963763112,
+     "kurtosis": 0.7451072638607434,
+     "ks_normal": 0.023898847479495333,
+     "ks_uniform": 0.31413334405144694,
+     "distinct_share": 0.015525,
+     "row_cv_ratio": 2.3941139961138096,
+     "row_mean_ratio": 0.9631194930795066
+    },
+    {
+     "tensor": "decoder.block.3.layer.1.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 3.1903274262869554,
+     "std": 0.03758384031621826,
+     "kurtosis": 22.995479443931792,
+     "ks_normal": 0.11532316579390622,
+     "ks_uniform": 0.4891188330170778,
+     "distinct_share": 0.318359375
+    },
+    {
+     "tensor": "decoder.block.3.layer.2.DenseReluDense.wi.weight",
+     "dtype": "F32",
+     "shape": [
+      2048,
+      512
+     ],
+     "n": 1048576,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.021975233750681993,
+     "std": 0.6776295279343995,
+     "kurtosis": 0.7093670774057159,
+     "ks_normal": 0.014498814005851957,
+     "ks_uniform": 0.49813078811369504,
+     "distinct_share": 0.015345,
+     "row_cv_ratio": 5.528898247083782,
+     "row_mean_ratio": 0.9628383495463086
+    },
+    {
+     "tensor": "decoder.block.3.layer.2.DenseReluDense.wo.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      2048
+     ],
+     "n": 1048576,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": -0.0006781730682622298,
+     "std": 0.39935855720628216,
+     "kurtosis": 5.93272599527179,
+     "ks_normal": 0.035467172413422676,
+     "ks_uniform": 0.532355735930736,
+     "distinct_share": 0.0163,
+     "row_cv_ratio": 14.554112185640545,
+     "row_mean_ratio": 2.6000605630883946
+    },
+    {
+     "tensor": "decoder.block.3.layer.2.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 5.510140856679348,
+     "std": 0.3490663385259889,
+     "kurtosis": 16.409384371654596,
+     "ks_normal": 0.15729740535096493,
+     "ks_uniform": 0.49028133348174535,
+     "distinct_share": 0.228515625
+    },
+    {
+     "tensor": "decoder.block.4.layer.0.SelfAttention.k.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": -0.001801099434543055,
+     "std": 0.4112535657544119,
+     "kurtosis": 0.266367339205666,
+     "ks_normal": 0.006428360883415807,
+     "ks_uniform": 0.34627860182370823,
+     "distinct_share": 0.01498,
+     "row_cv_ratio": 2.574874854490996,
+     "row_mean_ratio": 0.9295839247203098
+    },
+    {
+     "tensor": "decoder.block.4.layer.0.SelfAttention.o.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": -0.0011407148139722509,
+     "std": 2.31565636135528,
+     "kurtosis": 13.49532332483222,
+     "ks_normal": 0.07758974330821652,
+     "ks_uniform": 0.48693953488372094,
+     "distinct_share": 0.0171,
+     "row_cv_ratio": 11.616294951408745,
+     "row_mean_ratio": 0.9417501495381437
+    },
+    {
+     "tensor": "decoder.block.4.layer.0.SelfAttention.q.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.001420938385624766,
+     "std": 0.0434074879350778,
+     "kurtosis": 0.35140035824109006,
+     "ks_normal": 0.005930810388934282,
+     "ks_uniform": 0.3551539164086688,
+     "distinct_share": 0.01515,
+     "row_cv_ratio": 2.56407339193242,
+     "row_mean_ratio": 1.0143784788934773
+    },
+    {
+     "tensor": "decoder.block.4.layer.0.SelfAttention.v.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.0016454369510258242,
+     "std": 0.8917107944293193,
+     "kurtosis": 0.3035630173527961,
+     "ks_normal": 0.009914963354643702,
+     "ks_uniform": 0.3800624012158054,
+     "distinct_share": 0.015075,
+     "row_cv_ratio": 3.177669356267359,
+     "row_mean_ratio": 1.0129107229894656
+    },
+    {
+     "tensor": "decoder.block.4.layer.0.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 4.774748284013844,
+     "std": 0.03629506292696716,
+     "kurtosis": 23.802435865691855,
+     "ks_normal": 0.11254540110382183,
+     "ks_uniform": 0.4852681295768918,
+     "distinct_share": 0.25390625
+    },
+    {
+     "tensor": "decoder.block.4.layer.1.EncDecAttention.k.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.000360515927270556,
+     "std": 0.47876687179435734,
+     "kurtosis": 2.836607994347201,
+     "ks_normal": 0.031181376110881787,
+     "ks_uniform": 0.45382888888888895,
+     "distinct_share": 0.01599,
+     "row_cv_ratio": 2.2859064733746353,
+     "row_mean_ratio": 1.0519078969407503
+    },
+    {
+     "tensor": "decoder.block.4.layer.1.EncDecAttention.o.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.0015280835379422933,
+     "std": 1.2713308868922735,
+     "kurtosis": 9.71678942357848,
+     "ks_normal": 0.03795758659418075,
+     "ks_uniform": 0.4349095953757225,
+     "distinct_share": 0.016545,
+     "row_cv_ratio": 13.2127827402153,
+     "row_mean_ratio": 0.9529488725251485
+    },
+    {
+     "tensor": "decoder.block.4.layer.1.EncDecAttention.q.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": -0.003350885477329531,
+     "std": 0.055639845377268835,
+     "kurtosis": 0.2524771116193536,
+     "ks_normal": 0.009537353024786699,
+     "ks_uniform": 0.26769062499999996,
+     "distinct_share": 0.01503,
+     "row_cv_ratio": 2.0818517430673547,
+     "row_mean_ratio": 1.0152086144028794
+    },
+    {
+     "tensor": "decoder.block.4.layer.1.EncDecAttention.v.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": -4.293008254514654e-05,
+     "std": 1.2192394796834298,
+     "kurtosis": 1.4044147521016237,
+     "ks_normal": 0.039194571071146656,
+     "ks_uniform": 0.3373,
+     "distinct_share": 0.01579,
+     "row_cv_ratio": 3.2559457198928095,
+     "row_mean_ratio": 1.041573881205012
+    },
+    {
+     "tensor": "decoder.block.4.layer.1.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 2.1989549765413416,
+     "std": 0.0325611201357676,
+     "kurtosis": 54.11096878152428,
+     "ks_normal": 0.25229373399356103,
+     "ks_uniform": 0.6277986639087656,
+     "distinct_share": 0.275390625
+    },
+    {
+     "tensor": "decoder.block.4.layer.2.DenseReluDense.wi.weight",
+     "dtype": "F32",
+     "shape": [
+      2048,
+      512
+     ],
+     "n": 1048576,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.010777813582406428,
+     "std": 0.6935958174788264,
+     "kurtosis": 0.7930838378975298,
+     "ks_normal": 0.013280026707376824,
+     "ks_uniform": 0.4007663736263737,
+     "distinct_share": 0.01515,
+     "row_cv_ratio": 4.773679696540451,
+     "row_mean_ratio": 0.978134919202448
+    },
+    {
+     "tensor": "decoder.block.4.layer.2.DenseReluDense.wo.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      2048
+     ],
+     "n": 1048576,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": -0.0015560675631505173,
+     "std": 0.42060909294997467,
+     "kurtosis": 15.064060136593397,
+     "ks_normal": 0.036571536821679795,
+     "ks_uniform": 0.5708933281733746,
+     "distinct_share": 0.016635,
+     "row_cv_ratio": 18.399973550563136,
+     "row_mean_ratio": 3.327577351906647
+    },
+    {
+     "tensor": "decoder.block.4.layer.2.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 3.517216497911708,
+     "std": 0.6933905342229703,
+     "kurtosis": 17.170207339020614,
+     "ks_normal": 0.17914169400327795,
+     "ks_uniform": 0.5570681330472103,
+     "distinct_share": 0.259765625
+    },
+    {
+     "tensor": "decoder.block.5.layer.0.SelfAttention.k.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.00013393135881056514,
+     "std": 0.39476444465652216,
+     "kurtosis": 0.29143744987064846,
+     "ks_normal": 0.007678672453962643,
+     "ks_uniform": 0.4424917962466488,
+     "distinct_share": 0.01505,
+     "row_cv_ratio": 3.1625928606810256,
+     "row_mean_ratio": 0.953964855959301
+    },
+    {
+     "tensor": "decoder.block.5.layer.0.SelfAttention.o.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": -0.0017778929757387677,
+     "std": 1.535426700822981,
+     "kurtosis": 37.390035084460415,
+     "ks_normal": 0.053881909987158305,
+     "ks_uniform": 0.46761822033898304,
+     "distinct_share": 0.01741,
+     "row_cv_ratio": 17.507277353379333,
+     "row_mean_ratio": 0.9022494399888176
+    },
+    {
+     "tensor": "decoder.block.5.layer.0.SelfAttention.q.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.004090208829889243,
+     "std": 0.0427780112300781,
+     "kurtosis": 0.31963742315678845,
+     "ks_normal": 0.008032509219426137,
+     "ks_uniform": 0.3232122727272727,
+     "distinct_share": 0.01499,
+     "row_cv_ratio": 3.468400712104491,
+     "row_mean_ratio": 0.9431605519466641
+    },
+    {
+     "tensor": "decoder.block.5.layer.0.SelfAttention.v.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.0025814004192586935,
+     "std": 0.9528536336577682,
+     "kurtosis": 0.26022019522953777,
+     "ks_normal": 0.00897194408753521,
+     "ks_uniform": 0.2761418085106383,
+     "distinct_share": 0.0151,
+     "row_cv_ratio": 2.5915446168173424,
+     "row_mean_ratio": 1.0434757508142616
+    },
+    {
+     "tensor": "decoder.block.5.layer.0.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 2.7852328065524112,
+     "std": 0.07952396898848478,
+     "kurtosis": 22.049033580086228,
+     "ks_normal": 0.22216152230167852,
+     "ks_uniform": 0.41171470207253885,
+     "distinct_share": 0.28515625
+    },
+    {
+     "tensor": "decoder.block.5.layer.1.EncDecAttention.k.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.0009472781074820345,
+     "std": 0.3877529135261969,
+     "kurtosis": 3.8433657871716935,
+     "ks_normal": 0.02941975470480207,
+     "ks_uniform": 0.41276871794871794,
+     "distinct_share": 0.016115,
+     "row_cv_ratio": 2.673352731245257,
+     "row_mean_ratio": 1.0461398789031247
+    },
+    {
+     "tensor": "decoder.block.5.layer.1.EncDecAttention.o.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": -0.0023239553361159102,
+     "std": 1.470205913560413,
+     "kurtosis": 5.983478884976531,
+     "ks_normal": 0.04008779087341935,
+     "ks_uniform": 0.412231507936508,
+     "distinct_share": 0.016655,
+     "row_cv_ratio": 12.480003490612043,
+     "row_mean_ratio": 0.9828765553435737
+    },
+    {
+     "tensor": "decoder.block.5.layer.1.EncDecAttention.q.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": -0.0008735390004113381,
+     "std": 0.04274099958354973,
+     "kurtosis": 0.16861384353861553,
+     "ks_normal": 0.005970560493194221,
+     "ks_uniform": 0.31130131749460044,
+     "distinct_share": 0.01483,
+     "row_cv_ratio": 1.80388126717523,
+     "row_mean_ratio": 1.015897109753191
+    },
+    {
+     "tensor": "decoder.block.5.layer.1.EncDecAttention.v.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": -0.00216921278615604,
+     "std": 1.7964929622084476,
+     "kurtosis": 1.7816741211696039,
+     "ks_normal": 0.05695128511762859,
+     "ks_uniform": 0.3218293175074184,
+     "distinct_share": 0.016295,
+     "row_cv_ratio": 3.521888163324831,
+     "row_mean_ratio": 0.9577307594538536
+    },
+    {
+     "tensor": "decoder.block.5.layer.1.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 1.4606717556658202,
+     "std": 0.0974383195636421,
+     "kurtosis": 111.03025955870959,
+     "ks_normal": 0.27718081809917894,
+     "ks_uniform": 0.7394386574074074,
+     "distinct_share": 0.353515625
+    },
+    {
+     "tensor": "decoder.block.5.layer.2.DenseReluDense.wi.weight",
+     "dtype": "F32",
+     "shape": [
+      2048,
+      512
+     ],
+     "n": 1048576,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.0074735914247470794,
+     "std": 0.8194419446527271,
+     "kurtosis": 0.9191815020788461,
+     "ks_normal": 0.016401077595126795,
+     "ks_uniform": 0.42058067567567564,
+     "distinct_share": 0.01528,
+     "row_cv_ratio": 4.661934531979733,
+     "row_mean_ratio": 0.9904386377631815
+    },
+    {
+     "tensor": "decoder.block.5.layer.2.DenseReluDense.wo.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      2048
+     ],
+     "n": 1048576,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 0.00227689330858913,
+     "std": 0.4703972062563569,
+     "kurtosis": 80.78252688994549,
+     "ks_normal": 0.05094548973664803,
+     "ks_uniform": 0.48990302752293574,
+     "distinct_share": 0.01704,
+     "row_cv_ratio": 25.185647471923552,
+     "row_mean_ratio": 5.15582813851129
+    },
+    {
+     "tensor": "decoder.block.5.layer.2.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "decoder.block",
+     "component_flagged": 0.0125,
+     "component_tensors": 80,
+     "mean_over_std": 2.4291342466773145,
+     "std": 1.2581853477731475,
+     "kurtosis": 14.614236781813382,
+     "ks_normal": 0.21760391898621045,
+     "ks_uniform": 0.5098398530285035,
+     "distinct_share": 0.32421875
+    },
+    {
+     "tensor": "decoder.final_layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "decoder.final_layer_norm.weight",
+     "component_flagged": 0.0,
+     "component_tensors": 1,
+     "mean_over_std": 0.45216599554700093,
+     "std": 0.528551236237673,
+     "kurtosis": 204.9704409868635,
+     "ks_normal": 0.37540356874207537,
+     "ks_uniform": 0.8978620404345219,
+     "distinct_share": 0.443359375
+    },
+    {
+     "tensor": "encoder.block.0.layer.0.SelfAttention.k.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": -0.002188251883551858,
+     "std": 0.48728021883865175,
+     "kurtosis": 1.3515381551888606,
+     "ks_normal": 0.026516542425174427,
+     "ks_uniform": 0.38032166666666667,
+     "distinct_share": 0.015605,
+     "row_cv_ratio": 7.366463537831587,
+     "row_mean_ratio": 1.0486333947784203
+    },
+    {
+     "tensor": "encoder.block.0.layer.0.SelfAttention.o.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": -0.0005868874111365675,
+     "std": 0.6378309011301904,
+     "kurtosis": 10.101262290741042,
+     "ks_normal": 0.042911527844931574,
+     "ks_uniform": 0.48664848314606735,
+     "distinct_share": 0.016595,
+     "row_cv_ratio": 12.657088494941108,
+     "row_mean_ratio": 0.9153612401712182
+    },
+    {
+     "tensor": "encoder.block.0.layer.0.SelfAttention.q.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 0.0019467952093846345,
+     "std": 0.05980549102935036,
+     "kurtosis": 1.0848228443795582,
+     "ks_normal": 0.021981406883970794,
+     "ks_uniform": 0.37028399521531097,
+     "distinct_share": 0.01553,
+     "row_cv_ratio": 7.324287423801223,
+     "row_mean_ratio": 1.0274105755555807
+    },
+    {
+     "tensor": "encoder.block.0.layer.0.SelfAttention.relative_attention_bias.weight",
+     "dtype": "F32",
+     "shape": [
+      32,
+      8
+     ],
+     "n": 256,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": -0.27457390619093264,
+     "std": 2.7273700589945147,
+     "kurtosis": 0.12028728186545168,
+     "ks_normal": 0.11441858427611307,
+     "ks_uniform": 0.3017181734317343,
+     "distinct_share": 0.86328125,
+     "row_cv_ratio": 1.0073665976629376,
+     "row_mean_ratio": 1.113302495893021
+    },
+    {
+     "tensor": "encoder.block.0.layer.0.SelfAttention.v.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 0.0002595516808181738,
+     "std": 0.44905724158315685,
+     "kurtosis": 0.4405026515972441,
+     "ks_normal": 0.010952154828690275,
+     "ks_uniform": 0.3620919069069069,
+     "distinct_share": 0.015145,
+     "row_cv_ratio": 3.9268927293829243,
+     "row_mean_ratio": 1.0051213405991264
+    },
+    {
+     "tensor": "encoder.block.0.layer.0.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 2.7513830207452203,
+     "std": 0.03356667311630174,
+     "kurtosis": 12.567303266397156,
+     "ks_normal": 0.1352213616303144,
+     "ks_uniform": 0.6430158703604568,
+     "distinct_share": 0.373046875
+    },
+    {
+     "tensor": "encoder.block.0.layer.1.DenseReluDense.wi.weight",
+     "dtype": "F32",
+     "shape": [
+      2048,
+      512
+     ],
+     "n": 1048576,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": -0.003931474831085334,
+     "std": 0.6141283677329618,
+     "kurtosis": 7.195259061375959,
+     "ks_normal": 0.017880725333835334,
+     "ks_uniform": 0.5041268380462726,
+     "distinct_share": 0.01603,
+     "row_cv_ratio": 8.499694942602558,
+     "row_mean_ratio": 0.9880250017785982
+    },
+    {
+     "tensor": "encoder.block.0.layer.1.DenseReluDense.wo.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      2048
+     ],
+     "n": 1048576,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": -0.0024345123002726316,
+     "std": 0.30666978248791765,
+     "kurtosis": 19.954087291450193,
+     "ks_normal": 0.03310971036107935,
+     "ks_uniform": 0.46416690376569036,
+     "distinct_share": 0.01636,
+     "row_cv_ratio": 17.18549737941755,
+     "row_mean_ratio": 2.8006041441859617
+    },
+    {
+     "tensor": "encoder.block.0.layer.1.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 1.3809063179357104,
+     "std": 0.22126054524510616,
+     "kurtosis": 122.84728805265289,
+     "ks_normal": 0.2656724977196001,
+     "ks_uniform": 0.8319251621402514,
+     "distinct_share": 0.375
+    },
+    {
+     "tensor": "encoder.block.1.layer.0.SelfAttention.k.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": -0.00033761584260896685,
+     "std": 0.46616946471466575,
+     "kurtosis": 0.592489583647779,
+     "ks_normal": 0.01137623946572694,
+     "ks_uniform": 0.3460965217391304,
+     "distinct_share": 0.01537,
+     "row_cv_ratio": 4.287545618196519,
+     "row_mean_ratio": 1.0057080054221088
+    },
+    {
+     "tensor": "encoder.block.1.layer.0.SelfAttention.o.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 0.0018531141872769846,
+     "std": 0.8124508077605441,
+     "kurtosis": 8.37052374629878,
+     "ks_normal": 0.05421628144334467,
+     "ks_uniform": 0.423189429280397,
+     "distinct_share": 0.016815,
+     "row_cv_ratio": 14.345623792271102,
+     "row_mean_ratio": 0.9634788851586805
+    },
+    {
+     "tensor": "encoder.block.1.layer.0.SelfAttention.q.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 6.540346451416438e-05,
+     "std": 0.060006705121036154,
+     "kurtosis": 0.6414789971263204,
+     "ks_normal": 0.011331564463940347,
+     "ks_uniform": 0.39849420529801327,
+     "distinct_share": 0.01535,
+     "row_cv_ratio": 3.835893254249194,
+     "row_mean_ratio": 1.0676597975009134
+    },
+    {
+     "tensor": "encoder.block.1.layer.0.SelfAttention.v.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": -0.0018575669466165832,
+     "std": 0.5914244410598892,
+     "kurtosis": 0.32524365753745554,
+     "ks_normal": 0.009621320364319397,
+     "ks_uniform": 0.3230485944700461,
+     "distinct_share": 0.015175,
+     "row_cv_ratio": 3.3626021421038157,
+     "row_mean_ratio": 1.0305110887076792
+    },
+    {
+     "tensor": "encoder.block.1.layer.0.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 3.6677547724716852,
+     "std": 0.027830794801952913,
+     "kurtosis": 16.592161310787763,
+     "ks_normal": 0.11152768083531484,
+     "ks_uniform": 0.6156334700018375,
+     "distinct_share": 0.31640625
+    },
+    {
+     "tensor": "encoder.block.1.layer.1.DenseReluDense.wi.weight",
+     "dtype": "F32",
+     "shape": [
+      2048,
+      512
+     ],
+     "n": 1048576,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": -0.0003126856969897215,
+     "std": 0.7617881108310195,
+     "kurtosis": 12.741955585029297,
+     "ks_normal": 0.02250100266669816,
+     "ks_uniform": 0.5623367935871744,
+     "distinct_share": 0.01615,
+     "row_cv_ratio": 10.213940225202212,
+     "row_mean_ratio": 0.9937958996588222
+    },
+    {
+     "tensor": "encoder.block.1.layer.1.DenseReluDense.wo.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      2048
+     ],
+     "n": 1048576,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 0.0001309320687825238,
+     "std": 0.35969082430112925,
+     "kurtosis": 5.965874253608231,
+     "ks_normal": 0.03533942724860284,
+     "ks_uniform": 0.44833857142857136,
+     "distinct_share": 0.016565,
+     "row_cv_ratio": 15.603314849974366,
+     "row_mean_ratio": 3.7501348826830947
+    },
+    {
+     "tensor": "encoder.block.1.layer.1.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 3.2673348346781537,
+     "std": 0.12419203971148346,
+     "kurtosis": 24.339840430140963,
+     "ks_normal": 0.17159148676394725,
+     "ks_uniform": 0.6623836379516019,
+     "distinct_share": 0.29296875
+    },
+    {
+     "tensor": "encoder.block.2.layer.0.SelfAttention.k.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 0.0008865196031352726,
+     "std": 0.3774990393065495,
+     "kurtosis": 0.6024792668562067,
+     "ks_normal": 0.008894105730490653,
+     "ks_uniform": 0.4556502729528536,
+     "distinct_share": 0.015415,
+     "row_cv_ratio": 3.4106595981541474,
+     "row_mean_ratio": 0.9546243836554296
+    },
+    {
+     "tensor": "encoder.block.2.layer.0.SelfAttention.o.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 0.0031782061598916974,
+     "std": 0.8084550926018315,
+     "kurtosis": 4.425163939228333,
+     "ks_normal": 0.049713096948723834,
+     "ks_uniform": 0.4273412686567164,
+     "distinct_share": 0.016405,
+     "row_cv_ratio": 13.069487850226457,
+     "row_mean_ratio": 1.018877201118528
+    },
+    {
+     "tensor": "encoder.block.2.layer.0.SelfAttention.q.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 0.0012873107181274092,
+     "std": 0.04495732220053278,
+     "kurtosis": 0.6734683910855104,
+     "ks_normal": 0.00913192490362269,
+     "ks_uniform": 0.3931349206349206,
+     "distinct_share": 0.01544,
+     "row_cv_ratio": 3.1546165297999593,
+     "row_mean_ratio": 0.9477160878425878
+    },
+    {
+     "tensor": "encoder.block.2.layer.0.SelfAttention.v.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": -0.001216040747174686,
+     "std": 0.6262895258219309,
+     "kurtosis": 0.3466297211055491,
+     "ks_normal": 0.010359730219516416,
+     "ks_uniform": 0.3867843832599119,
+     "distinct_share": 0.01524,
+     "row_cv_ratio": 3.1386098012327905,
+     "row_mean_ratio": 1.0029585988327143
+    },
+    {
+     "tensor": "encoder.block.2.layer.0.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 4.779459683734507,
+     "std": 0.028554500977717466,
+     "kurtosis": 4.844171255638631,
+     "ks_normal": 0.11715069861748839,
+     "ks_uniform": 0.4210707720588235,
+     "distinct_share": 0.265625
+    },
+    {
+     "tensor": "encoder.block.2.layer.1.DenseReluDense.wi.weight",
+     "dtype": "F32",
+     "shape": [
+      2048,
+      512
+     ],
+     "n": 1048576,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 0.001830271361484484,
+     "std": 0.7846498267048929,
+     "kurtosis": 23.775476687452677,
+     "ks_normal": 0.01769353685053987,
+     "ks_uniform": 0.6475335849056604,
+     "distinct_share": 0.015705,
+     "row_cv_ratio": 8.744241257427634,
+     "row_mean_ratio": 0.9597198126787915
+    },
+    {
+     "tensor": "encoder.block.2.layer.1.DenseReluDense.wo.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      2048
+     ],
+     "n": 1048576,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 0.002657797230589238,
+     "std": 0.4077877063195415,
+     "kurtosis": 8.002398293462003,
+     "ks_normal": 0.039621298015645956,
+     "ks_uniform": 0.5482619536423841,
+     "distinct_share": 0.016475,
+     "row_cv_ratio": 14.921142389133845,
+     "row_mean_ratio": 4.17600213967352
+    },
+    {
+     "tensor": "encoder.block.2.layer.1.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 4.084480003133909,
+     "std": 0.15011227108164799,
+     "kurtosis": 58.97851217483117,
+     "ks_normal": 0.23094367117781012,
+     "ks_uniform": 0.7086654974489796,
+     "distinct_share": 0.2109375
+    },
+    {
+     "tensor": "encoder.block.3.layer.0.SelfAttention.k.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 0.000547972471750749,
+     "std": 0.44831423071283144,
+     "kurtosis": 0.40910430401376496,
+     "ks_normal": 0.0076270738263937154,
+     "ks_uniform": 0.3354828082191781,
+     "distinct_share": 0.01524,
+     "row_cv_ratio": 3.1700049042301126,
+     "row_mean_ratio": 0.9520362800302333
+    },
+    {
+     "tensor": "encoder.block.3.layer.0.SelfAttention.o.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 0.00017900536474109246,
+     "std": 1.0213368458115646,
+     "kurtosis": 5.734199234183034,
+     "ks_normal": 0.06838903220890824,
+     "ks_uniform": 0.48190055555555555,
+     "distinct_share": 0.016785,
+     "row_cv_ratio": 15.898959828247865,
+     "row_mean_ratio": 0.9354612853290771
+    },
+    {
+     "tensor": "encoder.block.3.layer.0.SelfAttention.q.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 0.0011854014341362378,
+     "std": 0.05472361609009272,
+     "kurtosis": 0.4215027526352739,
+     "ks_normal": 0.007887289602515613,
+     "ks_uniform": 0.3462680612244898,
+     "distinct_share": 0.015175,
+     "row_cv_ratio": 3.0322288743829144,
+     "row_mean_ratio": 1.035507785284995
+    },
+    {
+     "tensor": "encoder.block.3.layer.0.SelfAttention.v.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 0.0015080783727527383,
+     "std": 0.6809914043054364,
+     "kurtosis": 0.3502294434836002,
+     "ks_normal": 0.010464849480861682,
+     "ks_uniform": 0.3153601626898047,
+     "distinct_share": 0.015185,
+     "row_cv_ratio": 4.156543346541639,
+     "row_mean_ratio": 1.050023588124289
+    },
+    {
+     "tensor": "encoder.block.3.layer.0.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 5.861732553209588,
+     "std": 0.02038307479436593,
+     "kurtosis": 9.467914940666486,
+     "ks_normal": 0.15819108783245756,
+     "ks_uniform": 0.48183328988529717,
+     "distinct_share": 0.234375
+    },
+    {
+     "tensor": "encoder.block.3.layer.1.DenseReluDense.wi.weight",
+     "dtype": "F32",
+     "shape": [
+      2048,
+      512
+     ],
+     "n": 1048576,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 0.002609134131299541,
+     "std": 0.8164616386494083,
+     "kurtosis": 5.655035292081001,
+     "ks_normal": 0.022716226605681594,
+     "ks_uniform": 0.5070469868995633,
+     "distinct_share": 0.01599,
+     "row_cv_ratio": 9.510905395875458,
+     "row_mean_ratio": 0.9424148417549265
+    },
+    {
+     "tensor": "encoder.block.3.layer.1.DenseReluDense.wo.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      2048
+     ],
+     "n": 1048576,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 0.0025766708679119616,
+     "std": 0.43852459326266396,
+     "kurtosis": 16.950355820746395,
+     "ks_normal": 0.04495089641187089,
+     "ks_uniform": 0.4610259090909091,
+     "distinct_share": 0.01661,
+     "row_cv_ratio": 16.672783523097866,
+     "row_mean_ratio": 4.015384716289451
+    },
+    {
+     "tensor": "encoder.block.3.layer.1.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 3.5480790741084873,
+     "std": 0.21233993931011125,
+     "kurtosis": 132.12545082866254,
+     "ks_normal": 0.2726064453774222,
+     "ks_uniform": 0.7832267992424242,
+     "distinct_share": 0.232421875
+    },
+    {
+     "tensor": "encoder.block.4.layer.0.SelfAttention.k.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": -0.0014737421698712396,
+     "std": 0.4504847724393692,
+     "kurtosis": 0.5616754887926643,
+     "ks_normal": 0.008908335797641054,
+     "ks_uniform": 0.4387623236514523,
+     "distinct_share": 0.01512,
+     "row_cv_ratio": 3.668264394752441,
+     "row_mean_ratio": 1.0121588752958603
+    },
+    {
+     "tensor": "encoder.block.4.layer.0.SelfAttention.o.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 0.001094388246228615,
+     "std": 1.3322930768447367,
+     "kurtosis": 5.63020172780959,
+     "ks_normal": 0.0877954917699647,
+     "ks_uniform": 0.3841323572938689,
+     "distinct_share": 0.01693,
+     "row_cv_ratio": 18.864903530165947,
+     "row_mean_ratio": 0.9180985479855219
+    },
+    {
+     "tensor": "encoder.block.4.layer.0.SelfAttention.q.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": -0.0019000056228665456,
+     "std": 0.0544796529268724,
+     "kurtosis": 0.9510026489477941,
+     "ks_normal": 0.010030949404463252,
+     "ks_uniform": 0.42384022653721687,
+     "distinct_share": 0.01533,
+     "row_cv_ratio": 3.596534792756123,
+     "row_mean_ratio": 0.979510458971549
+    },
+    {
+     "tensor": "encoder.block.4.layer.0.SelfAttention.v.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 0.0018599928208201295,
+     "std": 0.7702770286762824,
+     "kurtosis": 0.33217881555001094,
+     "ks_normal": 0.010188098798062484,
+     "ks_uniform": 0.3049116666666667,
+     "distinct_share": 0.01512,
+     "row_cv_ratio": 4.029072058220682,
+     "row_mean_ratio": 1.0048150730000511
+    },
+    {
+     "tensor": "encoder.block.4.layer.0.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 6.21797864814025,
+     "std": 0.01883762474901753,
+     "kurtosis": 5.225949239102288,
+     "ks_normal": 0.15153793798232673,
+     "ks_uniform": 0.38913871951219514,
+     "distinct_share": 0.23828125
+    },
+    {
+     "tensor": "encoder.block.4.layer.1.DenseReluDense.wi.weight",
+     "dtype": "F32",
+     "shape": [
+      2048,
+      512
+     ],
+     "n": 1048576,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": -0.0014595831553314413,
+     "std": 0.8963595976613213,
+     "kurtosis": 15.213641036242564,
+     "ks_normal": 0.029958574746378086,
+     "ks_uniform": 0.5153427160493826,
+     "distinct_share": 0.01614,
+     "row_cv_ratio": 11.00030265261008,
+     "row_mean_ratio": 1.041430131437048
+    },
+    {
+     "tensor": "encoder.block.4.layer.1.DenseReluDense.wo.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      2048
+     ],
+     "n": 1048576,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 0.00011847725821550766,
+     "std": 0.48689829362097004,
+     "kurtosis": 11.81758087890679,
+     "ks_normal": 0.05150191636873447,
+     "ks_uniform": 0.4933178409090909,
+     "distinct_share": 0.01668,
+     "row_cv_ratio": 18.1043866056524,
+     "row_mean_ratio": 4.366016754657868
+    },
+    {
+     "tensor": "encoder.block.4.layer.1.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 2.956620555543992,
+     "std": 0.2558407262565139,
+     "kurtosis": 127.37583076801525,
+     "ks_normal": 0.2628389130853612,
+     "ks_uniform": 0.8232684437337381,
+     "distinct_share": 0.265625
+    },
+    {
+     "tensor": "encoder.block.5.layer.0.SelfAttention.k.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": -0.0026374359397513918,
+     "std": 0.4363008329017574,
+     "kurtosis": 1.0118662287659097,
+     "ks_normal": 0.013019179772840062,
+     "ks_uniform": 0.3569404504504504,
+     "distinct_share": 0.01557,
+     "row_cv_ratio": 3.6854922899017994,
+     "row_mean_ratio": 1.0363060352179272
+    },
+    {
+     "tensor": "encoder.block.5.layer.0.SelfAttention.o.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 0.0002548443785151055,
+     "std": 1.732552939599318,
+     "kurtosis": 7.766933273460809,
+     "ks_normal": 0.10759514732557607,
+     "ks_uniform": 0.44761914110429446,
+     "distinct_share": 0.01737,
+     "row_cv_ratio": 21.407779618245723,
+     "row_mean_ratio": 1.0032139307168975
+    },
+    {
+     "tensor": "encoder.block.5.layer.0.SelfAttention.q.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": -0.0005940820932678464,
+     "std": 0.05412605103479117,
+     "kurtosis": 1.2866627476741224,
+     "ks_normal": 0.01563476271023856,
+     "ks_uniform": 0.42368546875,
+     "distinct_share": 0.01563,
+     "row_cv_ratio": 3.369990478512002,
+     "row_mean_ratio": 1.0326744560256158
+    },
+    {
+     "tensor": "encoder.block.5.layer.0.SelfAttention.v.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      512
+     ],
+     "n": 262144,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 0.0020482343575611915,
+     "std": 0.8949473939499683,
+     "kurtosis": 0.4951151902445581,
+     "ks_normal": 0.014458579152486856,
+     "ks_uniform": 0.33290139240506333,
+     "distinct_share": 0.015265,
+     "row_cv_ratio": 4.076445990352714,
+     "row_mean_ratio": 1.038371029028718
+    },
+    {
+     "tensor": "encoder.block.5.layer.0.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 5.553593591674598,
+     "std": 0.021449067847714328,
+     "kurtosis": 4.465351079397045,
+     "ks_normal": 0.1638775115717357,
+     "ks_uniform": 0.45323988970588236,
+     "distinct_share": 0.25
+    },
+    {
+     "tensor": "encoder.block.5.layer.1.DenseReluDense.wi.weight",
+     "dtype": "F32",
+     "shape": [
+      2048,
+      512
+     ],
+     "n": 1048576,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": -0.007753475496364052,
+     "std": 0.9332376392696239,
+     "kurtosis": 231.77290615292029,
+     "ks_normal": 0.041213596634843364,
+     "ks_uniform": 0.5432670478170477,
+     "distinct_share": 0.0164,
+     "row_cv_ratio": 13.253241355662126,
+     "row_mean_ratio": 1.0960053790105724
+    },
+    {
+     "tensor": "encoder.block.5.layer.1.DenseReluDense.wo.weight",
+     "dtype": "F32",
+     "shape": [
+      512,
+      2048
+     ],
+     "n": 1048576,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 0.0027233260554249193,
+     "std": 0.5567720185198036,
+     "kurtosis": 9.45871091474568,
+     "ks_normal": 0.063627237699591,
+     "ks_uniform": 0.43779042296072507,
+     "distinct_share": 0.017025,
+     "row_cv_ratio": 20.634476455399106,
+     "row_mean_ratio": 5.172131393985545
+    },
+    {
+     "tensor": "encoder.block.5.layer.1.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "encoder.block",
+     "component_flagged": 0.0,
+     "component_tensors": 49,
+     "mean_over_std": 2.7817936417581963,
+     "std": 0.22030002483818056,
+     "kurtosis": 67.08259257727595,
+     "ks_normal": 0.20074008283013844,
+     "ks_uniform": 0.709678069383544,
+     "distinct_share": 0.318359375
+    },
+    {
+     "tensor": "encoder.final_layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      512
+     ],
+     "n": 512,
+     "flags": [],
+     "component": "encoder.final_layer_norm.weight",
+     "component_flagged": 0.0,
+     "component_tensors": 1,
+     "mean_over_std": 3.0489462568539336,
+     "std": 0.07927193873836509,
+     "kurtosis": -0.7243794813350504,
+     "ks_normal": 0.15518096369350032,
+     "ks_uniform": 0.22546580188679244,
+     "distinct_share": 0.361328125
+    },
+    {
+     "tensor": "shared.weight",
+     "dtype": "F32",
+     "shape": [
+      32128,
+      512
+     ],
+     "n": 16449536,
+     "flags": [],
+     "component": "shared.weight",
+     "component_flagged": 0.0,
+     "component_tensors": 1,
+     "mean_over_std": 0.0047765137451941395,
+     "std": 23.19398609061163,
+     "kurtosis": 0.5378151317277133,
+     "ks_normal": 0.01832153375594764,
+     "ks_uniform": 0.31536692307692316,
+     "distinct_share": 0.01518,
+     "row_cv_ratio": 4.294166137456989,
+     "row_mean_ratio": 0.9763095836901465
+    }
+   ]
+  },
+  {
+   "repo": "FacebookAI/xlm-roberta-base",
+   "file": "model.safetensors",
+   "commit": "e73636d4f797dec63c3081bb6ed5c7b0bb3f2089",
+   "origin": "float16",
+   "flagged": 1,
+   "tensors": [
+    {
+     "tensor": "lm_head.bias",
+     "dtype": "F32",
+     "shape": [
+      250002
+     ],
+     "n": 250002,
+     "flags": [],
+     "component": "lm_head.bias",
+     "component_flagged": 0.0,
+     "component_tensors": 1,
+     "mean_over_std": 0.07200371560770982,
+     "std": 0.09027190463025533,
+     "kurtosis": 10.125226589153186,
+     "ks_normal": 0.3474303476253915,
+     "ks_uniform": 0.5153913011031797,
+     "distinct_share": 0.088505
+    },
+    {
+     "tensor": "lm_head.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "lm_head.dense.bias",
+     "component_flagged": 0.0,
+     "component_tensors": 1,
+     "mean_over_std": 0.10640753828445654,
+     "std": 0.0670879119261565,
+     "kurtosis": 11.103406270690678,
+     "ks_normal": 0.4348697643421568,
+     "ks_uniform": 0.5352571475849154,
+     "distinct_share": 0.7994791666666666
+    },
+    {
+     "tensor": "lm_head.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "lm_head.dense.weight",
+     "component_flagged": 0.0,
+     "component_tensors": 1,
+     "mean_over_std": 0.10996703681429502,
+     "std": 0.10331506608902023,
+     "kurtosis": 5.045950293367742,
+     "ks_normal": 0.02575767920034555,
+     "ks_uniform": 0.47218352760736193,
+     "distinct_share": 0.088185,
+     "row_cv_ratio": 9.512296450650883,
+     "row_mean_ratio": 2.5129923295418353
+    },
+    {
+     "tensor": "lm_head.layer_norm.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "lm_head.layer_norm.bias",
+     "component_flagged": 0.0,
+     "component_tensors": 1,
+     "mean_over_std": 0.3303967563899156,
+     "std": 0.2220309134517012,
+     "kurtosis": 0.15561346649234054,
+     "ks_normal": 0.10713722515592738,
+     "ks_uniform": 0.23266315832249673,
+     "distinct_share": 0.8450520833333334
+    },
+    {
+     "tensor": "lm_head.layer_norm.weight",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "lm_head.layer_norm.weight",
+     "component_flagged": 0.0,
+     "component_tensors": 1,
+     "mean_over_std": 11.48160410562373,
+     "std": 0.09040348113909849,
+     "kurtosis": 18.843103624779193,
+     "ks_normal": 0.23691638309781915,
+     "ks_uniform": 0.6741909104696993,
+     "distinct_share": 0.3346354166666667
+    },
+    {
+     "tensor": "roberta.embeddings.LayerNorm.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.embeddings.LayerNorm",
+     "component_flagged": 0.0,
+     "component_tensors": 2,
+     "mean_over_std": -0.00040323687188813413,
+     "std": 0.12391631990437091,
+     "kurtosis": 3.7285593763644416,
+     "ks_normal": 0.09738071369116458,
+     "ks_uniform": 0.5341484359471278,
+     "distinct_share": 0.9322916666666666
+    },
+    {
+     "tensor": "roberta.embeddings.LayerNorm.weight",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.embeddings.LayerNorm",
+     "component_flagged": 0.0,
+     "component_tensors": 2,
+     "mean_over_std": 4.263514721374619,
+     "std": 0.0691111198058393,
+     "kurtosis": 17.178518349258084,
+     "ks_normal": 0.21326588978181493,
+     "ks_uniform": 0.6011770833333334,
+     "distinct_share": 0.5677083333333334
+    },
+    {
+     "tensor": "roberta.embeddings.position_embeddings.weight",
+     "dtype": "F32",
+     "shape": [
+      514,
+      768
+     ],
+     "n": 394752,
+     "flags": [],
+     "component": "roberta.embeddings.position_embeddings",
+     "component_flagged": 0.0,
+     "component_tensors": 1,
+     "mean_over_std": -0.08384770381512681,
+     "std": 0.0877344389831306,
+     "kurtosis": 23.92585615212352,
+     "ks_normal": 0.11693272087697107,
+     "ks_uniform": 0.4133919197707736,
+     "distinct_share": 0.09867,
+     "row_cv_ratio": 3.295184577802309,
+     "row_mean_ratio": 0.8776797986060074
+    },
+    {
+     "tensor": "roberta.embeddings.token_type_embeddings.weight",
+     "dtype": "F32",
+     "shape": [
+      1,
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.embeddings.token_type_embeddings",
+     "component_flagged": 0.0,
+     "component_tensors": 1,
+     "mean_over_std": null,
+     "std": 0.0
+    },
+    {
+     "tensor": "roberta.embeddings.word_embeddings.weight",
+     "dtype": "F32",
+     "shape": [
+      250002,
+      768
+     ],
+     "n": 192001536,
+     "flags": [],
+     "component": "roberta.embeddings.word_embeddings",
+     "component_flagged": 0.0,
+     "component_tensors": 1,
+     "mean_over_std": 0.04943229020515841,
+     "std": 0.2117289409791414,
+     "kurtosis": -0.44107125433248884,
+     "ks_normal": 0.05575305394107549,
+     "ks_uniform": 0.20133727716727723,
+     "distinct_share": 0.089915,
+     "row_cv_ratio": 3.0170287157069953,
+     "row_mean_ratio": 2.333525019586488
+    },
+    {
+     "tensor": "roberta.encoder.layer.0.attention.output.LayerNorm.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.8549183339152563,
+     "std": 0.12278671900074155,
+     "kurtosis": 10.337443296445093,
+     "ks_normal": 0.13096305080415283,
+     "ks_uniform": 0.44033190747782003,
+     "distinct_share": 0.88671875
+    },
+    {
+     "tensor": "roberta.encoder.layer.0.attention.output.LayerNorm.weight",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 10.686322872008352,
+     "std": 0.05053666718130696,
+     "kurtosis": 27.239585150256968,
+     "ks_normal": 0.126162177413523,
+     "ks_uniform": 0.5129305129162518,
+     "distinct_share": 0.359375
+    },
+    {
+     "tensor": "roberta.encoder.layer.0.attention.output.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.0019613163703634706,
+     "std": 0.037775120131768015,
+     "kurtosis": 1.4928742803146031,
+     "ks_normal": 0.03907093588586952,
+     "ks_uniform": 0.4086390664805017,
+     "distinct_share": 0.9739583333333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.0.attention.output.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.003772071204940236,
+     "std": 0.03639462094408414,
+     "kurtosis": 21.151413825272435,
+     "ks_normal": 0.03115115922484646,
+     "ks_uniform": 0.4779926851609526,
+     "distinct_share": 0.09041,
+     "row_cv_ratio": 11.297559815793727,
+     "row_mean_ratio": 1.0506044866666346
+    },
+    {
+     "tensor": "roberta.encoder.layer.0.attention.self.key.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.06801419168558487,
+     "std": 0.0001556684394375519,
+     "kurtosis": 8.059716958604922,
+     "ks_normal": 0.11990463309749189,
+     "ks_uniform": 0.42995227916085,
+     "distinct_share": 0.921875
+    },
+    {
+     "tensor": "roberta.encoder.layer.0.attention.self.key.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.0023698898313657484,
+     "std": 0.12247034378569747,
+     "kurtosis": 0.10488482460706283,
+     "ks_normal": 0.004036312511037976,
+     "ks_uniform": 0.35647293388429746,
+     "distinct_share": 0.085235,
+     "row_cv_ratio": 2.647499076144895,
+     "row_mean_ratio": 1.9140719652572518
+    },
+    {
+     "tensor": "roberta.encoder.layer.0.attention.self.query.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.03075264034775343,
+     "std": 0.3978544637797459,
+     "kurtosis": -1.444302203025788,
+     "ks_normal": 0.1029169979820701,
+     "ks_uniform": 0.08472871663154202,
+     "distinct_share": 0.8815104166666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.0.attention.self.query.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.0007936197955840935,
+     "std": 0.11823405494565335,
+     "kurtosis": 0.6967786807580443,
+     "ks_normal": 0.012382236806917107,
+     "ks_uniform": 0.3792500099304866,
+     "distinct_share": 0.08728,
+     "row_cv_ratio": 2.39117188242967,
+     "row_mean_ratio": 1.7875983870076566
+    },
+    {
+     "tensor": "roberta.encoder.layer.0.attention.self.value.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.05465768392592479,
+     "std": 0.05154149030627265,
+     "kurtosis": 8.309229429057204,
+     "ks_normal": 0.14697189331442462,
+     "ks_uniform": 0.38905625086195006,
+     "distinct_share": 0.9622395833333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.0.attention.self.value.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.001035119023660241,
+     "std": 0.0369560124257249,
+     "kurtosis": 1.373193807895233,
+     "ks_normal": 0.015332942839148989,
+     "ks_uniform": 0.4166627672955975,
+     "distinct_share": 0.08797,
+     "row_cv_ratio": 5.066810803892341,
+     "row_mean_ratio": 1.088108876693252
+    },
+    {
+     "tensor": "roberta.encoder.layer.0.intermediate.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      3072
+     ],
+     "n": 3072,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -1.680569294203077,
+     "std": 0.0579979796493213,
+     "kurtosis": 6.555584806918617,
+     "ks_normal": 0.05158042623517689,
+     "ks_uniform": 0.4743121877014829,
+     "distinct_share": 0.6383463541666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.0.intermediate.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      3072,
+      768
+     ],
+     "n": 2359296,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.2285340928000376,
+     "std": 0.06528579350206887,
+     "kurtosis": 1.8619515979006653,
+     "ks_normal": 0.028290564548934916,
+     "ks_uniform": 0.4707970289097875,
+     "distinct_share": 0.090525,
+     "row_cv_ratio": 9.669686265089029,
+     "row_mean_ratio": 3.1786099255911413
+    },
+    {
+     "tensor": "roberta.encoder.layer.0.output.LayerNorm.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.3182682670418141,
+     "std": 0.1026536301484281,
+     "kurtosis": 13.69003376575586,
+     "ks_normal": 0.17648942404200635,
+     "ks_uniform": 0.4771863758992806,
+     "distinct_share": 0.9388020833333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.0.output.LayerNorm.weight",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 6.315691319758304,
+     "std": 0.0771334886739558,
+     "kurtosis": 12.91044859825695,
+     "ks_normal": 0.20373537758882487,
+     "ks_uniform": 0.40080145802830647,
+     "distinct_share": 0.5455729166666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.0.output.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.019031708603588986,
+     "std": 0.04523087102451868,
+     "kurtosis": 20.668097882711294,
+     "ks_normal": 0.05042055098002457,
+     "ks_uniform": 0.6174123723305479,
+     "distinct_share": 0.9544270833333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.0.output.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      3072
+     ],
+     "n": 2359296,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.0013349863969405826,
+     "std": 0.046648663136231,
+     "kurtosis": 5.177700181136885,
+     "ks_normal": 0.026273332218512635,
+     "ks_uniform": 0.4754881033564199,
+     "distinct_share": 0.090155,
+     "row_cv_ratio": 10.726616706105322,
+     "row_mean_ratio": 0.9416821358483892
+    },
+    {
+     "tensor": "roberta.encoder.layer.1.attention.output.LayerNorm.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -1.777291878160023,
+     "std": 0.07068421127821113,
+     "kurtosis": 50.077827613369685,
+     "ks_normal": 0.13162804119545427,
+     "ks_uniform": 0.48516503758381996,
+     "distinct_share": 0.7942708333333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.1.attention.output.LayerNorm.weight",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 8.969742634941937,
+     "std": 0.06454221304464942,
+     "kurtosis": 11.10963223941423,
+     "ks_normal": 0.12397718301372918,
+     "ks_uniform": 0.42703104082998666,
+     "distinct_share": 0.4348958333333333
+    },
+    {
+     "tensor": "roberta.encoder.layer.1.attention.output.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.012841697496885716,
+     "std": 0.06537161070953282,
+     "kurtosis": 2.1758094685781284,
+     "ks_normal": 0.06470073643289453,
+     "ks_uniform": 0.34398219443864414,
+     "distinct_share": 0.9609375
+    },
+    {
+     "tensor": "roberta.encoder.layer.1.attention.output.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.003521075285065522,
+     "std": 0.0340798462435811,
+     "kurtosis": 5.936995094969571,
+     "ks_normal": 0.0377152438230437,
+     "ks_uniform": 0.5048959089093088,
+     "distinct_share": 0.091625,
+     "row_cv_ratio": 8.061761917546136,
+     "row_mean_ratio": 1.017466237846814
+    },
+    {
+     "tensor": "roberta.encoder.layer.1.attention.self.key.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.01511904016421577,
+     "std": 0.005535278851994899,
+     "kurtosis": 16.14621492158065,
+     "ks_normal": 0.3576552919728355,
+     "ks_uniform": 0.40419735466950624,
+     "distinct_share": 0.9114583333333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.1.attention.self.key.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.004994153914856397,
+     "std": 0.09062071959743769,
+     "kurtosis": 1.8407188882798025,
+     "ks_normal": 0.022388104083648136,
+     "ks_uniform": 0.3528147669337218,
+     "distinct_share": 0.090155,
+     "row_cv_ratio": 5.87078516722204,
+     "row_mean_ratio": 1.8338201926340594
+    },
+    {
+     "tensor": "roberta.encoder.layer.1.attention.self.query.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.019679840798594955,
+     "std": 0.2633369324172207,
+     "kurtosis": -0.43216087439618267,
+     "ks_normal": 0.0341366819799766,
+     "ks_uniform": 0.12545748873873877,
+     "distinct_share": 0.9583333333333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.1.attention.self.query.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.004218817451178279,
+     "std": 0.09181655709213023,
+     "kurtosis": 1.5877651221081486,
+     "ks_normal": 0.020959004573937623,
+     "ks_uniform": 0.334683949044586,
+     "distinct_share": 0.089245,
+     "row_cv_ratio": 5.426527489940397,
+     "row_mean_ratio": 5.257963815940398
+    },
+    {
+     "tensor": "roberta.encoder.layer.1.attention.self.value.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.025325994886557086,
+     "std": 0.021984622273423775,
+     "kurtosis": 121.45322055496565,
+     "ks_normal": 0.27713647168645544,
+     "ks_uniform": 0.5396929342516608,
+     "distinct_share": 0.9713541666666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.1.attention.self.value.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 6.898175051357611e-05,
+     "std": 0.037565344996320776,
+     "kurtosis": 1.0642095812689085,
+     "ks_normal": 0.030236340035862397,
+     "ks_uniform": 0.3825940725984949,
+     "distinct_share": 0.09035,
+     "row_cv_ratio": 11.474336090004327,
+     "row_mean_ratio": 2.9660654474386923
+    },
+    {
+     "tensor": "roberta.encoder.layer.1.intermediate.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      3072
+     ],
+     "n": 3072,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -1.404842407345749,
+     "std": 0.055307323566294704,
+     "kurtosis": 15.48836415719542,
+     "ks_normal": 0.08435405177473979,
+     "ks_uniform": 0.6468693614091483,
+     "distinct_share": 0.6650390625
+    },
+    {
+     "tensor": "roberta.encoder.layer.1.intermediate.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      3072,
+      768
+     ],
+     "n": 2359296,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.2663645517332918,
+     "std": 0.06337871819909878,
+     "kurtosis": 1.3679678183500918,
+     "ks_normal": 0.027087875745645085,
+     "ks_uniform": 0.44658862431800467,
+     "distinct_share": 0.08915,
+     "row_cv_ratio": 8.193643801733788,
+     "row_mean_ratio": 3.315685803214156
+    },
+    {
+     "tensor": "roberta.encoder.layer.1.output.LayerNorm.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.2353008090916785,
+     "std": 0.050225498963189834,
+     "kurtosis": 47.38205352326505,
+     "ks_normal": 0.1451564442730691,
+     "ks_uniform": 0.42266030317769127,
+     "distinct_share": 0.9518229166666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.1.output.LayerNorm.weight",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 9.318857306935874,
+     "std": 0.06201502315985941,
+     "kurtosis": 11.875582443070272,
+     "ks_normal": 0.1103911114310161,
+     "ks_uniform": 0.4461235321647379,
+     "distinct_share": 0.4244791666666667
+    },
+    {
+     "tensor": "roberta.encoder.layer.1.output.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.013311316477382276,
+     "std": 0.044611081807104436,
+     "kurtosis": 7.929606615603687,
+     "ks_normal": 0.059991450089556086,
+     "ks_uniform": 0.3997331848894349,
+     "distinct_share": 0.9609375
+    },
+    {
+     "tensor": "roberta.encoder.layer.1.output.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      3072
+     ],
+     "n": 2359296,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.0014776611712151964,
+     "std": 0.0448043190658,
+     "kurtosis": 23.849546745511304,
+     "ks_normal": 0.031246634235396864,
+     "ks_uniform": 0.6526270527758739,
+     "distinct_share": 0.091205,
+     "row_cv_ratio": 10.342428535735717,
+     "row_mean_ratio": 0.7137026559638258
+    },
+    {
+     "tensor": "roberta.encoder.layer.10.attention.output.LayerNorm.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 1.5006289862209474,
+     "std": 0.047434719943464466,
+     "kurtosis": 40.70233584840392,
+     "ks_normal": 0.16525489204906288,
+     "ks_uniform": 0.6173916103603604,
+     "distinct_share": 0.8046875
+    },
+    {
+     "tensor": "roberta.encoder.layer.10.attention.output.LayerNorm.weight",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 7.530699093883067,
+     "std": 0.09638907583594042,
+     "kurtosis": -0.19782155564507908,
+     "ks_normal": 0.08168010706645146,
+     "ks_uniform": 0.22199584694989105,
+     "distinct_share": 0.5846354166666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.10.attention.output.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.03667657372158241,
+     "std": 0.08704956112723716,
+     "kurtosis": 0.09760347875913444,
+     "ks_normal": 0.028942331594522447,
+     "ks_uniform": 0.21520724580118022,
+     "distinct_share": 0.9635416666666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.10.attention.output.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.0012348466515970634,
+     "std": 0.03479525892480063,
+     "kurtosis": 15.92030285659741,
+     "ks_normal": 0.03336525646496691,
+     "ks_uniform": 0.45355467308814945,
+     "distinct_share": 0.09078,
+     "row_cv_ratio": 11.349189098998231,
+     "row_mean_ratio": 0.9605265926377693
+    },
+    {
+     "tensor": "roberta.encoder.layer.10.attention.self.key.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.019288135128999306,
+     "std": 0.03444003179633256,
+     "kurtosis": 47.59901237380817,
+     "ks_normal": 0.2954159642019627,
+     "ks_uniform": 0.5267153910303929,
+     "distinct_share": 0.95703125
+    },
+    {
+     "tensor": "roberta.encoder.layer.10.attention.self.key.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.0037735751555758347,
+     "std": 0.07042744353262062,
+     "kurtosis": 0.934940578780934,
+     "ks_normal": 0.011292357918041951,
+     "ks_uniform": 0.358405537881959,
+     "distinct_share": 0.087035,
+     "row_cv_ratio": 2.2698352040920104,
+     "row_mean_ratio": 1.0230332130978972
+    },
+    {
+     "tensor": "roberta.encoder.layer.10.attention.self.query.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.029191781601359684,
+     "std": 0.23911394683700407,
+     "kurtosis": -0.2972437301883484,
+     "ks_normal": 0.02838949182661965,
+     "ks_uniform": 0.13227749765478425,
+     "distinct_share": 0.95703125
+    },
+    {
+     "tensor": "roberta.encoder.layer.10.attention.self.query.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.008530194306476613,
+     "std": 0.07019042825292043,
+     "kurtosis": 0.5113687693709501,
+     "ks_normal": 0.007383116123361955,
+     "ks_uniform": 0.35338232351566146,
+     "distinct_share": 0.0864,
+     "row_cv_ratio": 2.528789587646758,
+     "row_mean_ratio": 6.425125216745359
+    },
+    {
+     "tensor": "roberta.encoder.layer.10.attention.self.value.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.005560877453911398,
+     "std": 0.01683115286557133,
+     "kurtosis": 68.15954986885919,
+     "ks_normal": 0.22682069270814076,
+     "ks_uniform": 0.5040952620967742,
+     "distinct_share": 0.94921875
+    },
+    {
+     "tensor": "roberta.encoder.layer.10.attention.self.value.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.0027508599000474216,
+     "std": 0.04035384375482775,
+     "kurtosis": 1.3344512912351298,
+     "ks_normal": 0.029749379021271505,
+     "ks_uniform": 0.37582683354728286,
+     "distinct_share": 0.091225,
+     "row_cv_ratio": 6.888009180021878,
+     "row_mean_ratio": 3.1341621720430757
+    },
+    {
+     "tensor": "roberta.encoder.layer.10.intermediate.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      3072
+     ],
+     "n": 3072,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.8255199966363344,
+     "std": 0.07693187270856047,
+     "kurtosis": 5.096724233410596,
+     "ks_normal": 0.1339478119367284,
+     "ks_uniform": 0.3511200404723991,
+     "distinct_share": 0.7923177083333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.10.intermediate.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      3072,
+      768
+     ],
+     "n": 2359296,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.20513564333887413,
+     "std": 0.04634032264493943,
+     "kurtosis": 1.4735210390604427,
+     "ks_normal": 0.018966402760723033,
+     "ks_uniform": 0.3789707751937985,
+     "distinct_share": 0.088635,
+     "row_cv_ratio": 7.217698643286658,
+     "row_mean_ratio": 4.6018911138170555
+    },
+    {
+     "tensor": "roberta.encoder.layer.10.output.LayerNorm.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.4866115623172325,
+     "std": 0.0435301038891258,
+     "kurtosis": 90.41051559673669,
+     "ks_normal": 0.200418882310322,
+     "ks_uniform": 0.4902940463976288,
+     "distinct_share": 0.9075520833333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.10.output.LayerNorm.weight",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 11.638480856927666,
+     "std": 0.06781580464280969,
+     "kurtosis": 0.6320060761122215,
+     "ks_normal": 0.051422816415748085,
+     "ks_uniform": 0.2733845975316732,
+     "distinct_share": 0.4947916666666667
+    },
+    {
+     "tensor": "roberta.encoder.layer.10.output.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.03728241676565919,
+     "std": 0.06077235282834455,
+     "kurtosis": 5.474600899103871,
+     "ks_normal": 0.02985434711196011,
+     "ks_uniform": 0.541851751986598,
+     "distinct_share": 0.9388020833333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.10.output.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      3072
+     ],
+     "n": 2359296,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.0010460976403994242,
+     "std": 0.047017876004132764,
+     "kurtosis": 9.234372788124121,
+     "ks_normal": 0.047377504637695994,
+     "ks_uniform": 0.4733698902885005,
+     "distinct_share": 0.09312,
+     "row_cv_ratio": 33.17592677553366,
+     "row_mean_ratio": 0.9200294630652334
+    },
+    {
+     "tensor": "roberta.encoder.layer.11.attention.output.LayerNorm.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.7840857610279903,
+     "std": 0.08560443699897649,
+     "kurtosis": 4.4105515600531815,
+     "ks_normal": 0.1668304899078224,
+     "ks_uniform": 0.41241494945567647,
+     "distinct_share": 0.87109375
+    },
+    {
+     "tensor": "roberta.encoder.layer.11.attention.output.LayerNorm.weight",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 12.281590117122729,
+     "std": 0.0586803903339069,
+     "kurtosis": 10.986963062795434,
+     "ks_normal": 0.08381673419964009,
+     "ks_uniform": 0.48909351610803775,
+     "distinct_share": 0.4166666666666667
+    },
+    {
+     "tensor": "roberta.encoder.layer.11.attention.output.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.06755491958748025,
+     "std": 0.047804688645077406,
+     "kurtosis": 1.8962559168144866,
+     "ks_normal": 0.03900540660231949,
+     "ks_uniform": 0.39505937650893286,
+     "distinct_share": 0.9635416666666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.11.attention.output.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.0012855239051444297,
+     "std": 0.037115494660298,
+     "kurtosis": 39.32065137183072,
+     "ks_normal": 0.034667672854205606,
+     "ks_uniform": 0.4478447001934236,
+     "distinct_share": 0.089995,
+     "row_cv_ratio": 11.457204723005713,
+     "row_mean_ratio": 1.0838130187898303
+    },
+    {
+     "tensor": "roberta.encoder.layer.11.attention.self.key.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.04193209889057044,
+     "std": 0.05879781481900924,
+     "kurtosis": 32.52714816944607,
+     "ks_normal": 0.32269535714125974,
+     "ks_uniform": 0.41347826542588867,
+     "distinct_share": 0.9205729166666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.11.attention.self.key.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.0006686861756719539,
+     "std": 0.07701827350033252,
+     "kurtosis": 0.6087411704254198,
+     "ks_normal": 0.011318802015875873,
+     "ks_uniform": 0.3669505663287792,
+     "distinct_share": 0.08738,
+     "row_cv_ratio": 3.235176815903638,
+     "row_mean_ratio": 1.0094919316080062
+    },
+    {
+     "tensor": "roberta.encoder.layer.11.attention.self.query.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.04406646633391858,
+     "std": 0.2124162083377551,
+     "kurtosis": -0.3784038332962827,
+     "ks_normal": 0.030373370084723655,
+     "ks_uniform": 0.13530800359712236,
+     "distinct_share": 0.9700520833333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.11.attention.self.query.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.00925117962832987,
+     "std": 0.07284469414048164,
+     "kurtosis": 0.7273015132605574,
+     "ks_normal": 0.01025463255329151,
+     "ks_uniform": 0.35209791934005497,
+     "distinct_share": 0.087205,
+     "row_cv_ratio": 2.314029333341046,
+     "row_mean_ratio": 4.814463297894219
+    },
+    {
+     "tensor": "roberta.encoder.layer.11.attention.self.value.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.048659947618513257,
+     "std": 0.009127980659982386,
+     "kurtosis": 27.9838100129686,
+     "ks_normal": 0.08274487279306045,
+     "ks_uniform": 0.451239406779661,
+     "distinct_share": 0.9830729166666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.11.attention.self.value.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.003962534732427698,
+     "std": 0.04711222892410654,
+     "kurtosis": 1.3003011449957498,
+     "ks_normal": 0.027644379452948842,
+     "ks_uniform": 0.32594722740170246,
+     "distinct_share": 0.09133,
+     "row_cv_ratio": 4.533070342474421,
+     "row_mean_ratio": 1.5779989956852316
+    },
+    {
+     "tensor": "roberta.encoder.layer.11.intermediate.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      3072
+     ],
+     "n": 3072,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -1.1622014314312343,
+     "std": 0.046305766741203055,
+     "kurtosis": 8.667687840828997,
+     "ks_normal": 0.09827318158307058,
+     "ks_uniform": 0.4135928342295436,
+     "distinct_share": 0.720703125
+    },
+    {
+     "tensor": "roberta.encoder.layer.11.intermediate.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      3072,
+      768
+     ],
+     "n": 2359296,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.13523621256840157,
+     "std": 0.04572414215172865,
+     "kurtosis": 0.7368036661363826,
+     "ks_normal": 0.013033469870153969,
+     "ks_uniform": 0.3854446355353075,
+     "distinct_share": 0.087115,
+     "row_cv_ratio": 6.567975299446567,
+     "row_mean_ratio": 3.6522329886025235
+    },
+    {
+     "tensor": "roberta.encoder.layer.11.output.LayerNorm.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.9359573201945279,
+     "std": 0.030868498295558225,
+     "kurtosis": 351.60983761526103,
+     "ks_normal": 0.25098110168341925,
+     "ks_uniform": 0.7230824995021904,
+     "distinct_share": 0.8307291666666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.11.output.LayerNorm.weight",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 5.335874449269992,
+     "std": 0.13447714063644797,
+     "kurtosis": -0.8125875007255705,
+     "ks_normal": 0.06247711388975574,
+     "ks_uniform": 0.11783762427587285,
+     "distinct_share": 0.6822916666666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.11.output.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.0050351876672520635,
+     "std": 0.06288153682282845,
+     "kurtosis": 81.92985189328023,
+     "ks_normal": 0.07299946573515481,
+     "ks_uniform": 0.703924605359765,
+     "distinct_share": 0.9544270833333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.11.output.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      3072
+     ],
+     "n": 2359296,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.007661451893295212,
+     "std": 0.03732501662971043,
+     "kurtosis": 37.59452537563199,
+     "ks_normal": 0.05663176744571086,
+     "ks_uniform": 0.4567058373205741,
+     "distinct_share": 0.09205,
+     "row_cv_ratio": 35.110944972303436,
+     "row_mean_ratio": 14.507708813597187
+    },
+    {
+     "tensor": "roberta.encoder.layer.2.attention.output.LayerNorm.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -2.2026329305569403,
+     "std": 0.05268418703610202,
+     "kurtosis": 57.91999192771243,
+     "ks_normal": 0.14112019703251868,
+     "ks_uniform": 0.5298506893606638,
+     "distinct_share": 0.7447916666666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.2.attention.output.LayerNorm.weight",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 6.792374579790039,
+     "std": 0.10333576700222129,
+     "kurtosis": 3.5978969324000643,
+     "ks_normal": 0.10542792433112769,
+     "ks_uniform": 0.38572261642796757,
+     "distinct_share": 0.5794270833333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.2.attention.output.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.009695995978892426,
+     "std": 0.06628710704495876,
+     "kurtosis": 5.333181022255239,
+     "ks_normal": 0.0554009295542226,
+     "ks_uniform": 0.48766181229773464,
+     "distinct_share": 0.9700520833333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.2.attention.output.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.0019284810940165724,
+     "std": 0.034129846631912646,
+     "kurtosis": 10.333542429689826,
+     "ks_normal": 0.049597187282397925,
+     "ks_uniform": 0.43296533831628636,
+     "distinct_share": 0.094265,
+     "row_cv_ratio": 14.221887185458597,
+     "row_mean_ratio": 0.9281311508319884
+    },
+    {
+     "tensor": "roberta.encoder.layer.2.attention.self.key.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.018312864264465697,
+     "std": 0.004144521278156719,
+     "kurtosis": 76.07110211745037,
+     "ks_normal": 0.34104886524136424,
+     "ks_uniform": 0.49483247633039507,
+     "distinct_share": 0.9635416666666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.2.attention.self.key.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.004633176767518436,
+     "std": 0.07548687682244244,
+     "kurtosis": 3.382709701300459,
+     "ks_normal": 0.030021584148635427,
+     "ks_uniform": 0.3763108140814081,
+     "distinct_share": 0.091595,
+     "row_cv_ratio": 8.484776455223756,
+     "row_mean_ratio": 1.0839400927985874
+    },
+    {
+     "tensor": "roberta.encoder.layer.2.attention.self.query.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.05467838197174931,
+     "std": 0.24781792343203426,
+     "kurtosis": -0.16452087747708433,
+     "ks_normal": 0.06511576004327169,
+     "ks_uniform": 0.15331413730803978,
+     "distinct_share": 0.9466145833333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.2.attention.self.query.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.0017326606917158372,
+     "std": 0.07574263420339683,
+     "kurtosis": 3.8398565081267133,
+     "ks_normal": 0.03005844531857274,
+     "ks_uniform": 0.42940373493975903,
+     "distinct_share": 0.091185,
+     "row_cv_ratio": 8.968973612209254,
+     "row_mean_ratio": 1.1941329622243275
+    },
+    {
+     "tensor": "roberta.encoder.layer.2.attention.self.value.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.017552349742352934,
+     "std": 0.04411306409131253,
+     "kurtosis": 59.78800077957532,
+     "ks_normal": 0.22933927403252374,
+     "ks_uniform": 0.5599283958533718,
+     "distinct_share": 0.9778645833333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.2.attention.self.value.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.0015349020097536895,
+     "std": 0.03916267360746224,
+     "kurtosis": 0.964685503239537,
+     "ks_normal": 0.02402876682569821,
+     "ks_uniform": 0.37541317847286115,
+     "distinct_share": 0.08955,
+     "row_cv_ratio": 9.56434665319128,
+     "row_mean_ratio": 0.9979589251152758
+    },
+    {
+     "tensor": "roberta.encoder.layer.2.intermediate.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      3072
+     ],
+     "n": 3072,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -1.139289697344666,
+     "std": 0.0703894327284493,
+     "kurtosis": 9.245871396189392,
+     "ks_normal": 0.1427998844190715,
+     "ks_uniform": 0.6809323142914733,
+     "distinct_share": 0.7405598958333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.2.intermediate.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      3072,
+      768
+     ],
+     "n": 2359296,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.26327716175649835,
+     "std": 0.061052713252799144,
+     "kurtosis": 2.405528780760471,
+     "ks_normal": 0.04304902542235256,
+     "ks_uniform": 0.4672720175438597,
+     "distinct_share": 0.09109,
+     "row_cv_ratio": 10.48172601712109,
+     "row_mean_ratio": 4.566110250995566
+    },
+    {
+     "tensor": "roberta.encoder.layer.2.output.LayerNorm.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.2583526328108875,
+     "std": 0.03895262393799338,
+     "kurtosis": 86.7254875154652,
+     "ks_normal": 0.17736833549837205,
+     "ks_uniform": 0.44847677017883036,
+     "distinct_share": 0.9557291666666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.2.output.LayerNorm.weight",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 6.994749400039603,
+     "std": 0.09462356083753364,
+     "kurtosis": 0.06599742276873011,
+     "ks_normal": 0.09923416109315786,
+     "ks_uniform": 0.305237676056338,
+     "distinct_share": 0.5611979166666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.2.output.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.010578602963662066,
+     "std": 0.07382722964129236,
+     "kurtosis": 3.5963863568999406,
+     "ks_normal": 0.07008036760825775,
+     "ks_uniform": 0.3835684755921433,
+     "distinct_share": 0.9778645833333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.2.output.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      3072
+     ],
+     "n": 2359296,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.0007773568551276251,
+     "std": 0.048818107986976646,
+     "kurtosis": 4.796195430645214,
+     "ks_normal": 0.043758333959655116,
+     "ks_uniform": 0.48907277777777775,
+     "distinct_share": 0.09363,
+     "row_cv_ratio": 20.60940680484944,
+     "row_mean_ratio": 1.2894743174367584
+    },
+    {
+     "tensor": "roberta.encoder.layer.3.attention.output.LayerNorm.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -2.2560172357906025,
+     "std": 0.0534352614789043,
+     "kurtosis": 85.16813738980989,
+     "ks_normal": 0.20228896021263126,
+     "ks_uniform": 0.5693449569689336,
+     "distinct_share": 0.6614583333333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.3.attention.output.LayerNorm.weight",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 4.657352764388365,
+     "std": 0.17013289070857823,
+     "kurtosis": 0.31169446834490344,
+     "ks_normal": 0.1353696750657114,
+     "ks_uniform": 0.3392325156147271,
+     "distinct_share": 0.6536458333333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.3.attention.output.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.023309980101338976,
+     "std": 0.06730676189868567,
+     "kurtosis": 5.747548513128617,
+     "ks_normal": 0.07358444203067982,
+     "ks_uniform": 0.4195921748692344,
+     "distinct_share": 0.9752604166666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.3.attention.output.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.0012449547537597264,
+     "std": 0.04428385592552343,
+     "kurtosis": 9.284879664485128,
+     "ks_normal": 0.06514536325909534,
+     "ks_uniform": 0.431969206212252,
+     "distinct_share": 0.097175,
+     "row_cv_ratio": 19.488970040657197,
+     "row_mean_ratio": 1.0522726644429647
+    },
+    {
+     "tensor": "roberta.encoder.layer.3.attention.self.key.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.011969492296977255,
+     "std": 0.0040009600500082905,
+     "kurtosis": 141.61041074843783,
+     "ks_normal": 0.4101172928786857,
+     "ks_uniform": 0.5780257311134183,
+     "distinct_share": 0.96875
+    },
+    {
+     "tensor": "roberta.encoder.layer.3.attention.self.key.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.0008230711959829748,
+     "std": 0.06763447878124004,
+     "kurtosis": 3.0629987925753532,
+     "ks_normal": 0.03046742630826249,
+     "ks_uniform": 0.37588217391304346,
+     "distinct_share": 0.090675,
+     "row_cv_ratio": 7.328728886978648,
+     "row_mean_ratio": 1.0105756236257921
+    },
+    {
+     "tensor": "roberta.encoder.layer.3.attention.self.query.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.03715881086875733,
+     "std": 0.22335525561115527,
+     "kurtosis": 0.4327634201719768,
+     "ks_normal": 0.08651213094176458,
+     "ks_uniform": 0.19399721582181262,
+     "distinct_share": 0.9518229166666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.3.attention.self.query.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.0006460210628336413,
+     "std": 0.06740792567852043,
+     "kurtosis": 2.1701906912024578,
+     "ks_normal": 0.02638387287539104,
+     "ks_uniform": 0.36622236472945896,
+     "distinct_share": 0.089965,
+     "row_cv_ratio": 7.533724640967268,
+     "row_mean_ratio": 1.4800688938708026
+    },
+    {
+     "tensor": "roberta.encoder.layer.3.attention.self.value.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.082855726840012,
+     "std": 0.030208870540671864,
+     "kurtosis": 21.03281499042825,
+     "ks_normal": 0.18938931845831028,
+     "ks_uniform": 0.45478958333333336,
+     "distinct_share": 0.9505208333333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.3.attention.self.value.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.00498269176808013,
+     "std": 0.04738541153383529,
+     "kurtosis": 1.2248981374218664,
+     "ks_normal": 0.026069561542830022,
+     "ks_uniform": 0.3975859034110098,
+     "distinct_share": 0.089795,
+     "row_cv_ratio": 9.049506648449102,
+     "row_mean_ratio": 0.9522789092877717
+    },
+    {
+     "tensor": "roberta.encoder.layer.3.intermediate.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      3072
+     ],
+     "n": 3072,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.9944390628537181,
+     "std": 0.08128831852839744,
+     "kurtosis": 6.578120720610212,
+     "ks_normal": 0.14387591198923871,
+     "ks_uniform": 0.5333633622672896,
+     "distinct_share": 0.7643229166666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.3.intermediate.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      3072,
+      768
+     ],
+     "n": 2359296,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.273822268200788,
+     "std": 0.06496993869279902,
+     "kurtosis": 3.587038232599147,
+     "ks_normal": 0.061785380619134966,
+     "ks_uniform": 0.3692687118509711,
+     "distinct_share": 0.093055,
+     "row_cv_ratio": 13.240355202001574,
+     "row_mean_ratio": 5.081872614590042
+    },
+    {
+     "tensor": "roberta.encoder.layer.3.output.LayerNorm.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.2964725413950438,
+     "std": 0.04116644968413272,
+     "kurtosis": 91.62575598918271,
+     "ks_normal": 0.19859429753537983,
+     "ks_uniform": 0.437897014451326,
+     "distinct_share": 0.9440104166666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.3.output.LayerNorm.weight",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 5.0206910103908085,
+     "std": 0.13085012050083014,
+     "kurtosis": -0.8280128412587282,
+     "ks_normal": 0.14305207574488377,
+     "ks_uniform": 0.40578107651361767,
+     "distinct_share": 0.5924479166666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.3.output.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.04287176357987268,
+     "std": 0.0804076669539781,
+     "kurtosis": 4.234968279426276,
+     "ks_normal": 0.07660320786141472,
+     "ks_uniform": 0.3360897904483431,
+     "distinct_share": 0.9674479166666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.3.output.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      3072
+     ],
+     "n": 2359296,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.00565656680780285,
+     "std": 0.05561753472488205,
+     "kurtosis": 4.030295754791236,
+     "ks_normal": 0.055537238088899765,
+     "ks_uniform": 0.4723127150275884,
+     "distinct_share": 0.095155,
+     "row_cv_ratio": 23.557342401246757,
+     "row_mean_ratio": 2.0335736363285477
+    },
+    {
+     "tensor": "roberta.encoder.layer.4.attention.output.LayerNorm.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -1.8877219672656171,
+     "std": 0.06174049286973532,
+     "kurtosis": 45.008015610921184,
+     "ks_normal": 0.18273581937733965,
+     "ks_uniform": 0.5069381853687847,
+     "distinct_share": 0.7890625
+    },
+    {
+     "tensor": "roberta.encoder.layer.4.attention.output.LayerNorm.weight",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 3.0365998004210364,
+     "std": 0.246907582297341,
+     "kurtosis": -0.6979180220464127,
+     "ks_normal": 0.16934959696672314,
+     "ks_uniform": 0.31957503687315636,
+     "distinct_share": 0.6627604166666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.4.attention.output.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.05828255548151735,
+     "std": 0.0775486810830808,
+     "kurtosis": 4.258347261942249,
+     "ks_normal": 0.10336423029916558,
+     "ks_uniform": 0.4327933081186339,
+     "distinct_share": 0.9713541666666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.4.attention.output.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.0010624532568912243,
+     "std": 0.058042049278446334,
+     "kurtosis": 11.04783182893291,
+     "ks_normal": 0.11468147098226553,
+     "ks_uniform": 0.38332813829787227,
+     "distinct_share": 0.10445,
+     "row_cv_ratio": 29.920448831597888,
+     "row_mean_ratio": 0.9923843083545003
+    },
+    {
+     "tensor": "roberta.encoder.layer.4.attention.self.key.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.005534752667517459,
+     "std": 0.004157835796842881,
+     "kurtosis": 86.09906463766627,
+     "ks_normal": 0.3756040080729991,
+     "ks_uniform": 0.5319998286106034,
+     "distinct_share": 0.9700520833333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.4.attention.self.key.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.002480068230371161,
+     "std": 0.07219069215999291,
+     "kurtosis": 2.4212589708624943,
+     "ks_normal": 0.02799838030733348,
+     "ks_uniform": 0.38572605976372476,
+     "distinct_share": 0.090455,
+     "row_cv_ratio": 7.056624707408871,
+     "row_mean_ratio": 1.0993737352756778
+    },
+    {
+     "tensor": "roberta.encoder.layer.4.attention.self.query.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.051292422322147695,
+     "std": 0.22923154427529407,
+     "kurtosis": 0.14618490471768775,
+     "ks_normal": 0.06045966883945564,
+     "ks_uniform": 0.16465836864406777,
+     "distinct_share": 0.9427083333333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.4.attention.self.query.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.003609240490072829,
+     "std": 0.07076491236709838,
+     "kurtosis": 1.5208762497256352,
+     "ks_normal": 0.024913063306065242,
+     "ks_uniform": 0.34896992769995483,
+     "distinct_share": 0.089555,
+     "row_cv_ratio": 6.817912414092866,
+     "row_mean_ratio": 2.4739630299863484
+    },
+    {
+     "tensor": "roberta.encoder.layer.4.attention.self.value.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.011809460353459398,
+     "std": 0.03647761334460659,
+     "kurtosis": 13.495444091754425,
+     "ks_normal": 0.13896097750595016,
+     "ks_uniform": 0.36444314783381837,
+     "distinct_share": 0.9622395833333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.4.attention.self.value.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.000507211738612259,
+     "std": 0.049804034308780644,
+     "kurtosis": 1.7839587485012336,
+     "ks_normal": 0.03307879422160448,
+     "ks_uniform": 0.4296477572016461,
+     "distinct_share": 0.09157,
+     "row_cv_ratio": 7.518838455870218,
+     "row_mean_ratio": 1.3512075543221451
+    },
+    {
+     "tensor": "roberta.encoder.layer.4.intermediate.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      3072
+     ],
+     "n": 3072,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.8969493407174455,
+     "std": 0.09402077260458828,
+     "kurtosis": 4.0689683350351915,
+     "ks_normal": 0.161943326752428,
+     "ks_uniform": 0.6262129314172945,
+     "distinct_share": 0.7945963541666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.4.intermediate.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      3072,
+      768
+     ],
+     "n": 2359296,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.2695378386526756,
+     "std": 0.07034911806771427,
+     "kurtosis": 4.364588721715138,
+     "ks_normal": 0.08106498351613234,
+     "ks_uniform": 0.3975803433563593,
+     "distinct_share": 0.0958,
+     "row_cv_ratio": 15.168183003167107,
+     "row_mean_ratio": 5.480269767308355
+    },
+    {
+     "tensor": "roberta.encoder.layer.4.output.LayerNorm.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.039459918341731785,
+     "std": 0.041551906475464875,
+     "kurtosis": 85.32070707269459,
+     "ks_normal": 0.17281215299977132,
+     "ks_uniform": 0.4394969512195122,
+     "distinct_share": 0.95703125
+    },
+    {
+     "tensor": "roberta.encoder.layer.4.output.LayerNorm.weight",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 4.115771922873447,
+     "std": 0.15397863476385298,
+     "kurtosis": -1.0776626810437382,
+     "ks_normal": 0.15608819703025978,
+     "ks_uniform": 0.35224197749324004,
+     "distinct_share": 0.6067708333333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.4.output.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.03065779271415596,
+     "std": 0.08297524179535891,
+     "kurtosis": 5.326388029755703,
+     "ks_normal": 0.07006494019866791,
+     "ks_uniform": 0.34613218221172765,
+     "distinct_share": 0.9700520833333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.4.output.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      3072
+     ],
+     "n": 2359296,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.0035322661774280346,
+     "std": 0.05947103931396287,
+     "kurtosis": 4.745966698898333,
+     "ks_normal": 0.06916600120624117,
+     "ks_uniform": 0.39663545789043336,
+     "distinct_share": 0.097615,
+     "row_cv_ratio": 32.027535771134545,
+     "row_mean_ratio": 2.3096325059670506
+    },
+    {
+     "tensor": "roberta.encoder.layer.5.attention.output.LayerNorm.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -1.727225292859928,
+     "std": 0.06906016527169041,
+     "kurtosis": 62.02320649123784,
+     "ks_normal": 0.21390219628692472,
+     "ks_uniform": 0.4785850971778488,
+     "distinct_share": 0.7486979166666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.5.attention.output.LayerNorm.weight",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 3.0876839793115547,
+     "std": 0.2531026427986913,
+     "kurtosis": -0.38575240133548183,
+     "ks_normal": 0.1999448388759938,
+     "ks_uniform": 0.3925076568389877,
+     "distinct_share": 0.5885416666666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.5.attention.output.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.06451571665124772,
+     "std": 0.08494306633812124,
+     "kurtosis": 5.052312783059568,
+     "ks_normal": 0.11717846717979116,
+     "ks_uniform": 0.3337628567457376,
+     "distinct_share": 0.9752604166666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.5.attention.output.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.0008989137551845223,
+     "std": 0.060697333558065544,
+     "kurtosis": 9.63100325755481,
+     "ks_normal": 0.12013470264060722,
+     "ks_uniform": 0.4318117417951759,
+     "distinct_share": 0.1062,
+     "row_cv_ratio": 30.005407105076287,
+     "row_mean_ratio": 1.0923627816194132
+    },
+    {
+     "tensor": "roberta.encoder.layer.5.attention.self.key.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.01682813426760748,
+     "std": 0.005187842638694353,
+     "kurtosis": 142.32874229874818,
+     "ks_normal": 0.3976736575752261,
+     "ks_uniform": 0.548828939820609,
+     "distinct_share": 0.9583333333333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.5.attention.self.key.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.0003532558063815215,
+     "std": 0.0657162955278935,
+     "kurtosis": 4.228788111240687,
+     "ks_normal": 0.03229664388499537,
+     "ks_uniform": 0.40042012886597933,
+     "distinct_share": 0.091045,
+     "row_cv_ratio": 4.660610777520353,
+     "row_mean_ratio": 0.91423394030522
+    },
+    {
+     "tensor": "roberta.encoder.layer.5.attention.self.query.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.003779567423936881,
+     "std": 0.23235165842703115,
+     "kurtosis": 0.09906654966342865,
+     "ks_normal": 0.045150799288977,
+     "ks_uniform": 0.14002594264892276,
+     "distinct_share": 0.9283854166666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.5.attention.self.query.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.0012827143972455612,
+     "std": 0.06409047278655583,
+     "kurtosis": 1.5715417091641815,
+     "ks_normal": 0.024589948909322756,
+     "ks_uniform": 0.3583106461324687,
+     "distinct_share": 0.08956,
+     "row_cv_ratio": 4.446879561155008,
+     "row_mean_ratio": 1.3419178545323198
+    },
+    {
+     "tensor": "roberta.encoder.layer.5.attention.self.value.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.0006832105503333011,
+     "std": 0.043917024689063104,
+     "kurtosis": 13.78140528602989,
+     "ks_normal": 0.14302758538941468,
+     "ks_uniform": 0.3688457718501703,
+     "distinct_share": 0.9557291666666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.5.attention.self.value.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.0015703790282720455,
+     "std": 0.05402026313238369,
+     "kurtosis": 2.298253722255577,
+     "ks_normal": 0.04267141601622193,
+     "ks_uniform": 0.3709947274184928,
+     "distinct_share": 0.093305,
+     "row_cv_ratio": 7.491761878797032,
+     "row_mean_ratio": 0.6737811471727166
+    },
+    {
+     "tensor": "roberta.encoder.layer.5.intermediate.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      3072
+     ],
+     "n": 3072,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.8148509381120673,
+     "std": 0.11108750620031549,
+     "kurtosis": 2.305401723328133,
+     "ks_normal": 0.2092485496789772,
+     "ks_uniform": 0.5015507262632699,
+     "distinct_share": 0.8001302083333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.5.intermediate.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      3072,
+      768
+     ],
+     "n": 2359296,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.27537899922485365,
+     "std": 0.06784161177944888,
+     "kurtosis": 5.0590214674748815,
+     "ks_normal": 0.0804907554507528,
+     "ks_uniform": 0.36964637757160146,
+     "distinct_share": 0.09571,
+     "row_cv_ratio": 15.704985985453906,
+     "row_mean_ratio": 5.767254880488718
+    },
+    {
+     "tensor": "roberta.encoder.layer.5.output.LayerNorm.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.6372608173519575,
+     "std": 0.038002899737720516,
+     "kurtosis": 102.1419450200437,
+     "ks_normal": 0.1707001053692903,
+     "ks_uniform": 0.472101076007326,
+     "distinct_share": 0.9153645833333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.5.output.LayerNorm.weight",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 4.217167687237696,
+     "std": 0.1501333480705054,
+     "kurtosis": -1.0590843318277992,
+     "ks_normal": 0.14173958551701804,
+     "ks_uniform": 0.33628400272224934,
+     "distinct_share": 0.6354166666666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.5.output.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.04002402481449254,
+     "std": 0.08314521165704025,
+     "kurtosis": 3.632037265696696,
+     "ks_normal": 0.06888414040541313,
+     "ks_uniform": 0.3717995216436637,
+     "distinct_share": 0.96875
+    },
+    {
+     "tensor": "roberta.encoder.layer.5.output.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      3072
+     ],
+     "n": 2359296,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.0016276906414025099,
+     "std": 0.056967147281233796,
+     "kurtosis": 5.785798690040691,
+     "ks_normal": 0.08332569175169846,
+     "ks_uniform": 0.4665782335329341,
+     "distinct_share": 0.10031,
+     "row_cv_ratio": 36.82761789491137,
+     "row_mean_ratio": 1.9349669248480337
+    },
+    {
+     "tensor": "roberta.encoder.layer.6.attention.output.LayerNorm.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -1.7378240487941503,
+     "std": 0.06608142232963019,
+     "kurtosis": 66.92765995914986,
+     "ks_normal": 0.18464162345766472,
+     "ks_uniform": 0.5929353349240014,
+     "distinct_share": 0.76171875
+    },
+    {
+     "tensor": "roberta.encoder.layer.6.attention.output.LayerNorm.weight",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 3.280718453820356,
+     "std": 0.23817247645075376,
+     "kurtosis": -0.26906418609704597,
+     "ks_normal": 0.17825911984687803,
+     "ks_uniform": 0.3557961568173039,
+     "distinct_share": 0.609375
+    },
+    {
+     "tensor": "roberta.encoder.layer.6.attention.output.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.017840828712841216,
+     "std": 0.09193459060886128,
+     "kurtosis": 2.8548679192741844,
+     "ks_normal": 0.09484354977302686,
+     "ks_uniform": 0.3389222756410257,
+     "distinct_share": 0.9752604166666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.6.attention.output.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.0017359571656816826,
+     "std": 0.05800092916689,
+     "kurtosis": 10.643768793322232,
+     "ks_normal": 0.12874740659017428,
+     "ks_uniform": 0.372843615819209,
+     "distinct_share": 0.10637,
+     "row_cv_ratio": 30.952028551931413,
+     "row_mean_ratio": 1.0595333216766945
+    },
+    {
+     "tensor": "roberta.encoder.layer.6.attention.self.key.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.006987951899008918,
+     "std": 0.008691048895498639,
+     "kurtosis": 96.17925092224904,
+     "ks_normal": 0.391009784601992,
+     "ks_uniform": 0.5990695015781848,
+     "distinct_share": 0.98046875
+    },
+    {
+     "tensor": "roberta.encoder.layer.6.attention.self.key.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.0035674760805152997,
+     "std": 0.07207488017592825,
+     "kurtosis": 2.4964583988731794,
+     "ks_normal": 0.02701344798566474,
+     "ks_uniform": 0.41109999842816725,
+     "distinct_share": 0.09037,
+     "row_cv_ratio": 5.050131630104086,
+     "row_mean_ratio": 1.1673371551252623
+    },
+    {
+     "tensor": "roberta.encoder.layer.6.attention.self.query.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.04248345505627738,
+     "std": 0.21700063097534544,
+     "kurtosis": -0.28082227211495336,
+     "ks_normal": 0.040259804956255585,
+     "ks_uniform": 0.15246123120300753,
+     "distinct_share": 0.94921875
+    },
+    {
+     "tensor": "roberta.encoder.layer.6.attention.self.query.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.001958368039665166,
+     "std": 0.07080019529135638,
+     "kurtosis": 1.1625363441311931,
+     "ks_normal": 0.019858449353324176,
+     "ks_uniform": 0.3608976320624713,
+     "distinct_share": 0.089535,
+     "row_cv_ratio": 5.287773884642573,
+     "row_mean_ratio": 4.29585361150255
+    },
+    {
+     "tensor": "roberta.encoder.layer.6.attention.self.value.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.01862150452656366,
+     "std": 0.04712507419701903,
+     "kurtosis": 15.970657223368722,
+     "ks_normal": 0.13479250498506354,
+     "ks_uniform": 0.40821373641738573,
+     "distinct_share": 0.96484375
+    },
+    {
+     "tensor": "roberta.encoder.layer.6.attention.self.value.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.006740231633198052,
+     "std": 0.04970789196378752,
+     "kurtosis": 2.3611355547319555,
+     "ks_normal": 0.045768035227850945,
+     "ks_uniform": 0.3796813330354484,
+     "distinct_share": 0.09302,
+     "row_cv_ratio": 7.964682724403439,
+     "row_mean_ratio": 3.06079899350348
+    },
+    {
+     "tensor": "roberta.encoder.layer.6.intermediate.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      3072
+     ],
+     "n": 3072,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.7955557990696599,
+     "std": 0.1118752141129463,
+     "kurtosis": 2.858947772445947,
+     "ks_normal": 0.20734619369195667,
+     "ks_uniform": 0.3260666121656176,
+     "distinct_share": 0.8037109375
+    },
+    {
+     "tensor": "roberta.encoder.layer.6.intermediate.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      3072,
+      768
+     ],
+     "n": 2359296,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.2570632549830156,
+     "std": 0.06581281629319344,
+     "kurtosis": 4.789054790460533,
+     "ks_normal": 0.07313730517140105,
+     "ks_uniform": 0.3939153578049685,
+     "distinct_share": 0.094665,
+     "row_cv_ratio": 15.198471082187206,
+     "row_mean_ratio": 6.371139065132211
+    },
+    {
+     "tensor": "roberta.encoder.layer.6.output.LayerNorm.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.1768898932598362,
+     "std": 0.033837851956309346,
+     "kurtosis": 142.36701074125546,
+     "ks_normal": 0.2666750697741529,
+     "ks_uniform": 0.620977751484781,
+     "distinct_share": 0.9244791666666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.6.output.LayerNorm.weight",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 4.353404926063726,
+     "std": 0.1486059418763605,
+     "kurtosis": -0.37355161859626085,
+     "ks_normal": 0.12275687323600148,
+     "ks_uniform": 0.4034318698101932,
+     "distinct_share": 0.6276041666666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.6.output.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.05252377940127018,
+     "std": 0.0891416014845066,
+     "kurtosis": 2.834855223736871,
+     "ks_normal": 0.06795087607466954,
+     "ks_uniform": 0.31307613199615664,
+     "distinct_share": 0.9674479166666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.6.output.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      3072
+     ],
+     "n": 2359296,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.0007707046441291336,
+     "std": 0.056512344420951766,
+     "kurtosis": 8.249080560511342,
+     "ks_normal": 0.08538326481675113,
+     "ks_uniform": 0.42750539651837527,
+     "distinct_share": 0.099805,
+     "row_cv_ratio": 39.75686472908248,
+     "row_mean_ratio": 1.9896151807139266
+    },
+    {
+     "tensor": "roberta.encoder.layer.7.attention.output.LayerNorm.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -1.7855007883632341,
+     "std": 0.061654003614678696,
+     "kurtosis": 162.35306400180323,
+     "ks_normal": 0.23828421496051203,
+     "ks_uniform": 0.6930135091145834,
+     "distinct_share": 0.7252604166666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.7.attention.output.LayerNorm.weight",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 3.5720788453356387,
+     "std": 0.22595606503672944,
+     "kurtosis": 0.2280712562216789,
+     "ks_normal": 0.19428756507138067,
+     "ks_uniform": 0.3998137365389432,
+     "distinct_share": 0.5872395833333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.7.attention.output.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.012946202274275497,
+     "std": 0.0680733278782402,
+     "kurtosis": 9.75723657337523,
+     "ks_normal": 0.12136535567418597,
+     "ks_uniform": 0.34681885424331615,
+     "distinct_share": 0.9778645833333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.7.attention.output.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.00479765833279811,
+     "std": 0.05375792035147687,
+     "kurtosis": 11.713455455323746,
+     "ks_normal": 0.09989455899479907,
+     "ks_uniform": 0.42129363504496664,
+     "distinct_share": 0.102145,
+     "row_cv_ratio": 25.1566144647837,
+     "row_mean_ratio": 1.0803077065985893
+    },
+    {
+     "tensor": "roberta.encoder.layer.7.attention.self.key.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.0028384036076039786,
+     "std": 0.010804523566546449,
+     "kurtosis": 89.7183248369653,
+     "ks_normal": 0.3714077785275849,
+     "ks_uniform": 0.4553581922896098,
+     "distinct_share": 0.9752604166666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.7.attention.self.key.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.001955020172220987,
+     "std": 0.06874578334820497,
+     "kurtosis": 3.060768215925057,
+     "ks_normal": 0.03448560125227598,
+     "ks_uniform": 0.3814339409905163,
+     "distinct_share": 0.0916,
+     "row_cv_ratio": 4.037104152400955,
+     "row_mean_ratio": 0.8593527421960315
+    },
+    {
+     "tensor": "roberta.encoder.layer.7.attention.self.query.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.009569158601425543,
+     "std": 0.24686448711183112,
+     "kurtosis": -0.5871201798614272,
+     "ks_normal": 0.038990803952882014,
+     "ks_uniform": 0.11129153603498987,
+     "distinct_share": 0.9583333333333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.7.attention.self.query.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.0017221956962420835,
+     "std": 0.06772131350126684,
+     "kurtosis": 1.7108168068700573,
+     "ks_normal": 0.02706015563391495,
+     "ks_uniform": 0.35965901343214446,
+     "distinct_share": 0.089985,
+     "row_cv_ratio": 3.8646941332736446,
+     "row_mean_ratio": 1.5347668356675312
+    },
+    {
+     "tensor": "roberta.encoder.layer.7.attention.self.value.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.014622729093499449,
+     "std": 0.017146697832335703,
+     "kurtosis": 8.365778869455987,
+     "ks_normal": 0.0856975808089849,
+     "ks_uniform": 0.40110395311313585,
+     "distinct_share": 0.9700520833333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.7.attention.self.value.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.0010378554009175455,
+     "std": 0.050792059573064936,
+     "kurtosis": 2.99374150426796,
+     "ks_normal": 0.05375028444467134,
+     "ks_uniform": 0.37264466590519707,
+     "distinct_share": 0.09484,
+     "row_cv_ratio": 8.438927032659471,
+     "row_mean_ratio": 0.27807909866415054
+    },
+    {
+     "tensor": "roberta.encoder.layer.7.intermediate.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      3072
+     ],
+     "n": 3072,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.8529384922655231,
+     "std": 0.12433797426221975,
+     "kurtosis": 1.313002658212696,
+     "ks_normal": 0.19057437590317416,
+     "ks_uniform": 0.36688809645443465,
+     "distinct_share": 0.8115234375
+    },
+    {
+     "tensor": "roberta.encoder.layer.7.intermediate.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      3072,
+      768
+     ],
+     "n": 2359296,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.2683533048930535,
+     "std": 0.06273537553656464,
+     "kurtosis": 4.291779440198559,
+     "ks_normal": 0.06428292302944327,
+     "ks_uniform": 0.39345505638340716,
+     "distinct_share": 0.0938,
+     "row_cv_ratio": 13.182924671012799,
+     "row_mean_ratio": 5.539040228226214
+    },
+    {
+     "tensor": "roberta.encoder.layer.7.output.LayerNorm.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.4296058294752338,
+     "std": 0.0379119747342658,
+     "kurtosis": 81.2380733191798,
+     "ks_normal": 0.24154117883583848,
+     "ks_uniform": 0.5052468501780334,
+     "distinct_share": 0.9361979166666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.7.output.LayerNorm.weight",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 4.358257728998771,
+     "std": 0.16037905553074333,
+     "kurtosis": -1.162222423045457,
+     "ks_normal": 0.13303073706992163,
+     "ks_uniform": 0.40768001895796563,
+     "distinct_share": 0.6419270833333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.7.output.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.08311923347284839,
+     "std": 0.08067034530231128,
+     "kurtosis": 1.9470198569334185,
+     "ks_normal": 0.03281472212141978,
+     "ks_uniform": 0.41717111751271674,
+     "distinct_share": 0.9583333333333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.7.output.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      3072
+     ],
+     "n": 2359296,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.00339556384129434,
+     "std": 0.054610651886273454,
+     "kurtosis": 7.6064273878020305,
+     "ks_normal": 0.07867036660556914,
+     "ks_uniform": 0.4919289931545921,
+     "distinct_share": 0.098135,
+     "row_cv_ratio": 38.67916274528065,
+     "row_mean_ratio": 1.757026522601783
+    },
+    {
+     "tensor": "roberta.encoder.layer.8.attention.output.LayerNorm.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.9379135092459688,
+     "std": 0.06646671556822609,
+     "kurtosis": 23.386530971680987,
+     "ks_normal": 0.12020168984239932,
+     "ks_uniform": 0.509020618556701,
+     "distinct_share": 0.890625
+    },
+    {
+     "tensor": "roberta.encoder.layer.8.attention.output.LayerNorm.weight",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 3.010161014259708,
+     "std": 0.2534360328896919,
+     "kurtosis": -0.3708104887138677,
+     "ks_normal": 0.17343547460701625,
+     "ks_uniform": 0.3412570965993381,
+     "distinct_share": 0.609375
+    },
+    {
+     "tensor": "roberta.encoder.layer.8.attention.output.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.048203389892152365,
+     "std": 0.08264261592296064,
+     "kurtosis": 3.9840683664999004,
+     "ks_normal": 0.09650407729558716,
+     "ks_uniform": 0.33327736514959966,
+     "distinct_share": 0.9700520833333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.8.attention.output.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.0023185228856229417,
+     "std": 0.05744087033247849,
+     "kurtosis": 13.568752214921233,
+     "ks_normal": 0.12309204213715452,
+     "ks_uniform": 0.40678086617583364,
+     "distinct_share": 0.10461,
+     "row_cv_ratio": 32.321943415257465,
+     "row_mean_ratio": 0.9565299556137592
+    },
+    {
+     "tensor": "roberta.encoder.layer.8.attention.self.key.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.005211940022182026,
+     "std": 0.018960890958631568,
+     "kurtosis": 144.25336001413422,
+     "ks_normal": 0.4168546741577437,
+     "ks_uniform": 0.6811357041173893,
+     "distinct_share": 0.9596354166666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.8.attention.self.key.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -4.242855943204172e-05,
+     "std": 0.07005994743489256,
+     "kurtosis": 2.5958604792702946,
+     "ks_normal": 0.03002666953033084,
+     "ks_uniform": 0.37544960977388764,
+     "distinct_share": 0.091555,
+     "row_cv_ratio": 5.019994299208452,
+     "row_mean_ratio": 0.9233746635268163
+    },
+    {
+     "tensor": "roberta.encoder.layer.8.attention.self.query.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.008665947796088817,
+     "std": 0.20761747659000993,
+     "kurtosis": -0.03834353046219263,
+     "ks_normal": 0.027947856197985677,
+     "ks_uniform": 0.1609670047207553,
+     "distinct_share": 0.9427083333333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.8.attention.self.query.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.002132794655878785,
+     "std": 0.06949359459572714,
+     "kurtosis": 1.3573076366381942,
+     "ks_normal": 0.02477628233853124,
+     "ks_uniform": 0.36223537772087067,
+     "distinct_share": 0.08976,
+     "row_cv_ratio": 5.19295612656749,
+     "row_mean_ratio": 3.783165935976539
+    },
+    {
+     "tensor": "roberta.encoder.layer.8.attention.self.value.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.03865111223754711,
+     "std": 0.01994398414373362,
+     "kurtosis": 14.325446041531713,
+     "ks_normal": 0.11005363771213204,
+     "ks_uniform": 0.41446645010744027,
+     "distinct_share": 0.96875
+    },
+    {
+     "tensor": "roberta.encoder.layer.8.attention.self.value.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.0017078042309282549,
+     "std": 0.051030987188335986,
+     "kurtosis": 2.9478882250130853,
+     "ks_normal": 0.050872563001108734,
+     "ks_uniform": 0.35664459946792787,
+     "distinct_share": 0.09501,
+     "row_cv_ratio": 9.117651710757256,
+     "row_mean_ratio": 0.8485444764148399
+    },
+    {
+     "tensor": "roberta.encoder.layer.8.intermediate.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      3072
+     ],
+     "n": 3072,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.7777293211926741,
+     "std": 0.12749705715785986,
+     "kurtosis": 2.1043556777220616,
+     "ks_normal": 0.17711173058769136,
+     "ks_uniform": 0.4211459409435261,
+     "distinct_share": 0.8193359375
+    },
+    {
+     "tensor": "roberta.encoder.layer.8.intermediate.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      3072,
+      768
+     ],
+     "n": 2359296,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.21665087727207105,
+     "std": 0.061395195179296036,
+     "kurtosis": 3.702682322516459,
+     "ks_normal": 0.06032647160859134,
+     "ks_uniform": 0.3697522222222222,
+     "distinct_share": 0.09344,
+     "row_cv_ratio": 12.472708291566423,
+     "row_mean_ratio": 4.557459427551684
+    },
+    {
+     "tensor": "roberta.encoder.layer.8.output.LayerNorm.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.8151864290523011,
+     "std": 0.035441961298872345,
+     "kurtosis": 51.452799453452315,
+     "ks_normal": 0.16618792260054727,
+     "ks_uniform": 0.4295104679802956,
+     "distinct_share": 0.8854166666666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.8.output.LayerNorm.weight",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 4.428469054733621,
+     "std": 0.15798290199331702,
+     "kurtosis": -0.9835726815858052,
+     "ks_normal": 0.11176617156913504,
+     "ks_uniform": 0.40209747817652763,
+     "distinct_share": 0.6497395833333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.8.output.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.07433749708501018,
+     "std": 0.08150371301480014,
+     "kurtosis": 2.9497422032051075,
+     "ks_normal": 0.03136628263032015,
+     "ks_uniform": 0.4409409811482434,
+     "distinct_share": 0.95703125
+    },
+    {
+     "tensor": "roberta.encoder.layer.8.output.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      3072
+     ],
+     "n": 2359296,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.0032298911917346272,
+     "std": 0.05489779516846946,
+     "kurtosis": 7.054602525548342,
+     "ks_normal": 0.06784476372037451,
+     "ks_uniform": 0.530421107205624,
+     "distinct_share": 0.097045,
+     "row_cv_ratio": 36.56284236508646,
+     "row_mean_ratio": 1.7999029677602065
+    },
+    {
+     "tensor": "roberta.encoder.layer.9.attention.output.LayerNorm.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 1.2625925174782664,
+     "std": 0.054992443060262367,
+     "kurtosis": 108.92953689326269,
+     "ks_normal": 0.14498385147012455,
+     "ks_uniform": 0.6629377540650407,
+     "distinct_share": 0.8333333333333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.9.attention.output.LayerNorm.weight",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 3.4596933096401807,
+     "std": 0.2227394007585374,
+     "kurtosis": -0.5369203840032326,
+     "ks_normal": 0.15120617997593377,
+     "ks_uniform": 0.2968771923950202,
+     "distinct_share": 0.66796875
+    },
+    {
+     "tensor": "roberta.encoder.layer.9.attention.output.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.030296150800670926,
+     "std": 0.0976336455320438,
+     "kurtosis": 0.9679843283179532,
+     "ks_normal": 0.059708393846221786,
+     "ks_uniform": 0.3130120945190157,
+     "distinct_share": 0.9583333333333334
+    },
+    {
+     "tensor": "roberta.encoder.layer.9.attention.output.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.0011436723555510184,
+     "std": 0.04514300059109825,
+     "kurtosis": 10.167812152868766,
+     "ks_normal": 0.06963697388849685,
+     "ks_uniform": 0.42689036321483775,
+     "distinct_share": 0.096705,
+     "row_cv_ratio": 19.48571020924771,
+     "row_mean_ratio": 0.9916348948996532
+    },
+    {
+     "tensor": "roberta.encoder.layer.9.attention.self.key.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.0024613026133983376,
+     "std": 0.018983848871572475,
+     "kurtosis": 106.36844880017242,
+     "ks_normal": 0.4062909092219785,
+     "ks_uniform": 0.5654546522556391,
+     "distinct_share": 0.91796875
+    },
+    {
+     "tensor": "roberta.encoder.layer.9.attention.self.key.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.003555152145899131,
+     "std": 0.07118520276869605,
+     "kurtosis": 2.371074853249353,
+     "ks_normal": 0.02579320880174024,
+     "ks_uniform": 0.3746736127744511,
+     "distinct_share": 0.089905,
+     "row_cv_ratio": 3.733848029883686,
+     "row_mean_ratio": 1.2546717592994354
+    },
+    {
+     "tensor": "roberta.encoder.layer.9.attention.self.query.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.03209839613355382,
+     "std": 0.21694287353112662,
+     "kurtosis": -0.3194916612617402,
+     "ks_normal": 0.033546102844506764,
+     "ks_uniform": 0.1369588549189536,
+     "distinct_share": 0.96875
+    },
+    {
+     "tensor": "roberta.encoder.layer.9.attention.self.query.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.010895071841891358,
+     "std": 0.071449293307241,
+     "kurtosis": 1.3196593219386266,
+     "ks_normal": 0.018110999187275656,
+     "ks_uniform": 0.3903316977225673,
+     "distinct_share": 0.08862,
+     "row_cv_ratio": 3.7728429285313454,
+     "row_mean_ratio": 4.9914067548941485
+    },
+    {
+     "tensor": "roberta.encoder.layer.9.attention.self.value.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.01609815752576176,
+     "std": 0.03235129261055284,
+     "kurtosis": 34.73056673365354,
+     "ks_normal": 0.16022673849704283,
+     "ks_uniform": 0.48419438931829256,
+     "distinct_share": 0.96484375
+    },
+    {
+     "tensor": "roberta.encoder.layer.9.attention.self.value.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.00039110609337660994,
+     "std": 0.04556845983760161,
+     "kurtosis": 2.2832048052953047,
+     "ks_normal": 0.04290653114249238,
+     "ks_uniform": 0.3778352016985138,
+     "distinct_share": 0.09401,
+     "row_cv_ratio": 8.094159285416398,
+     "row_mean_ratio": 2.392992409767665
+    },
+    {
+     "tensor": "roberta.encoder.layer.9.intermediate.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      3072
+     ],
+     "n": 3072,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.7587899264776792,
+     "std": 0.1136607989736676,
+     "kurtosis": 2.1353546741838807,
+     "ks_normal": 0.14310361751787437,
+     "ks_uniform": 0.28929717165039326,
+     "distinct_share": 0.833984375
+    },
+    {
+     "tensor": "roberta.encoder.layer.9.intermediate.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      3072,
+      768
+     ],
+     "n": 2359296,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": -0.22865724379536265,
+     "std": 0.056444202760163494,
+     "kurtosis": 3.485578904198494,
+     "ks_normal": 0.04976652090603184,
+     "ks_uniform": 0.38619780357903705,
+     "distinct_share": 0.09196,
+     "row_cv_ratio": 11.438913436277211,
+     "row_mean_ratio": 5.312658768586903
+    },
+    {
+     "tensor": "roberta.encoder.layer.9.output.LayerNorm.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.9031707226419085,
+     "std": 0.036606106497238534,
+     "kurtosis": 131.73429315212692,
+     "ks_normal": 0.16889593431777034,
+     "ks_uniform": 0.6206492279894875,
+     "distinct_share": 0.8828125
+    },
+    {
+     "tensor": "roberta.encoder.layer.9.output.LayerNorm.weight",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 6.487425851088198,
+     "std": 0.1167540520538601,
+     "kurtosis": -0.9566050302379532,
+     "ks_normal": 0.1170754642081645,
+     "ks_uniform": 0.13832321287519744,
+     "distinct_share": 0.62890625
+    },
+    {
+     "tensor": "roberta.encoder.layer.9.output.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.03946660817807812,
+     "std": 0.07639857274816704,
+     "kurtosis": 3.6500882693724916,
+     "ks_normal": 0.025327963413924404,
+     "ks_uniform": 0.45444983818770235,
+     "distinct_share": 0.9557291666666666
+    },
+    {
+     "tensor": "roberta.encoder.layer.9.output.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      3072
+     ],
+     "n": 2359296,
+     "flags": [],
+     "component": "roberta.encoder.layer",
+     "component_flagged": 0.0,
+     "component_tensors": 192,
+     "mean_over_std": 0.0023352615965109205,
+     "std": 0.053571805984126086,
+     "kurtosis": 4.923371471416913,
+     "ks_normal": 0.052530382345582494,
+     "ks_uniform": 0.4121563782866836,
+     "distinct_share": 0.09417,
+     "row_cv_ratio": 30.520471786242645,
+     "row_mean_ratio": 1.3026392188477096
+    },
+    {
+     "tensor": "roberta.pooler.dense.bias",
+     "dtype": "F32",
+     "shape": [
+      768
+     ],
+     "n": 768,
+     "flags": [],
+     "component": "roberta.pooler.dense",
+     "component_flagged": 0.5,
+     "component_tensors": 2,
+     "mean_over_std": null,
+     "std": 0.0
+    },
+    {
+     "tensor": "roberta.pooler.dense.weight",
+     "dtype": "F32",
+     "shape": [
+      768,
+      768
+     ],
+     "n": 589824,
+     "flags": [
+      "S3:precision-anomaly",
+      "S4:lowbit-anomaly"
+     ],
+     "component": "roberta.pooler.dense",
+     "component_flagged": 0.5,
+     "component_tensors": 2,
+     "mean_over_std": -0.0001099840355600381,
+     "std": 0.020020958873914304,
+     "kurtosis": 0.010200212242987838,
+     "ks_normal": 0.0017904111690831837,
+     "ks_uniform": 0.27353796798886565,
+     "distinct_share": 0.085275,
+     "row_cv_ratio": 1.0282939093956611,
+     "row_mean_ratio": 1.0190835799130267
+    }
+   ]
+  }
+ ]
+}

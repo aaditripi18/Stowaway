@@ -26,7 +26,10 @@ DATASET = "stowaway-code"
 JOBS = {"e10a": ("stowaway-e10-whole-files", "scripts/run_e10a.py"),
         "e8": ("stowaway-e8-base-discovery", "scripts/run_e8.py"),
         "e11rec": ("stowaway-e11-window-counts", "scripts/run_e11_record.py"),
-        "e11": ("stowaway-e11-windowed-s4", "scripts/run_e11.py")}
+        "e11": ("stowaway-e11-windowed-s4", "scripts/run_e11.py"),
+        "e14dev": ("stowaway-e14-dev", "scripts/e14_dev.py"),
+        "e15": ("stowaway-e15-base-closeness", "scripts/run_e15.py")}
+DEV_FILES = ("e14_dev.json",)  # dev statistics (not ledger lines) a job writes to results/
 LEDGER = ROOT / "results" / "ledger.jsonl"
 
 NOTEBOOK = r'''
@@ -43,6 +46,9 @@ subprocess.run([sys.executable, SCRIPT], cwd=work, check=False)
 new = ledger.read_text(encoding="utf-8").splitlines()[n0:]
 pathlib.Path("/kaggle/working/new_ledger_lines.jsonl").write_text("\n".join(new) + "\n", encoding="utf-8")
 print(len(new), "new ledger lines", flush=True)
+for name in DEV_FILES:
+    if (work / "results" / name).exists():
+        shutil.copy2(work / "results" / name, pathlib.Path("/kaggle/working") / name)
 shutil.rmtree(work)
 '''
 
@@ -97,7 +103,7 @@ def push() -> str:
 
 def notebook_source(job: str, sha: str) -> str:
     """The script Kaggle runs for one experiment (tests/test_kaggle_e10.py: it must define SCRIPT)."""
-    return f"# Stowaway {job}, code {sha}\nSCRIPT = {JOBS[job][1]!r}\n" + NOTEBOOK
+    return f"# Stowaway {job}, code {sha}\nSCRIPT = {JOBS[job][1]!r}\nDEV_FILES = {DEV_FILES!r}\n" + NOTEBOOK
 
 
 def run(job: str) -> None:
@@ -121,6 +127,11 @@ def status(job: str) -> None:
 def pull(job: str) -> None:
     with tempfile.TemporaryDirectory() as d:
         kaggle("kernels", "output", f"{USER}/{JOBS[job][0]}", "-p", d)
+        for name in DEV_FILES:
+            got = [p for p in Path(d).iterdir() if p.name == name]
+            if got:
+                (ROOT / "results" / name).write_bytes(got[0].read_bytes())
+                print(f"wrote results/{name}")
         f = next(Path(d).rglob("new_ledger_lines.jsonl"), None)
         if f is not None:
             new = [ln for ln in f.read_text(encoding="utf-8").splitlines() if ln.strip()]
@@ -130,7 +141,7 @@ def pull(job: str) -> None:
             led = next(Path(d).rglob("Stowaway/results/ledger.jsonl"), None)
             if led is None:
                 sys.exit(f"no ledger in the output ({[p.name for p in Path(d).rglob('*')][:20]})")
-            exp = {"e10a": "E10a", "e8": "E8", "e11rec": "E11rec", "e11": "E11"}[job]
+            exp = {"e10a": "E10a", "e8": "E8", "e11rec": "E11rec", "e11": "E11", "e14dev": "-", "e15": "E15"}[job]
             new = [ln for ln in led.read_text(encoding="utf-8").splitlines()
                    if ln.strip() and json.loads(ln).get("experiment") == exp]
             print(f"session did not finish: recovered {len(new)} {exp} lines from its working ledger")

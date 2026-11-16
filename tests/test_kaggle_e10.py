@@ -15,5 +15,6 @@ def test_every_job_notebook_defines_what_it_uses():
                  if isinstance(n, (ast.Import, ast.ImportFrom)) for a in n.names}
         bound |= {t.id for n in ast.walk(tree) if isinstance(n, ast.Assign) for t in n.targets
                   if isinstance(t, ast.Name)}
+        bound |= {n.target.id for n in ast.walk(tree) if isinstance(n, ast.For) and isinstance(n.target, ast.Name)}
         used = {n.id for n in ast.walk(tree) if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load)}
         assert used <= bound | set(dir(builtins)), used - bound
