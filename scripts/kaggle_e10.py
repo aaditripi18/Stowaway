@@ -127,7 +127,7 @@ def status(job: str) -> None:
 def pull(job: str) -> None:
     with tempfile.TemporaryDirectory() as d:
         kaggle("kernels", "output", f"{USER}/{JOBS[job][0]}", "-p", d)
-        for name in DEV_FILES:
+        for name in DEV_FILES if job.endswith("dev") else ():  # only the dev job's copy is new
             got = [p for p in Path(d).iterdir() if p.name == name]
             if got:
                 (ROOT / "results" / name).write_bytes(got[0].read_bytes())
