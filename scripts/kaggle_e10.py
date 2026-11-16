@@ -131,7 +131,8 @@ def pull(job: str) -> None:
     with tempfile.TemporaryDirectory() as d:
         kaggle("kernels", "output", f"{USER}/{JOBS[job][0]}", "-p", d)
         for name in [OWN_DEV[job]] if job in OWN_DEV else []:  # only the job's own dev file is new
-            got = [p for p in Path(d).iterdir() if p.name == name]
+            # a session stopped by the time limit leaves the file only in its working copy
+            got = [p for p in Path(d).iterdir() if p.name == name] or list(Path(d).rglob(f"Stowaway/results/{name}"))
             if got:
                 (ROOT / "results" / name).write_bytes(got[0].read_bytes())
                 print(f"wrote results/{name}")
