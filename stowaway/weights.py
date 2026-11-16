@@ -342,6 +342,44 @@ S5_MIN_CHANGED = 1
 # None = S5c alone. Adopted by E13 on 25 fresh pairs (H17: an honest flag in 1 pair; H18: all
 # 48 base-matching payload catches kept, the thin payload caught in 30/30 models in both cases).
 S5_ABOVE_MAX: float | None = 0.02
+# E15 (PLAN.md, phase 5): is the base a close relative? S5 reports the median cosine between the
+# aligned float tensors (>= MIN_ELEMENTS) and how many are identical; below S5_CLOSE_MIN it adds a
+# `base-not-close` finding, because against a base that is not the model's parent almost every
+# element differs above the low bits and S5's silence means nothing. Off until E15 is judged.
+S5_BASE_CHECK = False
+S5_CLOSE_MIN = 0.9  # E8's discovery bar: true parents and mirrors >= 0.971, not-close bases <= 0.254
+
+
+def _closeness(a: RawTensor, b: RawTensor) -> tuple[float | None, bool] | None:
+    """(cosine rounded to 4 decimals, identical) for an aligned pair S5 compares, else None."""
+    if a.dtype != b.dtype or a.data.shape != b.data.shape or a.data.size < MIN_ELEMENTS:
+        return None
+    if np.array_equal(a.data, b.data):
+        return 1.0, True
+    x = a.to_float32().astype(np.float64).ravel()
+    y = b.to_float32().astype(np.float64).ravel()
+    ok = np.isfinite(x) & np.isfinite(y)
+    x, y = x[ok], y[ok]
+    nx, ny = float(np.dot(x, x)), float(np.dot(y, y))
+    if nx == 0 or ny == 0:
+        return None, False
+    return round(float(np.dot(x, y)) / (nx * ny) ** 0.5, 4), False
+
+
+def _closeness_findings(rows: list[tuple[float | None, bool]]) -> list[Finding]:
+    cos = [c for c, _ in rows if c is not None]
+    if not S5_BASE_CHECK or not cos:
+        return []
+    med = round(float(np.median(cos)), 4)
+    same = sum(i for _, i in rows)
+    detail = {"median_cosine": med, "compared": len(cos), "identical": same, "close_min": S5_CLOSE_MIN}
+    out = [Finding("S5", "info", "base-closeness",
+                   f"median cosine with the base over {len(cos)} aligned tensors: {med}; {same} identical", detail)]
+    if med < S5_CLOSE_MIN:
+        out.append(Finding("S5", "medium", "base-not-close",
+                           f"the base is not a close relative of this model (median cosine {med} < {S5_CLOSE_MIN}): "
+                           f"S5 can only see a payload in the {same} tensor(s) identical to it", detail))
+    return out
 
 
 def _highest_changed_bit(xor: np.ndarray, mant_bits: int) -> np.ndarray:
@@ -371,11 +409,16 @@ def s5_differential(floats: dict[str, RawTensor], base: dict[str, RawTensor]) ->
                                 "the base model shares no tensor names with this model"))
         return findings
 
+    close = []
     for name in shared:
         f = _s5_tensor(name, floats[name], base[pairing.get(name, name)])
         if f is not None:
             findings.append(f)
-    return findings
+        if S5_BASE_CHECK:
+            c = _closeness(floats[name], base[pairing.get(name, name)])
+            if c is not None:
+                close.append(c)
+    return findings + _closeness_findings(close)
 
 
 def _s5_tensor(name: str, a: RawTensor, b: RawTensor) -> Finding | None:
@@ -490,6 +533,7 @@ def analyse(mf: ModelFile, f, base: "dict[str, RawTensor] | BaseFile | None" = N
     s5: list[tuple[str, Finding]] = []
     windowed: list[Finding] = []
     shared = 0
+    close = []
     infos = _float_infos(mf)
     pairing, dm, db = {}, 0, 0
     if isinstance(base, BaseFile):
@@ -508,6 +552,10 @@ def analyse(mf: ModelFile, f, base: "dict[str, RawTensor] | BaseFile | None" = N
                 found = _s5_tensor(name, a, b)
                 if found is not None:
                     s5.append((name, found))
+                if S5_BASE_CHECK:
+                    c = _closeness(a, b)
+                    if c is not None:
+                        close.append(c)
         del a
     if not sums:
         return []
@@ -524,7 +572,7 @@ def analyse(mf: ModelFile, f, base: "dict[str, RawTensor] | BaseFile | None" = N
             findings.append(Finding("S5", "info", "no-shared-tensors",
                                     "the base model shares no tensor names with this model"))
         else:
-            findings += [x for _, x in sorted(s5, key=lambda p: p[0])]
+            findings += [x for _, x in sorted(s5, key=lambda p: p[0])] + _closeness_findings(close)
     return findings
 
 

@@ -510,3 +510,55 @@ case (a) 48 / 48 of S5c's catches kept; thin payload caught in 30 / 30 models in
 adopted in both cores (`S5_ABOVE_MAX = 0.02`), with a parity fixture (`web/fixtures/s5/gain`).
 The fresh pairs had no LayerNorm-type flag for S5d to remove; its effect on those is shown on the
 dev pairs (56 honest tensors in 4 pairs to 0).
+
+## Phase 5 (written 2026-11-16, before the runs it governs)
+
+Three items FINDINGS lists as not yet tested: whether a declared base is a close enough relative
+for S5 to mean anything (E15), whether a rule can tell a never-trained tensor from a payload
+(E14), and whether S3/S4 see a payload written to keep each tensor's bit statistics (E16). Each
+rule is chosen on models already read and judged once on a list frozen before its weights are
+read.
+
+### E15. Is the base close enough for S5?
+
+S5 compares a model with the base it is given. Against a base that is not the model's parent or a
+close relative, almost every element differs above the low bits, so S5 flags nothing and its
+silence means nothing. The scanner does not check this today; E8 only checked that names and
+shapes match (>= 90%), and that check accepted `cross-encoder/ms-marco-MiniLM-L12-v2` as the base
+of the L4 and L6 cross-encoders at median cosines of 0.07 and 0.25 (E8; the two pairs where S5
+also flagged honest LayerNorm tensors).
+
+**Rule (fixed from E8, no fresh data read):** S5 reports the median cosine between the model's
+and the base's aligned float tensors (each tensor's cosine from a correctly rounded sum, so the
+browser build computes the same number), and the number of aligned tensors identical to the base.
+Below a median of **0.9** (E8's discovery bar; every true parent or mirror in E8 was >= 0.971,
+both declared-but-not-close bases <= 0.254) it adds a finding (`base-not-close`, medium): this
+base is not a close relative, so S5 can only see a payload in the tensors identical to it.
+
+**Fresh list (`results/e15_pairs.json`, frozen before any of its weights is read):** declared
+base pairs from Pedigree's Hub audit (its E2, 600 models, snapshot 2026-11-04), which Stowaway
+has never read: model and base both safetensors, each file <= 1.5 GB, names and shapes matching
+>= 90% by S5's alignment computed from headers only. All pairs whose declaration Pedigree's
+weight check contradicts, plus 30 of the rest drawn with seed 15. The labels come from Pedigree,
+an instrument with its own thresholds (fixed on Pedigree's development negatives), not from S5.
+*Amendment (2026-11-16, same day, before any weight of the list was read):* Pedigree's three
+contradicted declarations are a 27B model, a GGUF file and a 2 GB pythia, so the size and format
+filters would leave H19 next to empty. The negatives therefore also include every
+independent same-architecture pair of Pedigree's E1 ground truth (separately trained models of one
+architecture: bert-base cased/uncased, xlm-roberta/roberta, nine pythia-160m seeds, GPT-2
+replicas, ResNet and Whisper variants), with the same filters; the size limit for negatives is
+2.5 GB.
+
+- **H19** The `base-not-close` finding fires on every negative (a declaration Pedigree's weights
+  contradict, or an independent same-architecture model), all of which the name-and-shape check
+  alone accepts.
+- **H20** Of the fresh pairs Pedigree confirms, the finding fires on none where the model left at
+  least one tensor of >= 256 elements identical to the base (S5 has something to compare) and the
+  median cosine is >= 0.9 by Pedigree's sampled reading; every pair it fires on is reported with
+  its median cosine and identical-tensor count.
+
+*Frozen list (2026-11-16):* 19 pairs, 9 negatives and 10 confirmed (the draw ran out of candidates
+at 11; one was removed as read in E8; see the note in the file). Switch: `weights.S5_BASE_CHECK`.
+
+If H19 and H20 hold, the finding ships in both cores. Otherwise it does not, and both numbers are
+reported.
