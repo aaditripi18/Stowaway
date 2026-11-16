@@ -1,0 +1,280 @@
+{
+ "pair": {
+  "model": "Qwen/Qwen2-0.5B-Instruct",
+  "model_commit": "c540970f9e29518b1d8f06ab8b24cba66ad77b6d",
+  "base": "Qwen/Qwen2-0.5B",
+  "base_commit": "91d2aff3f957f99e4c74c962f2f408dcc88a18d8",
+  "pedigree": "related",
+  "model_file": "model.safetensors",
+  "base_file": "model.safetensors",
+  "model_bytes": 988097824,
+  "base_bytes": 988097824,
+  "name_shape_match": 1.0
+ },
+ "flagged": [
+  {
+   "tensor": "model.layers.13.post_attention_layernorm.weight",
+   "dtype": "BF16",
+   "elements": 896,
+   "changed": 1,
+   "hist_highest_bit": [
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "ulp_abs_counts": {
+    "1": 1
+   },
+   "base_value_range": [
+    0.24609375,
+    2.390625
+   ],
+   "finding": {
+    "tensor": "model.layers.13.post_attention_layernorm.weight",
+    "changed": 1,
+    "bit": 1,
+    "share": 1.0,
+    "threshold": -1.0,
+    "cutoff": 4,
+    "mantissa_bits": 7,
+    "above": 0.0
+   }
+  },
+  {
+   "tensor": "model.layers.17.input_layernorm.weight",
+   "dtype": "BF16",
+   "elements": 896,
+   "changed": 1,
+   "hist_highest_bit": [
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "ulp_abs_counts": {
+    "1": 1
+   },
+   "base_value_range": [
+    0.08544921875,
+    3.390625
+   ],
+   "finding": {
+    "tensor": "model.layers.17.input_layernorm.weight",
+    "changed": 1,
+    "bit": 1,
+    "share": 1.0,
+    "threshold": -1.0,
+    "cutoff": 4,
+    "mantissa_bits": 7,
+    "above": 0.0
+   }
+  },
+  {
+   "tensor": "model.layers.23.post_attention_layernorm.weight",
+   "dtype": "BF16",
+   "elements": 896,
+   "changed": 1,
+   "hist_highest_bit": [
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0
+   ],
+   "ulp_abs_counts": {
+    "33150": 1
+   },
+   "base_value_range": [
+    2.1576881408691406e-05,
+    7.71875
+   ],
+   "finding": {
+    "tensor": "model.layers.23.post_attention_layernorm.weight",
+    "changed": 1,
+    "bit": 2,
+    "share": 1.0,
+    "threshold": -1.0,
+    "cutoff": 4,
+    "mantissa_bits": 7,
+    "above": 0.0
+   }
+  },
+  {
+   "tensor": "model.layers.5.input_layernorm.weight",
+   "dtype": "BF16",
+   "elements": 896,
+   "changed": 3,
+   "hist_highest_bit": [
+    0,
+    1,
+    2,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "ulp_abs_counts": {
+    "1": 3
+   },
+   "base_value_range": [
+    -1.2578125,
+    3.9375
+   ],
+   "finding": {
+    "tensor": "model.layers.5.input_layernorm.weight",
+    "changed": 3,
+    "bit": 1,
+    "share": 0.6667,
+    "threshold": -0.366,
+    "cutoff": 4,
+    "mantissa_bits": 7,
+    "above": 0.0
+   }
+  },
+  {
+   "tensor": "model.layers.5.post_attention_layernorm.weight",
+   "dtype": "BF16",
+   "elements": 896,
+   "changed": 1,
+   "hist_highest_bit": [
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "ulp_abs_counts": {
+    "1": 1
+   },
+   "base_value_range": [
+    -0.052734375,
+    2.953125
+   ],
+   "finding": {
+    "tensor": "model.layers.5.post_attention_layernorm.weight",
+    "changed": 1,
+    "bit": 0,
+    "share": 1.0,
+    "threshold": -1.0,
+    "cutoff": 4,
+    "mantissa_bits": 7,
+    "above": 0.0
+   }
+  },
+  {
+   "tensor": "model.layers.6.input_layernorm.weight",
+   "dtype": "BF16",
+   "elements": 896,
+   "changed": 3,
+   "hist_highest_bit": [
+    0,
+    0,
+    3,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "ulp_abs_counts": {
+    "1": 3
+   },
+   "base_value_range": [
+    -0.828125,
+    3.96875
+   ],
+   "finding": {
+    "tensor": "model.layers.6.input_layernorm.weight",
+    "changed": 3,
+    "bit": 1,
+    "share": 1.0,
+    "threshold": -0.366,
+    "cutoff": 4,
+    "mantissa_bits": 7,
+    "above": 0.0
+   }
+  },
+  {
+   "tensor": "model.layers.8.post_attention_layernorm.weight",
+   "dtype": "BF16",
+   "elements": 896,
+   "changed": 1,
+   "hist_highest_bit": [
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "ulp_abs_counts": {
+    "1": 1
+   },
+   "base_value_range": [
+    0.2578125,
+    3.53125
+   ],
+   "finding": {
+    "tensor": "model.layers.8.post_attention_layernorm.weight",
+    "changed": 1,
+    "bit": 0,
+    "share": 1.0,
+    "threshold": -1.0,
+    "cutoff": 4,
+    "mantissa_bits": 7,
+    "above": 0.0
+   }
+  },
+  {
+   "tensor": "model.layers.9.input_layernorm.weight",
+   "dtype": "BF16",
+   "elements": 896,
+   "changed": 3,
+   "hist_highest_bit": [
+    0,
+    3,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "ulp_abs_counts": {
+    "1": 3
+   },
+   "base_value_range": [
+    -0.8046875,
+    10.75
+   ],
+   "finding": {
+    "tensor": "model.layers.9.input_layernorm.weight",
+    "changed": 3,
+    "bit": 0,
+    "share": 1.0,
+    "threshold": -0.366,
+    "cutoff": 4,
+    "mantissa_bits": 7,
+    "above": 0.0
+   }
+  }
+ ]
+}

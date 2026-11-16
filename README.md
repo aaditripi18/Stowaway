@@ -16,7 +16,7 @@ gap the other way: **where a payload cannot be detected, it removes it.**
 models (nine image models and a text classifier) that left 100.00% of
 predictions unchanged and 0 bytes of a planted 64 KB payload.
 
-> Status: phases 1-4 done. Single-file checks on 260 public Hugging Face models
+> Status: phases 1-5 done. Single-file checks on 260 public Hugging Face models
 > (a top-1000 list, three held-out batches, a random sample of the top 10,000; 67
 > scanned as whole files), S5 calibrated and validated on real fine-tune/base
 > pairs, automatic reference discovery on the 23 models a file alone cannot
@@ -25,7 +25,10 @@ predictions unchanged and 0 bytes of a planted 64 KB payload.
 > fresh list: a windowed S4 (65 fresh whole files), S5 without its size floor
 > (15 fresh pairs) and S5d (25 fresh pairs). Every hypothesis was written before
 > its run; four of phase 3's eight failed and are reported as such, all six of
-> phase 4's held.
+> phase 4's held. Phase 5 checks that a given base is close enough for S5 to mean
+> anything (E15, 19 fresh pairs labelled by
+> [Pedigree](https://github.com/aaditripi18/Pedigree)), and measured whether a
+> rule can tell a never-trained tensor from a payload (E14: not safely).
 
 ## Results
 
@@ -96,6 +99,15 @@ Phase 4 fixed what H11 and E8 exposed, each on a fresh list:
 | H16 | S4w flags a clean tensor in at most 1 fresh model | **supported**: 0 of 65 |
 | H17 | S5d flags an honest tensor in at most 1 of 25 fresh pairs | **supported**: 1 (a 1-ULP re-save, flagged by S5c too) |
 | H18 | S5d keeps >= 95% of S5c's base-matching catches and catches the thin payload in >= 95% of models | **supported**: 48 / 48; 30 / 30 and 30 / 30 |
+
+Phase 5 (E15): S5 now reports how close the base is (median cosine of the aligned
+tensors) and warns below 0.9, because against a base that is not the model's parent
+S5's silence means nothing. E8's name-and-shape check had accepted such bases.
+
+| | Hypothesis (phase 5) | Verdict |
+|---|---|---|
+| H19 | The warning fires on every independent same-architecture base, all of which pass the name-and-shape check | **supported**: 9 / 9 |
+| H20 | It fires on no confirmed parent S5 can use | **supported**: 0 of 4; it fires on 3 confirmed but distant bases (cosine 0.10-0.89), where its message is right |
 
 What the numbers say:
 
@@ -274,15 +286,25 @@ removal.
 - **A diff cannot see a payload inside a tensor training changed** (0 / 14 in
   E8): training randomises the same low bits. Again, `sanitize`.
 - **Reference discovery finds a close relative, not provenance**, and found none
-  for 2 of 20 models; it needs a same-architecture model on the Hub.
+  for 2 of 20 models; it needs a same-architecture model on the Hub. A base you
+  pass yourself is checked: below a median cosine of 0.9 the report says S5 can
+  only see the tensors identical to it (E15).
 - **Whole files flag 5 of 67 clean popular models**: tensors whose precision
   history genuinely differs from the rest of the file. A report says which tensor
-  and why; it cannot say whether the cause is benign.
+  and why; it cannot say whether the cause is benign. E14 measured whether one
+  could: a never-trained tensor's values look like a fresh random draw, but so do
+  about one in 26 trained tensors, so no rule on values can excuse the first
+  without hiding payloads in the second. `sanitize` settles it either way.
 - **A change of one unit in the last place looks like a 1-bit payload.** One of
   25 fresh honest pairs re-saved a tensor so that 8,265 elements differ in bit 0
   only; at the bit level that is what a 1-bit payload is, and S5 flags it (E13).
   The report names the tensor and the bit, so a reviewer can see it is a 1-ULP
   change; `sanitize` clears it either way.
+- **A tensor nudged by rounding looks like a tiny payload.** On a fresh pair
+  (E15), S5 flagged 8 RMSNorm weights of Qwen2-0.5B-Instruct against its true
+  parent: 1 to 3 of 896 elements each, one unit in the last place. A one-bit
+  change is what a one-bit payload is; the report shows the count and the bit,
+  and `sanitize` clears it.
 - **Inside tensors training changed, S5d catches fewer payloads than S5c** (46
   against 58 of 96 cells, E13): those are the payloads E8 showed a diff cannot
   reliably see, and `sanitize` is the answer there.

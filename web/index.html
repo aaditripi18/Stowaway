@@ -91,7 +91,7 @@
           <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-hair">
             <div class="py-space-md px-space-lg flex items-center gap-space-sm">
               <span class="w-1.5 h-1.5 rounded-full bg-primary-container shrink-0"></span>
-              <span class="font-code-md text-code-md text-on-surface font-semibold">5 checks · <span data-fact="tests.total">263</span> tests</span>
+              <span class="font-code-md text-code-md text-on-surface font-semibold">5 checks · <span data-fact="tests.total">268</span> tests</span>
             </div>
             <div class="py-space-md px-space-lg flex items-center gap-space-sm">
               <span class="w-1.5 h-1.5 rounded-full bg-outline shrink-0"></span>
@@ -441,7 +441,7 @@
 <span class="text-primary-container select-none">$ </span>python scripts/run_hf_survey.py --list hf_models.json
 <span class="text-primary-container select-none">$ </span>python scripts/report.py</div>
             </div>
-            <p class="font-body-sm text-body-sm text-outline leading-relaxed">Nothing is trained: models are downloaded pretrained and only run forward. Every run appends to <span class="font-code-sm text-code-sm">results/ledger.jsonl</span> with the git commit that produced it, and <span class="font-code-sm text-code-sm">docs/RESULTS.md</span> is generated from that ledger, never edited by hand. <span data-fact="tests.total">263</span> tests: <span data-fact="tests.py">145</span> Python, and <span data-fact="tests.ts">118</span> for the browser build, including parity tests that require byte-identical JSON reports to the Python tool on every fixture.</p>
+            <p class="font-body-sm text-body-sm text-outline leading-relaxed">Nothing is trained: models are downloaded pretrained and only run forward. Every run appends to <span class="font-code-sm text-code-sm">results/ledger.jsonl</span> with the git commit that produced it, and <span class="font-code-sm text-code-sm">docs/RESULTS.md</span> is generated from that ledger, never edited by hand. <span data-fact="tests.total">268</span> tests: <span data-fact="tests.py">146</span> Python, and <span data-fact="tests.ts">122</span> for the browser build, including parity tests that require byte-identical JSON reports to the Python tool on every fixture.</p>
           </div>
         </section>
 
@@ -462,11 +462,11 @@
               <div class="bg-panel border border-panel-line p-space-lg rounded flex flex-col gap-space-xs">
                 <h3 class="font-headline-md text-headline-md text-on-surface">Where a model came from</h3>
                 <p class="font-body-md text-body-md text-on-surface-variant">Reference discovery finds the closest relative on the Hub (a parent, a fine-tune or a mirror), not a model's provenance, and needs a same-architecture model to exist.</p>
-                <p class="font-body-sm text-body-sm text-primary">Pass the base you trust with <span class="font-code-md text-code-md text-on-surface">--base</span>; proving provenance takes a lineage check of its own.</p>
+                <p class="font-body-sm text-body-sm text-primary">Pass the base you trust with <span class="font-code-md text-code-md text-on-surface">--base</span>; the report says whether it is close enough for the diff to mean anything (it warned on <span data-fact="e15.neg_warned">9 / 9</span> independent look-alike bases), and <a class="underline" href="https://github.com/aaditripi18/Pedigree">Pedigree</a> checks lineage itself.</p>
               </div>
               <div class="bg-panel border border-panel-line p-space-lg rounded flex flex-col gap-space-xs">
                 <h3 class="font-headline-md text-headline-md text-on-surface">Clean tensors with a different history</h3>
-                <p class="font-body-md text-body-md text-on-surface-variant">Whole files flag <span data-fact="e10.fp_models">5 of 67</span> clean popular models: a never-trained tensor or a component saved at full precision looks exactly like a payload.</p>
+                <p class="font-body-md text-body-md text-on-surface-variant">Whole files flag <span data-fact="e10.fp_models">5 of 67</span> clean popular models: a never-trained tensor or a component saved at full precision looks exactly like a payload. Measured: a never-trained tensor's values cannot be told from many trained ones, so no rule can excuse it without hiding payloads.</p>
                 <p class="font-body-sm text-body-sm text-primary">The report names the tensor and why; sanitising makes the question moot.</p>
               </div>
               <div class="bg-panel border border-panel-line p-space-lg rounded flex flex-col gap-space-xs">

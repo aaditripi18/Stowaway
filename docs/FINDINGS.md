@@ -1,12 +1,43 @@
 # Findings
 
-> Status: phases 1-4 (PLAN.md). S3, S4, S5 revised and validated on held-out
+> Status: phases 1-5 (PLAN.md). S3, S4, S5 revised and validated on held-out
 > models; E5 compares Stowaway with picklescan, ModelScan and fickling; phase 3
 > adds reference discovery (E8), payload removal (E9), whole files and a random
-> sample (E10); phase 4 closes the gaps whole files exposed (E11-E13). 260 public Hugging Face models surveyed, 67 of them as whole
+> sample (E10); phase 4 closes the gaps whole files exposed (E11-E13); phase 5 checks
+> the base S5 compares against and measures never-trained tensors (E14, E15). 260 public Hugging Face models surveyed, 67 of them as whole
 > files. Every number below is in [RESULTS.md](RESULTS.md), generated from the
 > ledger with the commit that produced it. Hypotheses were written before their
 > runs; the ones that failed are reported as failed.
+
+## Phase 5: is the base close enough, and what is a never-trained tensor? (E14, E15)
+
+- **E15, is the base close enough for S5?** Against a base that is not the model's parent,
+  almost every element differs above the low bits, so S5 flags nothing, and its silence means
+  nothing. E8's name-and-shape check had accepted such a base (the MiniLM cross-encoders' declared
+  L12 base, median cosine 0.07). S5 now reports the median cosine of the aligned tensors and how
+  many are identical, and warns below 0.9 (E8's discovery bar, fixed before the run). Fresh pairs
+  labelled by [Pedigree](https://github.com/aaditripi18/Pedigree), an instrument with its own
+  thresholds: the warning fired on all 9 independent same-architecture bases (bert cased/uncased,
+  pythia-160m seeds, ResNet and Whisper variants; cosines 0.0001-0.17), all of which passed the
+  name-and-shape check, and on none of the 4 confirmed parents S5 can use. It also fired on 3
+  confirmed bases that are far from their model (cosines 0.10, 0.31, 0.89), where its message (S5
+  sees only the identical tensors) is right. **H19 and H20 supported**; the check is on in both
+  cores, with the same cosine bit for bit in the browser.
+- **One honest flag on a fresh pair, explained.** In that run S5 flagged 8 RMSNorm weights of
+  `Qwen/Qwen2-0.5B-Instruct` against its true parent. In each, 1 to 3 of 896 bf16 elements changed,
+  almost all by one unit in the last place: a nearly frozen tensor nudged by rounding. Since E12,
+  S5 judges a tensor with any number of changes, and a one-element, one-bit change is, at the bit
+  level, what a one-bit payload is. As with E13's 1-ULP re-save, no rule on the bits separates
+  them; the finding states the changed count (1-3) and the bit, and `sanitize` clears both.
+- **E14, a never-trained tensor or a payload?** Of the 8 whole files that flag clean tensors, 3
+  flag a tensor that was never trained (T5's cross-attention bias, XLM-R's pooler, ESM2's
+  position table): its values are an i.i.d. normal draw (kurtosis about 0, rows as even as chance).
+  But many trained tensors look the same: a rule that excuses those three also excuses 44 of 1,129
+  trained tensors in the same files (3.9%), and one strict enough to excuse 5 excuses only one of
+  the three. Excusing a tensor would hide a payload there, so no rule is adopted. The question is
+  answered by the measurement: from values alone the two are not reliably separable. The other
+  flagged tensors are not never-trained at all (CLIP's tower kept at another precision; trained
+  tensors S4 flags in four bf16/float32 files), and stay reported by name.
 
 ## Phase 4: closing the whole-file gaps (E11-E13)
 
@@ -562,13 +593,13 @@ real fine-tune/base pairs in E4 rather than adjusted to this result.
 - ~~The survey covers only the most-downloaded models.~~ Done in E10 B (a random
   sample of the top 10,000).
 - ~~Accuracy cost only on image models.~~ E9 adds a text model (sanitising).
-- E3 tested placements from ordinary embed parameters only; an attacker who
-  preserves each tensor's bit signature exactly was not tested for detection.
-  Removal does not depend on it: whatever such a payload puts in the low 8 bits,
-  `sanitize` overwrites (E9).
+- E3 tested placements from ordinary embed parameters only; detection of a payload
+  built to keep each tensor's bit statistics was not run. Removal does not depend
+  on it: whatever such a payload puts in the low 8 bits, `sanitize` overwrites (E9).
 - ~~E2 measures accuracy; agreement of individual predictions would be more
   sensitive.~~ Done in E6 (top-1 agreement on 1,000 images).
-- Whether a rule can tell a never-trained tensor from a payload with the same
-  precision signature (E10 A); and whether weight cosine should replace the
-  name-and-shape check for a declared base (E8). Both need a fresh model list.
+- ~~Whether a rule can tell a never-trained tensor from a payload with the same
+  precision signature (E10 A).~~ Measured in E14: not safely, from values alone.
+- ~~Whether weight cosine should replace the name-and-shape check for a declared
+  base (E8).~~ Done in E15: S5 now warns when the base is not a close relative.
 - ~~S4 role peers need a better estimate of clean spread for very small groups (RegNet case).~~ S4c (E0d) removes the RegNet flag. The two residual bf16 flags are extreme sub-4-bit quantized models.

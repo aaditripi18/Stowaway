@@ -313,6 +313,13 @@ def facts(counts=True, weights=True):
                                                  and sum(r["detected_s5d"] for r in a) >= 0.95 * len(a)
                                                  and all(r["detected_s5d"] for r in thin))
 
+    # phase 5: E15, is the base close enough for S5?
+    e15 = [r for r in rows if r["experiment"] == "E15" and r.get("kind") == "pair"]
+    if e15:
+        neg = [r for r in e15 if r["pedigree"] != "related"]
+        f["e15.neg_warned"] = f"{sum(r['warned'] for r in neg)} / {len(neg)}"
+        asserts["E15: every independent base warned"] = all(r["warned"] for r in neg)
+
     if weights:
         f.update(_mobilenet_bit0())
     if counts:

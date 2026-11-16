@@ -21,8 +21,16 @@ their weights were read; the numbers are in [docs/RESULTS.md](docs/RESULTS.md).
   are no longer flagged. S5 findings gain an `above` detail (E13: 48 / 48
   base-matching catches kept, the thin payload in 30 / 30 models).
 
+- **Is the base close enough?** With a base, S5 reports the median cosine of the
+  aligned tensors and how many are identical (`base-closeness`, info), and below
+  0.9 warns that S5 can only see the identical tensors (`base-not-close`, medium).
+  E15: fired on 9 / 9 independent same-architecture bases, on no confirmed parent
+  S5 can use.
+
 ### Evidence
 - E11, E12, E13: see docs/FINDINGS.md, phase 4. H13-H18 supported.
+- E14, E15: see docs/FINDINGS.md, phase 5. H19 and H20 supported; E14 found no
+  safe rule for never-trained tensors (not adopted).
 
 ## 0.3.0 — 2026-11-03
 
