@@ -1,0 +1,42 @@
+{
+ "models": [
+  {
+   "repo": "sentence-transformers/all-MiniLM-L6-v2",
+   "commit": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "encoder.layer.5.output.dense.weight",
+     "target_elements": 589824,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "encoder.layer.5.output.dense.weight",
+     "target_elements": 589824,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "encoder.layer.5.output.dense.weight",
+     "target_elements": 589824,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  }
+ ]
+}

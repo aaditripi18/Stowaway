@@ -29,8 +29,10 @@ JOBS = {"e10a": ("stowaway-e10-whole-files", "scripts/run_e10a.py"),
         "e11": ("stowaway-e11-windowed-s4", "scripts/run_e11.py"),
         "e14dev": ("stowaway-e14-dev", "scripts/e14_dev.py"),
         "e15": ("stowaway-e15-base-closeness", "scripts/run_e15.py"),
-        "e15inspectdev": ("stowaway-e15-inspect", "scripts/e15_inspect.py")}
-DEV_FILES = ("e14_dev.json", "e15_inspect.json")  # dev statistics (not ledger lines) a job writes to results/
+        "e15inspectdev": ("stowaway-e15-inspect", "scripts/e15_inspect.py"),
+        "e17dev": ("stowaway-e17-dev", "scripts/e17_dev.py")}
+DEV_FILES = ("e14_dev.json", "e15_inspect.json", "e17_dev.json")
+OWN_DEV = {"e14dev": "e14_dev.json", "e15inspectdev": "e15_inspect.json", "e17dev": "e17_dev.json"}  # dev statistics (not ledger lines) a job writes to results/
 LEDGER = ROOT / "results" / "ledger.jsonl"
 
 NOTEBOOK = r'''
@@ -128,7 +130,7 @@ def status(job: str) -> None:
 def pull(job: str) -> None:
     with tempfile.TemporaryDirectory() as d:
         kaggle("kernels", "output", f"{USER}/{JOBS[job][0]}", "-p", d)
-        for name in DEV_FILES if job.endswith("dev") else ():  # only the dev job's copy is new
+        for name in [OWN_DEV[job]] if job in OWN_DEV else []:  # only the job's own dev file is new
             got = [p for p in Path(d).iterdir() if p.name == name]
             if got:
                 (ROOT / "results" / name).write_bytes(got[0].read_bytes())
@@ -142,7 +144,7 @@ def pull(job: str) -> None:
             led = next(Path(d).rglob("Stowaway/results/ledger.jsonl"), None)
             if led is None:
                 sys.exit(f"no ledger in the output ({[p.name for p in Path(d).rglob('*')][:20]})")
-            exp = {"e10a": "E10a", "e8": "E8", "e11rec": "E11rec", "e11": "E11", "e14dev": "-", "e15": "E15", "e15inspectdev": "-"}[job]
+            exp = {"e10a": "E10a", "e8": "E8", "e11rec": "E11rec", "e11": "E11", "e14dev": "-", "e15": "E15", "e15inspectdev": "-", "e17dev": "-"}[job]
             new = [ln for ln in led.read_text(encoding="utf-8").splitlines()
                    if ln.strip() and json.loads(ln).get("experiment") == exp]
             print(f"session did not finish: recovered {len(new)} {exp} lines from its working ledger")
