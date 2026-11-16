@@ -20,6 +20,10 @@ export const S5_MIN_CHANGED = 1;
 // bit above S5c's bit; null = S5c alone. Must equal weights.S5_ABOVE_MAX in Python (adopted by
 // E13: H17 and H18 supported).
 export const S5_ABOVE_MAX: number | null = 0.02;
+// E15 (PLAN.md): report how close the base is; below S5_CLOSE_MIN a base-not-close finding.
+// Must equal weights.S5_BASE_CHECK and weights.S5_CLOSE_MIN in Python (adopted by E15).
+export const S5_BASE_CHECK = true;
+export const S5_CLOSE_MIN = 0.9;
 // Which S5 rule runs; must equal weights.S5_RULE in Python (see there).
 export const S5_RULE: "p99" | "s5c" = "s5c"; // adopted by E4b (PLAN.md)
 const S4_BITS: Record<string, number> = { F32: 8, F16: 3, BF16: 2 }; // round(mant*8/23)
@@ -360,12 +364,65 @@ export function align(model: Map<string, string>, base: Map<string, string>): { 
 
 const sig = (t: { dtype: string; shape: number[] }) => `${t.dtype}|${t.shape.join(",")}`;
 
+/** A tensor's values as float64 numbers (every F32, F16 and BF16 value is exact in a double). */
+function values(rf: RawFloat): Float64Array {
+  const out = new Float64Array(rf.u.length);
+  if (rf.dtype === "F32") {
+    const f = new Float32Array(rf.u.buffer, rf.u.byteOffset, rf.u.length);
+    for (let i = 0; i < f.length; i++) out[i] = f[i]!;
+  } else if (rf.dtype === "BF16") {
+    const w = new Uint32Array(1), f = new Float32Array(w.buffer);
+    for (let i = 0; i < rf.u.length; i++) { w[0] = rf.u[i]! << 16; out[i] = f[0]!; }
+  } else {
+    for (let i = 0; i < rf.u.length; i++) {
+      const h = rf.u[i]!, e = (h >> 10) & 31, m = h & 1023, sgn = h & 0x8000 ? -1 : 1;
+      out[i] = e === 0 ? sgn * m * 2 ** -24 : e === 31 ? (m ? NaN : sgn * Infinity) : sgn * (1024 + m) * 2 ** (e - 25);
+    }
+  }
+  return out;
+}
+
+/** [cosine rounded to 4 decimals (null if a norm is 0), identical] for a pair S5 compares, else null.
+ * Sums run left to right, as weights._closeness's cumsum does, so the two builds agree. */
+function closeness(a: RawFloat, b: RawFloat): [number | null, boolean] | null {
+  if (a.dtype !== b.dtype || a.u.length !== b.u.length || a.u.length < MIN_ELEMENTS) return null;
+  let same = true;
+  for (let i = 0; i < a.u.length; i++) if (a.u[i] !== b.u[i]) { same = false; break; }
+  if (same) return [1.0, true];
+  const x = values(a), y = values(b);
+  let xx = 0, yy = 0, xy = 0;
+  for (let i = 0; i < x.length; i++) {
+    const p = x[i]!, q = y[i]!;
+    if (!Number.isFinite(p) || !Number.isFinite(q)) continue;
+    xx += p * p; yy += q * q; xy += p * q;
+  }
+  if (xx === 0 || yy === 0) return [null, false];
+  return [round(xy / Math.sqrt(xx * yy), 4), false];
+}
+
+function closenessFindings(rows: Array<[number | null, boolean]>): Finding[] {
+  const cos = rows.map(([c]) => c).filter((c): c is number => c !== null);
+  if (!S5_BASE_CHECK || cos.length === 0) return [];
+  const med = round(median(cos), 4);
+  const same = rows.filter(([, i]) => i).length;
+  const detail = { median_cosine: med, compared: cos.length, identical: same, close_min: S5_CLOSE_MIN };
+  const out = [finding("S5", "info", "base-closeness",
+    `median cosine with the base over ${cos.length} aligned tensors: ${pyStr(med)}; ${same} identical`, detail)];
+  if (med < S5_CLOSE_MIN) {
+    out.push(finding("S5", "medium", "base-not-close",
+      `the base is not a close relative of this model (median cosine ${pyStr(med)} < ${pyStr(S5_CLOSE_MIN)}): ` +
+      `S5 can only see a payload in the ${same} tensor(s) identical to it`, detail));
+  }
+  return out;
+}
+
 /** S3, S4 and (with a base) S5, reading one tensor at a time: peak memory is
  * the largest tensor (and its base counterpart), not the file. */
 export function analyseWeights(mf: ModelFile, r: Reader, base?: BaseModel): Finding[] {
   const sums = new Map<string, TensorSummary>();
   const baseTensors = base ? floatTensors(base.mf) : null;
   const s5: Array<[string, Finding]> = [];
+  const close: Array<[number | null, boolean]> = [];
   const windowed: Finding[] = [];
   let shared = 0;
   const infos = floatTensors(mf);
@@ -385,6 +442,7 @@ export function analyseWeights(mf: ModelFile, r: Reader, base?: BaseModel): Find
         shared++;
         const f = s5Tensor(name, rf, brf);
         if (f) s5.push([name, f]);
+        if (S5_BASE_CHECK) { const c = closeness(rf, brf); if (c) close.push(c); }
       }
     }
   }
@@ -401,7 +459,8 @@ export function analyseWeights(mf: ModelFile, r: Reader, base?: BaseModel): Find
     if (shared === 0) {
       findings.push(finding("S5", "info", "no-shared-tensors", "the base model shares no tensor names with this model"));
     } else {
-      findings.push(...s5.sort((x, y) => (x[0] < y[0] ? -1 : x[0] > y[0] ? 1 : 0)).map(([, f]) => f));
+      findings.push(...s5.sort((x, y) => (x[0] < y[0] ? -1 : x[0] > y[0] ? 1 : 0)).map(([, f]) => f),
+                    ...closenessFindings(close));
     }
   }
   return findings;

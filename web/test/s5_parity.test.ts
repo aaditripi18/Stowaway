@@ -39,6 +39,16 @@ describe("S5 differential parity", () => {
     expect(s5).toEqual(["layer.1.weight"]);
   });
 
+  for (const tag of ["far", "near"]) {
+    it(`closeness to the base (${tag})`, async () => {
+      const base = openBase(new Uint8Array(readFileSync(join(DIR, `base_${tag}.safetensors`))));
+      const model = new Uint8Array(readFileSync(join(DIR, "base.safetensors")));
+      const rep = await scan(model, base);
+      rep.file = "base.safetensors";
+      expect(canon(rep)).toEqual(readFileSync(join(DIR, `vs_${tag}.json`), "utf-8").trimEnd());
+    });
+  }
+
   it("renamed (wrapper prefix and gamma/beta names) vs base", async () => {
     const base = openBase(new Uint8Array(readFileSync(join(DIR, "base_ln.safetensors"))));
     const model = new Uint8Array(readFileSync(join(DIR, "renamed.safetensors")));

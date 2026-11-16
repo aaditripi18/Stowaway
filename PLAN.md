@@ -562,3 +562,14 @@ at 11; one was removed as read in E8; see the note in the file). Switch: `weight
 
 If H19 and H20 hold, the finding ships in both cores. Otherwise it does not, and both numbers are
 reported.
+
+**Result (2026-11-17, run `E15-2026-11-16T18:34:35Z-05077f2`, Kaggle, 19 of 19 pairs read).** H19
+supported: `base-not-close` fired on all 9 independent same-architecture bases (median cosines
+0.0001-0.17; two of them shared one identical tensor). H20 supported: of the 4 confirmed pairs S5 can
+use (an identical tensor and Pedigree's cosine >= 0.9) it fired on none; it fired on 3 other
+confirmed pairs, all far from their declared base (median cosines 0.31, 0.10 and 0.89; the last
+with no identical tensor), where its message (S5 can see only the identical tensors) is right. The
+check ships in both cores (`S5_BASE_CHECK = True`), sums taken left to right so the browser build
+gives the same cosine bit for bit (fixtures `web/fixtures/s5/vs_far`, `vs_near`). Seen along the way:
+S5 flagged 8 RMSNorm weights of `Qwen/Qwen2-0.5B-Instruct` against its true parent
+`Qwen/Qwen2-0.5B`, an honest false positive, examined in FINDINGS.

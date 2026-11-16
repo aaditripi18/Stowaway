@@ -983,3 +983,35 @@ Run `E13-2026-11-13T22:55:15Z-445d4ff`; fresh list `ft_pairs_fresh3.json`, whole
 | H17 | S5d flags an honest tensor in at most 1 of the fresh pairs | **supported** | 1 of 25 (S5c: 1) |
 | H18 | S5d keeps >= 95% of S5c's case (a) catches and catches the thin payload in >= 95% of models (a and b) | **supported** | case a 48/48; thin a 30/30; b 30/30 |
 
+
+## E15 - is the base close enough for S5? (PLAN.md, phase 5)
+
+Run `E15-2026-11-16T18:34:35Z-05077f2`; fresh list `e15_pairs.json` (Pedigree's ground truth: 9 independent same-architecture pairs, 10 declared bases Pedigree confirms). Every pair passed the name-and-shape check (>= 90% aligned).
+
+| Pair | Pedigree | Median cosine (S5) | Pedigree's cosine | Identical tensors | Warned | S5 flags |
+|---|---|--:|--:|--:|---|--:|
+| `timm/resnet18.tv_in1k` <- `timm/resnet18.a1_in1k` | independent | 0.0881 |  | 0 / 62 | yes | 0 |
+| `google-bert/bert-base-cased` <- `google-bert/bert-base-uncased` | independent | 0.0004 |  | 0 / 203 | yes | 0 |
+| `timm/resnet50.tv_in1k` <- `timm/resnet50.a1_in1k` | independent | 0.1736 |  | 0 / 207 | yes | 0 |
+| `EleutherAI/pythia-160m-seed2` <- `EleutherAI/pythia-160m` | independent | 0.0011 |  | 0 / 148 | yes | 0 |
+| `timm/resnet50.fb_ssl_yfcc100m_ft_in1k` <- `timm/resnet50.a1_in1k` | independent | 0.1569 |  | 0 / 207 | yes | 0 |
+| `EleutherAI/pythia-160m-seed1` <- `EleutherAI/pythia-160m` | independent | 0.0004 |  | 0 / 148 | yes | 0 |
+| `EleutherAI/pythia-160m-seed3` <- `EleutherAI/pythia-160m` | independent | 0.0011 |  | 0 / 148 | yes | 0 |
+| `FacebookAI/xlm-roberta-base` <- `FacebookAI/roberta-base` | independent | 0.0001 |  | 1 / 200 | yes | 0 |
+| `openai/whisper-tiny.en` <- `openai/whisper-tiny` | independent | 0.0016 |  | 1 / 166 | yes | 0 |
+| `Qwen/Qwen2-0.5B-Instruct` <- `Qwen/Qwen2-0.5B` | related | 0.9999 | 0.9999 | 20 / 242 | no | 8 |
+| `francesca9805/tur-latn-100mb-after-ppt-Dp-100mb-packed-bfdiso-ckpt500_seed10` <- `francesca9805/tur-latn-100mb-ppt-Dp-100mb-packed-bfdiso_seed10` | related | 0.3116 | 0.1911 | 25 / 148 | yes | 0 |
+| `ElementMerc/qwen3-0.6b-uncensored` <- `Qwen/Qwen3-0.6B` | related | 1.0 | 1.0000 | 225 / 254 | no | 0 |
+| `deepvk/USER2-small` <- `deepvk/RuModernBERT-small` | related | 0.8866 | 0.8624 | 0 / 74 | yes | 0 |
+| `NeuML/colbert-bert-tiny` <- `google/bert_uncased_L-2_H-128_A-2` | related | 0.9999 | 0.9998 | 1 / 17 | no | 0 |
+| `hotchpotch/japanese-reranker-small-v2` <- `cl-nagoya/ruri-v3-pt-70m` | related | 0.974 | 0.9689 | 0 / 80 | no | 0 |
+| `cisco-ai/SecureBERT2.0-cross_encoder` <- `cisco-ai/SecureBERT2.0-base` | related | 0.9999 | 0.9998 | 0 / 136 | no | 0 |
+| `Thox-ai/ThoxClip-Qwen3-0.6B` <- `Qwen/Qwen3-0.6B` | related | 1.0 | 1.0000 | 58 / 254 | no | 0 |
+| `francesca9805/urd-100mb-after-wc-uniform-newlex-before-ckpt500-packed-bfdiso_seed3407` <- `francesca9805/ppt-wc-uniform-newlex-urd-before-100mb-packed-bfdiso_seed3407` | related | 0.1005 | 0.1351 | 25 / 147 | yes | 0 |
+| `amunchet/rorshark-vit-base` <- `google/vit-base-patch16-224-in21k` | related | 1.0 | 1.0000 | 0 / 198 | no | 0 |
+
+| | Hypothesis | Verdict | Evidence |
+|---|---|---|---|
+| H19 | base-not-close fires on every negative, all accepted by the name-and-shape check | **supported** | 9 / 9 warned |
+| H20 | It fires on no confirmed pair S5 can use (an identical tensor, Pedigree's cosine >= 0.9) | **supported** | 0 of 4; warned confirmed pairs: `francesca9805/tur-latn-100mb-after-ppt-Dp-100mb-packed-bfdiso-ckpt500_seed10` (0.3116, 25 identical), `deepvk/USER2-small` (0.8866, 0 identical), `francesca9805/urd-100mb-after-wc-uniform-newlex-before-ckpt500-packed-bfdiso_seed3407` (0.1005, 25 identical) |
+

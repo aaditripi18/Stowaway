@@ -257,7 +257,7 @@ def test_s5_judges_tensors_with_few_changes():
             for i in range(3)}
     thin = {n: embed({n: t}, rng.bytes(16), k=8, spread=64, names=[n])[n] for n, t in base.items()}
     from stowaway import weights
-    found = weights.s5_differential(thin, base)
+    found = [f for f in weights.s5_differential(thin, base) if f.code == "low-bit-only-change"]
     assert sorted(f.detail["tensor"] for f in found if f.severity == "high") == sorted(base)
     assert all(f.detail["changed"] < 256 for f in found)
 
@@ -278,11 +278,30 @@ def test_s5d_clears_an_additive_shift_but_not_a_payload():
     old = weights.S5_ABOVE_MAX
     try:
         weights.S5_ABOVE_MAX = None
-        assert sorted(f.detail["tensor"] for f in weights.s5_differential(model, base)) == ["ln.weight", "w"]
+        assert sorted(f.detail["tensor"] for f in weights.s5_differential(model, base)
+                      if f.code == "low-bit-only-change") == ["ln.weight", "w"]
         weights.S5_ABOVE_MAX = 0.02
-        found = weights.s5_differential(model, base)
+        found = [f for f in weights.s5_differential(model, base) if f.code == "low-bit-only-change"]
         assert [f.detail["tensor"] for f in found] == ["w"]
         assert found[0].detail["above"] == 0
     finally:
         weights.S5_ABOVE_MAX = old
     assert weights.S5_ABOVE_MAX == 0.02
+
+
+def test_s5_warns_when_the_base_is_not_a_close_relative():
+    """E15: against an independently drawn base of the same shapes, S5 can see nothing, and says so."""
+    import numpy as np
+    from stowaway import weights
+    from stowaway.bits import RawTensor
+    rng = np.random.default_rng(15)
+    model = {f"l{i}.weight": RawTensor.from_float(rng.standard_normal((64, 64)).astype(np.float32)) for i in range(3)}
+    other = {n: RawTensor.from_float(rng.standard_normal((64, 64)).astype(np.float32)) for n in model}
+    near = {n: RawTensor.from_float((t.to_float32() + 0.05 * rng.standard_normal((64, 64))).astype(np.float32))
+            for n, t in model.items()}
+    codes = lambda fs: {f.code: f.detail for f in fs}  # noqa: E731
+    far = codes(weights.s5_differential(model, other))
+    assert far["base-closeness"]["median_cosine"] < 0.1 and "base-not-close" in far
+    close = codes(weights.s5_differential(model, near))
+    assert close["base-closeness"]["median_cosine"] > 0.99 and "base-not-close" not in close
+    assert close["base-closeness"]["identical"] == 0

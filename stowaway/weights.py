@@ -345,8 +345,8 @@ S5_ABOVE_MAX: float | None = 0.02
 # E15 (PLAN.md, phase 5): is the base a close relative? S5 reports the median cosine between the
 # aligned float tensors (>= MIN_ELEMENTS) and how many are identical; below S5_CLOSE_MIN it adds a
 # `base-not-close` finding, because against a base that is not the model's parent almost every
-# element differs above the low bits and S5's silence means nothing. Off until E15 is judged.
-S5_BASE_CHECK = False
+# element differs above the low bits and S5's silence means nothing.
+S5_BASE_CHECK = True  # adopted by E15 (H19: 9/9 independent bases warned; H20 supported)
 S5_CLOSE_MIN = 0.9  # E8's discovery bar: true parents and mirrors >= 0.971, not-close bases <= 0.254
 
 
@@ -360,10 +360,13 @@ def _closeness(a: RawTensor, b: RawTensor) -> tuple[float | None, bool] | None:
     y = b.to_float32().astype(np.float64).ravel()
     ok = np.isfinite(x) & np.isfinite(y)
     x, y = x[ok], y[ok]
-    nx, ny = float(np.dot(x, x)), float(np.dot(y, y))
+    # sums strictly left to right (cumsum), so the browser build's plain loop gets the same bits
+    def total(v: np.ndarray) -> float:
+        return float(np.cumsum(v)[-1]) if v.size else 0.0
+    nx, ny = total(x * x), total(y * y)
     if nx == 0 or ny == 0:
         return None, False
-    return round(float(np.dot(x, y)) / (nx * ny) ** 0.5, 4), False
+    return round(total(x * y) / (nx * ny) ** 0.5, 4), False
 
 
 def _closeness_findings(rows: list[tuple[float | None, bool]]) -> list[Finding]:

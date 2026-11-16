@@ -312,6 +312,18 @@ def gen_s5():
     (d / "gain.json").write_text(canon(rep) + "\n", encoding="utf-8")
     print(f"s5/gain: {rep['verdict']} ({len(rep['findings'])} findings)")
 
+    # E15: the same model against an independently drawn base of the same shapes (not close:
+    # base-not-close) and against a noisy copy of itself (close, cosine below 1).
+    frng = np.random.default_rng(15)
+    far = {n: frng.standard_normal(a.shape).astype(np.float32) for n, a in base.items()}
+    (d / "base_far.safetensors").write_bytes(st_bytes(far))
+    near = {n: (a + 0.3 * frng.standard_normal(a.shape)).astype(np.float32) for n, a in base.items()}
+    (d / "base_near.safetensors").write_bytes(st_bytes(near))
+    for tag in ("far", "near"):
+        rep = scan(d / "base.safetensors", base=d / f"base_{tag}.safetensors")
+        (d / f"vs_{tag}.json").write_text(canon(rep) + "\n", encoding="utf-8")
+        print(f"s5/vs_{tag}: {rep['verdict']} ({len(rep['findings'])} findings)")
+
     # The same model saved under a wrapper prefix, with one LayerNorm-style
     # tensor under its old name: S5 must pair the tensors by name alignment.
     base_ln = dict(base, **{"layer.norm.gamma": rng.standard_normal(64).astype(np.float32)})
