@@ -1015,3 +1015,29 @@ Run `E15-2026-11-16T18:34:35Z-05077f2`; fresh list `e15_pairs.json` (Pedigree's 
 | H19 | base-not-close fires on every negative, all accepted by the name-and-shape check | **supported** | 9 / 9 warned |
 | H20 | It fires on no confirmed pair S5 can use (an identical tensor, Pedigree's cosine >= 0.9) | **supported** | 0 of 4; warned confirmed pairs: `francesca9805/tur-latn-100mb-after-ppt-Dp-100mb-packed-bfdiso-ckpt500_seed10` (0.3116, 25 identical), `deepvk/USER2-small` (0.8866, 0 identical), `francesca9805/urd-100mb-after-wc-uniform-newlex-before-ckpt500-packed-bfdiso_seed3407` (0.1005, 25 identical) |
 
+
+## E17 - whole-tensor S4 where S4w already looks (PLAN.md, phase 5)
+
+Run `E17-2026-11-17T01:04:08Z-e47ac20`; fresh list `hf_models_batch6.json`: 60 whole files read, 8 over the size limit, 2 without float weights to plant into (`unslothai/1`, `unslothai/repeat`).
+
+Clean whole files, every S4 flag (a false alarm), and whether S4x keeps it:
+
+| Model | Tensor | Elements read | Bit | z | Kept by S4x |
+|---|---|--:|--:|--:|---|
+| `almanach/camembert-base` | `roberta.pooler.dense.weight` | 589824 | 7 | 383980.47 | no (S4w covers it) |
+| `PaddlePaddle/PP-DocLayoutV3_safetensors` | `model.decoder_order_head.5.bias` | 256 | 4 | 8000.0 | yes |
+| `google/siglip2-so400m-patch14-384` | `vision_model.embeddings.patch_embedding.weight` | 677372 | 0 | 7.84 | yes |
+| `google/siglip2-so400m-patch14-384` | `vision_model.embeddings.position_embedding.weight` | 839804 | 0 | 9.82 | yes |
+| `google/siglip2-so400m-patch14-384` | `vision_model.encoder.layers.0.self_attn.k_proj.weight` | 1327100 | 0 | 6.49 | no (S4w covers it) |
+| `unsloth/Llama-3.2-1B-Instruct` | `model.layers.14.self_attn.k_proj.weight` | 1039025 | 0 | 9.22 | no (S4w covers it) |
+| `unsloth/Llama-3.2-1B-Instruct` | `model.layers.15.self_attn.k_proj.weight` | 1039182 | 0 | 8.07 | no (S4w covers it) |
+| `jinaai/jina-embeddings-v5-omni-small` | `audio_tower.layers.9.fc1.weight` | 6504693 | 0 | 7.07 | no (S4w covers it) |
+| `jinaai/jina-embeddings-v5-omni-small` | `audio_tower.layers.9.fc2.weight` | 6499651 | 0 | 6.78 | no (S4w covers it) |
+
+Planted cells (E11's procedure): 158; caught by S3, S4 or S4w now: 20; with S4x: 20.
+
+| | Hypothesis | Verdict | Evidence |
+|---|---|---|---|
+| H23 | S4x keeps >= 99% of the current rule's catches on the fresh cells | **supported** | 20 / 20 |
+| H24 | S4x flags a clean tensor in fewer fresh models than the current rule | **supported** | models 5 -> 2; flags 9 -> 3; still flagged: `PaddlePaddle/PP-DocLayoutV3_safetensors`, `google/siglip2-so400m-patch14-384` |
+

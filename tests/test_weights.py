@@ -305,3 +305,26 @@ def test_s5_warns_when_the_base_is_not_a_close_relative():
     close = codes(weights.s5_differential(model, near))
     assert close["base-closeness"]["median_cosine"] > 0.99 and "base-not-close" not in close
     assert close["base-closeness"]["identical"] == 0
+
+
+def test_s4x_skips_whole_tensor_s4_where_s4w_covers(tmp_path):
+    """E17: a large tensor evenly nearer 0.5 than its peers is flagged by whole-tensor S4, but on a
+    whole file S4w covers it (no window out of line), so the scan does not flag it."""
+    from safetensors.numpy import save as st_save
+    from stowaway.formats import open_model
+    from stowaway.weights import S4W_WINDOW as W, analyse, s4_bit_planes
+    rng = np.random.default_rng(5)
+
+    def biased(frac):
+        u = rng.standard_normal(3 * W).astype(np.float32).view(np.uint32)
+        return np.where(rng.random(3 * W) < frac, u | np.uint32(1), u & ~np.uint32(1)).astype(np.uint32).view(np.float32)
+
+    t = {f"blk.{i}.mlp.w": biased(0.6 if i == 0 else 0.67) for i in range(5)}
+    floats = {n: RawTensor.from_float(a) for n, a in t.items()}
+    path = tmp_path / "m.safetensors"
+    path.write_bytes(st_save(t))
+    with open(path, "rb") as fh:
+        flagged = [f.detail["tensor"] for f in analyse(open_model(path, fh), fh) if f.code == "lowbit-anomaly"]
+    assert flagged == []
+    # the dictionary S4 (samples: S4w does not run there) still tests it
+    assert "blk.0.mlp.w" in [f.detail["tensor"] for f in s4_bit_planes(floats) if f.code == "lowbit-anomaly"]

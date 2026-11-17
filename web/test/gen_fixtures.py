@@ -251,6 +251,12 @@ def gen_weights():
     win["blk.0.attn.h"] = h.view(np.float16)
     win["embed_tokens.weight"] = win["blk.0.mlp.w"].copy()
     write("weights_window", st_bytes(win))
+    # S4x (E17): five large role peers (three windows each) at 67% bit 0, one of them evenly at 60%
+    # through the whole tensor - a clean training difference, not a payload. Whole-tensor S4 would
+    # flag it; S4w covers the tensor and finds no window out of line, so the scan reports nothing.
+    cov = {f"blk.{i}.mlp.w": _biased_f32((3, W), 0.6 if i == 0 else 0.67, seed=30 + i).reshape(-1)
+           for i in range(5)}
+    write("weights_covered", st_bytes(cov))
 
 
 def gen_plant():

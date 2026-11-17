@@ -28,7 +28,9 @@ predictions unchanged and 0 bytes of a planted 64 KB payload.
 > phase 4's held. Phase 5 checks that a given base is close enough for S5 to mean
 > anything (E15, 19 fresh pairs labelled by
 > [Pedigree](https://github.com/aaditripi18/Pedigree)), and measured whether a
-> rule can tell a never-trained tensor from a payload (E14: not safely).
+> rule can tell a never-trained tensor from a payload (E14: not safely), and drops
+> whole-tensor S4 where the windowed test already looks (E17, 60 fresh whole files:
+> every catch kept, clean models flagged 5 -> 2).
 
 ## Results
 
@@ -108,6 +110,8 @@ S5's silence means nothing. E8's name-and-shape check had accepted such bases.
 |---|---|---|
 | H19 | The warning fires on every independent same-architecture base, all of which pass the name-and-shape check | **supported**: 9 / 9 |
 | H20 | It fires on no confirmed parent S5 can use | **supported**: 0 of 4; it fires on 3 confirmed but distant bases (cosine 0.10-0.89), where its message is right |
+| H23 | Skipping whole-tensor S4 where S4w looks (S4x) keeps >= 99% of catches | **supported**: 20 / 20 |
+| H24 | S4x flags a clean tensor in fewer fresh models | **supported**: 5 -> 2 (left: two embedding tables, one 256-element bias) |
 
 What the numbers say:
 
@@ -294,7 +298,9 @@ removal.
   and why; it cannot say whether the cause is benign. E14 measured whether one
   could: a never-trained tensor's values look like a fresh random draw, but so do
   about one in 26 trained tensors, so no rule on values can excuse the first
-  without hiding payloads in the second. `sanitize` settles it either way.
+  without hiding payloads in the second. `sanitize` settles it either way. Flags
+  on large tensors S4w already tests are gone since E17 (S4x: fresh models with
+  such a flag 5 -> 2, every catch kept); the rest are named in the report.
 - **A change of one unit in the last place looks like a 1-bit payload.** One of
   25 fresh honest pairs re-saved a tensor so that 8,265 elements differ in bit 0
   only; at the bit level that is what a 1-bit payload is, and S5 flags it (E13).

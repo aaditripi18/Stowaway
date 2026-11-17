@@ -4,12 +4,26 @@
 > models; E5 compares Stowaway with picklescan, ModelScan and fickling; phase 3
 > adds reference discovery (E8), payload removal (E9), whole files and a random
 > sample (E10); phase 4 closes the gaps whole files exposed (E11-E13); phase 5 checks
-> the base S5 compares against and measures never-trained tensors (E14, E15). 260 public Hugging Face models surveyed, 67 of them as whole
+> the base S5 compares against, measures never-trained tensors and removes whole-tensor S4 flags
+> where S4w already looks (E14, E15, E17). 260 public Hugging Face models surveyed, 67 of them as whole
 > files. Every number below is in [RESULTS.md](RESULTS.md), generated from the
 > ledger with the commit that produced it. Hypotheses were written before their
 > runs; the ones that failed are reported as failed.
 
-## Phase 5: is the base close enough, and what is a never-trained tensor? (E14, E15)
+## Phase 5: is the base close enough, and what is a never-trained tensor? (E14, E15, E17)
+
+- **E17, whole-tensor S4 where S4w already looks.** On whole files S4 flags clean, trained tensors:
+  in a tensor of a million elements a small, genuine difference in one bit plane's frequency is
+  significant. An effect-size floor cannot separate them (on dev the false flags are the large
+  shifts, the true catches the small ones). But where S4w tests a tensor window by window (at least
+  three windows, not an embedding table or a quantisation scale), the whole-tensor test adds
+  nothing: on dev all 76 of 341 planted cells are still caught without it. **Rule S4x**, chosen on
+  the 132 whole files already read and run once on 60 fresh whole files (`hf_models_batch6.json`):
+  all 20 fresh catches kept (**H23 supported**), and models with a false S4 flag on a clean file
+  down from 5 to 2, flags from 9 to 3 (**H24 supported**). The three left are SigLIP2's patch and
+  position embeddings (embedding tables, which S4w does not window) and a 256-element bias of a
+  PaddlePaddle layout model, each named in the report. S4x is on in both cores
+  (`S4_SKIP_COVERED`); a skipped tensor still serves as a peer for the others.
 
 - **E15, is the base close enough for S5?** Against a base that is not the model's parent,
   almost every element differs above the low bits, so S5 flags nothing, and its silence means
@@ -602,4 +616,6 @@ real fine-tune/base pairs in E4 rather than adjusted to this result.
   precision signature (E10 A).~~ Measured in E14: not safely, from values alone.
 - ~~Whether weight cosine should replace the name-and-shape check for a declared
   base (E8).~~ Done in E15: S5 now warns when the base is not a close relative.
+- ~~Whole files flag clean trained tensors through S4 (E14).~~ E17: S4x removes the flags S4w
+  covers (fresh: models flagged 5 -> 2, every catch kept).
 - ~~S4 role peers need a better estimate of clean spread for very small groups (RegNet case).~~ S4c (E0d) removes the RegNet flag. The two residual bf16 flags are extreme sub-4-bit quantized models.

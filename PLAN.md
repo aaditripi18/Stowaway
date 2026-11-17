@@ -623,3 +623,8 @@ with S3, S4 (with its tensor's size and name) and S4w, so both rules are scored 
 
 If both hold, S4x is adopted in both cores (switch `S4_SKIP_COVERED`). Otherwise the current rule
 stays, and both numbers are reported.
+
+**Result (run `E17-2026-11-17T01:04:08Z-e47ac20`, RESULTS.md):** 60 whole files read (8 over the size
+limit, 2 placeholder repos with no weights). H23 supported: 20 / 20 catches kept. H24 supported:
+models with a clean S4 flag 5 -> 2 (flags 9 -> 3). S4x adopted in both cores, with parity fixture
+`weights_covered`.

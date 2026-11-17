@@ -124,7 +124,8 @@ function signature(stats: Stat[], nbits: number): { sig: number[]; tau: number[]
   return { sig, tau, hasPop: true };
 }
 
-export function s4BitPlanes(sums: Map<string, TensorSummary>): Finding[] {
+/** `skip`: tensors kept as peers and in the signature but not tested (S4x). */
+export function s4BitPlanes(sums: Map<string, TensorSummary>, skip: Set<string> = new Set()): Finding[] {
   const findings: Finding[] = [];
   const byDtype = new Map<string, Stat[]>();
   for (const name of [...sums.keys()].sort()) {
@@ -148,6 +149,7 @@ export function s4BitPlanes(sums: Map<string, TensorSummary>): Finding[] {
     for (const s of stats) (roles.get(key(s.name)) ?? roles.set(key(s.name), []).get(key(s.name))!).push(s);
 
     for (const { name, n, m } of stats) {
+      if (skip.has(name)) continue;
       const peers = roles.get(key(name))!.filter((s) => s.name !== name);
       let sig: number[], tau: number[], against: string;
       if (peers.length >= 3) { ({ sig, tau } = signature(peers, kb)); against = `its ${peers.length} role peers`; }
@@ -177,14 +179,21 @@ export function s4BitPlanes(sums: Map<string, TensorSummary>): Finding[] {
 export const S4W = true; // adopted by E11 (PLAN.md: H15 and H16 supported)
 export const S4W_WINDOW = 32 * 1024;
 const S4W_Z = Z_FLAG;
+// S4x (PLAN.md, phase 5, E17): whole-tensor S4 is skipped where S4w covers the tensor.
+// Must equal weights.S4_SKIP_COVERED in Python.
+export const S4_SKIP_COVERED = true; // adopted by E17 (H23 and H24 supported)
+
+/** S4w tests this tensor (mirrors weights.s4w_covers). */
+export function s4wCovers(name: string, dtype: string, size: number): boolean {
+  const low = name.toLowerCase();
+  return S4_BITS[dtype] !== undefined && !low.includes("scale") && !low.includes("embed") && Math.floor(size / S4W_WINDOW) >= 3;
+}
 
 /** S4w for one tensor: a finding, or null. */
 export function s4Windowed(name: string, rf: RawFloat): Finding | null {
-  const low = name.toLowerCase();
-  const nbits = S4_BITS[rf.dtype];
-  if (nbits === undefined || low.includes("scale") || low.includes("embed")) return null;
+  if (!s4wCovers(name, rf.dtype, rf.u.length)) return null;
+  const nbits = S4_BITS[rf.dtype]!;
   const nw = Math.floor(rf.u.length / S4W_WINDOW);
-  if (nw < 3) return null;
   const { mant, exp } = FLOAT_LAYOUT[rf.dtype]!;
   const expMax = (1 << exp) - 1;
   const mantMask = mant < 31 ? (1 << mant) - 1 : 0x7fffffff;
@@ -424,6 +433,7 @@ export function analyseWeights(mf: ModelFile, r: Reader, base?: BaseModel): Find
   const s5: Array<[string, Finding]> = [];
   const close: Array<[number | null, boolean]> = [];
   const windowed: Finding[] = [];
+  const covered = new Set<string>();
   let shared = 0;
   const infos = floatTensors(mf);
   let pairing = { pairs: new Map<string, string>(), dm: 0, db: 0 };
@@ -434,7 +444,10 @@ export function analyseWeights(mf: ModelFile, r: Reader, base?: BaseModel): Find
     const rf = load(t, r);
     if (!rf) continue;
     sums.set(name, { name, dtype: rf.dtype, ndim: rf.shape.length, ...summarize(rf, S4_BITS[rf.dtype]!) });
-    if (S4W) { const w = s4Windowed(name, rf); if (w) windowed.push(w); }
+    if (S4W) {
+      const w = s4Windowed(name, rf); if (w) windowed.push(w);
+      if (S4_SKIP_COVERED && s4wCovers(name, rf.dtype, rf.u.length)) covered.add(name);
+    }
     const bt = baseTensors?.get(pairing.pairs.get(name) ?? name);
     if (bt && base) {
       const brf = load(bt, base.r);
@@ -447,7 +460,7 @@ export function analyseWeights(mf: ModelFile, r: Reader, base?: BaseModel): Find
     }
   }
   if (sums.size === 0) return [];
-  const findings = [...s3PrecisionHistory(sums), ...s4BitPlanes(sums), ...windowed];
+  const findings = [...s3PrecisionHistory(sums), ...s4BitPlanes(sums, covered), ...windowed];
   const renamed = [...pairing.pairs].filter(([m, b]) => m !== b).length;
   if (renamed) {
     findings.push(finding("S5", "info", "aligned-names",

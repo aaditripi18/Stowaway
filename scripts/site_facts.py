@@ -320,6 +320,17 @@ def facts(counts=True, weights=True):
         f["e15.neg_warned"] = f"{sum(r['warned'] for r in neg)} / {len(neg)}"
         asserts["E15: every independent base warned"] = all(r["warned"] for r in neg)
 
+    # phase 5: E17, S4x
+    e17 = [r for r in rows if r["experiment"] == "E17"]
+    if e17:
+        from stowaway.weights import s4w_covers
+        last = max(r["run_id"] for r in e17)
+        ms = [r for r in e17 if r["run_id"] == last and r.get("kind") == "model" and "clean_s4" in r]
+        before = sum(bool(m["clean_s4"]) for m in ms)
+        after = sum(any(not s4w_covers(x["tensor"], "F32", x["elements"]) for x in m["clean_s4"]) for m in ms)
+        f["e17.flagged"] = f"{before} -> {after}"
+        asserts["E17: H24 supported"] = after < before
+
     if weights:
         f.update(_mobilenet_bit0())
     if counts:

@@ -26,11 +26,15 @@ their weights were read; the numbers are in [docs/RESULTS.md](docs/RESULTS.md).
   0.9 warns that S5 can only see the identical tensors (`base-not-close`, medium).
   E15: fired on 9 / 9 independent same-architecture bases, on no confirmed parent
   S5 can use.
+- **S4x**: on whole files, S4's whole-tensor test is skipped for a tensor S4w
+  already tests window by window (at least three windows, not an embedding table
+  or a quantisation scale); the tensor still serves as a peer. E17: every one of
+  20 fresh catches kept, models with a false flag 5 -> 2.
 
 ### Evidence
 - E11, E12, E13: see docs/FINDINGS.md, phase 4. H13-H18 supported.
-- E14, E15: see docs/FINDINGS.md, phase 5. H19 and H20 supported; E14 found no
-  safe rule for never-trained tensors (not adopted).
+- E14, E15, E17: see docs/FINDINGS.md, phase 5. H19, H20, H23 and H24
+  supported; E14 found no safe rule for never-trained tensors (not adopted).
 
 ## 0.3.0 — 2026-11-03
 

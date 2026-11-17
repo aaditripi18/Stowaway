@@ -178,7 +178,10 @@ def s4_bit_planes(floats: dict[str, RawTensor], low_bits: dict[str, int] | None 
     return _s4(_summaries(floats, low_bits, shapes), small_floor, min_signature)
 
 
-def _s4(sums: dict[str, _Summary], small_floor: bool | None = None, min_signature: float | None = None) -> list[Finding]:
+def _s4(sums: dict[str, _Summary], small_floor: bool | None = None, min_signature: float | None = None,
+        skip: frozenset = frozenset()) -> list[Finding]:
+    """`skip`: tensors that serve as peers and in the model signature but are not tested themselves
+    (S4x: S4w already tests them window by window)."""
     small_floor = S4_SMALL_FLOOR if small_floor is None else small_floor
     min_signature = S4_MIN_SIGNATURE if min_signature is None else min_signature
     findings = []
@@ -214,6 +217,8 @@ def _s4(sums: dict[str, _Summary], small_floor: bool | None = None, min_signatur
             roles.setdefault(key(s[0]), []).append(s)
 
         for name, n, m in stats:
+            if name in skip:
+                continue
             # Reference: the other tensors of the same role (same name, other
             # layers), when there are at least three; otherwise the whole model.
             # Different kinds of tensor carry different low-bit signatures (bf16
@@ -266,6 +271,17 @@ def _s4(sums: dict[str, _Summary], small_floor: bool | None = None, min_signatur
 S4W = True
 S4W_WINDOW = 32 * 1024
 S4W_Z = Z_FLAG
+# S4x (PLAN.md, phase 5, E17): on whole files, S4's whole-tensor test is skipped for a tensor S4w
+# covers; the tensor stays a peer and part of the signature. Chosen on 132 whole files (dev);
+# adopted by E17 on 60 fresh models (H23: 20/20 catches kept; H24: models with a clean S4 flag 5 -> 2).
+S4_SKIP_COVERED = True
+
+
+def s4w_covers(name: str, dtype: str, size: int) -> bool:
+    """S4w tests this tensor: a float dtype S4 reads, not quantisation metadata or an embedding
+    table, and at least three windows."""
+    low = name.lower()
+    return dtype in S4_BITS and "scale" not in low and "embed" not in low and size // S4W_WINDOW >= 3
 
 
 def s4_windowed(floats: dict[str, RawTensor], min_signature: float | None = None) -> list[Finding]:
@@ -275,12 +291,9 @@ def s4_windowed(floats: dict[str, RawTensor], min_signature: float | None = None
     min_signature = S4_MIN_SIGNATURE if min_signature is None else min_signature
     findings = []
     for name, t in sorted(floats.items()):
-        low = name.lower()
-        if t.dtype not in S4_BITS or "scale" in low or "embed" in low:
+        if not s4w_covers(name, t.dtype, t.data.size):
             continue
         nw = t.data.size // S4W_WINDOW
-        if nw < 3:
-            continue
         v = t.data[: nw * S4W_WINDOW].reshape(nw, S4W_WINDOW)
         inf = informative(v.reshape(-1), t.dtype).reshape(nw, S4W_WINDOW)
         n = inf.sum(1).astype(np.float64)
@@ -535,6 +548,7 @@ def analyse(mf: ModelFile, f, base: "dict[str, RawTensor] | BaseFile | None" = N
     sums: dict[str, _Summary] = {}
     s5: list[tuple[str, Finding]] = []
     windowed: list[Finding] = []
+    covered: set[str] = set()
     shared = 0
     close = []
     infos = _float_infos(mf)
@@ -548,6 +562,8 @@ def analyse(mf: ModelFile, f, base: "dict[str, RawTensor] | BaseFile | None" = N
         sums[name] = _Summary(a, S4_BITS[a.dtype])
         if S4W:
             windowed += s4_windowed({name: a})
+            if S4_SKIP_COVERED and s4w_covers(name, a.dtype, a.data.size):
+                covered.add(name)
         if base is not None:
             b = base.get(pairing.get(name, name)) if isinstance(base, BaseFile) else base.get(name)
             if b is not None:
@@ -562,7 +578,7 @@ def analyse(mf: ModelFile, f, base: "dict[str, RawTensor] | BaseFile | None" = N
         del a
     if not sums:
         return []
-    findings = _s3(sums) + _s4(sums) + windowed
+    findings = _s3(sums) + _s4(sums, skip=frozenset(covered)) + windowed
     renamed = sum(1 for m, b in pairing.items() if m != b)
     if renamed:
         findings.append(Finding("S5", "info", "aligned-names",
