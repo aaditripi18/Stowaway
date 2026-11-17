@@ -269,14 +269,15 @@ The planting code is a port of `stowaway.embed`, byte-identical in tests.
 ```
 cd web
 npm ci
-npm test            # 40 tests
+npm test            # 124 tests
 npm run build       # static site in web/dist
 ```
 
 Deployed on Vercel with `web/` as the project root: every push to `main` builds
 and publishes it (`cd web && vercel deploy --prod` does the same by hand). Any
-static host works. Design from Stitch; the figures on the project page are copied from
-[docs/RESULTS.md](docs/RESULTS.md) and checked by hand, not yet generated.
+static host works. Design from Stitch. Every number on the project page is computed from
+the ledger by `scripts/site_facts.py` (`--write` rewrites them); CI fails if any number on
+the page differs from what the ledger gives.
 
 ## What it can and cannot see, and what to do about it
 
