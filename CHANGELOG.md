@@ -1,11 +1,12 @@
 # Changelog
 
-Versions follow `MAJOR.MINOR.PATCH`; while the major version is 0, a minor
-release may change detector rules and report fields. Every rule change is
+Versions follow `MAJOR.MINOR.PATCH`. Before 1.0.0, a minor release could change
+detector rules and report fields; from 1.0.0, a change to a report field is a
+major release and a change to a detector rule at least a minor one. Every rule change is
 pre-registered in [PLAN.md](PLAN.md) and validated on models committed before
 their weights were read; the numbers are in [docs/RESULTS.md](docs/RESULTS.md).
 
-## Unreleased
+## 1.0.0 — 2026-11-17
 
 ### Detection (both the Python tool and the browser build, with parity fixtures)
 - **S4w, windowed S4**: each 32,768-element window of a tensor is tested
