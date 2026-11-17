@@ -598,3 +598,28 @@ not run on a fresh list:** no candidate passed dev. The answer to the question i
 at the level of values, a never-trained tensor and a trained one are not reliably separable. The
 scanner keeps reporting such a tensor by name, and `sanitize` clears whatever its low bits hold.
 Kinds (2) and (3) are not never-trained tensors and are left to their own measurements.
+
+### E17. Whole-tensor S4 where S4w already looks (written 2026-11-17, before any batch-6 weight is read)
+
+Whole files flag trained tensors through S4 (E14 kind 3). `scripts/e17_dev.py` (`results/e17_dev.json`,
+the 132 whole files of E10 A and E11, read on Kaggle) recorded every S4 flag on the clean files (49
+in 8 models) and E11's planted cells (341) with S3, S4 and S4w's verdict on the target.
+
+An effect-size floor cannot work: the false flags are large shifts (up to 0.5: a tensor whose
+peers hold some bits fixed while its own vary), the true catches small ones (from 0.0005). But
+whole-tensor S4 adds little where S4w already tests the tensor window by window: of S4's 60
+catches, 58 are also caught by S4w or S3, and the 2 others are in an embedding table, which S4w
+does not window. **Rule S4x:** S4's whole-tensor test is skipped for a tensor S4w covers (at least
+three windows, not a quantisation scale or embedding table); everywhere else S4 runs as before.
+On dev: catches 76 -> 76 of 341, clean S4 flags 49 -> 29, models with a false flag 8 -> 6.
+
+**Fresh, used once:** `results/hf_models_batch6.json`, the survey's rule as batch 5 (top 2,000,
+every earlier list excluded; 40 float32, 20 bfloat16, 10 float16), frozen before any of its
+weights is read; `scripts/run_e17.py` records, per model, the clean flags and E11's planted cells
+with S3, S4 (with its tensor's size and name) and S4w, so both rules are scored on the same reads.
+
+- **H23** S4x keeps >= 99% of the current rule's catches on the fresh cells.
+- **H24** S4x flags a clean tensor in fewer fresh models than the current rule.
+
+If both hold, S4x is adopted in both cores (switch `S4_SKIP_COVERED`). Otherwise the current rule
+stays, and both numbers are reported.

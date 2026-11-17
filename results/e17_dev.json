@@ -37,6 +37,5512 @@
     }
    ],
    "list": "hf_models.json"
+  },
+  {
+   "repo": "cross-encoder/ms-marco-MiniLM-L6-v2",
+   "commit": "233902d25c440f23af6f7d6e94d2946bac0bee0a",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "bert.encoder.layer.5.output.dense.weight",
+     "target_elements": 589824,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "bert.encoder.layer.5.output.dense.weight",
+     "target_elements": 589824,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "bert.encoder.layer.5.output.dense.weight",
+     "target_elements": 589824,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "BAAI/bge-small-en-v1.5",
+   "commit": "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 589824,
+     "s3": true,
+     "s4": {
+      "tensor": "encoder.layer.9.output.dense.weight",
+      "bit": 0,
+      "z": 5370.97,
+      "mean": 0.007,
+      "expected": 0.0,
+      "elements": 588993,
+      "reference": "role",
+      "effect": 0.007
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 589824,
+     "s3": true,
+     "s4": {
+      "tensor": "encoder.layer.9.output.dense.weight",
+      "bit": 1,
+      "z": 5415.27,
+      "mean": 0.0071,
+      "expected": 0.0,
+      "elements": 588995,
+      "reference": "role",
+      "effect": 0.0071
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 589824,
+     "s3": true,
+     "s4": {
+      "tensor": "encoder.layer.9.output.dense.weight",
+      "bit": 6,
+      "z": 5350.12,
+      "mean": 0.007,
+      "expected": 0.0,
+      "elements": 588995,
+      "reference": "role",
+      "effect": 0.007
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+   "commit": "e8f8c211226b894fcb81acc59f3b34ba3efd5f42",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 589824,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 589824,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 589824,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "google-bert/bert-base-uncased",
+   "commit": "86b5e0934494bd15c9632b12f734a8a67f723594",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "bert.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "bert.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "bert.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "google-t5/t5-small",
+   "commit": "df1b051c49625cf57a3d0d8d3863ed4d13564fe4",
+   "clean_s4": [
+    {
+     "tensor": "decoder.block.0.layer.1.EncDecAttention.relative_attention_bias.weight",
+     "bit": 2,
+     "z": 8000.0,
+     "mean": 0.5,
+     "expected": 0.0,
+     "elements": 256,
+     "reference": "model",
+     "effect": 0.5
+    }
+   ],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "decoder.block.5.layer.2.DenseReluDense.wo.weight",
+     "target_elements": 1048576,
+     "s3": true,
+     "s4": {
+      "tensor": "decoder.block.5.layer.2.DenseReluDense.wo.weight",
+      "bit": 0,
+      "z": 3990.31,
+      "mean": 0.0039,
+      "expected": 0.0,
+      "elements": 1039827,
+      "reference": "role",
+      "effect": 0.0039
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "decoder.block.5.layer.2.DenseReluDense.wo.weight",
+     "target_elements": 1048576,
+     "s3": true,
+     "s4": {
+      "tensor": "decoder.block.5.layer.2.DenseReluDense.wo.weight",
+      "bit": 1,
+      "z": 4078.52,
+      "mean": 0.004,
+      "expected": 0.0,
+      "elements": 1039854,
+      "reference": "role",
+      "effect": 0.004
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "decoder.block.5.layer.2.DenseReluDense.wo.weight",
+     "target_elements": 1048576,
+     "s3": true,
+     "s4": {
+      "tensor": "decoder.block.5.layer.2.DenseReluDense.wo.weight",
+      "bit": 4,
+      "z": 4035.37,
+      "mean": 0.004,
+      "expected": 0.0,
+      "elements": 1039857,
+      "reference": "role",
+      "effect": 0.004
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "timm/mobilenetv3_small_100.lamb_in1k",
+   "commit": "76b303ec28c466e9df37f4745dfb7aef20ab87ae",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "conv_head.weight",
+     "target_elements": 589824,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "conv_head.weight",
+     "target_elements": 589824,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "conv_head.weight",
+     "target_elements": 589824,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "amazon/chronos-2",
+   "commit": "29ec3766d36d6f73f0696f85560a422f50e8498c",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "encoder.block.9.layer.2.mlp.wo.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "encoder.block.9.layer.2.mlp.wo.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "encoder.block.9.layer.2.mlp.wo.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "sentence-transformers/all-mpnet-base-v2",
+   "commit": "e8c3b32edf5434bc2275fc9bab85f82640a19130",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "openai-community/gpt2",
+   "commit": "607a30d783dfa663caf39e06633721c8d4cfcd7e",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "h.9.mlp.c_proj.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "h.9.mlp.c_proj.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "h.9.mlp.c_proj.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "BAAI/bge-reranker-v2-m3",
+   "commit": "953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "roberta.encoder.layer.9.intermediate.dense.weight",
+     "target_elements": 4194304,
+     "s3": true,
+     "s4": {
+      "tensor": "roberta.encoder.layer.9.intermediate.dense.weight",
+      "bit": 0,
+      "z": 1974.75,
+      "mean": 0.001,
+      "expected": 0.0,
+      "elements": 4189549,
+      "reference": "role",
+      "effect": 0.001
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "roberta.encoder.layer.9.intermediate.dense.weight",
+     "target_elements": 4194304,
+     "s3": true,
+     "s4": {
+      "tensor": "roberta.encoder.layer.9.intermediate.dense.weight",
+      "bit": 0,
+      "z": 1995.76,
+      "mean": 0.001,
+      "expected": 0.0,
+      "elements": 4189554,
+      "reference": "role",
+      "effect": 0.001
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "roberta.encoder.layer.9.intermediate.dense.weight",
+     "target_elements": 4194304,
+     "s3": true,
+     "s4": {
+      "tensor": "roberta.encoder.layer.9.intermediate.dense.weight",
+      "bit": 7,
+      "z": 2033.87,
+      "mean": 0.001,
+      "expected": 0.0,
+      "elements": 4189554,
+      "reference": "role",
+      "effect": 0.001
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "nomic-ai/nomic-embed-text-v1.5",
+   "commit": "e9b6763023c676ca8431644204f50c2b100d9aab",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "encoder.layers.9.mlp.fc2.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "encoder.layers.9.mlp.fc2.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "encoder.layers.9.mlp.fc2.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "google/vit-base-patch16-224",
+   "commit": "3f49326eb077187dfe1c2a2bb15fbd74e6ab91e3",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "vit.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "vit.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "vit.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "FacebookAI/xlm-roberta-base",
+   "commit": "e73636d4f797dec63c3081bb6ed5c7b0bb3f2089",
+   "clean_s4": [
+    {
+     "tensor": "roberta.pooler.dense.weight",
+     "bit": 6,
+     "z": 383923.83,
+     "mean": 0.4999,
+     "expected": 0.0,
+     "elements": 589822,
+     "reference": "model",
+     "effect": 0.4999
+    }
+   ],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "roberta.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": true,
+     "s4": {
+      "tensor": "roberta.encoder.layer.9.output.dense.weight",
+      "bit": 0,
+      "z": 2633.52,
+      "mean": 0.0017,
+      "expected": 0.0,
+      "elements": 2355689,
+      "reference": "role",
+      "effect": 0.0017
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "roberta.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": true,
+     "s4": {
+      "tensor": "roberta.encoder.layer.9.output.dense.weight",
+      "bit": 0,
+      "z": 2698.03,
+      "mean": 0.0018,
+      "expected": 0.0,
+      "elements": 2355691,
+      "reference": "role",
+      "effect": 0.0018
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "roberta.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": true,
+     "s4": {
+      "tensor": "roberta.encoder.layer.9.output.dense.weight",
+      "bit": 5,
+      "z": 2708.45,
+      "mean": 0.0018,
+      "expected": 0.0,
+      "elements": 2355692,
+      "reference": "role",
+      "effect": 0.0018
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "BAAI/bge-large-en-v1.5",
+   "commit": "d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "encoder.layer.9.intermediate.dense.weight",
+     "target_elements": 4194304,
+     "s3": true,
+     "s4": {
+      "tensor": "encoder.layer.9.intermediate.dense.weight",
+      "bit": 0,
+      "z": 2016.11,
+      "mean": 0.001,
+      "expected": 0.0,
+      "elements": 4188239,
+      "reference": "role",
+      "effect": 0.001
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "encoder.layer.9.intermediate.dense.weight",
+     "target_elements": 4194304,
+     "s3": true,
+     "s4": {
+      "tensor": "encoder.layer.9.intermediate.dense.weight",
+      "bit": 3,
+      "z": 2056.17,
+      "mean": 0.001,
+      "expected": 0.0,
+      "elements": 4188248,
+      "reference": "role",
+      "effect": 0.001
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "encoder.layer.9.intermediate.dense.weight",
+     "target_elements": 4194304,
+     "s3": true,
+     "s4": {
+      "tensor": "encoder.layer.9.intermediate.dense.weight",
+      "bit": 4,
+      "z": 2022.95,
+      "mean": 0.001,
+      "expected": 0.0,
+      "elements": 4188248,
+      "reference": "role",
+      "effect": 0.001
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "intfloat/multilingual-e5-small",
+   "commit": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 589824,
+     "s3": true,
+     "s4": {
+      "tensor": "encoder.layer.9.output.dense.weight",
+      "bit": 0,
+      "z": 5301.01,
+      "mean": 0.0069,
+      "expected": 0.0,
+      "elements": 589193,
+      "reference": "role",
+      "effect": 0.0069
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 589824,
+     "s3": true,
+     "s4": {
+      "tensor": "encoder.layer.9.output.dense.weight",
+      "bit": 0,
+      "z": 5454.72,
+      "mean": 0.0071,
+      "expected": 0.0,
+      "elements": 589197,
+      "reference": "role",
+      "effect": 0.0071
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 589824,
+     "s3": true,
+     "s4": {
+      "tensor": "encoder.layer.9.output.dense.weight",
+      "bit": 6,
+      "z": 5432.58,
+      "mean": 0.0071,
+      "expected": 0.0,
+      "elements": 589197,
+      "reference": "role",
+      "effect": 0.0071
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+   "commit": "4328cf26390c98c5e3c738b4460a05b95f4911f5",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "BAAI/bge-base-en-v1.5",
+   "commit": "a5beb1e3e68b9ab74eb54cfd186867f64f240e1a",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": true,
+     "s4": {
+      "tensor": "encoder.layer.9.output.dense.weight",
+      "bit": 0,
+      "z": 2695.93,
+      "mean": 0.0018,
+      "expected": 0.0,
+      "elements": 2355939,
+      "reference": "role",
+      "effect": 0.0018
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": true,
+     "s4": {
+      "tensor": "encoder.layer.9.output.dense.weight",
+      "bit": 1,
+      "z": 2699.18,
+      "mean": 0.0018,
+      "expected": 0.0,
+      "elements": 2355945,
+      "reference": "role",
+      "effect": 0.0018
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": true,
+     "s4": {
+      "tensor": "encoder.layer.9.output.dense.weight",
+      "bit": 3,
+      "z": 2732.41,
+      "mean": 0.0018,
+      "expected": 0.0,
+      "elements": 2355945,
+      "reference": "role",
+      "effect": 0.0018
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "FacebookAI/roberta-base",
+   "commit": "e2da8e2f811d1448a5b465c236feacd80ffbac7b",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "roberta.encoder.layer.8.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": true,
+     "s4": {
+      "tensor": "roberta.encoder.layer.8.output.dense.weight",
+      "bit": 0,
+      "z": 2626.62,
+      "mean": 0.0017,
+      "expected": 0.0,
+      "elements": 2356379,
+      "reference": "role",
+      "effect": 0.0017
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "roberta.encoder.layer.8.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": true,
+     "s4": {
+      "tensor": "roberta.encoder.layer.8.output.dense.weight",
+      "bit": 2,
+      "z": 2705.45,
+      "mean": 0.0018,
+      "expected": 0.0,
+      "elements": 2356385,
+      "reference": "role",
+      "effect": 0.0018
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "roberta.encoder.layer.8.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": true,
+     "s4": {
+      "tensor": "roberta.encoder.layer.8.output.dense.weight",
+      "bit": 2,
+      "z": 2702.19,
+      "mean": 0.0018,
+      "expected": 0.0,
+      "elements": 2356389,
+      "reference": "role",
+      "effect": 0.0018
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "laion/clap-htsat-fused",
+   "commit": "365dea6ef167def6676140ed93bbc43f84dabb28",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "audio_model.audio_encoder.layers.3.blocks.1.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "audio_model.audio_encoder.layers.3.blocks.1.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "audio_model.audio_encoder.layers.3.blocks.1.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "distilbert/distilbert-base-uncased",
+   "commit": "12040accade4e8a0f71eabdb258fecc2e7e948be",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "vocab_transform.weight",
+     "target_elements": 589824,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "vocab_transform.weight",
+     "target_elements": 589824,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "vocab_transform.weight",
+     "target_elements": 589824,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "openai/clip-vit-large-patch14",
+   "commit": "32bd64288804d66eefd0ccbe215aa642df71cc41",
+   "clean_s4": [
+    {
+     "tensor": "text_model.embeddings.position_embedding.weight",
+     "bit": 2,
+     "z": 121585.36,
+     "mean": 0.5,
+     "expected": 0.0,
+     "elements": 59136,
+     "reference": "model",
+     "effect": 0.5
+    },
+    {
+     "tensor": "text_model.embeddings.token_embedding.weight",
+     "bit": 5,
+     "z": 3079925.77,
+     "mean": 0.5,
+     "expected": 0.0,
+     "elements": 37945337,
+     "reference": "model",
+     "effect": 0.5
+    },
+    {
+     "tensor": "text_model.final_layer_norm.bias",
+     "bit": 1,
+     "z": 13820.32,
+     "mean": 0.5013,
+     "expected": 0.0,
+     "elements": 768,
+     "reference": "model",
+     "effect": 0.4987
+    },
+    {
+     "tensor": "text_model.final_layer_norm.weight",
+     "bit": 7,
+     "z": 13820.32,
+     "mean": 0.4987,
+     "expected": 0.0,
+     "elements": 768,
+     "reference": "model",
+     "effect": 0.4987
+    },
+    {
+     "tensor": "vision_model.embeddings.class_embedding",
+     "bit": 3,
+     "z": 15937.5,
+     "mean": 0.498,
+     "expected": 0.0,
+     "elements": 1024,
+     "reference": "model",
+     "effect": 0.498
+    },
+    {
+     "tensor": "vision_model.embeddings.position_embedding.weight",
+     "bit": 7,
+     "z": 256396.2,
+     "mean": 0.4998,
+     "expected": 0.0,
+     "elements": 263168,
+     "reference": "model",
+     "effect": 0.4998
+    },
+    {
+     "tensor": "vision_model.post_layernorm.bias",
+     "bit": 1,
+     "z": 15968.75,
+     "mean": 0.499,
+     "expected": 0.0,
+     "elements": 1024,
+     "reference": "model",
+     "effect": 0.499
+    },
+    {
+     "tensor": "vision_model.post_layernorm.weight",
+     "bit": 6,
+     "z": 15906.25,
+     "mean": 0.5029,
+     "expected": 0.0,
+     "elements": 1024,
+     "reference": "model",
+     "effect": 0.4971
+    },
+    {
+     "tensor": "vision_model.pre_layrnorm.bias",
+     "bit": 0,
+     "z": 15937.5,
+     "mean": 0.498,
+     "expected": 0.0,
+     "elements": 1024,
+     "reference": "model",
+     "effect": 0.498
+    },
+    {
+     "tensor": "vision_model.pre_layrnorm.weight",
+     "bit": 5,
+     "z": 15875.0,
+     "mean": 0.4961,
+     "expected": 0.0,
+     "elements": 1024,
+     "reference": "model",
+     "effect": 0.4961
+    }
+   ],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "vision_model.encoder.layers.9.self_attn.q_proj.weight",
+     "target_elements": 1048576,
+     "s3": true,
+     "s4": {
+      "tensor": "vision_model.encoder.layers.9.self_attn.q_proj.weight",
+      "bit": 0,
+      "z": 3914.09,
+      "mean": 0.0038,
+      "expected": 0.0,
+      "elements": 1047516,
+      "reference": "role",
+      "effect": 0.0038
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "vision_model.encoder.layers.9.self_attn.q_proj.weight",
+     "target_elements": 1048576,
+     "s3": true,
+     "s4": {
+      "tensor": "vision_model.encoder.layers.9.self_attn.q_proj.weight",
+      "bit": 3,
+      "z": 4033.28,
+      "mean": 0.0039,
+      "expected": 0.0,
+      "elements": 1047520,
+      "reference": "role",
+      "effect": 0.0039
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "vision_model.encoder.layers.9.self_attn.q_proj.weight",
+     "target_elements": 1048576,
+     "s3": true,
+     "s4": {
+      "tensor": "vision_model.encoder.layers.9.self_attn.q_proj.weight",
+      "bit": 7,
+      "z": 4085.07,
+      "mean": 0.004,
+      "expected": 0.0,
+      "elements": 1047520,
+      "reference": "role",
+      "effect": 0.004
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "intfloat/multilingual-e5-large",
+   "commit": "3d7cfbdacd47fdda877c5cd8a79fbcc4f2a574f3",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "encoder.layer.9.intermediate.dense.weight",
+     "target_elements": 4194304,
+     "s3": true,
+     "s4": {
+      "tensor": "encoder.layer.9.intermediate.dense.weight",
+      "bit": 0,
+      "z": 1980.08,
+      "mean": 0.001,
+      "expected": 0.0,
+      "elements": 4189750,
+      "reference": "role",
+      "effect": 0.001
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "encoder.layer.9.intermediate.dense.weight",
+     "target_elements": 4194304,
+     "s3": true,
+     "s4": {
+      "tensor": "encoder.layer.9.intermediate.dense.weight",
+      "bit": 0,
+      "z": 2013.3,
+      "mean": 0.001,
+      "expected": 0.0,
+      "elements": 4189755,
+      "reference": "role",
+      "effect": 0.001
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "encoder.layer.9.intermediate.dense.weight",
+     "target_elements": 4194304,
+     "s3": true,
+     "s4": {
+      "tensor": "encoder.layer.9.intermediate.dense.weight",
+      "bit": 2,
+      "z": 2034.31,
+      "mean": 0.001,
+      "expected": 0.0,
+      "elements": 4189755,
+      "reference": "role",
+      "effect": 0.001
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "intfloat/multilingual-e5-base",
+   "commit": "d128750597153bb5987e10b1c3493a34e5a4502a",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": true,
+     "s4": {
+      "tensor": "encoder.layer.9.output.dense.weight",
+      "bit": 0,
+      "z": 2675.26,
+      "mean": 0.0017,
+      "expected": 0.0,
+      "elements": 2356771,
+      "reference": "role",
+      "effect": 0.0017
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": true,
+     "s4": {
+      "tensor": "encoder.layer.9.output.dense.weight",
+      "bit": 0,
+      "z": 2696.1,
+      "mean": 0.0018,
+      "expected": 0.0,
+      "elements": 2356775,
+      "reference": "role",
+      "effect": 0.0018
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": true,
+     "s4": {
+      "tensor": "encoder.layer.9.output.dense.weight",
+      "bit": 7,
+      "z": 2702.62,
+      "mean": 0.0018,
+      "expected": 0.0,
+      "elements": 2356775,
+      "reference": "role",
+      "effect": 0.0018
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "FacebookAI/roberta-large",
+   "commit": "722cf37b1afa9454edce342e7895e588b6ff1d59",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "roberta.encoder.layer.9.intermediate.dense.weight",
+     "target_elements": 4194304,
+     "s3": true,
+     "s4": {
+      "tensor": "roberta.encoder.layer.9.intermediate.dense.weight",
+      "bit": 0,
+      "z": 2009.98,
+      "mean": 0.001,
+      "expected": 0.0,
+      "elements": 4189343,
+      "reference": "role",
+      "effect": 0.001
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "roberta.encoder.layer.9.intermediate.dense.weight",
+     "target_elements": 4194304,
+     "s3": true,
+     "s4": {
+      "tensor": "roberta.encoder.layer.9.intermediate.dense.weight",
+      "bit": 1,
+      "z": 1989.46,
+      "mean": 0.001,
+      "expected": 0.0,
+      "elements": 4189347,
+      "reference": "role",
+      "effect": 0.001
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "roberta.encoder.layer.9.intermediate.dense.weight",
+     "target_elements": 4194304,
+     "s3": true,
+     "s4": {
+      "tensor": "roberta.encoder.layer.9.intermediate.dense.weight",
+      "bit": 3,
+      "z": 2042.22,
+      "mean": 0.001,
+      "expected": 0.0,
+      "elements": 4189347,
+      "reference": "role",
+      "effect": 0.001
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "amazon/chronos-bolt-small",
+   "commit": "772f3d25d38aec6d914c8949dab4462e2d46f5d8",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "decoder.block.5.layer.2.DenseReluDense.wo.weight",
+     "target_elements": 1048576,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "decoder.block.5.layer.2.DenseReluDense.wo.weight",
+     "target_elements": 1048576,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "decoder.block.5.layer.2.DenseReluDense.wo.weight",
+     "target_elements": 1048576,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "autogluon/chronos-bolt-small",
+   "commit": "2e1597a7bae01316fcea6a9da90451890b529096",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "decoder.block.5.layer.2.DenseReluDense.wo.weight",
+     "target_elements": 1048576,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "decoder.block.5.layer.2.DenseReluDense.wo.weight",
+     "target_elements": 1048576,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "decoder.block.5.layer.2.DenseReluDense.wo.weight",
+     "target_elements": 1048576,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "autogluon/chronos-2",
+   "commit": "60088152a34e242427b44c3100014473a0157d53",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "encoder.block.9.layer.2.mlp.wo.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "encoder.block.9.layer.2.mlp.wo.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "encoder.block.9.layer.2.mlp.wo.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "cross-encoder/ms-marco-MiniLM-L4-v2",
+   "commit": "777b2f369bc1c2f850df8bd367ed1654bda4497b",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "bert.encoder.layer.3.output.dense.weight",
+     "target_elements": 589824,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "bert.encoder.layer.3.output.dense.weight",
+     "target_elements": 589824,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "bert.encoder.layer.3.output.dense.weight",
+     "target_elements": 589824,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "facebook/esm2_t33_650M_UR50D",
+   "commit": "08e4846e537177426273712802403f7ba8261b6c",
+   "clean_s4": [
+    {
+     "tensor": "esm.embeddings.position_embeddings.weight",
+     "bit": 7,
+     "z": 572297.28,
+     "mean": 0.4996,
+     "expected": 0.0,
+     "elements": 1312000,
+     "reference": "model",
+     "effect": 0.4996
+    }
+   ],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "esm.encoder.layer.9.intermediate.dense.weight",
+     "target_elements": 6553600,
+     "s3": true,
+     "s4": {
+      "tensor": "esm.encoder.layer.9.intermediate.dense.weight",
+      "bit": 0,
+      "z": 1599.27,
+      "mean": 0.0006,
+      "expected": 0.0,
+      "elements": 6546757,
+      "reference": "role",
+      "effect": 0.0006
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "esm.encoder.layer.9.intermediate.dense.weight",
+     "target_elements": 6553600,
+     "s3": true,
+     "s4": {
+      "tensor": "esm.encoder.layer.9.intermediate.dense.weight",
+      "bit": 0,
+      "z": 1607.48,
+      "mean": 0.0006,
+      "expected": 0.0,
+      "elements": 6546761,
+      "reference": "role",
+      "effect": 0.0006
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "esm.encoder.layer.9.intermediate.dense.weight",
+     "target_elements": 6553600,
+     "s3": true,
+     "s4": {
+      "tensor": "esm.encoder.layer.9.intermediate.dense.weight",
+      "bit": 0,
+      "z": 1619.99,
+      "mean": 0.0006,
+      "expected": 0.0,
+      "elements": 6546762,
+      "reference": "role",
+      "effect": 0.0006
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "stabilityai/stable-diffusion-xl-base-1.0",
+   "skipped": "size",
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "ProsusAI/finbert",
+   "commit": "0bc2ac10dda6929bcb1f77ccc43c7ec5c424f031",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "bert.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "bert.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "bert.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "SamLowe/roberta-base-go_emotions",
+   "commit": "d75048347613a25d77de8cf6412eaae9fa7b26be",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "roberta.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "roberta.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "roberta.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "datasocietyco/bge-base-en-v1.5-course-recommender-v5",
+   "commit": "2b069eed51ce7bc2beeaa7e3eea1a01c48ef3d29",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "answerdotai/ModernBERT-base",
+   "commit": "8949b909ec900327062f0ebf497f51aef5e6f0c8",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "model.layers.9.mlp.Wo.weight",
+     "target_elements": 884736,
+     "s3": false,
+     "s4": null,
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "model.layers.9.mlp.Wo.weight",
+     "target_elements": 884736,
+     "s3": false,
+     "s4": null,
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "model.layers.9.mlp.Wo.weight",
+     "target_elements": 884736,
+     "s3": false,
+     "s4": null,
+     "s4w": true,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "BAAI/bge-small-zh-v1.5",
+   "commit": "7999e1d3359715c523056ef9478215996d62a620",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "encoder.layer.3.output.dense.weight",
+     "target_elements": 1048576,
+     "s3": true,
+     "s4": {
+      "tensor": "encoder.layer.3.output.dense.weight",
+      "bit": 0,
+      "z": 4033.42,
+      "mean": 0.0039,
+      "expected": 0.0,
+      "elements": 1046939,
+      "reference": "role",
+      "effect": 0.0039
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "encoder.layer.3.output.dense.weight",
+     "target_elements": 1048576,
+     "s3": true,
+     "s4": {
+      "tensor": "encoder.layer.3.output.dense.weight",
+      "bit": 3,
+      "z": 4011.91,
+      "mean": 0.0039,
+      "expected": 0.0,
+      "elements": 1046943,
+      "reference": "role",
+      "effect": 0.0039
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "encoder.layer.3.output.dense.weight",
+     "target_elements": 1048576,
+     "s3": true,
+     "s4": {
+      "tensor": "encoder.layer.3.output.dense.weight",
+      "bit": 7,
+      "z": 4086.19,
+      "mean": 0.004,
+      "expected": 0.0,
+      "elements": 1046945,
+      "reference": "role",
+      "effect": 0.004
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "BAAI/bge-reranker-base",
+   "commit": "2cfc18c9415c912f9d8155881c133215df768a70",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "roberta.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "roberta.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "roberta.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "laion/CLIP-ViT-B-32-laion2B-s34B-b79K",
+   "commit": "1a25a446712ba5ee05982a381eed697ef9b435cf",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "vision_model.encoder.layers.9.mlp.fc2.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "vision_model.encoder.layers.9.mlp.fc2.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "vision_model.encoder.layers.9.mlp.fc2.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "prithivMLmods/Gender-Classifier-Mini",
+   "commit": "4855356b698e88ba57996836bb35091f81932667",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "vision_model.head.mlp.fc2.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "vision_model.head.mlp.fc2.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "vision_model.head.mlp.fc2.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "google-bert/bert-base-cased",
+   "commit": "cd5ef92a9fb2f889e972770a36d4ed042daf221e",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "bert.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "bert.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "bert.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "Qwen/Qwen3-0.6B",
+   "commit": "c1899de289a04d12100db370d81485cdf75e47ca",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.layers.9.self_attn.q_proj.weight",
+     "target_elements": 2097152,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.layers.9.self_attn.q_proj.weight",
+     "target_elements": 2097152,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "Qwen/Qwen3-4B",
+   "commit": "1cfa9a7208912126459214e8b04321603b3df60c",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.layers.9.self_attn.v_proj.weight",
+     "target_elements": 2621440,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.layers.9.self_attn.v_proj.weight",
+     "target_elements": 2621440,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "google/gemma-4-26B-A4B-it",
+   "skipped": "size",
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "Qwen/Qwen3-8B",
+   "commit": "b968826d9c46dd6066d109eabc6255188de91218",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.layers.7.self_attn.v_proj.weight",
+     "target_elements": 4194304,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.layers.7.self_attn.v_proj.weight",
+     "target_elements": 4194304,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "google/gemma-4-31B-it",
+   "skipped": "size",
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "Qwen/Qwen3-Embedding-0.6B",
+   "commit": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "layers.9.self_attn.q_proj.weight",
+     "target_elements": 2097152,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "layers.9.self_attn.q_proj.weight",
+     "target_elements": 2097152,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "Qwen/Qwen3.5-9B",
+   "commit": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.language_model.layers.27.mlp.gate_proj.weight",
+     "target_elements": 50331648,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.language_model.layers.27.mlp.gate_proj.weight",
+     "target_elements": 50331648,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "Qwen/Qwen3.5-4B",
+   "commit": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "mtp.layers.0.mlp.up_proj.weight",
+     "target_elements": 23592960,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "mtp.layers.0.mlp.up_proj.weight",
+     "target_elements": 23592960,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "Qwen/Qwen3-VL-8B-Instruct",
+   "commit": "0c351dd01ed87e9c1b53cbc748cba10e6187ff3b",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.language_model.layers.9.self_attn.q_proj.weight",
+     "target_elements": 16777216,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.language_model.layers.9.self_attn.q_proj.weight",
+     "target_elements": 16777216,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "Qwen/Qwen2.5-7B-Instruct",
+   "commit": "a09a35458c702b33eeacc393d103063234e8bc28",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.layers.6.self_attn.v_proj.weight",
+     "target_elements": 1835008,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.layers.6.self_attn.v_proj.weight",
+     "target_elements": 1835008,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "Qwen/Qwen3.8-27B",
+   "commit": "37561816e66b5b9153b1b64c10968c18c1e6f4a0",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.visual.blocks.9.mlp.linear_fc2.weight",
+     "target_elements": 4958208,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.visual.blocks.9.mlp.linear_fc2.weight",
+     "target_elements": 4958208,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "Qwen/Qwen3-14B",
+   "commit": "40c069824f4251a91eefaf281ebe4c544efd3e18",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.layers.3.self_attn.v_proj.weight",
+     "target_elements": 5242880,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.layers.3.self_attn.v_proj.weight",
+     "target_elements": 5242880,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "zai-org/GLM-5.3-Flash",
+   "commit": "46a050bec13002ad29ee795c16e61cf4fa3c4a9c",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.language_model.layers.45.eh_proj.weight",
+     "target_elements": 33554432,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.language_model.layers.45.eh_proj.weight",
+     "target_elements": 33554432,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "Qwen/Qwen2.5-0.5B-Instruct",
+   "commit": "7ae557604adf67be50417f59c2c2f167def9a775",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.layers.9.self_attn.q_proj.weight",
+     "target_elements": 802816,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.layers.9.self_attn.q_proj.weight",
+     "target_elements": 802816,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "Qwen/Qwen2.5-1.5B-Instruct",
+   "commit": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.layers.9.self_attn.q_proj.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.layers.9.self_attn.q_proj.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "openai/gpt-oss-20b",
+   "commit": "6cee5e81ee83917806bbde320786a8fb61efebee",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.layers.18.self_attn.o_proj.weight",
+     "target_elements": 11796480,
+     "s3": false,
+     "s4": null,
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.layers.18.self_attn.o_proj.weight",
+     "target_elements": 11796480,
+     "s3": false,
+     "s4": null,
+     "s4w": true,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "trl-internal-testing/tiny-Qwen2ForCausalLM-2.5",
+   "commit": "edca82771e1fad8f0b7ce110ffe770c682043fec",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.embed_tokens.weight",
+     "target_elements": 1216512,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.embed_tokens.weight",
+     "target_elements": 1216512,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "RadixArk/Kimi-K3-DSpark",
+   "commit": "3c5bac301d9cf392706189d82ed947feca6c2f0f",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "layers.4.self_attn.k_proj.weight",
+     "target_elements": 7340032,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "layers.4.self_attn.k_proj.weight",
+     "target_elements": 7340032,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "ibm-granite/granite-embedding-small-english-r2",
+   "commit": "2ab6fa8ea2d674564defd37171ae19079b864b33",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "layers.9.mlp.Wo.weight",
+     "target_elements": 589824,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "layers.9.mlp.Wo.weight",
+     "target_elements": 589824,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "Qwen/Qwen2.5-VL-7B-Instruct",
+   "commit": "cc594898137f460bfe9f0759e9844b3ce807cfb5",
+   "clean_s4": [
+    {
+     "tensor": "model.embed_tokens.weight",
+     "bit": 0,
+     "z": 24.0,
+     "mean": 0.4911,
+     "expected": 0.3915,
+     "elements": 540489300,
+     "reference": "model",
+     "effect": 0.0996
+    },
+    {
+     "tensor": "model.layers.0.mlp.down_proj.weight",
+     "bit": 0,
+     "z": 25.12,
+     "mean": 0.5043,
+     "expected": 0.3915,
+     "elements": 67332565,
+     "reference": "model",
+     "effect": 0.1042
+    },
+    {
+     "tensor": "model.layers.0.mlp.gate_proj.weight",
+     "bit": 0,
+     "z": 25.1,
+     "mean": 0.5044,
+     "expected": 0.3915,
+     "elements": 67331341,
+     "reference": "model",
+     "effect": 0.1041
+    },
+    {
+     "tensor": "model.layers.0.mlp.up_proj.weight",
+     "bit": 0,
+     "z": 25.13,
+     "mean": 0.5042,
+     "expected": 0.3915,
+     "elements": 67333453,
+     "reference": "model",
+     "effect": 0.1043
+    },
+    {
+     "tensor": "model.layers.1.mlp.down_proj.weight",
+     "bit": 0,
+     "z": 25.13,
+     "mean": 0.5042,
+     "expected": 0.3915,
+     "elements": 67331102,
+     "reference": "model",
+     "effect": 0.1043
+    },
+    {
+     "tensor": "model.layers.1.mlp.gate_proj.weight",
+     "bit": 0,
+     "z": 25.14,
+     "mean": 0.5042,
+     "expected": 0.3915,
+     "elements": 67334928,
+     "reference": "model",
+     "effect": 0.1043
+    },
+    {
+     "tensor": "model.layers.1.mlp.up_proj.weight",
+     "bit": 0,
+     "z": 25.15,
+     "mean": 0.5041,
+     "expected": 0.3915,
+     "elements": 67332024,
+     "reference": "model",
+     "effect": 0.1044
+    },
+    {
+     "tensor": "model.layers.2.mlp.down_proj.weight",
+     "bit": 0,
+     "z": 25.13,
+     "mean": 0.5042,
+     "expected": 0.3915,
+     "elements": 67331819,
+     "reference": "model",
+     "effect": 0.1043
+    },
+    {
+     "tensor": "model.layers.2.mlp.gate_proj.weight",
+     "bit": 0,
+     "z": 25.24,
+     "mean": 0.5038,
+     "expected": 0.3915,
+     "elements": 67331220,
+     "reference": "model",
+     "effect": 0.1047
+    },
+    {
+     "tensor": "model.layers.2.mlp.up_proj.weight",
+     "bit": 0,
+     "z": 25.15,
+     "mean": 0.5042,
+     "expected": 0.3915,
+     "elements": 67332218,
+     "reference": "model",
+     "effect": 0.1043
+    },
+    {
+     "tensor": "visual.merger.ln_q.weight",
+     "bit": 0,
+     "z": 7.06,
+     "mean": 0.4922,
+     "expected": 0.3915,
+     "elements": 1280,
+     "reference": "model",
+     "effect": 0.1007
+    },
+    {
+     "tensor": "visual.merger.mlp.0.bias",
+     "bit": 0,
+     "z": 12.93,
+     "mean": 0.5049,
+     "expected": 0.3915,
+     "elements": 5072,
+     "reference": "model",
+     "effect": 0.1036
+    },
+    {
+     "tensor": "visual.merger.mlp.0.weight",
+     "bit": 0,
+     "z": 25.2,
+     "mean": 0.5039,
+     "expected": 0.3915,
+     "elements": 25996451,
+     "reference": "model",
+     "effect": 0.1046
+    },
+    {
+     "tensor": "visual.merger.mlp.2.bias",
+     "bit": 0,
+     "z": 11.78,
+     "mean": 0.5004,
+     "expected": 0.3915,
+     "elements": 3557,
+     "reference": "model",
+     "effect": 0.1081
+    },
+    {
+     "tensor": "visual.merger.mlp.2.weight",
+     "bit": 0,
+     "z": 25.14,
+     "mean": 0.5041,
+     "expected": 0.3915,
+     "elements": 18198239,
+     "reference": "model",
+     "effect": 0.1044
+    }
+   ],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "visual.blocks.9.mlp.up_proj.weight",
+     "target_elements": 4377600,
+     "s3": false,
+     "s4": null,
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "visual.blocks.9.mlp.up_proj.weight",
+     "target_elements": 4377600,
+     "s3": false,
+     "s4": null,
+     "s4w": true,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "openai/whisper-large-v3-turbo",
+   "commit": "41f01f3fe87f28c78e2fbf8b568835947dd65ed9",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.encoder.layers.9.self_attn.v_proj.weight",
+     "target_elements": 1638400,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.encoder.layers.9.self_attn.v_proj.weight",
+     "target_elements": 1638400,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "openai/whisper-large-v3",
+   "commit": "06f233fe06e710322aca913c1bc4249a0d71fce1",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.encoder.layers.9.fc2.weight",
+     "target_elements": 6553600,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.encoder.layers.9.fc2.weight",
+     "target_elements": 6553600,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "EleutherAI/pythia-160m",
+   "commit": "50f5173d932e8e61f858120bcb800b97af589f46",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "gpt_neox.layers.9.mlp.dense_h_to_4h.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "gpt_neox.layers.9.mlp.dense_h_to_4h.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "microsoft/Florence-2-base",
+   "commit": "5ca5edf5bd017b9919c05d08aebef5e4c7ac3bac",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "vision_tower.blocks.3.0.spatial_block.ffn.fn.net.fc2.weight",
+     "target_elements": 4194304,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "vision_tower.blocks.3.0.spatial_block.ffn.fn.net.fc2.weight",
+     "target_elements": 4194304,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "Qwen/Qwen2.5-7B-Instruct-AWQ",
+   "commit": "b25037543e9394b818fdfca67ab2a00ecc7dd641",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.layers.9.self_attn.q_proj.scales",
+     "target_elements": 100352,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.layers.9.self_attn.q_proj.scales",
+     "target_elements": 100352,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "mixedbread-ai/mxbai-embed-large-v1",
+   "commit": "b33106f585b9ce46904ad7443a3b52b7a63e231c",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "encoder.layer.9.intermediate.dense.weight",
+     "target_elements": 4194304,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "encoder.layer.9.intermediate.dense.weight",
+     "target_elements": 4194304,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "intfloat/multilingual-e5-large-instruct",
+   "commit": "274baa43b0e13e37fafa6428dbc7938e62e5c439",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "encoder.layer.9.intermediate.dense.weight",
+     "target_elements": 4194304,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "encoder.layer.9.intermediate.dense.weight",
+     "target_elements": 4194304,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "Qwen/Qwen2.5-14B-Instruct-AWQ",
+   "commit": "539535859b135b0244c91f3e59816150c8056698",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.layers.9.self_attn.k_proj.scales",
+     "target_elements": 40960,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.layers.9.self_attn.k_proj.scales",
+     "target_elements": 40960,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "Qwen/Qwen2-VL-7B-Instruct-AWQ",
+   "commit": "6ec2560b0afc3a618d4acc9b8e2967d1642f463d",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "visual.blocks.9.mlp.fc2.weight",
+     "target_elements": 6553600,
+     "s3": false,
+     "s4": {
+      "tensor": "visual.blocks.9.mlp.fc2.weight",
+      "bit": 0,
+      "z": 3212.18,
+      "mean": 0.0013,
+      "expected": 0.0,
+      "elements": 6486536,
+      "reference": "role",
+      "effect": 0.0013
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "visual.blocks.9.mlp.fc2.weight",
+     "target_elements": 6553600,
+     "s3": false,
+     "s4": {
+      "tensor": "visual.blocks.9.mlp.fc2.weight",
+      "bit": 1,
+      "z": 3218.85,
+      "mean": 0.0013,
+      "expected": 0.0,
+      "elements": 6486574,
+      "reference": "role",
+      "effect": 0.0013
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "Alibaba-NLP/gte-multilingual-base",
+   "commit": "9bbca17d9273fd0d03d5725c7a4b0f6b45142062",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "new.encoder.layer.9.mlp.up_gate_proj.weight",
+     "target_elements": 4718592,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "new.encoder.layer.9.mlp.up_gate_proj.weight",
+     "target_elements": 4718592,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models.json"
+  },
+  {
+   "repo": "Snowflake/snowflake-arctic-embed-l-v2.0",
+   "commit": "ac6544c8a46e00af67e330e85a9028c66b8cfd9a",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "encoder.layer.9.intermediate.dense.weight",
+     "target_elements": 4194304,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "encoder.layer.9.intermediate.dense.weight",
+     "target_elements": 4194304,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "encoder.layer.9.intermediate.dense.weight",
+     "target_elements": 4194304,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "k2-fsa/OmniVoice",
+   "commit": "c5fdb5ccb189668d56333f77ba2629f4cd7535f4",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "llm.layers.9.self_attn.q_proj.weight",
+     "target_elements": 2097152,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "llm.layers.9.self_attn.q_proj.weight",
+     "target_elements": 2097152,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "llm.layers.9.self_attn.q_proj.weight",
+     "target_elements": 2097152,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "Arunavaonly/Bangla-twoclass-Sentiment-Analyzer",
+   "commit": "b2b3ca5db5eaf56a8542ee9deff888d5fa1b5cad",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "roberta.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "roberta.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "roberta.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "NeoQuasar/Kronos-small",
+   "commit": "901c26c1332695a2a8f243eb2f37243a37bea320",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "transformer.7.self_attn.v_proj.weight",
+     "target_elements": 262144,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "transformer.7.self_attn.v_proj.weight",
+     "target_elements": 262144,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "transformer.7.self_attn.v_proj.weight",
+     "target_elements": 262144,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "amazon/chronos-bolt-mini",
+   "commit": "251268337516a88e253628c43e1d26ec577b376b",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "decoder.block.3.layer.2.DenseReluDense.wo.weight",
+     "target_elements": 589824,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "decoder.block.3.layer.2.DenseReluDense.wo.weight",
+     "target_elements": 589824,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "decoder.block.3.layer.2.DenseReluDense.wo.weight",
+     "target_elements": 589824,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "MIT/ast-finetuned-audioset-10-10-0.4593",
+   "commit": "f826b80d28226b62986cc218e5cec390b1096902",
+   "clean_s4": [
+    {
+     "tensor": "audio_spectrogram_transformer.encoder.layer.0.attention.attention.key.weight",
+     "bit": 2,
+     "z": 7.52,
+     "mean": 0.4623,
+     "expected": 0.454,
+     "elements": 589824,
+     "reference": "role",
+     "effect": 0.0083
+    },
+    {
+     "tensor": "audio_spectrogram_transformer.encoder.layer.0.attention.attention.query.weight",
+     "bit": 2,
+     "z": 8.02,
+     "mean": 0.4611,
+     "expected": 0.4545,
+     "elements": 589824,
+     "reference": "role",
+     "effect": 0.0066
+    },
+    {
+     "tensor": "audio_spectrogram_transformer.encoder.layer.0.attention.attention.value.weight",
+     "bit": 2,
+     "z": 12.89,
+     "mean": 0.4604,
+     "expected": 0.452,
+     "elements": 589824,
+     "reference": "role",
+     "effect": 0.0084
+    },
+    {
+     "tensor": "audio_spectrogram_transformer.encoder.layer.0.intermediate.dense.weight",
+     "bit": 2,
+     "z": 9.5,
+     "mean": 0.4601,
+     "expected": 0.4532,
+     "elements": 2359296,
+     "reference": "role",
+     "effect": 0.0069
+    },
+    {
+     "tensor": "audio_spectrogram_transformer.encoder.layer.1.attention.attention.query.weight",
+     "bit": 2,
+     "z": 7.16,
+     "mean": 0.4603,
+     "expected": 0.4545,
+     "elements": 589824,
+     "reference": "role",
+     "effect": 0.0058
+    },
+    {
+     "tensor": "audio_spectrogram_transformer.encoder.layer.1.attention.attention.value.weight",
+     "bit": 2,
+     "z": 9.49,
+     "mean": 0.4582,
+     "expected": 0.452,
+     "elements": 589824,
+     "reference": "role",
+     "effect": 0.0062
+    }
+   ],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "audio_spectrogram_transformer.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "audio_spectrogram_transformer.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "audio_spectrogram_transformer.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": true,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "sentence-transformers/paraphrase-mpnet-base-v2",
+   "commit": "6cc9279c672dc57f94445ef259b28a1b736fec8f",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "ibm-granite/granite-timeseries-ttm-r3",
+   "commit": "ea17cfd2e3edcaea21eb8dcecd18bf88971482fa",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "residual_forecaster.head.base_forecast_block.weight",
+     "target_elements": 38400,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "residual_forecaster.head.base_forecast_block.weight",
+     "target_elements": 38400,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "residual_forecaster.head.base_forecast_block.weight",
+     "target_elements": 38400,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "iitolstykh/mivolo_v2",
+   "commit": "e8bdd8aec21ae468cbfe73b41f52550105ad8fbf",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "mivolo.model.patch_embed.conv2.6.weight",
+     "target_elements": 36864,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "mivolo.model.patch_embed.conv2.6.weight",
+     "target_elements": 36864,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "mivolo.model.patch_embed.conv2.6.weight",
+     "target_elements": 36864,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "HuggingFaceTB/SmolVLM2-500M-Video-Instruct",
+   "commit": "4cde9d208e19519c36917aa170fffc7e381aa0ad",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "model.text_model.layers.9.self_attn.q_proj.weight",
+     "target_elements": 921600,
+     "s3": true,
+     "s4": {
+      "tensor": "model.text_model.layers.9.self_attn.q_proj.weight",
+      "bit": 0,
+      "z": 4282.53,
+      "mean": 0.0045,
+      "expected": 0.0,
+      "elements": 913890,
+      "reference": "role",
+      "effect": 0.0045
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "model.text_model.layers.9.self_attn.q_proj.weight",
+     "target_elements": 921600,
+     "s3": true,
+     "s4": {
+      "tensor": "model.text_model.layers.9.self_attn.q_proj.weight",
+      "bit": 1,
+      "z": 4347.33,
+      "mean": 0.0045,
+      "expected": 0.0,
+      "elements": 913915,
+      "reference": "role",
+      "effect": 0.0045
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "model.text_model.layers.9.self_attn.q_proj.weight",
+     "target_elements": 921600,
+     "s3": true,
+     "s4": {
+      "tensor": "model.text_model.layers.9.self_attn.q_proj.weight",
+      "bit": 4,
+      "z": 4365.11,
+      "mean": 0.0046,
+      "expected": 0.0,
+      "elements": 913917,
+      "reference": "role",
+      "effect": 0.0046
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "Alibaba-NLP/gte-large-en-v1.5",
+   "commit": "104333d6af6f97649377c2afbde10a7704870c7b",
+   "clean_s4": [
+    {
+     "tensor": "embeddings.word_embeddings.weight",
+     "bit": 1,
+     "z": 124.49,
+     "mean": 0.497,
+     "expected": 0.532,
+     "elements": 31251822,
+     "reference": "model",
+     "effect": 0.029
+    },
+    {
+     "tensor": "encoder.layer.18.mlp_ln.weight",
+     "bit": 1,
+     "z": 8.39,
+     "mean": 0.1235,
+     "expected": 0.0364,
+     "elements": 1020,
+     "reference": "role",
+     "effect": 0.0871
+    },
+    {
+     "tensor": "encoder.layer.19.attn_ln.weight",
+     "bit": 2,
+     "z": 9.33,
+     "mean": 0.1016,
+     "expected": 0.0205,
+     "elements": 1024,
+     "reference": "role",
+     "effect": 0.0811
+    },
+    {
+     "tensor": "encoder.layer.19.mlp_ln.weight",
+     "bit": 1,
+     "z": 9.63,
+     "mean": 0.1364,
+     "expected": 0.0364,
+     "elements": 1019,
+     "reference": "role",
+     "effect": 0.1
+    },
+    {
+     "tensor": "encoder.layer.20.attn_ln.weight",
+     "bit": 2,
+     "z": 11.47,
+     "mean": 0.1201,
+     "expected": 0.0205,
+     "elements": 1024,
+     "reference": "role",
+     "effect": 0.0996
+    },
+    {
+     "tensor": "encoder.layer.20.mlp_ln.weight",
+     "bit": 2,
+     "z": 17.43,
+     "mean": 0.1184,
+     "expected": 0.0167,
+     "elements": 1022,
+     "reference": "role",
+     "effect": 0.1017
+    },
+    {
+     "tensor": "encoder.layer.21.attn_ln.weight",
+     "bit": 2,
+     "z": 11.58,
+     "mean": 0.1211,
+     "expected": 0.0205,
+     "elements": 1024,
+     "reference": "role",
+     "effect": 0.1006
+    },
+    {
+     "tensor": "encoder.layer.21.mlp_ln.weight",
+     "bit": 2,
+     "z": 20.93,
+     "mean": 0.1388,
+     "expected": 0.0167,
+     "elements": 1023,
+     "reference": "role",
+     "effect": 0.1221
+    },
+    {
+     "tensor": "encoder.layer.22.attn_ln.weight",
+     "bit": 2,
+     "z": 11.8,
+     "mean": 0.123,
+     "expected": 0.0205,
+     "elements": 1024,
+     "reference": "role",
+     "effect": 0.1025
+    },
+    {
+     "tensor": "encoder.layer.22.mlp_ln.weight",
+     "bit": 2,
+     "z": 20.5,
+     "mean": 0.1364,
+     "expected": 0.0167,
+     "elements": 1019,
+     "reference": "role",
+     "effect": 0.1197
+    },
+    {
+     "tensor": "encoder.layer.23.attn_ln.weight",
+     "bit": 2,
+     "z": 17.42,
+     "mean": 0.1719,
+     "expected": 0.0205,
+     "elements": 1024,
+     "reference": "role",
+     "effect": 0.1514
+    },
+    {
+     "tensor": "encoder.layer.23.mlp_ln.weight",
+     "bit": 2,
+     "z": 33.64,
+     "mean": 0.2129,
+     "expected": 0.0167,
+     "elements": 1024,
+     "reference": "role",
+     "effect": 0.1962
+    }
+   ],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "encoder.layer.9.mlp.up_gate_proj.weight",
+     "target_elements": 8388608,
+     "s3": false,
+     "s4": null,
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "encoder.layer.9.mlp.up_gate_proj.weight",
+     "target_elements": 8388608,
+     "s3": false,
+     "s4": null,
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "encoder.layer.9.mlp.up_gate_proj.weight",
+     "target_elements": 8388608,
+     "s3": false,
+     "s4": null,
+     "s4w": true,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "sentence-transformers/distiluse-base-multilingual-cased-v1",
+   "commit": "826fee3d516ebb14987355af373f5b69101c7006",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "transformer.layer.5.ffn.lin2.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "transformer.layer.5.ffn.lin2.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "transformer.layer.5.ffn.lin2.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "google/timesfm-2.5-200m-pytorch",
+   "commit": "1d952420fba87f3c6dee4f240de0f1a0fbc790e3",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "tokenizer.residual_layer.weight",
+     "target_elements": 81920,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "tokenizer.residual_layer.weight",
+     "target_elements": 81920,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "tokenizer.residual_layer.weight",
+     "target_elements": 81920,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "timm/resnet50.a1_in1k",
+   "commit": "767268603ca0cb0bfe326fa87277f19c419566ef",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "layer4.2.conv3.weight",
+     "target_elements": 1048576,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "layer4.2.conv3.weight",
+     "target_elements": 1048576,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "layer4.2.conv3.weight",
+     "target_elements": 1048576,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "colbert-ir/colbertv2.0",
+   "commit": "c1e84128e85ef755c096a95bdb06b47793b13acf",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "bert.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "bert.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "bert.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "google-bert/bert-base-multilingual-cased",
+   "commit": "3f076fdb1ab68d5b2880cb87a0886f315b8146f8",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "bert.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "bert.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "bert.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "sentence-transformers/paraphrase-MiniLM-L6-v2",
+   "commit": "c9a2bfebc254878aee8c3aca9e6844d5bbb102d1",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "encoder.layer.5.output.dense.weight",
+     "target_elements": 589824,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "encoder.layer.5.output.dense.weight",
+     "target_elements": 589824,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "encoder.layer.5.output.dense.weight",
+     "target_elements": 589824,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "intfloat/e5-small-v2",
+   "commit": "ffb93f3bd4047442299a41ebb6fa998a38507c52",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 589824,
+     "s3": true,
+     "s4": {
+      "tensor": "encoder.layer.9.output.dense.weight",
+      "bit": 0,
+      "z": 5239.93,
+      "mean": 0.0068,
+      "expected": 0.0,
+      "elements": 589159,
+      "reference": "role",
+      "effect": 0.0068
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 589824,
+     "s3": true,
+     "s4": {
+      "tensor": "encoder.layer.9.output.dense.weight",
+      "bit": 1,
+      "z": 5368.9,
+      "mean": 0.007,
+      "expected": 0.0,
+      "elements": 589161,
+      "reference": "role",
+      "effect": 0.007
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 589824,
+     "s3": true,
+     "s4": {
+      "tensor": "encoder.layer.9.output.dense.weight",
+      "bit": 0,
+      "z": 5464.0,
+      "mean": 0.0071,
+      "expected": 0.0,
+      "elements": 589163,
+      "reference": "role",
+      "effect": 0.0071
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "jhgan/ko-sroberta-multitask",
+   "commit": "8fca7c9c98c26599be0e14b9916b11a756a26f19",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "sentence-transformers/multi-qa-mpnet-base-dot-v1",
+   "commit": "17997f24dca0df1a4fed68894fb0e1e133e60482",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "cambridgeltl/SapBERT-from-PubMedBERT-fulltext",
+   "commit": "090663c3ae57bf35ffe4d0d468a2a88d03051a4d",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "google/siglip2-base-patch16-224",
+   "commit": "75de2d55ec2d0b4efc50b3e9ad70dba96a7b2fa2",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "vision_model.encoder.layers.9.mlp.fc2.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "vision_model.encoder.layers.9.mlp.fc2.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "vision_model.encoder.layers.9.mlp.fc2.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "SG161222/RealVisXL_V5.0",
+   "skipped": "size",
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "distilbert/distilroberta-base",
+   "commit": "fb53ab8802853c8e4fbdbcd0529f21fc6f459b2b",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "roberta.encoder.layer.5.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "roberta.encoder.layer.5.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "roberta.encoder.layer.5.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "microsoft/table-transformer-structure-recognition",
+   "commit": "f4d4bdc85c3fe4b1fa49658882a5d38bbdd0f343",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "model.encoder.layers.5.fc2.weight",
+     "target_elements": 524288,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "model.encoder.layers.5.fc2.weight",
+     "target_elements": 524288,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "model.encoder.layers.5.fc2.weight",
+     "target_elements": 524288,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "PekingU/rtdetr_r101vd_coco_o365",
+   "commit": "ff44b69152a72cc752677665fb4539507d56a99d",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "model.encoder.pan_blocks.1.bottlenecks.2.conv2.conv.weight",
+     "target_elements": 147456,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "model.encoder.pan_blocks.1.bottlenecks.2.conv2.conv.weight",
+     "target_elements": 147456,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "model.encoder.pan_blocks.1.bottlenecks.2.conv2.conv.weight",
+     "target_elements": 147456,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "comodoro/wav2vec2-xls-r-300m-cs-250",
+   "commit": "73e2b9004f35d3ca79316a624e7edc3cdaa45d40",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "wav2vec2.encoder.layers.9.feed_forward.intermediate_dense.weight",
+     "target_elements": 4194304,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "wav2vec2.encoder.layers.9.feed_forward.intermediate_dense.weight",
+     "target_elements": 4194304,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "wav2vec2.encoder.layers.9.feed_forward.intermediate_dense.weight",
+     "target_elements": 4194304,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "timm/efficientvit_l2.r288_in1k",
+   "commit": "8163ce9d4995f078dc00123c0b94a7e8238fdeb3",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "stages.3.blocks.8.context_module.main.qkv.conv.weight",
+     "target_elements": 786432,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "stages.3.blocks.8.context_module.main.qkv.conv.weight",
+     "target_elements": 786432,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "stages.3.blocks.8.context_module.main.qkv.conv.weight",
+     "target_elements": 786432,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "facebook/w2v-bert-2.0",
+   "commit": "da985ba0987f70aaeb84a80f2851cfac8c697a7b",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "encoder.layers.9.ffn2.output_dense.weight",
+     "target_elements": 4194304,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "encoder.layers.9.ffn2.output_dense.weight",
+     "target_elements": 4194304,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "encoder.layers.9.ffn2.output_dense.weight",
+     "target_elements": 4194304,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "google/siglip2-base-patch16-naflex",
+   "commit": "b53b807d3a2d5e2b3911292f2d69e5341cdc064c",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "vision_model.encoder.layers.9.mlp.fc2.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "vision_model.encoder.layers.9.mlp.fc2.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "vision_model.encoder.layers.9.mlp.fc2.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "KBLab/wav2vec2-large-voxrex-swedish",
+   "commit": "ca70e31c06a2617bf7fe3b4fb5d387d2b19b2983",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "wav2vec2.encoder.layers.9.feed_forward.intermediate_dense.weight",
+     "target_elements": 4194304,
+     "s3": true,
+     "s4": {
+      "tensor": "wav2vec2.encoder.layers.9.feed_forward.intermediate_dense.weight",
+      "bit": 0,
+      "z": 2029.41,
+      "mean": 0.001,
+      "expected": 0.0,
+      "elements": 4189813,
+      "reference": "role",
+      "effect": 0.001
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "wav2vec2.encoder.layers.9.feed_forward.intermediate_dense.weight",
+     "target_elements": 4194304,
+     "s3": true,
+     "s4": {
+      "tensor": "wav2vec2.encoder.layers.9.feed_forward.intermediate_dense.weight",
+      "bit": 2,
+      "z": 2005.47,
+      "mean": 0.001,
+      "expected": 0.0,
+      "elements": 4189817,
+      "reference": "role",
+      "effect": 0.001
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "wav2vec2.encoder.layers.9.feed_forward.intermediate_dense.weight",
+     "target_elements": 4194304,
+     "s3": true,
+     "s4": {
+      "tensor": "wav2vec2.encoder.layers.9.feed_forward.intermediate_dense.weight",
+      "bit": 2,
+      "z": 2018.66,
+      "mean": 0.001,
+      "expected": 0.0,
+      "elements": 4189817,
+      "reference": "role",
+      "effect": 0.001
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "Lightricks/LTX-Video",
+   "commit": "8984fa25007f376c1a299016d0957a37a2f797bb",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "vae.encoder.down_blocks.9.res_blocks.3.conv2.conv.weight",
+     "target_elements": 7077888,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "vae.encoder.down_blocks.9.res_blocks.3.conv2.conv.weight",
+     "target_elements": 7077888,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "kresnik/wav2vec2-large-xlsr-korean",
+   "commit": "629c9a3501c10ba128bf3fa1eebb12af3be03f61",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "wav2vec2.encoder.layers.9.feed_forward.intermediate_dense.weight",
+     "target_elements": 4194304,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "wav2vec2.encoder.layers.9.feed_forward.intermediate_dense.weight",
+     "target_elements": 4194304,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "wav2vec2.encoder.layers.9.feed_forward.intermediate_dense.weight",
+     "target_elements": 4194304,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "rizvandwiki/gender-classification",
+   "commit": "380b17658cc037b246aab0b62a20deb7dd607e65",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "vit.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "vit.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "vit.encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "deepvk/USER2-base",
+   "commit": "94bbff0cc696f26dc93b275fc874657727df0c29",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "layers.9.mlp.Wo.weight",
+     "target_elements": 884736,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "layers.9.mlp.Wo.weight",
+     "target_elements": 884736,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "layers.9.mlp.Wo.weight",
+     "target_elements": 884736,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "amazon/chronos-bolt-tiny",
+   "commit": "a0e552de83495b5c28c14c71c374f3e33280b340",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "decoder.block.3.layer.2.DenseReluDense.wo.weight",
+     "target_elements": 262144,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "decoder.block.3.layer.2.DenseReluDense.wo.weight",
+     "target_elements": 262144,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "decoder.block.3.layer.2.DenseReluDense.wo.weight",
+     "target_elements": 262144,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "WhereIsAI/UAE-Large-V1",
+   "commit": "9c9b2c999b3350cfb3171ed429320668e39b00b8",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "encoder.layer.9.intermediate.dense.weight",
+     "target_elements": 4194304,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "encoder.layer.9.intermediate.dense.weight",
+     "target_elements": 4194304,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "encoder.layer.9.intermediate.dense.weight",
+     "target_elements": 4194304,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "gigant/romanian-wav2vec2",
+   "commit": "79cf603aac59501d02bfeb37f615efc3ac4ce1b3",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "wav2vec2.encoder.layers.9.feed_forward.intermediate_dense.weight",
+     "target_elements": 4194304,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "wav2vec2.encoder.layers.9.feed_forward.intermediate_dense.weight",
+     "target_elements": 4194304,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "wav2vec2.encoder.layers.9.feed_forward.intermediate_dense.weight",
+     "target_elements": 4194304,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "sentence-transformers/paraphrase-MiniLM-L3-v2",
+   "commit": "4ca70771034acceecb2e72475f72050fcdde4ddc",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "pooler.dense.weight",
+     "target_elements": 147456,
+     "s3": false,
+     "s4": null,
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "pooler.dense.weight",
+     "target_elements": 147456,
+     "s3": false,
+     "s4": null,
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "pooler.dense.weight",
+     "target_elements": 147456,
+     "s3": false,
+     "s4": null,
+     "s4w": true,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "intfloat/e5-base-v2",
+   "commit": "f52bf8ec8c7124536f0efb74aca902b2995e5bcd",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 1020,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": true,
+     "s4": {
+      "tensor": "encoder.layer.9.output.dense.weight",
+      "bit": 0,
+      "z": 2692.17,
+      "mean": 0.0018,
+      "expected": 0.0,
+      "elements": 2356809,
+      "reference": "role",
+      "effect": 0.0018
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 4092,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": true,
+     "s4": {
+      "tensor": "encoder.layer.9.output.dense.weight",
+      "bit": 2,
+      "z": 2699.34,
+      "mean": 0.0018,
+      "expected": 0.0,
+      "elements": 2356816,
+      "reference": "role",
+      "effect": 0.0018
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 8,
+     "payload_bytes": 8188,
+     "target": "encoder.layer.9.output.dense.weight",
+     "target_elements": 2359296,
+     "s3": true,
+     "s4": {
+      "tensor": "encoder.layer.9.output.dense.weight",
+      "bit": 4,
+      "z": 2688.26,
+      "mean": 0.0018,
+      "expected": 0.0,
+      "elements": 2356816,
+      "reference": "role",
+      "effect": 0.0018
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "baidu/Unlimited-OCR",
+   "skipped": "size",
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "trl-internal-testing/tiny-Qwen3ForCausalLM",
+   "commit": "25bb9b8963688237e94750f6f3e48f1947d3c7a3",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.embed_tokens.weight",
+     "target_elements": 1215488,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.embed_tokens.weight",
+     "target_elements": 1215488,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "pnnbao-ump/VieNeu-TTS-v3-Turbo",
+   "commit": "61b85e3d937fbbacb387714180e8182823512523",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "semantic_backbone.layers.9.self_attn.o_proj.weight",
+     "target_elements": 589824,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "semantic_backbone.layers.9.self_attn.o_proj.weight",
+     "target_elements": 589824,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "deepseek-ai/DeepSeek-V4.1-Flash",
+   "commit": "314113f8a7dadb388215396ba5fbee2c610a04d6",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "vision.patch_embed.proj.weight",
+     "target_elements": 602112,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "vision.patch_embed.proj.weight",
+     "target_elements": 602112,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "nvidia/Gemma-4-26B-A4B-NVFP4",
+   "skipped": "size",
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+   "commit": "b2cff646eb4bb1d68355c01b18ae02e7cf42d120",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.layers.2.self_attn.v_proj.weight",
+     "target_elements": 1048576,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.layers.2.self_attn.v_proj.weight",
+     "target_elements": 1048576,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "deepseek-ai/DeepSeek-R1",
+   "commit": "56d4cbbb4d29f4355bab4b9a39ccb717a14ad5ad",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.layers.3.mlp.gate.weight",
+     "target_elements": 1835008,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.layers.3.mlp.gate.weight",
+     "target_elements": 1835008,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "autotrust/AutoTrust-Decider-Pro-35B",
+   "commit": "a5d0d580bb9324f0f4c07dcba5c5ca91e813e7c9",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.language_model.layers.34.mlp.experts.gate_up_proj",
+     "target_elements": 536870912,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.language_model.layers.34.mlp.experts.gate_up_proj",
+     "target_elements": 536870912,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "Qwen/Qwen3-ASR-1.7B",
+   "commit": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "thinker.audio_tower.layers.9.self_attn.v_proj.weight",
+     "target_elements": 1048576,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "thinker.audio_tower.layers.9.self_attn.v_proj.weight",
+     "target_elements": 1048576,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "thinkingmachines/Inkling",
+   "skipped": "size",
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
+   "commit": "9e53b8a809d2ab98e3e6a55b2b2dbf94b4c1e84a",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.visual.blocks.9.mlp.linear_fc2.weight",
+     "target_elements": 4958208,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.visual.blocks.9.mlp.linear_fc2.weight",
+     "target_elements": 4958208,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "ornith-ai/Ornith-1.0-35B",
+   "commit": "5df2ed3f675c7beaa490328cc70bb573b65fb660",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.language_model.layers.1.mlp.experts.99.down_proj.weight",
+     "target_elements": 1048576,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.language_model.layers.1.mlp.experts.99.down_proj.weight",
+     "target_elements": 1048576,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "jinaai/jina-reranker-v2-base-multilingual",
+   "commit": "9cfeff2df7d40d1b78e75e5e9cebec92a99813c9",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "roberta.encoder.layers.9.mlp.fc2.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "roberta.encoder.layers.9.mlp.fc2.weight",
+     "target_elements": 2359296,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-BF16",
+   "commit": "bf77c3174f68ad409e1c2aa60daeb46e32d1c606",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "backbone.layers.3.mixer.experts.9.up_proj.weight",
+     "target_elements": 4988928,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "backbone.layers.3.mixer.experts.9.up_proj.weight",
+     "target_elements": 4988928,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "Qwen/Qwen3.6-27B-FP8",
+   "commit": "a56219b8202864dc6d3e565be5ff1eea01f54cb4",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.language_model.layers.0.linear_attn.in_proj_b.weight",
+     "target_elements": 245760,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.language_model.layers.0.linear_attn.in_proj_b.weight",
+     "target_elements": 245760,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "lmstudio-community/gemma-4-E4B-it-MLX-4bit",
+   "commit": "ce713a0013bb7090305edfb8e3773a07ccae35c1",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "language_model.model.layers.7.mlp.gate_proj.scales",
+     "target_elements": 409600,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "language_model.model.layers.7.mlp.gate_proj.scales",
+     "target_elements": 409600,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "lmstudio-community/gemma-4-E4B-it-MLX-8bit",
+   "commit": "45c20664205a7d600425ea23efed8ba8b8543fc3",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "language_model.model.layers.7.mlp.gate_proj.scales",
+     "target_elements": 409600,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "language_model.model.layers.7.mlp.gate_proj.scales",
+     "target_elements": 409600,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "lmstudio-community/gemma-4-E4B-it-MLX-6bit",
+   "commit": "7af9c68c69b0679c3908a317f022fd26a49e90fd",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "language_model.model.layers.7.mlp.gate_proj.scales",
+     "target_elements": 409600,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "language_model.model.layers.7.mlp.gate_proj.scales",
+     "target_elements": 409600,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "lmstudio-community/gemma-4-E4B-it-MLX-5bit",
+   "commit": "3dba0b5613bad334c2a9c29712c9b3ec6d6a9532",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "language_model.model.layers.7.mlp.gate_proj.scales",
+     "target_elements": 409600,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "language_model.model.layers.7.mlp.gate_proj.scales",
+     "target_elements": 409600,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "zai-org/GLM-5",
+   "commit": "c183ef8c61faee82855eca1ed9bb3a9a7ce3b0b2",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.layers.1.self_attn.q_a_proj.weight",
+     "target_elements": 12582912,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.layers.1.self_attn.q_a_proj.weight",
+     "target_elements": 12582912,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "farbodtavakkoli/OTel-2.0-Decision-26B-A4B-4bit",
+   "commit": "7ff608e3d02a1960dac5a3da518fc80878a972d4",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.language_model.layers.16.experts.1.down_proj.weight_scale",
+     "target_elements": 61952,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.language_model.layers.16.experts.1.down_proj.weight_scale",
+     "target_elements": 61952,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "hindsight-ai/hs-rerank-1",
+   "commit": "927f5be31280298a51cf29af8a29cb111ed812c5",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.layers.7.mlp.Wo.weight",
+     "target_elements": 442368,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.layers.7.mlp.Wo.weight",
+     "target_elements": 442368,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "Laxhar/noobai-XL-1.1",
+   "skipped": "size",
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "cyankiwi/gemma-4-31B-it-AWQ-4bit",
+   "commit": "a6b1af08a2dec2a803fd31641540d6a6d6cb09a9",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.language_model.layers.16.mlp.up_proj.weight_scale",
+     "target_elements": 3612672,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.language_model.layers.16.mlp.up_proj.weight_scale",
+     "target_elements": 3612672,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "defog/sqlcoder-7b-2",
+   "commit": "7e5b6f7981c0aa7d143f6bec6fa26625bdfcbe66",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.layers.9.self_attn.v_proj.weight",
+     "target_elements": 16777216,
+     "s3": false,
+     "s4": {
+      "tensor": "model.layers.9.self_attn.v_proj.weight",
+      "bit": 0,
+      "z": 1978.84,
+      "mean": 0.0005,
+      "expected": 0.0,
+      "elements": 16520144,
+      "reference": "role",
+      "effect": 0.0005
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.layers.9.self_attn.v_proj.weight",
+     "target_elements": 16777216,
+     "s3": false,
+     "s4": {
+      "tensor": "model.layers.9.self_attn.v_proj.weight",
+      "bit": 1,
+      "z": 2024.84,
+      "mean": 0.0005,
+      "expected": 0.0,
+      "elements": 16520236,
+      "reference": "role",
+      "effect": 0.0005
+     },
+     "s4w": true,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "cyankiwi/Ornith-1.0-9B-AWQ-INT4",
+   "commit": "2971eee366ac5e04914378dfed5d60ca99ed4bcf",
+   "clean_s4": [
+    {
+     "tensor": "model.visual.merger.linear_fc1.weight",
+     "bit": 0,
+     "z": 11.25,
+     "mean": 0.5042,
+     "expected": 0.4587,
+     "elements": 21062075,
+     "reference": "model",
+     "effect": 0.0371
+    },
+    {
+     "tensor": "model.visual.merger.linear_fc2.weight",
+     "bit": 0,
+     "z": 11.21,
+     "mean": 0.5043,
+     "expected": 0.4587,
+     "elements": 18722100,
+     "reference": "model",
+     "effect": 0.037
+    },
+    {
+     "tensor": "model.visual.pos_embed.weight",
+     "bit": 0,
+     "z": 10.9,
+     "mean": 0.5052,
+     "expected": 0.4587,
+     "elements": 2632784,
+     "reference": "model",
+     "effect": 0.0361
+    }
+   ],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.visual.pos_embed.weight",
+     "target_elements": 2654208,
+     "s3": false,
+     "s4": {
+      "tensor": "model.visual.pos_embed.weight",
+      "bit": 0,
+      "z": 10.9,
+      "mean": 0.5052,
+      "expected": 0.4587,
+      "elements": 2632753,
+      "reference": "model",
+      "effect": 0.0361
+     },
+     "s4w": false,
+     "s4_clean_flag": true
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.visual.pos_embed.weight",
+     "target_elements": 2654208,
+     "s3": false,
+     "s4": {
+      "tensor": "model.visual.pos_embed.weight",
+      "bit": 0,
+      "z": 10.9,
+      "mean": 0.5052,
+      "expected": 0.4587,
+      "elements": 2632744,
+      "reference": "model",
+      "effect": 0.0361
+     },
+     "s4w": false,
+     "s4_clean_flag": true
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "ccore/Qwen3.5-4B-3D-Coder",
+   "commit": "4b9f05f3a0382725b679c5e32a338b88acaf0064",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.language_model.layers.5.linear_attn.out_proj.weight",
+     "target_elements": 10485760,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.language_model.layers.5.linear_attn.out_proj.weight",
+     "target_elements": 10485760,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "hugging-quants/Meta-Llama-3.1-8B-Instruct-AWQ-INT4",
+   "commit": "db1f81ad4b8c7e39777509fac66c652eb0a52f91",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.layers.9.self_attn.k_proj.scales",
+     "target_elements": 32768,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.layers.9.self_attn.k_proj.scales",
+     "target_elements": 32768,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "xinsir/controlnet-openpose-sdxl-1.0",
+   "commit": "23f966cd5cfdd3f7729c903e243d87152162d2b7",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "down_blocks.2.attentions.1.transformer_blocks.9.ff.net.0.proj.weight",
+     "target_elements": 13107200,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "down_blocks.2.attentions.1.transformer_blocks.9.ff.net.0.proj.weight",
+     "target_elements": 13107200,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
+  },
+  {
+   "repo": "Weni/Llama-Guard-3-8B-AWQ",
+   "commit": "2157d713ed408803437e1a22f11d2c6dcb1034e2",
+   "clean_s4": [],
+   "cells": [
+    {
+     "k": 1,
+     "payload_bytes": 2044,
+     "target": "model.layers.9.self_attn.k_proj.scales",
+     "target_elements": 32768,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    },
+    {
+     "k": 4,
+     "payload_bytes": 8188,
+     "target": "model.layers.9.self_attn.k_proj.scales",
+     "target_elements": 32768,
+     "s3": false,
+     "s4": null,
+     "s4w": false,
+     "s4_clean_flag": false
+    }
+   ],
+   "list": "hf_models_batch5.json"
   }
  ]
 }

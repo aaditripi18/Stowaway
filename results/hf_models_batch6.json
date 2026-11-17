@@ -1,0 +1,685 @@
+{
+ "selected": "2026-11-17",
+ "rule": [
+  "Rule (fixed before any model is sampled): walk the most-downloaded public models",
+  "that ship safetensors, skip gated ones and ones without a top-level weights file,",
+  "classify each by the float dtype holding most of its parameters, and keep the",
+  "first N of each dtype. The frozen list keeps the survey reproducible after the",
+  "rankings change."
+ ],
+ "scanned": 1000,
+ "skipped": {
+  "gated": 40,
+  "no_file": 16,
+  "no_float": 29,
+  "in_earlier_list": 280
+ },
+ "excluded_lists": [
+  "hf_models.json",
+  "hf_models_batch2.json",
+  "hf_models_batch3.json",
+  "hf_models_batch4.json",
+  "hf_models_batch5.json",
+  "hf_models_random.json"
+ ],
+ "models": [
+  {
+   "repo": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+   "file": "v1-5-pruned-emaonly.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 859520964
+   },
+   "rank": 224
+  },
+  {
+   "repo": "bkai-foundation-models/vietnamese-bi-encoder",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 134998272
+   },
+   "rank": 237
+  },
+  {
+   "repo": "sentence-transformers/LaBSE",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "I64": 512,
+    "F32": 470926848
+   },
+   "rank": 240
+  },
+  {
+   "repo": "VoVanPhuc/sup-SimCSE-VietNamese-phobert-base",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "I64": 258,
+    "F32": 135588864
+   },
+   "rank": 243
+  },
+  {
+   "repo": "openai-community/gpt2-large",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 811778816
+   },
+   "rank": 246
+  },
+  {
+   "repo": "facebook/bart-large-cnn",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 406290432
+   },
+   "rank": 249
+  },
+  {
+   "repo": "google/vit-base-patch16-224-in21k",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 86389248
+   },
+   "rank": 261
+  },
+  {
+   "repo": "microsoft/llmlingua-2-bert-base-multilingual-cased-meetingbank",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 177341186
+   },
+   "rank": 263
+  },
+  {
+   "repo": "dslim/bert-base-NER",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 108317193
+   },
+   "rank": 265
+  },
+  {
+   "repo": "lxyuan/distilbert-base-multilingual-cased-sentiments-student",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 135326979
+   },
+   "rank": 268
+  },
+  {
+   "repo": "unslothai/1",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 0
+   },
+   "rank": 269
+  },
+  {
+   "repo": "livekit/turn-detector",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 134516160
+   },
+   "rank": 273
+  },
+  {
+   "repo": "alefiury/wav2vec2-large-xlsr-53-gender-recognition-librispeech",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 315701634
+   },
+   "rank": 282
+  },
+  {
+   "repo": "amunchet/rorshark-vit-base",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 85800194
+   },
+   "rank": 283
+  },
+  {
+   "repo": "intfloat/e5-base",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "I64": 512,
+    "F32": 109482240
+   },
+   "rank": 287
+  },
+  {
+   "repo": "mlx-community/parakeet-tdt-0.6b-v2",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 617869958
+   },
+   "rank": 291
+  },
+  {
+   "repo": "almanach/camembert-base",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 111246085
+   },
+   "rank": 293
+  },
+  {
+   "repo": "NeoQuasar/Kronos-base",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 102311008
+   },
+   "rank": 294
+  },
+  {
+   "repo": "sentence-transformers/distiluse-base-multilingual-cased-v2",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 134734080
+   },
+   "rank": 296
+  },
+  {
+   "repo": "PaddlePaddle/PP-DocLayoutV3_safetensors",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 33288957
+   },
+   "rank": 298
+  },
+  {
+   "repo": "sentence-transformers-testing/stsb-bert-tiny-safetensors",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 4385920
+   },
+   "rank": 301
+  },
+  {
+   "repo": "unslothai/repeat",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 0
+   },
+   "rank": 305
+  },
+  {
+   "repo": "shibing624/text2vec-base-chinese",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "I64": 512,
+    "F32": 102267648
+   },
+   "rank": 316
+  },
+  {
+   "repo": "google/siglip-so400m-patch14-384",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 877960498
+   },
+   "rank": 326
+  },
+  {
+   "repo": "hustvl/yolos-small",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 30684768
+   },
+   "rank": 327
+  },
+  {
+   "repo": "intfloat/e5-large-v2",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "I64": 512,
+    "F32": 335141888
+   },
+   "rank": 328
+  },
+  {
+   "repo": "google/siglip2-so400m-patch14-384",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 1136008498
+   },
+   "rank": 332
+  },
+  {
+   "repo": "amazon/chronos-t5-base",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 201374976
+   },
+   "rank": 341
+  },
+  {
+   "repo": "timm/vit_base_patch14_reg4_dinov2.lvd142m",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 86582016
+   },
+   "rank": 342
+  },
+  {
+   "repo": "google/flan-t5-base",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 247577856
+   },
+   "rank": 345
+  },
+  {
+   "repo": "timm/efficientnet_b0.ra_in1k",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 5330564
+   },
+   "rank": 349
+  },
+  {
+   "repo": "ai-forever/FRIDA",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 823401216
+   },
+   "rank": 350
+  },
+  {
+   "repo": "facebook/VGGT-1B",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 1256537516
+   },
+   "rank": 351
+  },
+  {
+   "repo": "dbmdz/bert-large-cased-finetuned-conll03-english",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 333588489
+   },
+   "rank": 355
+  },
+  {
+   "repo": "NeuML/pubmedbert-base-embeddings",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 109482240
+   },
+   "rank": 356
+  },
+  {
+   "repo": "AdamCodd/vit-base-nsfw-detector",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 86092034
+   },
+   "rank": 357
+  },
+  {
+   "repo": "timm/repvgg_a0.rvgg_in1k",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 9132616
+   },
+   "rank": 359
+  },
+  {
+   "repo": "albert/albert-base-v2",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 11842272
+   },
+   "rank": 362
+  },
+  {
+   "repo": "timm/wide_resnet50_2.racm_in1k",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "F32": 68951464
+   },
+   "rank": 363
+  },
+  {
+   "repo": "Babelscape/wikineural-multilingual-ner",
+   "file": "model.safetensors",
+   "dtype": "F32",
+   "params": {
+    "I64": 512,
+    "F32": 177269769
+   },
+   "rank": 365
+  },
+  {
+   "repo": "deepseek-ai/DeepSeek-V4-Flash",
+   "file": "model-00001-of-00046.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 1415259264,
+    "I64": 2327040,
+    "F32": 36168018,
+    "F8_E4M3": 6023020544,
+    "I8": 283467841536
+   },
+   "rank": 215
+  },
+  {
+   "repo": "ornith-ai/Ornith-1.5-35B-A3B-NVFP4",
+   "file": "model-00001-of-00003.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 1825916784,
+    "F8_E4M3": 1279262720,
+    "U8": 16423321600
+   },
+   "rank": 221
+  },
+  {
+   "repo": "ornith-ai/Ornith-1.5-9B-NVFP4",
+   "file": "model.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 1723772656,
+    "F8_E4M3": 2080374784,
+    "U8": 2924478464
+   },
+   "rank": 222
+  },
+  {
+   "repo": "zai-org/GLM-4.7-Flash",
+   "file": "model-00001-of-00048.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 31221485568,
+    "F32": 3008
+   },
+   "rank": 223
+  },
+  {
+   "repo": "Qwen/Qwen3-30B-A3B",
+   "file": "model-00001-of-00016.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 30532122624
+   },
+   "rank": 225
+  },
+  {
+   "repo": "OpenGVLab/InternVL2-1B",
+   "file": "model.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 938158976
+   },
+   "rank": 227
+  },
+  {
+   "repo": "Qwen/Qwen2.5-0.5B",
+   "file": "model.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 494032768
+   },
+   "rank": 228
+  },
+  {
+   "repo": "zai-org/GLM-4.5-Air",
+   "file": "model-00001-of-00047.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 110468818944,
+    "F32": 5888
+   },
+   "rank": 229
+  },
+  {
+   "repo": "nvidia/Gemma-4-31B-IT-NVFP4",
+   "file": "model-00001-of-00004.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 10464098156,
+    "U8": 10404495360
+   },
+   "rank": 230
+  },
+  {
+   "repo": "RedHatAI/gemma-4-26B-A4B-it-FP8-dynamic",
+   "file": "model.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 2060703310,
+    "F8_E4M3": 24483430400
+   },
+   "rank": 233
+  },
+  {
+   "repo": "unsloth/Llama-3.2-1B-Instruct",
+   "file": "model.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 1235814400
+   },
+   "rank": 238
+  },
+  {
+   "repo": "MiniMaxAI/MiniMax-M2.5",
+   "file": "model-00000-of-00126.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "F32": 48774656,
+    "BF16": 1230021632,
+    "F8_E4M3": 227410968576
+   },
+   "rank": 247
+  },
+  {
+   "repo": "nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-BF16",
+   "file": "model-00001-of-00225.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 560524578816,
+    "F32": 25088
+   },
+   "rank": 251
+  },
+  {
+   "repo": "thinkingmachines/Inkling-Small",
+   "file": "model-00001-of-00032.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "F32": 10280,
+    "BF16": 265956428810
+   },
+   "rank": 252
+  },
+  {
+   "repo": "jinaai/jina-embeddings-v5-omni-small",
+   "file": "model.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 1626268672
+   },
+   "rank": 253
+  },
+  {
+   "repo": "Qwen/Qwen2-VL-2B-Instruct",
+   "file": "model-00001-of-00002.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 2208985600
+   },
+   "rank": 255
+  },
+  {
+   "repo": "openbmb/MiniCPM5-2B",
+   "file": "model-00000-of-00001.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 2516756480
+   },
+   "rank": 257
+  },
+  {
+   "repo": "tencent/Hy3",
+   "file": "model-00001-of-00099.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 298786140416,
+    "F32": 15360
+   },
+   "rank": 264
+  },
+  {
+   "repo": "openbmb/VoxCPM2",
+   "file": "model.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "BF16": 2290004544
+   },
+   "rank": 267
+  },
+  {
+   "repo": "nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-BF16",
+   "file": "model-00001-of-00014.safetensors",
+   "dtype": "BF16",
+   "params": {
+    "F32": 3072,
+    "BF16": 32913263168
+   },
+   "rank": 270
+  },
+  {
+   "repo": "cagliostrolab/animagine-xl-3.1",
+   "file": "animagine-xl-3.1.safetensors",
+   "dtype": "F16",
+   "params": {
+    "F16": 2567463684
+   },
+   "rank": 727
+  },
+  {
+   "repo": "QuantTrio/Qwen3-VL-32B-Instruct-AWQ",
+   "file": "model-00001-of-00007.safetensors",
+   "dtype": "F16",
+   "params": {
+    "I32": 31205621760,
+    "F16": 2151768304
+   },
+   "rank": 740
+  },
+  {
+   "repo": "mlx-community/chatterbox-turbo-4bit",
+   "file": "model.safetensors",
+   "dtype": "F16",
+   "params": {
+    "F16": 43494402,
+    "U32": 582481920
+   },
+   "rank": 778
+  },
+  {
+   "repo": "xinsir/controlnet-union-sdxl-1.0",
+   "file": "diffusion_pytorch_model.safetensors",
+   "dtype": "F16",
+   "params": {
+    "F16": 1255958800
+   },
+   "rank": 828
+  },
+  {
+   "repo": "NAMAA-Space/Qari-OCR-v0.3-VL-2B-Instruct",
+   "file": "model.safetensors",
+   "dtype": "F16",
+   "params": {
+    "F16": 2208985600
+   },
+   "rank": 839
+  },
+  {
+   "repo": "nvidia/NV-Embed-v2",
+   "file": "model-00001-of-00004.safetensors",
+   "dtype": "F16",
+   "params": {
+    "F16": 7851016192
+   },
+   "rank": 857
+  },
+  {
+   "repo": "OnomaAIResearch/Illustrious-xl-early-release-v0",
+   "file": "Illustrious-XL-v0.1-GUIDED.safetensors",
+   "dtype": "F16",
+   "params": {
+    "F16": 2567463684
+   },
+   "rank": 874
+  },
+  {
+   "repo": "MoritzLaurer/mDeBERTa-v3-base-mnli-xnli",
+   "file": "model.safetensors",
+   "dtype": "F16",
+   "params": {
+    "I64": 512,
+    "F16": 278811651
+   },
+   "rank": 900
+  },
+  {
+   "repo": "TheBloke/Mistral-7B-Instruct-v0.2-AWQ",
+   "file": "model.safetensors",
+   "dtype": "F16",
+   "params": {
+    "I32": 6979321856,
+    "F16": 262410240
+   },
+   "rank": 940
+  },
+  {
+   "repo": "florence-community/Florence-2-large",
+   "file": "model.safetensors",
+   "dtype": "F16",
+   "params": {
+    "F16": 776710144
+   },
+   "rank": 998
+  }
+ ]
+}
