@@ -956,10 +956,12 @@ def section_e17(rows):
     flags_x = [(r, f) for r, f in flags if not cov(f["tensor"], f["elements"])]
     m_cur = sorted({r for r, _ in flags})
     m_x = sorted({r for r, _ in flags_x})
+    err_names = ", ".join("`" + r["repo"] + "`" for r in errors) or "none"
+    lost_names = ", ".join("`" + c["repo"] + "` k=" + str(c["k"]) for c in lost)
     out = [title + " (PLAN.md, phase 5)", "",
            f"Run `{last}`; fresh list `hf_models_batch6.json`: {len(models)} whole files read, {len(skipped)} "
            f"over the size limit, {len(errors)} without float weights to plant into "
-           f"({', '.join(f'`{r["repo"]}`' for r in errors) or 'none'}).", "",
+           f"({err_names}).", "",
            "Clean whole files, every S4 flag (a false alarm), and whether S4x keeps it:", "",
            "| Model | Tensor | Elements read | Bit | z | Kept by S4x |", "|---|---|--:|--:|--:|---|"]
     for r, f in flags:
@@ -969,7 +971,7 @@ def section_e17(rows):
             f"with S4x: {new}.", ""]
     verdicts = [("H23", "S4x keeps >= 99% of the current rule's catches on the fresh cells",
                  cur > 0 and new >= 0.99 * cur,
-                 f"{new} / {cur}" + (f"; lost: {', '.join(f'`{c["repo"]}` k={c["k"]}' for c in lost)}" if lost else "")),
+                 f"{new} / {cur}" + (f"; lost: {lost_names}" if lost else "")),
                 ("H24", "S4x flags a clean tensor in fewer fresh models than the current rule",
                  len(m_x) < len(m_cur),
                  f"models {len(m_cur)} -> {len(m_x)}; flags {len(flags)} -> {len(flags_x)}"
