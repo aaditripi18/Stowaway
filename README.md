@@ -318,7 +318,7 @@ removal.
 - **Sanitising was measured on ten models with 1,000 images or 872 sentences
   each**; a model whose predictions depend on the lowest float32 bits would lose
   accuracy, so the agreement check in E9 is worth repeating on your own model.
-- Open items are listed in [docs/FINDINGS.md](docs/FINDINGS.md).
+- Every earlier gap and the experiment that closed it are listed in [docs/FINDINGS.md](docs/FINDINGS.md#every-earlier-gap-and-how-it-was-closed).
 
 ## Reproduce
 
