@@ -14,26 +14,38 @@
   </head>
   <body class="bg-surface font-body-md text-body-md text-on-surface antialiased selection:bg-primary-container selection:text-surface">
     <header class="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant">
-      <div class="h-14 max-w-[1100px] mx-auto px-margin md:px-margin-lg flex items-center justify-between">
+      <div class="h-14 max-w-[1100px] mx-auto px-margin md:px-margin-lg flex items-center justify-between gap-space-md">
         <a class="flex items-center gap-2 group" href="./">
           <span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
           <span class="font-code-sm text-code-sm tracking-wider uppercase font-semibold text-on-surface group-hover:text-primary transition-colors">STOWAWAY</span>
         </a>
-        <nav class="hidden md:flex items-center gap-space-lg">
-          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="#findings">Findings</a>
-          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="#checks">Checks</a>
-          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="#remove">Remove</a>
-          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="limits.html">Test the limits</a>
-          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="not-a-coin.html">Writing</a>
-          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="scan.html">Scan</a>
-          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="#reproduce">Reproduce</a>
-          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="https://github.com/aaditripi18/Stowaway" rel="noopener" target="_blank">GitHub</a>
+        <nav aria-label="Main" class="hidden md:flex items-center gap-space-lg">
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="#findings">Findings</a>
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="#checks">Checks</a>
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="#remove">Remove</a>
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="limits.html">Test the limits</a>
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="not-a-coin.html">Writing</a>
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="scan.html">Scan</a>
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="#reproduce">Reproduce</a>
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="https://github.com/aaditripi18/Stowaway" rel="noopener" target="_blank">GitHub</a>
         </nav>
-        <a class="inline-flex items-center bg-primary-container text-surface font-code-sm text-code-sm font-semibold px-3 py-1.5 rounded hover:brightness-110 active:scale-[0.99] transition-all" href="scan.html">Scan a model</a>
+        <a class="inline-flex items-center bg-primary-container text-surface font-code-sm text-code-sm font-semibold px-3 py-1.5 rounded whitespace-nowrap hover:brightness-110 active:scale-[0.99] transition-all" href="scan.html">Scan a model</a>
+      </div>
+      <div class="md:hidden max-w-[1100px] mx-auto px-margin">
+        <nav aria-label="Main" class="flex items-center gap-space-lg overflow-x-auto h-10 nav-scroll">
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="#findings">Findings</a>
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="#checks">Checks</a>
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="#remove">Remove</a>
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="limits.html">Test the limits</a>
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="not-a-coin.html">Writing</a>
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="scan.html">Scan</a>
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="#reproduce">Reproduce</a>
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="https://github.com/aaditripi18/Stowaway" rel="noopener" target="_blank">GitHub</a>
+        </nav>
       </div>
     </header>
 
-    <main class="w-full pt-14 bg-surface">
+    <main class="w-full pt-24 md:pt-14 bg-surface">
       <div class="max-w-[1100px] mx-auto px-margin md:px-margin-lg">
 
         <!-- HERO -->
@@ -42,7 +54,7 @@
             <div class="lg:col-span-7 flex flex-col gap-space-lg max-w-xl">
               <div class="inline-flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full bg-primary-container"></span>
-                <span class="font-label-mono text-label-mono uppercase tracking-wider text-primary">Findings · October 2026</span>
+                <span class="font-label-mono text-label-mono uppercase tracking-wider text-primary">Findings · November 2026</span>
               </div>
               <h1 class="font-headline-xl text-headline-xl font-semibold text-on-surface tracking-tight leading-[1.12]">What can hide in a model's weights that no scanner sees?</h1>
               <p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
@@ -75,7 +87,7 @@
               <figcaption class="mt-space-xs pt-space-md border-t border-hair flex flex-col gap-1">
                 <div class="font-label-mono text-label-mono uppercase tracking-wider text-outline flex items-center justify-between">
                   <span>Hidden in ResNet-18</span>
-                  <span class="text-primary-container">Δ top-1 accuracy: <span data-fact="e2.resnet.delta">0.0</span></span>
+                  <span class="text-primary-container">Δ top-1 accuracy: <span data-fact="e2.resnet.delta">0.0</span> points</span>
                 </div>
                 <div class="font-code-md text-5xl font-bold text-white tracking-tight py-1"><span data-fact="e2.resnet.max_zero">4 MB</span></div>
                 <p class="font-body-sm text-body-sm text-on-surface-variant leading-snug">
@@ -105,7 +117,7 @@
         </section>
 
         <!-- 01 THE PROBLEM -->
-        <section class="py-12 border-b border-hair scroll-mt-14" id="problem">
+        <section class="py-12 border-b border-hair scroll-mt-24 md:scroll-mt-14" id="problem">
           <div class="flex flex-col gap-space-lg">
             <div class="flex items-baseline gap-space-md">
               <span class="font-label-mono text-label-mono text-primary font-bold">01</span>
@@ -119,7 +131,7 @@
         </section>
 
         <!-- 02 WHAT IT CHECKS -->
-        <section class="py-12 border-b border-hair scroll-mt-14" id="checks">
+        <section class="py-12 border-b border-hair scroll-mt-24 md:scroll-mt-14" id="checks">
           <div class="flex flex-col gap-space-lg">
             <div class="flex items-baseline gap-space-md">
               <span class="font-label-mono text-label-mono text-primary font-bold">02</span>
@@ -157,7 +169,7 @@
         </section>
 
         <!-- 03 THE EXPERIMENTS -->
-        <section class="py-12 border-b border-hair scroll-mt-14" id="findings">
+        <section class="py-12 border-b border-hair scroll-mt-24 md:scroll-mt-14" id="findings">
           <div class="flex flex-col gap-space-lg">
             <div class="flex items-baseline gap-space-md">
               <span class="font-label-mono text-label-mono text-primary font-bold">03</span>
@@ -168,29 +180,29 @@
               <div class="p-space-md border-b border-hair">
                 <span class="font-code-sm text-code-sm font-semibold text-on-surface uppercase tracking-wider">Where a random payload hides, by what the model's weights look like</span>
               </div>
-              <table class="w-full text-left border-collapse min-w-[520px]">
+              <table class="w-full text-left border-collapse">
                 <thead>
                   <tr class="bg-panel-hover border-b border-hair">
-                    <th class="py-space-md px-space-lg font-label-mono text-label-mono uppercase tracking-wider text-[#8c93a8]">What the weights look like</th>
-                    <th class="py-space-md px-space-lg font-label-mono text-label-mono uppercase tracking-wider text-[#8c93a8] text-right">Models</th>
-                    <th class="py-space-md px-space-lg font-label-mono text-label-mono uppercase tracking-wider text-[#8c93a8] text-right">Payload seen from the file alone</th>
+                    <th class="py-space-md px-space-sm md:px-space-lg font-label-mono text-label-mono uppercase tracking-wider text-[#8c93a8]">What the weights look like</th>
+                    <th class="py-space-md px-space-sm md:px-space-lg font-label-mono text-label-mono uppercase tracking-wider text-[#8c93a8] text-right">Models</th>
+                    <th class="py-space-md px-space-sm md:px-space-lg font-label-mono text-label-mono uppercase tracking-wider text-[#8c93a8] text-right">Payload seen from the file alone</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-hair font-body-md text-body-md">
                   <tr>
-                    <td class="py-space-md px-space-lg text-on-surface">float32 file carrying only fp16 or bf16 precision</td>
-                    <td class="py-space-md px-space-lg font-code-md text-code-md text-right text-on-surface-variant"><span data-fact="hf.half">14</span></td>
-                    <td class="py-space-md px-space-lg font-code-md text-code-md text-right text-on-surface"><span data-fact="hf.half_cell">14 / 14</span> at every k</td>
+                    <td class="py-space-md px-space-sm md:px-space-lg text-on-surface">float32 file carrying only fp16 or bf16 precision</td>
+                    <td class="py-space-md px-space-sm md:px-space-lg font-code-md text-code-md text-right text-on-surface-variant"><span data-fact="hf.half">14</span></td>
+                    <td class="py-space-md px-space-sm md:px-space-lg font-code-md text-code-md text-right text-on-surface"><span data-fact="hf.half_cell">14 / 14</span> at every k</td>
                   </tr>
                   <tr>
-                    <td class="py-space-md px-space-lg text-on-surface">float32 with a low-bit signature</td>
-                    <td class="py-space-md px-space-lg font-code-md text-code-md text-right text-on-surface-variant"><span data-fact="hf.sig">2</span></td>
-                    <td class="py-space-md px-space-lg font-code-md text-code-md text-right text-on-surface"><span data-fact="hf.sig_cell">2 / 2</span> at every k</td>
+                    <td class="py-space-md px-space-sm md:px-space-lg text-on-surface">float32 with a low-bit signature</td>
+                    <td class="py-space-md px-space-sm md:px-space-lg font-code-md text-code-md text-right text-on-surface-variant"><span data-fact="hf.sig">2</span></td>
+                    <td class="py-space-md px-space-sm md:px-space-lg font-code-md text-code-md text-right text-on-surface"><span data-fact="hf.sig_cell">2 / 2</span> at every k</td>
                   </tr>
                   <tr>
-                    <td class="py-space-md px-space-lg text-on-surface">float32 with fair-coin low bits</td>
-                    <td class="py-space-md px-space-lg font-code-md text-code-md text-right text-on-surface-variant"><span data-fact="hf.fair">23</span></td>
-                    <td class="py-space-md px-space-lg text-right"><span class="inline-block bg-primary-container/15 text-primary-container font-code-md text-code-md px-2 py-0.5 rounded font-medium"><span data-fact="hf.fair_cell">0 / 23</span> at every k</span></td>
+                    <td class="py-space-md px-space-sm md:px-space-lg text-on-surface">float32 with fair-coin low bits</td>
+                    <td class="py-space-md px-space-sm md:px-space-lg font-code-md text-code-md text-right text-on-surface-variant"><span data-fact="hf.fair">23</span></td>
+                    <td class="py-space-md px-space-sm md:px-space-lg text-right"><span class="inline-block bg-primary-container/15 text-primary-container font-code-md text-code-md px-2 py-0.5 rounded font-medium"><span data-fact="hf.fair_cell">0 / 23</span> at every k</span></td>
                   </tr>
                 </tbody>
               </table>
@@ -200,7 +212,7 @@
         </section>
 
         <!-- 04 WHAT ONE FILE CAN'T SEE -->
-        <section class="py-12 border-b border-hair scroll-mt-14" id="one-file">
+        <section class="py-12 border-b border-hair scroll-mt-24 md:scroll-mt-14" id="one-file">
           <div class="flex flex-col gap-space-lg">
             <div class="flex items-baseline gap-space-md">
               <span class="font-label-mono text-label-mono text-primary font-bold">04</span>
@@ -248,7 +260,7 @@
         </section>
 
         <!-- 05 FOUR HYPOTHESES -->
-        <section class="py-12 border-b border-hair scroll-mt-14" id="hypotheses">
+        <section class="py-12 border-b border-hair scroll-mt-24 md:scroll-mt-14" id="hypotheses">
           <div class="flex flex-col gap-space-lg">
             <div class="flex items-baseline gap-space-md">
               <span class="font-label-mono text-label-mono text-primary font-bold">05</span>
@@ -302,7 +314,7 @@
 
         <!-- 06 WHAT WE LEARNED -->
         <!-- 06 REMOVE WHAT CANNOT BE DETECTED -->
-        <section class="py-12 border-b border-hair scroll-mt-14" id="remove">
+        <section class="py-12 border-b border-hair scroll-mt-24 md:scroll-mt-14" id="remove">
           <div class="flex flex-col gap-space-lg">
             <div class="flex items-baseline gap-space-md">
               <span class="font-label-mono text-label-mono text-primary font-bold">06</span>
@@ -340,7 +352,7 @@
         </section>
 
         <!-- 07 WHAT WE LEARNED -->
-        <section class="py-12 border-b border-hair scroll-mt-14" id="learned">
+        <section class="py-12 border-b border-hair scroll-mt-24 md:scroll-mt-14" id="learned">
           <div class="flex flex-col gap-space-lg">
             <div class="flex items-baseline gap-space-md">
               <span class="font-label-mono text-label-mono text-primary font-bold">07</span>
@@ -368,7 +380,7 @@
         </section>
 
         <!-- 07 VALIDATED ON UNSEEN MODELS -->
-        <section class="py-12 border-b border-hair scroll-mt-14" id="validated">
+        <section class="py-12 border-b border-hair scroll-mt-24 md:scroll-mt-14" id="validated">
           <div class="flex flex-col gap-space-lg">
             <div class="flex items-baseline gap-space-md">
               <span class="font-label-mono text-label-mono text-primary font-bold">08</span>
@@ -413,7 +425,7 @@
         </section>
 
         <!-- 08 REPRODUCE -->
-        <section class="py-12 border-b border-hair scroll-mt-14" id="reproduce">
+        <section class="py-12 border-b border-hair scroll-mt-24 md:scroll-mt-14" id="reproduce">
           <div class="flex flex-col gap-space-lg">
             <div class="flex items-baseline gap-space-md">
               <span class="font-label-mono text-label-mono text-primary font-bold">09</span>
@@ -446,7 +458,7 @@
         </section>
 
         <!-- 09 BOUNDARIES -->
-        <section class="py-12 scroll-mt-14" id="boundaries">
+        <section class="py-12 scroll-mt-24 md:scroll-mt-14" id="boundaries">
           <div class="flex flex-col gap-space-lg">
             <div class="flex items-baseline gap-space-md">
               <span class="font-label-mono text-label-mono text-primary font-bold">10</span>
@@ -484,7 +496,7 @@
                 <p class="font-body-md text-body-md text-on-surface-variant">E5 uses a corpus we built, so it shows what each tool can see, not how often payloads occur in the wild.</p>
                 <p class="font-body-sm text-body-sm text-primary">Read it as a capability table, not a prevalence estimate.</p>
               </div>
-              <div class="bg-panel border border-panel-line p-space-lg rounded flex flex-col gap-space-xs">
+              <div class="md:col-span-2 bg-panel border border-panel-line p-space-lg rounded flex flex-col gap-space-xs">
                 <h3 class="font-headline-md text-headline-md text-on-surface">A single tensor larger than memory</h3>
                 <p class="font-body-md text-body-md text-on-surface-variant">Both scanners hold one tensor (and its base counterpart) at a time, so files of any size scan; one tensor bigger than available memory cannot.</p>
                 <p class="font-body-sm text-body-sm text-primary">Scan on a machine with more memory than the largest tensor.</p>
@@ -504,12 +516,13 @@
           </div>
           <p class="font-body-sm text-body-sm text-on-surface-variant">Every claim on this page is a test you can run.</p>
         </div>
-        <div class="flex items-center gap-space-lg">
-          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary transition-colors" href="https://github.com/aaditripi18/Stowaway" rel="noopener" target="_blank">GitHub</a>
+        <div class="flex flex-wrap items-center gap-x-space-lg gap-y-space-xs">
           <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary transition-colors" href="#findings">Findings</a>
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary transition-colors" href="limits.html">Test the limits</a>
           <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary transition-colors" href="not-a-coin.html">Writing</a>
           <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary transition-colors" href="scan.html">Scan</a>
           <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary transition-colors" href="#reproduce">Reproduce</a>
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary transition-colors" href="https://github.com/aaditripi18/Stowaway" rel="noopener" target="_blank">GitHub</a>
         </div>
       </div>
     </footer>

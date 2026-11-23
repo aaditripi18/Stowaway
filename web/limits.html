@@ -14,23 +14,38 @@
   </head>
   <body class="bg-surface font-body-md text-body-md text-on-surface antialiased selection:bg-primary-container selection:text-surface">
     <header class="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant">
-      <div class="h-14 max-w-[1100px] mx-auto px-margin md:px-margin-lg flex items-center justify-between">
+      <div class="h-14 max-w-[1100px] mx-auto px-margin md:px-margin-lg flex items-center justify-between gap-space-md">
         <a class="flex items-center gap-2 group" href="./">
           <span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
           <span class="font-code-sm text-code-sm tracking-wider uppercase font-semibold text-on-surface group-hover:text-primary transition-colors">STOWAWAY</span>
         </a>
-        <nav class="hidden md:flex items-center gap-space-lg">
-          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="./#findings">Findings</a>
-          <a aria-current="page" class="font-code-sm text-code-sm text-primary border-b border-primary py-1" href="limits.html">Test the limits</a>
-          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="not-a-coin.html">Writing</a>
-          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="scan.html">Scan</a>
-          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface py-1 transition-colors" href="https://github.com/aaditripi18/Stowaway" rel="noopener" target="_blank">GitHub</a>
+        <nav aria-label="Main" class="hidden md:flex items-center gap-space-lg">
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="./#findings">Findings</a>
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="./#checks">Checks</a>
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="./#remove">Remove</a>
+          <a aria-current="page" class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-primary border-b border-primary" href="limits.html">Test the limits</a>
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="not-a-coin.html">Writing</a>
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="scan.html">Scan</a>
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="./#reproduce">Reproduce</a>
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="https://github.com/aaditripi18/Stowaway" rel="noopener" target="_blank">GitHub</a>
         </nav>
-        <a class="md:hidden font-code-sm text-code-sm text-on-surface-variant hover:text-on-surface" href="./">← Findings</a>
+        <a class="inline-flex items-center bg-primary-container text-surface font-code-sm text-code-sm font-semibold px-3 py-1.5 rounded whitespace-nowrap hover:brightness-110 active:scale-[0.99] transition-all" href="scan.html">Scan a model</a>
+      </div>
+      <div class="md:hidden max-w-[1100px] mx-auto px-margin">
+        <nav aria-label="Main" class="flex items-center gap-space-lg overflow-x-auto h-10 nav-scroll">
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="./#findings">Findings</a>
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="./#checks">Checks</a>
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="./#remove">Remove</a>
+          <a aria-current="page" class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-primary border-b border-primary" href="limits.html">Test the limits</a>
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="not-a-coin.html">Writing</a>
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="scan.html">Scan</a>
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="./#reproduce">Reproduce</a>
+          <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="https://github.com/aaditripi18/Stowaway" rel="noopener" target="_blank">GitHub</a>
+        </nav>
       </div>
     </header>
 
-    <main class="w-full pt-14 bg-surface">
+    <main class="w-full pt-24 md:pt-14 bg-surface">
       <div class="max-w-[1100px] mx-auto px-margin md:px-margin-lg py-space-xl flex flex-col gap-space-lg">
         <div class="flex flex-col gap-3 max-w-3xl">
           <h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight">Test the limits</h1>
@@ -88,6 +103,25 @@
         </section>
       </div>
     </main>
+    <footer class="w-full bg-surface-container-lowest border-t border-outline-variant py-space-xl">
+      <div class="max-w-[1100px] mx-auto px-margin md:px-margin-lg flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+        <div class="flex flex-col gap-space-xs">
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+            <span class="font-code-sm text-code-sm uppercase tracking-wider font-semibold text-on-surface">STOWAWAY</span>
+          </div>
+          <p class="font-body-sm text-body-sm text-on-surface-variant">Runs in your browser · CSP <code class="text-primary">connect-src 'none'</code> · nothing is uploaded.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-x-space-lg gap-y-space-xs">
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary transition-colors" href="./#findings">Findings</a>
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary transition-colors" href="limits.html">Test the limits</a>
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary transition-colors" href="not-a-coin.html">Writing</a>
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary transition-colors" href="scan.html">Scan</a>
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary transition-colors" href="./#reproduce">Reproduce</a>
+          <a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary transition-colors" href="https://github.com/aaditripi18/Stowaway" rel="noopener" target="_blank">GitHub</a>
+        </div>
+      </div>
+    </footer>
     <script type="module" src="/src/limits.ts"></script>
   </body>
 </html>

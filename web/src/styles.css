@@ -60,3 +60,6 @@ body { overscroll-behavior: none; }
 .verdict { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.6875rem; line-height: 1rem; letter-spacing: 0.04em; text-transform: uppercase; padding: 0.25rem 0.625rem; border-radius: 0.125rem; white-space: nowrap; }
 
 html { scroll-behavior: smooth; }
+
+/* the phone row of links scrolls sideways; fade its edge so that reads as more to come */
+.nav-scroll { -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); }
