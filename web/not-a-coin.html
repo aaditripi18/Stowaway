@@ -7,11 +7,13 @@
       http-equiv="Content-Security-Policy"
       content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'"
     />
+    <meta name="color-scheme" content="light dark" />
     <script src="/theme.js"></script>
     <title>Bit 0 is not a coin — Stowaway</title>
     <meta name="description" content="Stowaway's bit-plane check assumed a model's lowest bits are fair coins. They are not, and the fix that held came from asking which way a payload can move a bit." />
   </head>
   <body class="bg-surface font-body-md text-body-md text-on-surface antialiased selection:bg-primary-container selection:text-surface">
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:bg-surface focus:text-on-surface focus:px-3 focus:py-2 focus:rounded">Skip to content</a>
     <header class="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant">
       <div class="h-14 max-w-[1100px] mx-auto px-margin md:px-margin-lg flex items-center justify-between gap-space-md">
         <a class="flex items-center gap-2 group" href="./">
@@ -50,7 +52,7 @@
       </div>
     </header>
 
-    <main class="w-full pt-24 md:pt-14 bg-surface">
+    <main id="main" class="w-full pt-24 md:pt-14 bg-surface">
       <article class="max-w-[720px] mx-auto px-margin md:px-margin-lg py-12 flex flex-col gap-space-lg">
         <div class="flex flex-col gap-space-sm">
           <span class="font-label-mono text-label-mono uppercase tracking-wider text-primary">Writing · October 2026</span>

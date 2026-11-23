@@ -152,3 +152,8 @@ html { scroll-behavior: smooth; }
 .theme-toggle .i-sun { display: none; }
 html.dark .theme-toggle .i-sun { display: block; }
 html.dark .theme-toggle .i-moon { display: none; }
+
+/* keyboard focus is always visible */
+:focus-visible { outline: 2px solid rgb(var(--c-primary-container)); outline-offset: 2px; }
+/* readers who ask for less motion get no smooth scrolling or transitions */
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; animation: none !important; } }

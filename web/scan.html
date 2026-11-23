@@ -12,11 +12,13 @@
       http-equiv="Content-Security-Policy"
       content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; worker-src blob:; base-uri 'none'; form-action 'none'"
     />
+    <meta name="color-scheme" content="light dark" />
     <script src="/theme.js"></script>
     <title>Scan a model file — Stowaway</title>
     <meta name="description" content="Scan a .safetensors, .pt or .gguf model file in your browser. Nothing is uploaded: the page's Content-Security-Policy blocks every network request." />
   </head>
   <body class="bg-surface font-body-md text-body-md text-on-surface antialiased selection:bg-primary-container selection:text-surface">
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:bg-surface focus:text-on-surface focus:px-3 focus:py-2 focus:rounded">Skip to content</a>
     <header class="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant">
       <div class="h-14 max-w-[1100px] mx-auto px-margin md:px-margin-lg flex items-center justify-between gap-space-md">
         <a class="flex items-center gap-2 group" href="./">
@@ -54,7 +56,7 @@
       </div>
     </header>
 
-    <main class="w-full pt-24 md:pt-14 bg-surface min-h-[calc(100vh-120px)]">
+    <main id="main" class="w-full pt-24 md:pt-14 bg-surface min-h-[calc(100vh-120px)]">
       <div class="max-w-[1100px] mx-auto px-margin md:px-margin-lg py-space-xl flex flex-col gap-space-lg">
 
         <!-- Title and privacy guarantee -->
