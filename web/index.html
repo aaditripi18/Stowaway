@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="dark" lang="en">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,6 +9,7 @@
       http-equiv="Content-Security-Policy"
       content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'"
     />
+    <script src="/theme.js"></script>
     <title>Stowaway — what hides in a model's weights</title>
     <meta name="description" content="Stowaway scans .safetensors, .pt and .gguf model files for payloads hidden in the weights, unaccounted bytes and unsafe pickle code, in your browser, and measures what a single-file scan cannot see." />
   </head>
@@ -29,7 +30,13 @@
           <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="#reproduce">Reproduce</a>
           <a class="font-code-sm text-code-sm py-1 whitespace-nowrap transition-colors text-on-surface-variant hover:text-on-surface" href="https://github.com/aaditripi18/Stowaway" rel="noopener" target="_blank">GitHub</a>
         </nav>
+        <div class="flex items-center gap-space-sm">
+          <button type="button" data-theme-toggle aria-label="Switch between light and dark" class="theme-toggle w-8 h-8 inline-flex items-center justify-center rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
+            <svg class="i-moon w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+            <svg class="i-sun w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          </button>
         <a class="inline-flex items-center bg-primary-container text-surface font-code-sm text-code-sm font-semibold px-3 py-1.5 rounded whitespace-nowrap hover:brightness-110 active:scale-[0.99] transition-all" href="scan.html">Scan a model</a>
+        </div>
       </div>
       <div class="md:hidden max-w-[1100px] mx-auto px-margin">
         <nav aria-label="Main" class="flex items-center gap-space-lg overflow-x-auto h-10 nav-scroll">
@@ -62,8 +69,8 @@
               </p>
               <div class="flex flex-wrap items-center gap-space-sm pt-space-xs">
                 <a class="inline-flex items-center justify-center bg-primary-container text-surface font-code-sm text-code-sm font-semibold px-4 py-2 rounded-sm hover:brightness-110 active:scale-[0.99] transition-all" href="scan.html">Scan a model</a>
-                <a class="inline-flex items-center justify-center border border-[#353c52] hover:bg-panel-hover text-on-surface font-code-sm text-code-sm px-4 py-2 rounded-sm transition-colors" href="limits.html">Test the limits yourself</a>
-                <a class="inline-flex items-center justify-center border border-[#353c52] hover:bg-panel-hover text-on-surface font-code-sm text-code-sm px-4 py-2 rounded-sm transition-colors" href="#reproduce">Reproduce it</a>
+                <a class="inline-flex items-center justify-center border border-line-strong hover:bg-panel-hover text-on-surface font-code-sm text-code-sm px-4 py-2 rounded-sm transition-colors" href="limits.html">Test the limits yourself</a>
+                <a class="inline-flex items-center justify-center border border-line-strong hover:bg-panel-hover text-on-surface font-code-sm text-code-sm px-4 py-2 rounded-sm transition-colors" href="#reproduce">Reproduce it</a>
               </div>
             </div>
 
@@ -73,7 +80,7 @@
                 <span class="font-label-mono text-label-mono uppercase tracking-wider text-outline">float32 weights, as hex</span>
                 <span class="font-label-mono text-label-mono text-primary-container">low byte = payload</span>
               </div>
-              <div class="py-space-md font-code-sm text-[9px] sm:text-code-sm leading-relaxed overflow-x-auto text-[#8c93a8]" aria-hidden="true">
+              <div class="py-space-md font-code-sm text-[9px] sm:text-code-sm leading-relaxed overflow-x-auto text-muted" aria-hidden="true">
                 <div class="grid grid-cols-1 gap-0.5 select-none whitespace-pre" id="hex-grid" data-nofacts>
                   <div>3f84 9b<b>53</b>   bf02 4e<b>54</b>   3e71 d0<b>4f</b>   3f19 a2<b>57</b></div>
                   <div>3e92 c1<b>41</b>   be80 18<b>57</b>   3f77 e4<b>41</b>   bf33 09<b>59</b></div>
@@ -89,7 +96,7 @@
                   <span>Hidden in ResNet-18</span>
                   <span class="text-primary-container">Δ top-1 accuracy: <span data-fact="e2.resnet.delta">0.0</span> points</span>
                 </div>
-                <div class="font-code-md text-5xl font-bold text-white tracking-tight py-1"><span data-fact="e2.resnet.max_zero">4 MB</span></div>
+                <div class="font-code-md text-5xl font-bold text-on-surface tracking-tight py-1"><span data-fact="e2.resnet.max_zero">4 MB</span></div>
                 <p class="font-body-sm text-body-sm text-on-surface-variant leading-snug">
                   of random data in the low bits of ResNet-18's weights leaves top-1 accuracy exactly unchanged (<span data-fact="e2.resnet.clean">66.8%</span> before and after). Tested for detection from <span data-fact="e1.min">1 KB</span> to <span data-fact="e1.max">1 MB</span>, the single-file checks missed every size; only a diff against the base model caught them.
                 </p>
@@ -99,7 +106,7 @@
         </section>
 
         <!-- KEY NUMBERS -->
-        <section class="border-b border-hair bg-[#121622]">
+        <section class="border-b border-hair bg-strip">
           <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-hair">
             <div class="py-space-md px-space-lg flex items-center gap-space-sm">
               <span class="w-1.5 h-1.5 rounded-full bg-primary-container shrink-0"></span>
@@ -183,9 +190,9 @@
               <table class="w-full text-left border-collapse">
                 <thead>
                   <tr class="bg-panel-hover border-b border-hair">
-                    <th class="py-space-md px-space-sm md:px-space-lg font-label-mono text-label-mono uppercase tracking-wider text-[#8c93a8]">What the weights look like</th>
-                    <th class="py-space-md px-space-sm md:px-space-lg font-label-mono text-label-mono uppercase tracking-wider text-[#8c93a8] text-right">Models</th>
-                    <th class="py-space-md px-space-sm md:px-space-lg font-label-mono text-label-mono uppercase tracking-wider text-[#8c93a8] text-right">Payload seen from the file alone</th>
+                    <th class="py-space-md px-space-sm md:px-space-lg font-label-mono text-label-mono uppercase tracking-wider text-muted">What the weights look like</th>
+                    <th class="py-space-md px-space-sm md:px-space-lg font-label-mono text-label-mono uppercase tracking-wider text-muted text-right">Models</th>
+                    <th class="py-space-md px-space-sm md:px-space-lg font-label-mono text-label-mono uppercase tracking-wider text-muted text-right">Payload seen from the file alone</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-hair font-body-md text-body-md">
@@ -324,17 +331,17 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
               <div class="bg-panel border border-panel-line p-space-lg rounded flex flex-col gap-space-xs">
                 <span class="font-label-mono text-label-mono uppercase tracking-wider text-outline">Predictions unchanged</span>
-                <span class="font-code-md text-4xl font-bold text-white tracking-tight"><span data-fact="e9.min_agree8">100.00%</span></span>
+                <span class="font-code-md text-4xl font-bold text-on-surface tracking-tight"><span data-fact="e9.min_agree8">100.00%</span></span>
                 <p class="font-body-sm text-body-sm text-on-surface-variant">on every one of <span data-fact="e9.models">10</span> models (nine image models and a text classifier) after clearing the low 8 bits of every weight; accuracy identical.</p>
               </div>
               <div class="bg-panel border border-panel-line p-space-lg rounded flex flex-col gap-space-xs">
                 <span class="font-label-mono text-label-mono uppercase tracking-wider text-outline">Payload bytes left</span>
-                <span class="font-code-md text-4xl font-bold text-white tracking-tight"><span data-fact="e9.payload_left">0 / 65,536</span></span>
+                <span class="font-code-md text-4xl font-bold text-on-surface tracking-tight"><span data-fact="e9.payload_left">0 / 65,536</span></span>
                 <p class="font-body-sm text-body-sm text-on-surface-variant">of a <span data-fact="e9.payload_kb">64 KB</span> payload planted in the low 8 bits: every one of those bits is zero afterwards.</p>
               </div>
               <div class="bg-panel border border-panel-line p-space-lg rounded flex flex-col gap-space-xs">
                 <span class="font-label-mono text-label-mono uppercase tracking-wider text-outline">Where the limit is</span>
-                <span class="font-code-md text-4xl font-bold text-white tracking-tight"><span data-fact="e9.min_agree16">92.4%</span></span>
+                <span class="font-code-md text-4xl font-bold text-on-surface tracking-tight"><span data-fact="e9.min_agree16">92.4%</span></span>
                 <p class="font-body-sm text-body-sm text-on-surface-variant">lowest agreement after clearing 16 bits instead: under the 99% we predicted on <span data-fact="e9.below99_16">8</span> of <span data-fact="e9.models">10</span> models. Eight bits is the safe setting.</p>
               </div>
             </div>
@@ -388,34 +395,34 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-hair border border-hair bg-panel rounded">
               <div class="p-space-lg flex flex-col gap-1">
-                <span class="font-code-md text-headline-xl font-bold text-white tracking-tight"><span data-fact="e4b.fresh_new_fp_models">0</span> of <span data-fact="e4b.fresh_pairs">20</span></span>
+                <span class="font-code-md text-headline-xl font-bold text-on-surface tracking-tight"><span data-fact="e4b.fresh_new_fp_models">0</span> of <span data-fact="e4b.fresh_pairs">20</span></span>
                 <span class="font-label-mono text-label-mono uppercase tracking-wider text-primary-container">honest fine-tunes flagged by S5</span>
                 <p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">scanned as whole files, from four bases never used before (MiniLM, ALBERT, DistilRoBERTa, BERT-cased). The earlier S5 rule flagged <span data-fact="e4b.fresh_old_fp_models">16</span> of them.</p>
               </div>
               <div class="p-space-lg flex flex-col gap-1">
-                <span class="font-code-md text-headline-xl font-bold text-white tracking-tight"><span data-fact="e4b.fresh_a">9 / 9</span></span>
+                <span class="font-code-md text-headline-xl font-bold text-on-surface tracking-tight"><span data-fact="e4b.fresh_a">9 / 9</span></span>
                 <span class="font-label-mono text-label-mono uppercase tracking-wider text-primary-container">S5 detections</span>
                 <p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">fresh pairs where S5 caught a payload in a tensor identical to the base, at every k tested (<span data-fact="e4b.ks">8, 16, 20 and 21</span>).</p>
               </div>
               <div class="p-space-lg flex flex-col gap-1">
-                <span class="font-code-md text-headline-xl font-bold text-white tracking-tight"><span data-fact="e0c.bf16">5 → 1 of 20</span></span>
+                <span class="font-code-md text-headline-xl font-bold text-on-surface tracking-tight"><span data-fact="e0c.bf16">5 → 1 of 20</span></span>
                 <span class="font-label-mono text-label-mono uppercase tracking-wider text-primary-container">S4 false-positive models</span>
                 <p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">on a fresh batch of bf16 models, first revision of S4 against the current rule (and <span data-fact="e0c.f16">1 → 0 of 20</span> for fp16).</p>
               </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-hair border border-hair bg-panel rounded">
               <div class="p-space-lg flex flex-col gap-1">
-                <span class="font-code-md text-headline-xl font-bold text-white tracking-tight"><span data-fact="e11.agree">163 / 168</span></span>
+                <span class="font-code-md text-headline-xl font-bold text-on-surface tracking-tight"><span data-fact="e11.agree">163 / 168</span></span>
                 <span class="font-label-mono text-label-mono uppercase tracking-wider text-primary-container">whole file agrees with sample</span>
                 <p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">planted payloads in <span data-fact="e11.models">65</span> fresh whole files, with the windowed S4 (S3/S4 alone: <span data-fact="e11.agree_s4">160</span>). In every remaining difference the whole file catches what the sample missed; <span data-fact="e11.fp">0</span> clean models gain a flag.</p>
               </div>
               <div class="p-space-lg flex flex-col gap-1">
-                <span class="font-code-md text-headline-xl font-bold text-white tracking-tight"><span data-fact="e12.thin_total">36 / 36</span></span>
+                <span class="font-code-md text-headline-xl font-bold text-on-surface tracking-tight"><span data-fact="e12.thin_total">36 / 36</span></span>
                 <span class="font-label-mono text-label-mono uppercase tracking-wider text-primary-container">thin payloads caught</span>
                 <p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs"><span data-fact="e12.thin">18 / 18 and 18 / 18</span> models at two sizes, a few bytes in every tensor, too few changes per tensor for S5's old size floor (<span data-fact="e12.thin_floor">0 / 18 and 0 / 18</span> with it). No honest pair of <span data-fact="e12.pairs">15</span> gained a flag.</p>
               </div>
               <div class="p-space-lg flex flex-col gap-1">
-                <span class="font-code-md text-headline-xl font-bold text-white tracking-tight"><span data-fact="e13.a">48 / 48</span></span>
+                <span class="font-code-md text-headline-xl font-bold text-on-surface tracking-tight"><span data-fact="e13.a">48 / 48</span></span>
                 <span class="font-label-mono text-label-mono uppercase tracking-wider text-primary-container">S5d keeps every catch</span>
                 <p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">in tensors identical to the base, on <span data-fact="e13.pairs">25</span> fresh pairs, and the thin payload in <span data-fact="e13.thin">30 / 30 and 30 / 30</span> models, while ignoring LayerNorm shifts S5c flagged: a payload changes nothing above its top bit, training does.</p>
               </div>
@@ -432,7 +439,7 @@
               <h2 class="font-headline-lg text-headline-lg font-semibold text-on-surface">Reproduce</h2>
             </div>
             <div class="bg-panel border border-panel-line rounded flex flex-col">
-              <div class="flex items-center justify-between px-space-md py-space-sm border-b border-hair bg-[#121622]">
+              <div class="flex items-center justify-between px-space-md py-space-sm border-b border-hair bg-strip">
                 <div class="flex items-center gap-2">
                   <span class="w-2.5 h-2.5 rounded-full bg-panel-line"></span>
                   <span class="w-2.5 h-2.5 rounded-full bg-panel-line"></span>
@@ -443,13 +450,13 @@
                   <span class="material-symbols-outlined text-[15px]">content_copy</span><span data-copy-label>copy</span>
                 </button>
               </div>
-              <div class="p-space-lg font-code-md text-code-md text-on-surface overflow-x-auto leading-relaxed whitespace-pre" id="reproduce-cmds" data-nofacts><span class="text-[#8c93a8] select-none"># install and run the Python tests</span>
+              <div class="p-space-lg font-code-md text-code-md text-on-surface overflow-x-auto leading-relaxed whitespace-pre" id="reproduce-cmds" data-nofacts><span class="text-muted select-none"># install and run the Python tests</span>
 <span class="text-primary-container select-none">$ </span>pip install -e ".[dev]" &amp;&amp; python -m pytest
-<span class="text-[#8c93a8] select-none"># scan one file (exit status: 0 clean, 1 suspicious, 2 dangerous)</span>
+<span class="text-muted select-none"># scan one file (exit status: 0 clean, 1 suspicious, 2 dangerous)</span>
 <span class="text-primary-container select-none">$ </span>python -m stowaway scan model.safetensors
-<span class="text-[#8c93a8] select-none"># add the S5 diff against the claimed base model</span>
+<span class="text-muted select-none"># add the S5 diff against the claimed base model</span>
 <span class="text-primary-container select-none">$ </span>python -m stowaway scan finetune.safetensors --base base.safetensors
-<span class="text-[#8c93a8] select-none"># the Hugging Face survey (range requests, no full downloads), then regenerate RESULTS.md</span>
+<span class="text-muted select-none"># the Hugging Face survey (range requests, no full downloads), then regenerate RESULTS.md</span>
 <span class="text-primary-container select-none">$ </span>python scripts/run_hf_survey.py --list hf_models.json
 <span class="text-primary-container select-none">$ </span>python scripts/report.py</div>
             </div>

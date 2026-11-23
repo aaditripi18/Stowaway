@@ -268,11 +268,11 @@ function hexPreview(head: Uint8Array, start: number, length: number): string {
     const hex = [...row].map((b) => b.toString(16).padStart(2, "0")).join(" ");
     const ascii = [...row].map((b) => (b >= 0x20 && b < 0x7f ? String.fromCharCode(b) : ".")).join("");
     const off = (start + i).toString(16).padStart(8, "0");
-    lines.push(`<span class="text-[#575e74]">${off}: </span><span class="text-primary-container">${hex.padEnd(47)}</span>  <span class="text-on-surface">${esc(ascii)}</span>`);
+    lines.push(`<span class="text-faint">${off}: </span><span class="text-primary-container">${hex.padEnd(47)}</span>  <span class="text-on-surface">${esc(ascii)}</span>`);
   }
-  return `<div class="rounded border border-outline-variant/70 bg-[#0c1018] p-3 overflow-x-auto">` +
+  return `<div class="rounded border border-outline-variant/70 bg-sunk p-3 overflow-x-auto">` +
     `<div class="border-b border-outline-variant/40 pb-1.5 mb-2 font-label-mono text-[10px] text-outline uppercase tracking-wider">First ${plural(n, "byte")} at offset ${start} (0x${start.toString(16)})</div>` +
-    `<pre class="font-code-sm text-code-sm leading-relaxed text-[#8c93a8]">${lines.join("\n")}</pre></div>`;
+    `<pre class="font-code-sm text-code-sm leading-relaxed text-muted">${lines.join("\n")}</pre></div>`;
 }
 
 function detailRows(detail: Record<string, unknown>): string {
@@ -315,7 +315,7 @@ function renderFindings(rep: Report): void {
     const hex = head && typeof d.bytes === "number" ? hexPreview(head, d.start as number, d.bytes as number) : "";
     const body = detailRows(d) + hex;
     card.innerHTML = `
-      <div class="p-4 bg-[#161a26] ${body ? "cursor-pointer" : ""}" ${body ? `data-toggle="${bodyId}"` : ""}>
+      <div class="p-4 bg-panel-2 ${body ? "cursor-pointer" : ""}" ${body ? `data-toggle="${bodyId}"` : ""}>
         <div class="flex items-start justify-between gap-2">
           <div class="flex flex-wrap items-center gap-2 min-w-0">
             <span class="text-[11px] font-label-mono uppercase px-2 py-0.5 rounded font-semibold border ${SEV_CHIP[f.severity]}">${esc(f.severity)}</span>

@@ -38,6 +38,90 @@
   -webkit-font-smoothing: antialiased;
 }
 
+/* Theme: light by default, dark under html.dark (set by /theme.js before first paint). */
+:root {
+  --c-surface: 246 247 249;
+  --c-background: 246 247 249;
+  --c-surface-dim: 238 240 244;
+  --c-surface-container-lowest: 255 255 255;
+  --c-surface-container-low: 238 240 244;
+  --c-surface-container: 232 235 240;
+  --c-surface-container-high: 223 227 234;
+  --c-surface-container-highest: 214 219 227;
+  --c-surface-variant: 214 219 227;
+  --c-surface-bright: 255 255 255;
+  --c-on-surface: 21 26 36;
+  --c-on-background: 21 26 36;
+  --c-on-surface-variant: 61 70 84;
+  --c-outline: 100 109 121;
+  --c-outline-variant: 201 207 216;
+  --c-primary: 3 105 161;
+  --c-primary-container: 2 132 199;
+  --c-on-primary: 255 255 255;
+  --c-secondary: 74 84 104;
+  --c-tertiary: 180 69 47;
+  --c-error: 179 38 30;
+  --c-error-container: 253 231 228;
+  --c-on-error-container: 92 11 5;
+  --c-ok: 21 128 61;
+  --c-warn: 180 83 9;
+  --c-hair: 225 229 236;
+  --c-panel: 255 255 255;
+  --c-panel-line: 221 226 234;
+  --c-panel-hover: 242 244 248;
+  --c-sunk: 241 243 247;
+  --c-strip: 240 242 246;
+  --c-panel-2: 248 249 251;
+  --c-tip: 255 255 255;
+  --c-chip: 230 234 241;
+  --c-line-mid: 211 217 226;
+  --c-line-strong: 195 202 213;
+  --c-muted: 93 102 120;
+  --c-faint: 138 147 163;
+  color-scheme: light;
+}
+html.dark {
+  --c-surface: 15 19 28;
+  --c-background: 15 19 28;
+  --c-surface-dim: 15 19 28;
+  --c-surface-container-lowest: 10 14 23;
+  --c-surface-container-low: 24 27 37;
+  --c-surface-container: 28 32 41;
+  --c-surface-container-high: 38 42 52;
+  --c-surface-container-highest: 49 53 63;
+  --c-surface-variant: 49 53 63;
+  --c-surface-bright: 53 57 67;
+  --c-on-surface: 223 226 239;
+  --c-on-background: 223 226 239;
+  --c-on-surface-variant: 189 200 209;
+  --c-outline: 135 146 154;
+  --c-outline-variant: 62 72 79;
+  --c-primary: 142 213 255;
+  --c-primary-container: 56 189 248;
+  --c-on-primary: 0 53 74;
+  --c-secondary: 191 198 220;
+  --c-tertiary: 255 188 180;
+  --c-error: 255 180 171;
+  --c-error-container: 147 0 10;
+  --c-on-error-container: 255 218 214;
+  --c-ok: 74 222 128;
+  --c-warn: 251 191 36;
+  --c-hair: 35 41 59;
+  --c-panel: 21 25 36;
+  --c-panel-line: 39 45 63;
+  --c-panel-hover: 27 32 46;
+  --c-sunk: 12 16 24;
+  --c-strip: 19 24 38;
+  --c-panel-2: 23 27 38;
+  --c-tip: 31 36 51;
+  --c-chip: 40 47 66;
+  --c-line-mid: 43 51 71;
+  --c-line-strong: 53 60 82;
+  --c-muted: 140 147 168;
+  --c-faint: 87 94 116;
+  color-scheme: dark;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -48,14 +132,14 @@ body { overscroll-behavior: none; }
 
 /* --- landing page ---------------------------------------------------------- */
 /* Hero illustration: the low byte of each weight is the payload. */
-#hex-grid b { color: #38bdf8; background: rgb(56 189 248 / 0.1); padding: 0 0.125rem; font-weight: 700; }
+#hex-grid b { color: rgb(var(--c-primary-container)); background: rgb(var(--c-primary-container) / 0.1); padding: 0 0.125rem; font-weight: 700; }
 
 /* "What one file can't see": one row per check, one cell per payload size. */
-.matrix { display: grid; grid-template-columns: minmax(7.5rem, auto) repeat(6, minmax(0, 1fr)); gap: 0.375rem; align-items: center; color: #87929a; text-align: center; }
-.matrix .lane { text-align: left; color: #bdc8d1; }
+.matrix { display: grid; grid-template-columns: minmax(7.5rem, auto) repeat(6, minmax(0, 1fr)); gap: 0.375rem; align-items: center; color: rgb(var(--c-outline)); text-align: center; }
+.matrix .lane { text-align: left; color: rgb(var(--c-on-surface-variant)); }
 .matrix i { display: block; height: 1.25rem; border-radius: 0.125rem; }
-.matrix i.hit { background: rgb(56 189 248 / 0.75); }
-.matrix i.miss { background: #262a34; border: 1px solid #3e484f; }
+.matrix i.hit { background: rgb(var(--c-primary-container) / 0.75); }
+.matrix i.miss { background: rgb(var(--c-surface-container-high)); border: 1px solid rgb(var(--c-outline-variant)); }
 
 .verdict { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.6875rem; line-height: 1rem; letter-spacing: 0.04em; text-transform: uppercase; padding: 0.25rem 0.625rem; border-radius: 0.125rem; white-space: nowrap; }
 
@@ -63,3 +147,8 @@ html { scroll-behavior: smooth; }
 
 /* the phone row of links scrolls sideways; fade its edge so that reads as more to come */
 .nav-scroll { -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); }
+
+/* theme toggle: show the icon of the theme you would switch to */
+.theme-toggle .i-sun { display: none; }
+html.dark .theme-toggle .i-sun { display: block; }
+html.dark .theme-toggle .i-moon { display: none; }
